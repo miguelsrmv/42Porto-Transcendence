@@ -1,0 +1,22 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    docker-compose.yml                                 :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: mde-sa-- <mde-sa--@student.42porto.com>    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/02/03 14:31:20 by mde-sa--          #+#    #+#              #
+#    Updated: 2025/02/03 14:31:23 by mde-sa--         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+services:
+  nginx:
+    container_name: nginx
+    image: nginx
+    build: ./requirements/nginx
+    ports:
+      - 443:443
+    env_file:
+      - .env
+    restart: always
