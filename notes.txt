@@ -1,7 +1,17 @@
-- Automatic testing ?
-- Weekly meetings for code reviews ?
-- Mockup ?
-- Document routes for API endpoints ?
-- Tree -l for container structure
-- Check Git Projects way of working
--	 
+# Elaborate automatic tests?
+## Pytest? Git Actions on PR?
+
+# Document project development
+## Git Wiki vs Notion
+## Create log of technical Debt
+## Create decision-making log
+## Create meeting log for relevant conclusions
+
+# Create Mockup
+## Underway !!
+
+# Document project structure
+## Docker infrastructur: DONE!
+## Database schema 
+## API and Port access points
+## "tree -l" for containers' relevant contents
