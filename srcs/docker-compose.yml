@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   server:
     container_name: server
@@ -7,8 +9,11 @@ services:
       - 443:443
     env_file:
       - .env
-    restart: always
-    networks: public-transcendence-network
+    restart: unless-stopped
+    networks:
+      - public-transcendence-network
+    volumes:
+      - ./server:/app
 
   backend:
     container_name: backend
@@ -16,10 +21,14 @@ services:
     build: ./requirements/backend
     env_file:
       - .env
-    restart: always
+    restart: unless-stopped
     networks:
       - public-transcendence-network
       - private-transcendence-network
+    volumes:
+      - ./backend:/app
+      - /app/nodule_modules # Prevents overwriting dependencies
+    command: npm run dev # To hot reload changes
 
   database:
     container_name: database
@@ -27,8 +36,11 @@ services:
     build: ./requirements/database
     env_file:
       - .env
-    restart: always
-    networks: private-transcendence-network
+    restart: unless-stopped
+    networks:
+      - private-transcendence-network
+    volumes:
+      - database_data:/var/lib/sqlite
 
   blockchain:
     container_name: blockchain
@@ -36,17 +48,21 @@ services:
     build: ./requirements/blockchain
     env_file:
       - .env
-    restart: always
-    networks: private-transcendence-network
+    restart: unless-stopped
+    networks:
+      - private-transcendence-network
+    volumes:
+      - blockchain_data:/app/blockchain
+    command: npm run dev # To hot reload changes
 
 volumes:
-  database:
+  database_data:
     driver: local
     driver_opts:
       type: none
       device: ${DATA_PATH}/database
       o: bind
-  blockchain:
+  blockchain_data:
     driver: local
     driver_opts:
       type: none
@@ -60,4 +76,3 @@ networks:
   private-transcendence-network:
     name: private-transcendence-network
     driver: bridge
-   
