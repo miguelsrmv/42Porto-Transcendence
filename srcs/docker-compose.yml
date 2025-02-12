@@ -10,8 +10,7 @@ services:
     restart: always
     networks: public-transcendence-network
 
-  services:
-  server:
+  backend:
     container_name: backend
     image: backend
     build: ./requirements/backend
@@ -22,8 +21,7 @@ services:
       - public-transcendence-network
       - private-transcendence-network
 
-  services:
-  server:
+  database:
     container_name: database
     image: database
     build: ./requirements/database
@@ -32,8 +30,7 @@ services:
     restart: always
     networks: private-transcendence-network
 
-  services:
-  server:
+  serblockchainver:
     container_name: blockchain
     image: blockchain
     build: ./requirements/blockchain
