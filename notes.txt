@@ -15,3 +15,6 @@
 ## Database schema 
 ## API and Port access points
 ## "tree -l" for containers' relevant contents
+
+# Establish branches from which everything will stem
+## Suggestion: use same as Git Project's labels
