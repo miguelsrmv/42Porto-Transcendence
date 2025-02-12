@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   server:
     container_name: server
@@ -17,8 +19,6 @@ services:
     container_name: backend
     image: backend
     build: ./requirements/backend
-    ports: 
-      - 3000:3000
     env_file:
       - .env
     restart: unless-stopped
@@ -76,4 +76,3 @@ networks:
   private-transcendence-network:
     name: private-transcendence-network
     driver: bridge
-   
