@@ -1,0 +1,7 @@
+- Automatic testing ?
+- Weekly meetings for code reviews ?
+- Mockup ?
+- Document routes for API endpoints ?
+- Tree -l for container structure
+- Check Git Projects way of working
+-	 
