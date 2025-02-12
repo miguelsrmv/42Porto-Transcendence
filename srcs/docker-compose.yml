@@ -1,22 +1,66 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    docker-compose.yml                                 :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: mde-sa-- <mde-sa--@student.42porto.com>    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/02/03 14:31:20 by mde-sa--          #+#    #+#              #
-#    Updated: 2025/02/03 14:31:23 by mde-sa--         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 services:
-  nginx:
-    container_name: nginx
-    image: nginx
-    build: ./requirements/nginx
+  server:
+    container_name: server
+    image: server
+    build: ./requirements/server
     ports:
       - 443:443
     env_file:
       - .env
     restart: always
+    networks: public-transcendence-network
+
+  services:
+  server:
+    container_name: backend
+    image: backend
+    build: ./requirements/backend
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - public-transcendence-network
+      - private-transcendence-network
+
+  services:
+  server:
+    container_name: database
+    image: database
+    build: ./requirements/database
+    env_file:
+      - .env
+    restart: always
+    networks: private-transcendence-network
+
+  services:
+  server:
+    container_name: blockchain
+    image: blockchain
+    build: ./requirements/blockchain
+    env_file:
+      - .env
+    restart: always
+    networks: private-transcendence-network
+
+volumes:
+  database:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DATA_PATH}/database
+      o: bind
+  blockchain:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DATA_PATH}/blockchain
+      o: bind
+
+networks:
+  public-transcendence-network:
+    name: public-transcendence-network
+    driver: bridge
+  private-transcendence-network:
+    name: private-transcendence-network
+    driver: bridge
+   
