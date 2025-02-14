@@ -9,7 +9,6 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 ## Root Directory
 
 - `Makefile`: Contains build automation rules and commands for the project
-- `README.md`: Project overview, setup instructions, and essential documentation
 - `en.subject.pdf`: Project requirements and specifications document
 - `notes.txt`: Development notes and temporary documentation
 - `srcs/`: Source code and infrastructure configurations
