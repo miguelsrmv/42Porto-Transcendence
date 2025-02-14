@@ -12,6 +12,7 @@ services:
     restart: unless-stopped
     networks:
       - public-transcendence-network
+      - private-transcendence-network
     volumes:
       - ./server:/app
 
@@ -23,7 +24,6 @@ services:
       - .env
     restart: unless-stopped
     networks:
-      - public-transcendence-network
       - private-transcendence-network
     volumes:
       - ./backend:/app
