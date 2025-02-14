@@ -26,14 +26,6 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 ### Architecture (`docs/architecture/`)
 - System design documents
 - Infrastructure diagrams
-- Contains key files:
-  - `Docker_infrastructure.excalidraw`: Source file for infrastructure diagram
-  - `Docker_infrastructure.png`: Rendered infrastructure diagram
-
-### Configuration (`docs/config/`)
-- Configuration guides
-- Environment setup instructions
-- System requirements
 
 ### Contributing Guidelines (`docs/contributing/`)
 - Development workflow
@@ -49,7 +41,7 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 ## Source Code Structure (`srcs/`)
 
 ### Requirements (`srcs/requirements/`)
-Contains Dockerfiles and configurations for different services:
+Contains Dockerfiles and configurations for different services
 
 #### Backend (`backend/`)
 - Backend service Dockerfile
