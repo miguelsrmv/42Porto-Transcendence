@@ -10,7 +10,6 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 
 - `Makefile`: Contains build automation rules and commands for the project
 - `en.subject.pdf`: Project requirements and specifications document
-- `notes.txt`: Development notes and temporary documentation
 - `srcs/`: Source code and infrastructure configurations
 - `assets/`: Static resources, media files, and other project assets
 - `docs/`: Comprehensive project documentation
@@ -37,6 +36,12 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 - Images used in documentation
 - Diagrams
 - Screenshots
+
+### Logs (`docs/logs/`)
+- Team meeting minutes
+- Decision records
+- Issue tracking logs
+- Important discussions and decisions
 
 ## Source Code Structure (`srcs/`)
 
