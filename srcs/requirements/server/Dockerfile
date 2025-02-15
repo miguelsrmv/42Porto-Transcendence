@@ -1,16 +1,16 @@
 FROM nginx:latest
 
-# Set environment variables (default values can be overridden at build time)
-ARG DOMAIN_NAME=localhost
-ARG USER=nginx
+#TODO:Remove after project is buildable with Docker Compose. Variable is on .env
+ARG DOMAIN_NAME=padaria.42.pt
 
-COPY ./www/index.html /usr/share/nginx/html/index.html
+COPY ./src/index_placeholder.html /var/www/ft_transcendence/index.html
 
-COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./conf/nginx_template.conf /etc/nginx/conf.d/nginx_template.conf
 
-COPY ./scripts/ssl_setup.sh /ssl_setup.sh
-RUN chmod +x /ssl_setup.sh
+COPY ./conf/nginx_setup.sh /
+
+RUN chmod +x /nginx_setup.sh
 
 EXPOSE 443
 
-CMD ["/bin/sh", "-c", "/ssl_setup.sh && nginx -g 'daemon off;'"]
+ENTRYPOINT ["./nginx_setup.sh"]

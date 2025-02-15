@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Get environment variables updated on the nginx_config file
+# TODO: Enable once Docker compose (and .env) is up!
+#envsubst '$DOMAIN_NAME' < /etc/nginx/conf.d/nginx_template.conf > /etc/nginx/conf.d/default.conf
+
 # Check if certificate already exists
 if [ ! -f /etc/ssl/nginx-selfsigned.pem ]; then
     echo "Generating self-signed SSL certificate..."
@@ -11,4 +15,5 @@ else
     echo "SSL certificate already exists, skipping generation."
 fi
 
-exec "$@"
+# Starts nginx
+exec nginx -g 'daemon off;'
