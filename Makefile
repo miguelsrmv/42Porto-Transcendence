@@ -13,6 +13,7 @@
 DOMAIN_NAME = padaria.42.pt
 DB_DATA = $(PWD)/data/database
 BC_DATA = $(PWD)/data/blockchain
+COMPOSE = docker compose -f ./srcs/docker-compose.yml
 
 all: up
 
@@ -20,13 +21,13 @@ up:
 	mkdir -p $(DB_DATA)
 	mkdir -p $(BC_DATA)
 	@sudo hostsed add 127.0.0.1 $(DOMAIN_NAME)
-	@docker compose -f ./srcs/docker-compose.yml up --build -d
+	@$(COMPOSE) --build -d
 
 down:
-	@docker compose -f ./srcs/docker-compose.yml down
+	@$(COMPOSE) down
 
 build:
-	@docker compose -f ./srcs/docker-compose.yml build
+	@$(COMPOSE) build
 
 clean: down
 	@echo "** REMOVING IMAGES **"
@@ -52,4 +53,32 @@ status:
 	@docker network ls
 	@echo ""
 
-.PHONY: all up down build clean re phony prune
+server:
+	@$(COMPOSE) build server
+
+backend:
+	@$(COMPOSE) build backend
+
+db:
+	@$(COMPOSE) build database
+
+bc:
+	@$(COMPOSE) build blockchain
+
+server_clean:
+	$(COMPOSE) rm -sf server
+	docker rmi -f server || true
+
+backend_clean:
+	$(COMPOSE) rm -sf backend
+	docker rmi -f backend || true
+
+db_clean:
+	$(COMPOSE) rm -sf database
+	docker rmi -f database || true
+
+bc_clean:
+	$(COMPOSE) rm -sf blockchain
+	docker rmi -f blockchain || true
+
+.PHONY: all up down build clean re prune status server backend db bc server_clean backend_clean db_clean bc_clean
