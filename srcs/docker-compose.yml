@@ -12,7 +12,7 @@ services:
       - public-transcendence-network
       - private-transcendence-network
     volumes:
-      - ./server:/app
+      - ./requirements/server:/app
 
   backend:
     container_name: backend
@@ -24,7 +24,7 @@ services:
     networks:
       - private-transcendence-network
     volumes:
-      - ./backend:/app
+      - ./requirements/backend:/app
       - /app/node_modules # Prevents overwriting dependencies
 
   database:
