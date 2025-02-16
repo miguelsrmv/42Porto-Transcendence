@@ -11,10 +11,14 @@
 # **************************************************************************** #
 
 DOMAIN_NAME = padaria.42.pt
+DB_DATA = $(PWD)/data/database
+BC_DATA = $(PWD)/data/blockchain
 
 all: up
 
 up:
+	mkdir -p $(DB_DATA)
+	mkdir -p $(BC_DATA)
 	@sudo hostsed add 127.0.0.1 $(DOMAIN_NAME)
 	@docker compose -f ./srcs/docker-compose.yml up --build -d
 
