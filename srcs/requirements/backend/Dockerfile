@@ -1,3 +1,4 @@
-FROM node:latest
+FROM alpine
 
-CMD ["npm", "run", "dev"]
+# Set a default command to keep the container alive
+CMD ["sleep", "infinity"]
