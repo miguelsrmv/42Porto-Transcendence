@@ -21,7 +21,7 @@ up:
 	mkdir -p $(DB_DATA)
 	mkdir -p $(BC_DATA)
 	@sudo hostsed add 127.0.0.1 $(DOMAIN_NAME)
-	@$(COMPOSE) --build -d
+	@$(COMPOSE) up --build -d
 
 down:
 	@$(COMPOSE) down
