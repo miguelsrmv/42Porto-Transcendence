@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 DOMAIN_NAME = padaria.42.pt
-DB_DATA = $(PWD)/data/database
+DB_DATA = $(PWD)/data/backend_db
 BC_DATA = $(PWD)/data/blockchain
 COMPOSE = docker compose -f ./srcs/docker-compose.yml
 
@@ -59,8 +59,6 @@ server:
 backend:
 	@$(COMPOSE) build backend
 
-db:
-	@$(COMPOSE) build database
 
 bc:
 	@$(COMPOSE) build blockchain
@@ -73,12 +71,8 @@ backend_clean:
 	$(COMPOSE) rm -sf backend
 	docker rmi -f backend || true
 
-db_clean:
-	$(COMPOSE) rm -sf database
-	docker rmi -f database || true
-
 bc_clean:
 	$(COMPOSE) rm -sf blockchain
 	docker rmi -f blockchain || true
 
-.PHONY: all up down build clean re prune status server backend db bc server_clean backend_clean db_clean bc_clean
+.PHONY: all up down build clean re prune status server backend bc server_clean backend_clean bc_clean

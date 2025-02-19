@@ -25,19 +25,8 @@ services:
       - private-transcendence-network
     volumes:
       - ./requirements/backend:/app
-      - /app/node_modules # Prevents overwriting dependencies
-
-  database:
-    container_name: database
-    image: database
-    build: ./requirements/database
-    env_file:
-      - .env
-    restart: unless-stopped
-    networks:
-      - private-transcendence-network
-    volumes:
-      - database_data:/var/lib/sqlite
+      - backend_db:/app/data
+      - node_modules:/app/node_modules # Prevents overwriting dependencies
 
   blockchain:
     container_name: blockchain
@@ -52,11 +41,11 @@ services:
       - blockchain_data:/app/blockchain
 
 volumes:
-  database_data:
+  backend_db:
     driver: local
     driver_opts:
       type: none
-      device: ${DATA_PATH}/database
+      device: ${DATA_PATH}/backend_db
       o: bind
   blockchain_data:
     driver: local
@@ -64,6 +53,7 @@ volumes:
       type: none
       device: ${DATA_PATH}/blockchain
       o: bind
+  node_modules:
 
 networks:
   public-transcendence-network:
