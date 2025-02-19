@@ -75,4 +75,7 @@ bc_clean:
 	$(COMPOSE) rm -sf blockchain
 	docker rmi -f blockchain || true
 
-.PHONY: all up down build clean re prune status server backend bc server_clean backend_clean bc_clean
+test:
+	./docs/scripts/build_dockerfile_test.sh
+
+.PHONY: all up down build clean re prune status server backend bc server_clean backend_clean bc_clean test
