@@ -1,6 +1,5 @@
 # Solved Technical Debt issues for ft_transcendence
 
-
 ## 1. Hard-coded variables in the server container
 
 ### Date Created: 15/02/2025
