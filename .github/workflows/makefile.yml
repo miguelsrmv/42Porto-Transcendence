@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: configure
-      run: ./docks/script/configure
+      run: ./docs/script/configure
 
     - name: Install dependencies
       run: make
