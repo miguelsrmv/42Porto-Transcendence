@@ -1,67 +1,101 @@
 #!/bin/bash
 
-# Path to your docker compose.yml file
-DOCKER_COMPOSE_FILE="./srcs/docker-compose.yml"
+DOCKER_COMPOSE_FILE="srcs/docker-compose.yml"
 
-# Build the services defined in the docker compose.yml file
-echo "Building Docker services..."
-docker compose -f $DOCKER_COMPOSE_FILE build
+echo "========================================"
+echo "🚀 Running Docker Compose Test Script"
+echo "========================================"
 
-# Check if the build was successful
-if [ $? -eq 0 ]; then
-  echo "Docker Compose build successful."
-else
-  echo "Docker Compose build failed."
+# 1️⃣ Build Services
+echo "🔨 Building Docker services..."
+docker-compose -f $DOCKER_COMPOSE_FILE build
+if [ $? -ne 0 ]; then
+  echo "❌ Docker Compose build failed."
   exit 1
 fi
+echo "✅ Docker Compose build successful."
 
-# Start the services defined in the docker compose.yml file
-echo "Starting Docker services..."
-docker compose -f $DOCKER_COMPOSE_FILE up -d
-
-# Check if the services started successfully
-if [ $? -eq 0 ]; then
-  echo "Docker services started successfully."
-else
-  echo "Docker services failed to start."
+# 2️⃣ Start Services
+echo "🔄 Starting Docker services..."
+docker-compose -f $DOCKER_COMPOSE_FILE up -d
+if [ $? -ne 0 ]; then
+  echo "❌ Docker services failed to start."
   exit 1
 fi
+echo "✅ Docker services started successfully."
 
-# Optionally, check the logs of the service to see if it ran correctly
-## Check logs for each service
-services=("server" "backend" "blockchain")
-for service in "${services[@]}"; do
-  echo "Checking logs for $service..."
-  docker compose -f $DOCKER_COMPOSE_FILE logs $service
-done
+# 3️⃣ Check Running Containers
+echo "🔍 Checking running containers..."
+if ! docker-compose -f $DOCKER_COMPOSE_FILE ps | grep -q "Up"; then
+  echo "❌ One or more containers are not running!"
+  exit 1
+fi
+echo "✅ All containers are running."
 
-# Check if the networks were created
+# 4️⃣ Check Networks
+echo "🌐 Checking Docker networks..."
 networks=("private-transcendence-network" "public-transcendence-network")
 for network in "${networks[@]}"; do
-  echo "Checking Docker network $network..."
-  docker network ls | grep -E "$network"
-  if [ $? -eq 0 ]; then
-    echo "Docker network $network was correctly created."
-  else
-    echo "Docker network $network is missing or not created properly."
+  if ! docker network ls | grep -q "$network"; then
+    echo "❌ Network $network is missing!"
     exit 1
   fi
 done
+echo "✅ All networks exist."
 
-# Check if the volumes were created
-volumes=("backend_db" "blockchain_data")
+# 5️⃣ Check Volumes
+echo "💾 Checking Docker volumes..."
+volumes=("backend_db" "blockchain_data" "node_modules")
 for volume in "${volumes[@]}"; do
-  echo "Checking Docker volume $volume..."
-  docker volume ls | grep -E "$volume"
-  if [ $? -eq 0 ]; then
-    echo "Docker volume $volume was correctly created."
-  else
-    echo "Docker volume $volume is missing or not created properly."
+  if ! docker volume ls | grep -q "$volume"; then
+    echo "❌ Volume $volume is missing!"
     exit 1
   fi
 done
+echo "✅ All volumes exist."
 
-# Clean up: Stop and remove the containers
-docker compose -f $DOCKER_COMPOSE_FILE down
+# 6️⃣ Check Open Ports
+echo "📡 Checking open ports..."
+if ! docker-compose -f $DOCKER_COMPOSE_FILE ps | grep -q "0.0.0.0"; then
+  echo "❌ Expected services are not exposing ports!"
+  exit 1
+fi
+echo "✅ Services are exposing expected ports."
 
-echo "Docker Compose test script completed."
+'
+# 7️⃣ Check Backend Health (if healthcheck exists)
+ echo "🩺 Checking Backend service health..."
+ backend_container=$(docker-compose -f $DOCKER_COMPOSE_FILE ps -q Backend)
+ if docker inspect --format '{{json .State.Health.Status}}' "$backend_container" | grep -q "healthy"; then
+  echo "✅ Backend service is healthy."
+ else
+  echo "❌ Backend service is unhealthy!"
+  exit 1
+fi
+
+# 8️⃣ Check Backend API
+echo "🌍 Testing backend API..."
+if curl -fs http://localhost:3000/health; then
+  echo "✅ Backend API is responding."
+else
+  echo "❌ Backend API is not responding!"
+  exit 1
+fi
+
+# 9️⃣ Check Database Setup
+echo "🗄️ Checking SQLite database setup..."
+if docker-compose -f $DOCKER_COMPOSE_FILE exec Backend sqlite3 /app/database.db ".tables" | grep -q "users"; then
+  echo "✅ Database is initialized correctly."
+else
+  echo "❌ Database tables are missing!"
+  exit 1
+fi
+'
+
+# 🔟 Stop and Clean Up
+echo "🛑 Stopping and removing Docker services..."
+docker-compose -f $DOCKER_COMPOSE_FILE down
+echo "✅ Cleanup complete."
+
+echo "🎉 All tests passed successfully!"
+exit 0
