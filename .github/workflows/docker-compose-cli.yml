@@ -39,7 +39,7 @@ jobs:
     - name: 🏗️ Run Build and Test Script
       run: |
         chmod +x docs/scripts/build_dockerfile_test.sh
-        ./build_dockerfile_test.sh
+        ./docs/scripts/build_dockerfile_test.sh
 
     - name: 📜 Show Docker Logs (if failure)
       if: failure()
