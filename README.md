@@ -43,6 +43,9 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 - Issue tracking logs
 - Important discussions and decisions
 
+### Scripts (`docs/scripts/`)
+- Scripts for testing
+
 ## Source Code Structure (`srcs/`)
 
 ### Requirements (`srcs/requirements/`)
