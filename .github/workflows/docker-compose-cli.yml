@@ -17,7 +17,7 @@ jobs:
     - name: 🛠️ Set up Docker Buildx (for caching & multi-platform builds)
       uses: docker/setup-buildx-action@v3
 
-    - name: Ensure hostsed exists
+    - name: 🛠️ Ensure hostsed exists
       run: |
         if ! hostsed --help >/dev/null 2>&1; then \
           echo "hostsed not found. Installing..."; \
