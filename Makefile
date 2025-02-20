@@ -17,9 +17,9 @@ COMPOSE = docker compose -f ./srcs/docker-compose.yml
 
 all: up
 
-up: check_hostsed
-	mkdir -p $(DB_DATA)
-	mkdir -p $(BC_DATA)
+up: dependencies
+	@mkdir -p $(DB_DATA)
+	@mkdir -p $(BC_DATA)
 	@sudo hostsed add 127.0.0.1 $(DOMAIN_NAME)
 	@$(COMPOSE) up --build -d
 
@@ -40,7 +40,7 @@ clean: down
 re: clean up
 
 prune:
-	docker system prune -a
+	@docker system prune -a
 
 status:
 	@clear
@@ -65,23 +65,21 @@ bc:
 
 server_clean:
 	$(COMPOSE) rm -sf server
-	docker rmi -f server || true
+	@docker rmi -f server || true
 
 backend_clean:
 	$(COMPOSE) rm -sf backend
-	docker rmi -f backend || true
+	@docker rmi -f backend || true
 
 bc_clean:
 	$(COMPOSE) rm -sf blockchain
-	docker rmi -f blockchain || true
+	@docker rmi -f blockchain || true
 
-check_hostsed:
-	@if ! hostsed --help >/dev/null 2>&1; then \
-		echo "hostsed not found. Installing..."; \
-		sudo apt update && sudo apt install -y hostsed; \
-	fi
+dependencies:
+	@which docker > /dev/null 2>&1 || (echo "Docker not found. Installing..." && sudo apt-get update && sudo apt-get install -y docker.io)
+	@which hostsed > /dev/null 2>&1 || (echo "Hostsed not found. Installing..." && sudo apt-get update && sudo apt-get install -y hostsed)
 
-test:
-	./docs/scripts/build_dockerfile_test.sh
+test: 
+	@./docs/scripts/build_dockerfile_test.sh  #Tests build
 
-.PHONY: all up down build clean re prune status server backend bc server_clean backend_clean bc_clean test
+.PHONY: all up down build clean re prune status server backend bc server_clean backend_clean bc_clean depedencies test 
