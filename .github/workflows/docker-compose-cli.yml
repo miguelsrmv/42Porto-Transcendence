@@ -28,7 +28,7 @@ jobs:
     - name: 🐳 Start Docker Services (with cache)
       run: |
         cd srcs
-        docker-compose up -d --build
+        docker compose up -d --build
 
     - name: 🏗️ Run Build and Test Script
       run: |
