@@ -76,7 +76,7 @@ bc_clean:
 	docker rmi -f blockchain || true
 
 check_hostsed:
-	@if ! command -v hostsed &>/dev/null; then \
+	@if ! hostsed --help >/dev/null 2>&1; then \
 		echo "hostsed not found. Installing..."; \
 		sudo apt update && sudo apt install -y hostsed; \
 	fi
