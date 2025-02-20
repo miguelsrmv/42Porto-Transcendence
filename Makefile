@@ -17,7 +17,7 @@ COMPOSE = docker compose -f ./srcs/docker-compose.yml
 
 all: up
 
-up:
+up: check_hostsed
 	mkdir -p $(DB_DATA)
 	mkdir -p $(BC_DATA)
 	@sudo hostsed add 127.0.0.1 $(DOMAIN_NAME)
@@ -74,6 +74,12 @@ backend_clean:
 bc_clean:
 	$(COMPOSE) rm -sf blockchain
 	docker rmi -f blockchain || true
+
+check_hostsed:
+	@if ! hostsed --help >/dev/null 2>&1; then \
+		echo "hostsed not found. Installing..."; \
+		sudo apt update && sudo apt install -y hostsed; \
+	fi
 
 test:
 	./docs/scripts/build_dockerfile_test.sh
