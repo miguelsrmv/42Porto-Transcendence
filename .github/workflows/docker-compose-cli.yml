@@ -38,9 +38,9 @@ jobs:
     - name: 📜 Show Docker Logs (if failure)
       if: failure()
       run: |
-        docker-compose logs
+        docker compose logs
 
     - name: 🛑 Stop and Clean Up
       run: |
         cd srcs
-        docker-compose down
+        docker compose down
