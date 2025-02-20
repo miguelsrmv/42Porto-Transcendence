@@ -8,7 +8,7 @@ echo "========================================"
 
 # 1️⃣ Build Services
 echo "🔨 Building Docker services..."
-docker-compose -f $DOCKER_COMPOSE_FILE build
+docker compose -f $DOCKER_COMPOSE_FILE build
 if [ $? -ne 0 ]; then
   echo "❌ Docker Compose build failed."
   exit 1
@@ -17,7 +17,7 @@ echo "✅ Docker Compose build successful."
 
 # 2️⃣ Start Services
 echo "🔄 Starting Docker services..."
-docker-compose -f $DOCKER_COMPOSE_FILE up -d
+docker compose -f $DOCKER_COMPOSE_FILE up -d
 if [ $? -ne 0 ]; then
   echo "❌ Docker services failed to start."
   exit 1
@@ -26,7 +26,7 @@ echo "✅ Docker services started successfully."
 
 # 3️⃣ Check Running Containers
 echo "🔍 Checking running containers..."
-if ! docker-compose -f $DOCKER_COMPOSE_FILE ps | grep -q "Up"; then
+if ! docker compose -f $DOCKER_COMPOSE_FILE ps | grep -q "Up"; then
   echo "❌ One or more containers are not running!"
   exit 1
 fi
@@ -56,7 +56,7 @@ echo "✅ All volumes exist."
 
 # 6️⃣ Check Open Ports
 echo "📡 Checking open ports..."
-if ! docker-compose -f $DOCKER_COMPOSE_FILE ps | grep -q "0.0.0.0"; then
+if ! docker compose -f $DOCKER_COMPOSE_FILE ps | grep -q "0.0.0.0"; then
   echo "❌ Expected services are not exposing ports!"
   exit 1
 fi
@@ -84,7 +84,7 @@ fi
 
 # 9️⃣ Check Database Setup
 echo "🗄️ Checking SQLite database setup..."
-if docker-compose -f $DOCKER_COMPOSE_FILE exec Backend sqlite3 /app/database.db ".tables" | grep -q "users"; then
+if docker compose -f $DOCKER_COMPOSE_FILE exec Backend sqlite3 /app/database.db ".tables" | grep -q "users"; then
   echo "✅ Database is initialized correctly."
 else
   echo "❌ Database tables are missing!"
@@ -94,7 +94,7 @@ fi
 
 # 🔟 Stop and Clean Up
 echo "🛑 Stopping and removing Docker services..."
-docker-compose -f $DOCKER_COMPOSE_FILE down
+docker compose -f $DOCKER_COMPOSE_FILE down
 echo "✅ Cleanup complete."
 
 echo "🎉 All tests passed successfully!"
