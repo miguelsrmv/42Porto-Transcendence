@@ -8,3 +8,9 @@
 #### This replaces /app inside the container with your local files. However, this causes a problem: Dependencies Get Overwritten! Inside the container, npm install places dependencies in /app/node_modules. But since /app is replaced by ./requirements/backend, the node_modules directory disappears! This breaks the application because dependencies are missing.
 #### As such, we used a named volume 'node_modules:/app/node_modules' (a persistent volume for dependencies) which will be removed in production!
 
+## 2. Server volume in server container
+### Date Created: 28/02/2025
+### Branch: "Frontend"
+### Context: 🔍 Why Is `server_volume` in `docker-compose.yml`?
+#### This allows any local change to instantly take place in the docker container. It will be removed once the website is created.
+#### However, we will also have to update the Dockerfile.conf so that all the web files are properly copied over.
