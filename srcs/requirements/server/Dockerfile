@@ -1,9 +1,9 @@
 FROM nginx:latest
 
-#TODO:Remove after project is buildable with Docker Compose. Variable is on .env
-ARG DOMAIN_NAME=padaria.42.pt
-
-COPY ./src/index_placeholder.html /var/www/ft_transcendence/index.html
+#TODO: Uncomment after web files are done
+#TODO: Currently this dir is being mounted on the volume
+#COPY ./public/index.html /var/www/ft_transcendence/index.html
+#TODO: Make it so that all the /public file is copied to /ft_transcendence
 
 COPY ./conf/nginx_template.conf /etc/nginx/conf.d/nginx_template.conf
 

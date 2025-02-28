@@ -15,6 +15,7 @@ services:
       - private-transcendence-network
     volumes:
       - ./server:/app
+      - server_volume:/var/www/ft_transcendence/
 
   backend:
     container_name: backend
@@ -67,6 +68,13 @@ volumes:
     driver_opts:
       type: none
       device: ${DATA_PATH}/blockchain
+      o: bind
+  node_modules:
+  server_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./requirements/server/public/
       o: bind
 
 networks:
