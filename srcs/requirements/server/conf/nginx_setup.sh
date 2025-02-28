@@ -15,5 +15,18 @@ else
     echo "SSL certificate already exists, skipping generation."
 fi
 
+#TODO: We can remove the following 3 instructions, they are just here for hot reloading
+# Start Nginx in the background
+nginx &
+
+# Install inotify-tools (only needed in Alpine-based Nginx)
+apk add --no-cache inotify-tools
+
+# Watch the HTML file for changes and reload Nginx
+while inotifywait -e modify /var/www/ft_transcendence/index.html; do
+    echo "Detected change in index.html, reloading Nginx..."
+    nginx -s reload
+done
+
 # Starts nginx
 exec nginx -g 'daemon off;'
