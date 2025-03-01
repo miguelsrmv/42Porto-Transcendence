@@ -6,7 +6,7 @@
  * It will trigger the loading of the default page when the DOM content is fully loaded and parsed
  */
 document.addEventListener("DOMContentLoaded", () => {
-    loadPage("pages/home.html"); // Load default page on startup
+    loadPage("home.html"); // Load default page on startup
 });
 
 /**
@@ -23,7 +23,7 @@ async function loadPage(page: string): Promise<void> {
 
     try {
         // Fetch the page content
-        const response = await fetch(page);
+        const response = await fetch("pages/" + page);
         if (!response.ok) throw new Error("Page not found");
 
         // Load content into #app with fade transition
