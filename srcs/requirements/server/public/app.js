@@ -15,7 +15,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
  * It will trigger the loading of the default page when the DOM content is fully loaded and parsed
  */
 document.addEventListener("DOMContentLoaded", () => {
-    loadPage("pages/home.html"); // Load default page on startup
+    loadPage("home.html"); // Load default page on startup
 });
 /**
  *
@@ -30,7 +30,7 @@ function loadPage(page) {
         }
         try {
             // Fetch the page content
-            const response = yield fetch(page);
+            const response = yield fetch("pages/" + page);
             if (!response.ok)
                 throw new Error("Page not found");
             // Load content into #app with fade transition
