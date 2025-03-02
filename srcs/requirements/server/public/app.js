@@ -46,3 +46,22 @@ function loadPage(page) {
         }
     });
 }
+/**
+ *
+ * @brief Logs a specified API endpoint returned content into the console
+ * TODO: Return the json data or undefined
+ */
+function fetchData(endpoint) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch("api/" + endpoint);
+            if (!response.ok)
+                throw new Error(`Failed to retrieve data from '${endpoint}' Response status: ${response.status}`);
+            const json = yield response.json();
+            console.log(json);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    });
+}
