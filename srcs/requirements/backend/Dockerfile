@@ -1,4 +1,13 @@
-FROM alpine
+FROM node:slim
 
-# Set a default command to keep the container alive
-CMD ["sleep", "infinity"]
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "index.js"]
