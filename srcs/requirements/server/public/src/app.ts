@@ -37,3 +37,20 @@ async function loadPage(page: string): Promise<void> {
         console.error(error);
     }
 }
+
+
+/**
+ * 
+ * @brief Logs a specified API endpoint returned content into the console
+ * TODO: Return the json data or undefined
+ */
+async function fetchData(endpoint: string) {
+    try {
+        const response = await fetch("api/" + endpoint);
+        if (!response.ok) throw new Error(`Failed to retrieve data from '${endpoint}' Response status: ${response.status}`);
+        const json = await response.json();
+        console.log(json);
+    } catch (error) {
+        console.error(error);
+    }
+}
