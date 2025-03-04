@@ -11,6 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "^5.2.1"
+    "@prisma/client": "^6.5.0-dev.46"
+  },
+  "devDependencies": {
+    "fastify": "^5.2.1",
+    "@types/node": "^22.13.8",
+    "prisma": "^6.5.0-dev.46",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
   }
 }
