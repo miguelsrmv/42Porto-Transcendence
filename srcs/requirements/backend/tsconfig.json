@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",                       /* Specify ECMAScript target version */
+    "module": "CommonJS",                     /* Specify module system */
+    "outDir": "./dist",                       /* Output directory for compiled files */
+    "esModuleInterop": true,                  /* Enable interoperability between CommonJS and ES Modules */
+    "forceConsistentCasingInFileNames": true, /* Enforce consistent casing in file names to prevent issues on case-insensitive file systems (e.g., Windows) */
+    "strict": true,                           /* Enable strict type-checking */
+    "skipLibCheck": true                      /* Skip type checking of declaration files */
+  },
+  "include": [
+    "src/**/*"
+  ],                                          /* Specify the files to be included in compilation */
+  "exclude": [
+    "node_modules/**/*"
+  ]                                           /* Specify the files to be excluded from compilation */
+}
