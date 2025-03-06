@@ -13,7 +13,7 @@ datasource db {
 // TODO: Create separate Profile model?
 
 model User {
-  id    Int     @id @default(autoincrement())
+  id    String     @id @default(uuid())
   email String  @unique
   name  String?
   password String
@@ -22,5 +22,5 @@ model User {
   expPoints Int @default(0)
   wins Int @default(0)
   losses Int @default(0)
-  isOnline Boolean
+  isOnline Boolean @default(false)
 }
