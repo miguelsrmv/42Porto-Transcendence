@@ -13,14 +13,14 @@ datasource db {
 // TODO: Create separate Profile model?
 
 model User {
-  id    String     @id @default(uuid())
-  email String  @unique
-  name  String?
-  password String
-  salt String
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  salt      String
   createdAt DateTime @default(now())
-  expPoints Int @default(0)
-  wins Int @default(0)
-  losses Int @default(0)
-  isOnline Boolean @default(false)
+  expPoints Int      @default(0)
+  wins      Int      @default(0)
+  losses    Int      @default(0)
+  isOnline  Boolean  @default(false)
 }
