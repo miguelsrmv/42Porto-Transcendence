@@ -1,0 +1,9 @@
+# Using VScode extension REST Client
+
+# Get all users from database
+GET http://localhost:3000/users/ HTTP/1.1
+
+### Invalid route (testing)
+GET http://localhost:3000/api/users/ HTTP/1.1
+
+###
