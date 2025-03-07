@@ -43,13 +43,11 @@ export async function createUser(
   reply: FastifyReply
 ) {
   try {
-    const { hash, salt } = hashPassword(request.body.email);
     const user = await prisma.user.create({
       data: {
         name: request.body.name,
         email: request.body.email,
-        hashedPassword: hash,
-        salt: salt,
+        hashedPassword: request.body.password,
       },
     });
     reply.send(user);

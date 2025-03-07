@@ -17,7 +17,7 @@ model User {
   email          String   @unique
   name           String?
   hashedPassword String
-  salt           String
+  salt           String   @default("")
   createdAt      DateTime @default(now())
   expPoints      Int      @default(0)
   wins           Int      @default(0)

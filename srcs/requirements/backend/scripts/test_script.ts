@@ -6,13 +6,11 @@ import { faker } from "@faker-js/faker";
 // Change according to the test
 async function test() {
   await prisma.user.deleteMany();
-  const { hash, salt } = hashPassword(faker.internet.password());
   const user = await prisma.user.create({
     data: {
       name: "Kyle",
       email: "kyle23@email.com",
-      hashedPassword: hash,
-      salt: salt,
+      hashedPassword: faker.internet.password(),
     },
   });
   console.log(user);
