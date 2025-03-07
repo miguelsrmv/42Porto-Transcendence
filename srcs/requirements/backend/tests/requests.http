@@ -1,4 +1,4 @@
-# Using VScode extension REST Client
+# Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
 
 # Get all users from database
 GET http://localhost:3000/users/ HTTP/1.1
