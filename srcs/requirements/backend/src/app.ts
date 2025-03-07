@@ -6,7 +6,7 @@ const server = fastify({
 });
 
 server.get("/", async (request, reply) => {
-  reply.send({ hello: "world" });
+  reply.send({ greetings: "Welcome to the ft_transcendence API" });
 });
 
 server.register(userRoutes, { prefix: "/users" });
