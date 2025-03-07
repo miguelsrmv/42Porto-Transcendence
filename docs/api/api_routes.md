@@ -6,7 +6,7 @@ If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http:
 
 ## Users
 - To get all users in the database (GET), the endpoint is ```http://backend:3000/api/users```
-- To get data on a specific user by ID (GET), the endpoint is ```http://backend:3000/api/users/id```
+- To get data on a specific user by ID (GET), the endpoint is ```http://backend:3000/api/users/:id```
 - To create a new user (POST), the endpoint is ```http://backend:3000/api/users/create``` and the schema for the JSON data is 
 ```
 {
@@ -15,7 +15,7 @@ If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http:
 	"password": "password"
 } 
 ```
-- To update user data (PUT), the endpoint is ```http://backend:3000/api/users/id``` and the schema for the JSON data is 
+- To update user data (PUT), the endpoint is ```http://backend:3000/api/users/:id``` and the schema for the JSON data is 
 ```
 {
 	"data": {
@@ -24,5 +24,6 @@ If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http:
 	}
 } 
 ```
-
+- To delete a user from the database (DELETE), the endpoint is ```http://backend:3000/api/users/:id```   
+   
 **Note**: don't forget to replace the base api endpoint if you are running it locally.
