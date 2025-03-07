@@ -5,9 +5,9 @@ When making requests to the API through the Docker container, the base API endpo
 If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http://localhost:3000/```
 
 ## Users
-- To get all users in the database, the endpoint is ```http://backend:3000/api/users```
-- To get data on a specific user by ID, the endpoint is ```http://backend:3000/api/users/id```
-- To create a new user, the endpoint is ```http://backend:3000/api/users/create``` and the schema for the JSON data is 
+- To get all users in the database (GET), the endpoint is ```http://backend:3000/api/users```
+- To get data on a specific user by ID (GET), the endpoint is ```http://backend:3000/api/users/id```
+- To create a new user (POST), the endpoint is ```http://backend:3000/api/users/create``` and the schema for the JSON data is 
 ```
 {
 	"name": "new_user_name",
@@ -15,4 +15,14 @@ If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http:
 	"password": "password"
 } 
 ```
+- To update user data (PUT), the endpoint is ```http://backend:3000/api/users/id``` and the schema for the JSON data is 
+```
+{
+	"data": {
+		"name": "new_user_name", // optional
+		"email": "new_user@email.com",  // optional
+	}
+} 
+```
+
 **Note**: don't forget to replace the base api endpoint if you are running it locally.
