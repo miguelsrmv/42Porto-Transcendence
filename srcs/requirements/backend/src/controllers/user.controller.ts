@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { prisma } from "../utils/prisma";
-import { hashPassword } from "../utils/hash";
+import { verifyPassword } from "../utils/hash";
+import { JwtUserPayload } from "../fastify";
 
 interface IParams {
   id: string;
@@ -8,6 +9,11 @@ interface IParams {
 
 interface UserCreate {
   name: string;
+  email: string;
+  password: string;
+}
+
+interface UserLogin {
   email: string;
   password: string;
 }
@@ -86,5 +92,37 @@ export async function deleteUser(
     reply.send(user);
   } catch (error) {
     reply.status(500).send(error);
+  }
+}
+
+export async function login(
+  request: FastifyRequest<{ Body: UserLogin }>,
+  reply: FastifyReply
+) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: request.body.email },
+      select: { name: true, email: true, hashedPassword: true, salt: true }
+    });
+
+    const isMatch = verifyPassword({
+      candidatePassword: request.body.password,
+      hash: user.hashedPassword,
+      salt: user.salt
+    });
+
+    if (!isMatch) {
+      return reply.status(401).send({ message: "Invalid credentials" });
+    }
+
+    const token = request.server.jwt.sign({
+      payload: {
+        email: user.email, userName: user.name
+      }
+    })
+
+    reply.send({ token })
+  } catch (error) {
+    reply.status(500).send({ message: "An error occurred", error });
   }
 }

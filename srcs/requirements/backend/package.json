@@ -12,8 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/jwt": "^9.0.4",
     "@prisma/client": "^6.4.1",
-    "fastify": "^5.2.1"
+    "fastify": "^5.2.1",
+    "fastify-plugin": "^5.0.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.5.1",

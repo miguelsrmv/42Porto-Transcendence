@@ -9,11 +9,12 @@ GET http://localhost:3000/users/<id> HTTP/1.1
 ### Create a new user
 POST http://localhost:3000/users/create HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJ1c2VyTmFtZSI6IlRlc3QifSwiaWF0IjoxNzQxMzcwNjI3fQ.3JwQiR3SOzVbsc7QoLvNLmR-oM_GaNIB6kXhCvPLvWY
 
 {
-	"name": "Test",
-	"email": "test@gmail.com",
-	"password": "secure123"
+	"name": "NewUser3",
+	"email": "newUser2@gmail.com",
+	"password": "secure123441"
 }
 
 ### Update user info (only name or email, for now)
@@ -29,3 +30,12 @@ content-type: application/json
 
 ### Delete user from database
 DELETE http://localhost:3000/users/<id> HTTP/1.1
+
+### Login user and get a JWT token
+POST http://localhost:3000/users/login HTTP/1.1
+content-type: application/json
+
+{
+	"email": "test@gmail.com",
+	"password": "secure123"
+}

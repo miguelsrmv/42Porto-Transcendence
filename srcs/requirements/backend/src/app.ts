@@ -1,9 +1,13 @@
 import fastify from "fastify";
 import { userRoutes } from "./routes/user.routes";
+import jwtPlugin from "./middlewares/auth";
 
 const server = fastify({
   logger: true,
 });
+
+// TODO: replace secret with env variable
+server.register(jwtPlugin);
 
 server.get("/", async (request, reply) => {
   reply.send({ greetings: "Welcome to the ft_transcendence API" });
