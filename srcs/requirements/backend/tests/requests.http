@@ -6,4 +6,12 @@ GET http://localhost:3000/users/ HTTP/1.1
 ### Get user by id
 GET http://localhost:3000/users/<id> HTTP/1.1
 
-###
+### Create a new user
+POST http://localhost:3000/users/create HTTP/1.1
+content-type: application/json
+
+{
+	"name": "Jack",
+	"email": "jack23@gmail.com",
+	"password": "secure123"
+}

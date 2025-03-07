@@ -7,4 +7,12 @@ If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http:
 ## Users
 - To get all users in the database, the endpoint is ```http://backend:3000/api/users```
 - To get data on a specific user by ID, the endpoint is ```http://backend:3000/api/users/id```
+- To create a new user, the endpoint is ```http://backend:3000/api/users/create``` and the schema for the JSON data is 
+```
+{
+	"name": "new_user_name",
+	"email": "new_user@email.com",
+	"password": "password"
+} 
+```
 **Note**: don't forget to replace the base api endpoint if you are running it locally.
