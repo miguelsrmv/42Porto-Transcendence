@@ -74,3 +74,17 @@ export async function updateUser(
     reply.status(500).send(error);
   }
 }
+
+export async function deleteUser(
+  request: FastifyRequest<{ Params: IParams }>,
+  reply: FastifyReply
+) {
+  try {
+    const user = await prisma.user.delete({
+      where: { id: request.params.id },
+    });
+    reply.send(user);
+  } catch (error) {
+    reply.status(500).send(error);
+  }
+}
