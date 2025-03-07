@@ -3,7 +3,7 @@
 # Get all users from database
 GET http://localhost:3000/users/ HTTP/1.1
 
-### Invalid route (testing)
-GET http://localhost:3000/api/users/ HTTP/1.1
+### Get user by id
+GET http://localhost:3000/users/<id> HTTP/1.1
 
 ###
