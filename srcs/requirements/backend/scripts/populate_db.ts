@@ -1,18 +1,15 @@
 /* Script to interact with the database */
 import { prisma } from "../src/utils/prisma";
-import { hashPassword } from "../src/utils/hash";
 import { faker } from "@faker-js/faker";
 
 async function seedUsers() {
   await prisma.user.deleteMany();
   for (let index = 0; index < 4; index++) {
-    const { hash, salt } = hashPassword(faker.internet.password());
     await prisma.user.create({
       data: {
         name: faker.person.fullName(),
         email: faker.internet.email(),
-        hashedPassword: hash,
-        salt: salt,
+        hashedPassword: faker.internet.password(),
       },
     });
   }
