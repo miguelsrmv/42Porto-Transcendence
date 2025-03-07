@@ -1,6 +1,5 @@
 /* Script to interact with the database */
 import { prisma } from "../src/utils/prisma";
-import { hashPassword } from "../src/utils/hash";
 import { faker } from "@faker-js/faker";
 
 // Change according to the test
