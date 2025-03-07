@@ -12,6 +12,10 @@ interface UserCreate {
   password: string;
 }
 
+interface UserUpdate {
+  data: { name?: string; email?: string };
+}
+
 export async function getAllUsers(
   request: FastifyRequest,
   reply: FastifyReply
@@ -49,6 +53,21 @@ export async function createUser(
         email: request.body.email,
         hashedPassword: request.body.password,
       },
+    });
+    reply.send(user);
+  } catch (error) {
+    reply.status(500).send(error);
+  }
+}
+
+export async function updateUser(
+  request: FastifyRequest<{ Params: IParams; Body: UserUpdate }>,
+  reply: FastifyReply
+) {
+  try {
+    const user = await prisma.user.update({
+      where: { id: request.params.id },
+      data: request.body.data,
     });
     reply.send(user);
   } catch (error) {

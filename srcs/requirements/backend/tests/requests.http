@@ -15,3 +15,14 @@ content-type: application/json
 	"email": "test@gmail.com",
 	"password": "secure123"
 }
+
+### Update user info (only name or email, for now)
+PUT http://localhost:3000/users/bcdf9b12-3818-4134-8f6b-ff5bc9e593df HTTP/1.1
+content-type: application/json
+
+{
+	"data": {
+		"name": "Modified",
+		"email": "modified@gmail.com"
+	}
+}
