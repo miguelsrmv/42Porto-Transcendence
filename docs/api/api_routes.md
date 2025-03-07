@@ -25,5 +25,10 @@ If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http:
 } 
 ```
 - To delete a user from the database (DELETE), the endpoint is ```http://backend:3000/api/users/:id```   
+- To login user (get JWT) (POST), the endpoint is ```http://backend:3000/api/users/login``` and (if the login data is correct and the user exists in the database) will return a token that is required in the headers when making requests to protected routes. Example:
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2VyTmFtZSiaWF0.JwQiR3SOzVbsc7QmR-oM_GaNIB6kXhC
+
+```
    
 **Note**: don't forget to replace the base api endpoint if you are running it locally.
