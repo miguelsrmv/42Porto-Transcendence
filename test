@@ -1,0 +1,51 @@
+/**
+ * @file test
+ * @brief Brief description of the file.
+ *
+ * Detailed description of the file.
+ */
+
+/**
+ * @brief Example function to demonstrate Doxygen comments.
+ *
+ * Detailed description of what the function does.
+ *
+ * @param param1 Description of the first parameter.
+ * @param param2 Description of the second parameter.
+ * @return Description of the return value.
+ */
+function exampleFunction(param1, param2) {
+    // Function implementation
+    return;
+}
+
+/**
+ * @class ExampleClass
+ * @brief Brief description of the class.
+ *
+ * Detailed description of the class.
+ */
+class ExampleClass {
+    /**
+     * @brief Constructor for ExampleClass.
+     *
+     * @param param Description of the parameter.
+     */
+    constructor(param) {
+        // Constructor implementation
+    }
+
+    /**
+     * @brief Example method in ExampleClass.
+     *
+     * Detailed description of the method.
+     *
+     * @param param Description of the parameter.
+     * @return Description of the return value.
+     */
+    exampleMethod(param) {
+        // Method implementation
+        return;
+    }
+}
+
