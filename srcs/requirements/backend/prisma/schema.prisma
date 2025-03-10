@@ -5,11 +5,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// TODO: Update with env DATABASE_URL
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
+
 
 // TODO: Create separate Profile model?
 

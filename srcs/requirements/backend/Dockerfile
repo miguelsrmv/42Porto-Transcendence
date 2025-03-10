@@ -1,4 +1,6 @@
-FROM node:slim
+FROM node:20-slim
+
+RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /app
 
@@ -8,10 +10,8 @@ RUN npm install
 
 COPY . .
 
-RUN ["npm", "run", "build"]
-
-RUN ["chmod", "-R", "755", "./dist"]
+RUN ["chmod", "755", "./init.sh"]
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+ENTRYPOINT ["./init.sh"]

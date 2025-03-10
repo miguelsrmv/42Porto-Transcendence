@@ -3,7 +3,7 @@ import fp from "fastify-plugin";
 
 async function jwtAuth(fastify: FastifyInstance) {
   fastify.register(require("@fastify/jwt"), {
-    secret: "kj-d4hsa5bf2uy3qe3w9537g37e3r8fd5vb",
+    secret: process.env.JWT_SIGN_SECRET,
   });
 
   fastify.decorate(
