@@ -6,7 +6,6 @@ const server = fastify({
   logger: true,
 });
 
-// TODO: replace secret with env variable
 server.register(jwtPlugin);
 
 server.get("/", async (request, reply) => {
