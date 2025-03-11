@@ -1,5 +1,6 @@
 FROM node:20-slim
 
+# Required by latest Prisma version
 RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /app
@@ -10,7 +11,7 @@ RUN npm install
 
 COPY . .
 
-RUN ["chmod", "755", "./init.sh"]
+RUN chmod 755 ./init.sh
 
 EXPOSE 3000
 
