@@ -32,6 +32,7 @@ clean: down
 	@docker rmi -f $$(docker images -qa)
 	@echo "** REMOVING VOLUMES **"
 	@docker volume rm $$(docker volume ls -q)
+	@echo "** DELETING VOLUMES' DATA **"
 	@sudo rm -rf $(DB_DATA) $(BC_DATA)
 
 re: clean up
