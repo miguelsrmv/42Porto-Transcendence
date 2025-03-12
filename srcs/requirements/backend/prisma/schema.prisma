@@ -10,18 +10,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-// TODO: Create separate Profile model?
-
 model User {
   id             String   @id @default(uuid())
   email          String   @unique
-  name           String?
+  username       String   @unique
   hashedPassword String
   salt           String   @default("")
   createdAt      DateTime @default(now())
-  expPoints      Int      @default(0)
-  wins           Int      @default(0)
-  losses         Int      @default(0)
-  isOnline       Boolean  @default(false)
+  profile        Profile?
+}
+
+// TODO: Manage user online status somewhere else
+// TODO: Add default avatar picture URL
+model Profile {
+  id        String  @id @default(uuid())
+  name      String?
+  bio       String?
+  avatarUrl String?
+  expPoints Int     @default(0)
+  wins      Int     @default(0)
+  losses    Int     @default(0)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String  @unique
 }

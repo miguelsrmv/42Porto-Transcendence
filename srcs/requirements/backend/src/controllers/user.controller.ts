@@ -1,14 +1,13 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { prisma } from "../utils/prisma";
 import { verifyPassword } from "../utils/hash";
-import { JwtUserPayload } from "../fastify";
 
 interface IParams {
   id: string;
 }
 
 interface UserCreate {
-  name: string;
+  username: string;
   email: string;
   password: string;
 }
@@ -19,7 +18,7 @@ interface UserLogin {
 }
 
 interface UserUpdate {
-  data: { name?: string; email?: string };
+  data: { username?: string; email?: string };
 }
 
 export async function getAllUsers(
@@ -55,7 +54,7 @@ export async function createUser(
   try {
     const user = await prisma.user.create({
       data: {
-        name: request.body.name,
+        username: request.body.username,
         email: request.body.email,
         hashedPassword: request.body.password,
       },
@@ -102,7 +101,7 @@ export async function login(
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { email: request.body.email },
-      select: { name: true, email: true, hashedPassword: true, salt: true }
+      select: { username: true, email: true, hashedPassword: true, salt: true }
     });
 
     const isMatch = verifyPassword({
@@ -117,7 +116,7 @@ export async function login(
 
     const token = request.server.jwt.sign({
       payload: {
-        email: user.email, userName: user.name
+        email: user.email, userName: user.username
       }
     })
 

@@ -3,11 +3,11 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 
 interface JwtUserPayload {
   email: string;
-  userName: string;
+  username: string;
 }
 
 interface UserCreate {
-  name: string;
+  username: string;
   email: string;
   password: string;
 }
