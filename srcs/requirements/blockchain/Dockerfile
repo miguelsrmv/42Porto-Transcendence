@@ -1,4 +1,3 @@
-FROM alpine
+FROM busybox
 
-# Set a default command to keep the container alive
-CMD ["sleep", "infinity"]
+CMD [ "ps", "faux" ]
