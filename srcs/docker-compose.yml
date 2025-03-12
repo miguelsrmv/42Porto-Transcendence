@@ -19,6 +19,8 @@ services:
     container_name: backend
     image: backend
     build: ./requirements/backend
+    ports:
+      - 3000:3000
     env_file:
       - .env
     restart: unless-stopped
