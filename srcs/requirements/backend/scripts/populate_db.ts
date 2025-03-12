@@ -9,7 +9,7 @@ async function seedUsers() {
   for (let index = 0; index < NUMBER_OF_USERS; index++) {
     await prisma.user.create({
       data: {
-        name: faker.person.fullName(),
+        username: faker.internet.username(),
         email: faker.internet.email(),
         hashedPassword: faker.internet.password(),
       },
