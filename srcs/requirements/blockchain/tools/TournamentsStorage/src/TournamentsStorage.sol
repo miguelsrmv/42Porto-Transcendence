@@ -8,7 +8,7 @@ contract TournamentsStorage {
         uint256 date;
         uint256 time;
         uint256 maxParticipants;
-        uint256[] participants;
+        string[] participants;
     }
 
     Tournament[] public tournaments;
@@ -27,7 +27,7 @@ contract TournamentsStorage {
                 date: _date,
                 time: _time,
                 maxParticipants: MAX_PARTICIPANTS,
-                participants: new uint256[](0)
+                participants: new string[](0)
             })
         );
     }
@@ -42,13 +42,21 @@ contract TournamentsStorage {
         return tournaments[_id];
     }
 
-    function joinTournament(uint256 _id) public {
-        tournaments[_id].participants.push(1);
+    function joinTournament(
+        uint256 _id,
+        string memory _participantName
+    ) public {
+        require(
+            tournaments[_id].participants.length < MAX_PARTICIPANTS,
+            "Tournament is full"
+        );
+
+        tournaments[_id].participants.push(_participantName);
     }
 
     function getParticipants(
         uint256 _id
-    ) public view returns (uint256[] memory) {
+    ) public view returns (string[] memory) {
         return tournaments[_id].participants;
     }
 }
