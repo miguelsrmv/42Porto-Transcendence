@@ -2,24 +2,24 @@
 pragma solidity ^0.8.29;
 
 contract TournamentsStorage {
+    uint8 constant MAX_PARTICIPANTS = 4;
+
     struct Tournament {
         uint256 id;
         string name;
-        uint256 date;
-        uint256 time;
-        uint256 maxParticipants;
+        uint32 date;
+        uint16 time;
+        uint8 maxParticipants;
         string[] participants;
         uint8[] scores;
     }
 
     Tournament[] public tournaments;
 
-    uint8 constant MAX_PARTICIPANTS = 4;
-
     function createTournament(
         string memory _name,
-        uint256 _date,
-        uint256 _time
+        uint32 _date,
+        uint16 _time
     ) public {
         tournaments.push(
             Tournament({
