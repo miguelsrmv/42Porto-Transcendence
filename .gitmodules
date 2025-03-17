@@ -1,0 +1,3 @@
+[submodule "srcs/requirements/blockchain/tools/TournamentsStorage/lib/forge-std"]
+	path = srcs/requirements/blockchain/tools/TournamentsStorage/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
