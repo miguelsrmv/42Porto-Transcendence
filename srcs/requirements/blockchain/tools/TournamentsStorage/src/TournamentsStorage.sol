@@ -9,6 +9,7 @@ contract TournamentsStorage {
         uint256 time;
         uint256 maxParticipants;
         string[] participants;
+        uint8[] scores;
     }
 
     Tournament[] public tournaments;
@@ -27,7 +28,8 @@ contract TournamentsStorage {
                 date: _date,
                 time: _time,
                 maxParticipants: MAX_PARTICIPANTS,
-                participants: new string[](0)
+                participants: new string[](0),
+                scores: new uint8[](0)
             })
         );
     }
