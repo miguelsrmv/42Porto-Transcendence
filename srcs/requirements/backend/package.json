@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app.js",
-    "dev": "npx tsx src/app.ts"
+    "dev": "npx tsx src/app.ts",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +27,7 @@
     "@types/node": "^22.13.9",
     "prisma": "^6.4.1",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
   }
 }
