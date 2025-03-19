@@ -1,30 +1,57 @@
 name: Lint
 
-on: # yamllint disable-line rule:truthy
+on: 
   push:
-  pull_request: null
+    branches: 
+      ["main"]
+  pull_request:
+    branches:
+      ["main"]
+  
+permissions:
+  contents: read
 
 jobs:
-  build:
-    name: Lint
-    runs-on: ubuntu-latest
-
+  fix-lint-issues:
     permissions:
-      contents: read
-      packages: read
-      # To report GitHub Actions status checks
+      # To write linting fixes
+      contents: write
+      # To write Super-linter status checks
       statuses: write
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          # super-linter needs the full git history to get the
-          # list of files that changed across commits
           fetch-depth: 0
-
-      - name: Super-linter
+      - name: Super-Linter
         uses: super-linter/super-linter@v7.3.0 # x-release-please-version
         env:
-          # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          FIX_SHELL_SHFMT: true
+          FIX_YAML_PRETTIER: true
+          FIX_TYPESCRIPT_ES: true
+          FIX_TYPESCRIPT_PRETTIER: true
+          FIX_MARKDOWN: true
+          FIX_MARKDOWN_PRETTIER: true
+
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_MARKDOWN_PRETTIER: true
+          VALIDATE_YAML: true
+          VALIDATE_MAKEFILE: true
+
+      - name: Commit and push linting fixes
+        # Run only on:
+        # - Pull requests
+        # - Not on the default branch
+        if: >
+          github.event_name == 'pull_request' &&
+          github.ref_name != github.event.repository.default_branch
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
+          commit_message: "chore: fix linting issues"
+          commit_user_name: super-linter
+          commit_user_email: super-linter@super-linter.dev
