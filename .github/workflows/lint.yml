@@ -41,6 +41,11 @@ jobs:
           VALIDATE_MARKDOWN_PRETTIER: true
           VALIDATE_YAML: true
           VALIDATE_MAKEFILE: true
+          VALIDATE_SHELL_SHFMT: true
+
+          ACTIONS_RUNNER_DEBUG: true
+          ACTIONS_STEP_DEBUG: true
+        
 
       - name: Commit and push linting fixes
         # Run only on:
