@@ -40,6 +40,7 @@ jobs:
           VALIDATE_MARKDOWN: true
           VALIDATE_MARKDOWN_PRETTIER: true
           VALIDATE_YAML: true
+          VALIDATE_YAML_PRETTIER: true
           VALIDATE_MAKEFILE: true
           VALIDATE_SHELL_SHFMT: true
 
