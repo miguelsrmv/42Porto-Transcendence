@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 23
-          cache: "npm"
 
       # Cache node_modules based on package-lock.json
       - name: Cache node_modules
@@ -34,11 +33,10 @@ jobs:
             ${{ runner.os }}-node-modules-
 
       # TODO: Create global package.json and other config files
-      - name: Change directory to backend
-        run: cd srcs/requirements/backend
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Install backend dependencies
+        run: |
+          cd srcs/requirements/backend
+          npm ci
 
       - name: Run ESLint
         run: npx eslint "srcs/requirements/backend/src/**/*.ts"
