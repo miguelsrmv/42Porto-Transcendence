@@ -6,7 +6,6 @@ contract TournamentsStorage {
 
     struct Tournament {
         uint256 id;
-        string name;
         uint32 date;
         uint16 time;
         uint8 maxParticipants;
@@ -16,15 +15,10 @@ contract TournamentsStorage {
 
     Tournament[] public tournaments;
 
-    function createTournament(
-        string memory _name,
-        uint32 _date,
-        uint16 _time
-    ) public {
+    function createTournament(uint32 _date, uint16 _time) public {
         tournaments.push(
             Tournament({
                 id: tournaments.length,
-                name: _name,
                 date: _date,
                 time: _time,
                 maxParticipants: MAX_PARTICIPANTS,
@@ -44,6 +38,16 @@ contract TournamentsStorage {
         return tournaments[_id];
     }
 
+    function getParticipants(
+        uint256 _id
+    ) public view returns (string[] memory) {
+        return tournaments[_id].participants;
+    }
+
+    function getScores( uint256 _id) public view returns (uint8[] memory) {
+        return tournaments[_id].scores;
+    }
+
     function joinTournament(
         uint256 _id,
         string memory _participantName
@@ -56,9 +60,12 @@ contract TournamentsStorage {
         tournaments[_id].participants.push(_participantName);
     }
 
-    function getParticipants(
-        uint256 _id
-    ) public view returns (string[] memory) {
-        return tournaments[_id].participants;
+    function saveScore(
+        uint8 matchId,
+        uint8 scorePlayerOne,
+        uint8 scorePlayerTwo
+    ) public {
+        tournaments[matchId].scores.push(scorePlayerOne);
+        tournaments[matchId].scores.push(scorePlayerTwo);
     }
 }
