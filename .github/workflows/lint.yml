@@ -24,10 +24,19 @@ jobs:
           node-version: 23
           cache: "npm"
 
+      # Cache node_modules based on package-lock.json
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: srcs/requirements/backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('srcs/requirements/backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
       # TODO: Create global package.json and other config files
       - name: Change directory to backend
         run: cd srcs/requirements/backend
-      
+
       - name: Install dependencies
         run: npm ci
 
@@ -36,7 +45,7 @@ jobs:
 
       - name: Run Prettier Check
         run: npx prettier --write "srcs/requirements/backend/src/**/*.ts"
-      
+
       - name: Commit fixed files
         run: |
           git config --global user.name "GitHub Actions"
