@@ -24,6 +24,10 @@ jobs:
           node-version: 23
           cache: "npm"
 
+      # TODO: Create global package.json and other config files
+      - name: Change directory to backend
+        run: cd srcs/requirements/backend
+      
       - name: Install dependencies
         run: npm ci
 
