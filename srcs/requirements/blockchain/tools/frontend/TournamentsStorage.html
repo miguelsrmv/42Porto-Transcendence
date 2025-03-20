@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments DApp</title>
+    <script defer src="./scripts/TournamentsScore.js"></script>
+</head>
+
+<body>
+    <h1>Tournaments DApp</h1>
+    <button onclick="getAllTournaments()">Get All Tournaments</button>
+    <input type="number" id="tournamentId" placeholder="Tournament ID">
+    <button onclick="getTournament(document.getElementById('tournamentId').value)">Get Tournament</button>
+    <button onclick="getParticipants(document.getElementById('tournamentId').value)">Get Participants</button>
+    <button onclick="getScores(document.getElementById('tournamentId').value)">Get Scores</button>
+
+    <input type="text" id="date" placeholder="Date (YYYYMMDD)">
+    <input type="text" id="time" placeholder="Time (HHMM)">
+    <button
+        onclick="createTournament(parseInt(document.getElementById('date').value), parseInt(document.getElementById('time').value))">Create
+        Tournament</button>
+
+    <input type="text" id="participantName" placeholder="Participant Name">
+    <button
+        onclick="joinTournament(document.getElementById('tournamentId').value, document.getElementById('participantName').value)">Join
+        Tournament</button>
+</body>
+
+</html>
