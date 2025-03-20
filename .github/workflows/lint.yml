@@ -5,6 +5,7 @@ on:
     branches: ["main", "Backend"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: "23"
 
       # Cache node_modules based on package-lock.json
       - name: Cache node_modules
@@ -39,10 +40,14 @@ jobs:
           npm ci
 
       - name: Run ESLint
-        run: npx eslint "srcs/requirements/backend/src/**/*.ts"
+        run: |
+          cd srcs/requirements/backend
+          npx eslint "src/**/*.ts"
 
       - name: Run Prettier Check
-        run: npx prettier --write "srcs/requirements/backend/src/**/*.ts"
+        run: |
+          cd srcs/requirements/backend
+          npx prettier --write "src/**/*.ts"
 
       - name: Commit fixed files
         run: |
