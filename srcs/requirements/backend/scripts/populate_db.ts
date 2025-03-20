@@ -1,6 +1,6 @@
 /* Script to interact with the database */
-import { prisma } from "../src/utils/prisma";
-import { faker } from "@faker-js/faker";
+import { prisma } from '../src/utils/prisma';
+import { faker } from '@faker-js/faker';
 
 const NUMBER_OF_USERS = 4;
 

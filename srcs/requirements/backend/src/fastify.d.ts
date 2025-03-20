@@ -1,5 +1,5 @@
-import "@fastify/jwt";
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import '@fastify/jwt';
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 interface JwtUserPayload {
   email: string;
@@ -12,7 +12,7 @@ interface UserCreate {
   password: string;
 }
 
-declare module "fastify" {
+declare module 'fastify' {
   interface FastifyInstance {
     jwt: {
       sign: (payload: JwtUserPayload) => string;
