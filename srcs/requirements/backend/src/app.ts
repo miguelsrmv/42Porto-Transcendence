@@ -1,6 +1,6 @@
-import fastify from "fastify";
-import { userRoutes } from "./routes/user.routes";
-import jwtPlugin from "./middlewares/auth";
+import fastify from 'fastify';
+import { userRoutes } from './routes/user.routes';
+import jwtPlugin from './middlewares/auth';
 
 const app = fastify({
   logger: true,
@@ -8,10 +8,10 @@ const app = fastify({
 
 app.register(jwtPlugin);
 
-app.get("/", async (request, reply) => {
-  reply.send({ greetings: "Welcome to the ft_transcendence API" });
+app.get('/', async (request, reply) => {
+  reply.send({ greetings: 'Welcome to the ft_transcendence API' });
 });
 
-app.register(userRoutes, { prefix: "/users" });
+app.register(userRoutes, { prefix: '/users' });
 
 export default app;
