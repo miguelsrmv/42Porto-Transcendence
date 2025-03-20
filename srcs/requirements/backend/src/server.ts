@@ -2,8 +2,8 @@ import app from './app';
 
 app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) {
-    console.error(err);
+    app.log.error(err);
     process.exit(1);
   }
-  console.log(`Server listening at ${address}`);
+  app.log.info(`Server listening at ${address}`);
 });
