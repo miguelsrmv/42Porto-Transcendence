@@ -1,8 +1,8 @@
 services:
-  server:
-    container_name: server
-    image: server
-    build: ./requirements/server
+  frontend:
+    container_name: frontend
+    image: frontend
+    build: ./requirements/frontend
     ports:
       - 443:443
     env_file:
@@ -12,8 +12,8 @@ services:
       - public-transcendence-network
       - private-transcendence-network
     volumes:
-      - ./server:/app
-      - ./requirements/server/public:/var/www/ft_transcendence/
+      - ./frontend:/app
+      - ./requirements/frontend/public:/var/www/ft_transcendence/
 
   backend:
     container_name: backend
