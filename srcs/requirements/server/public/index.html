@@ -6,13 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ft_transcendence</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="navigation.js"></script>
+    <script type="module" src="app.js"></script>
 </head>
 
 <body>
-    <main id="app">
+    <div id="app"></div>
 
-    </main>
-    <script src="app.js" defer></script>
+    <template id="home">
+        <div class="bg-gray-900 text-white flex flex-col items-center justify-center h-screen text-center">
+            <h1 class="text-4xl font-bold">Welcome to ft_transcendence</h1>
+            <br>
+            <p class="mt-4 text-lg text-gray-300 py-8">teste, teste</p>
+            <br>
+            <nav class="flex justify-center space-x-4 p-4 bg-gray-200">
+                <a href="#" class="nav-button text-blue-500" target-page="home">Home</a>
+                <a href="#" class="nav-button text-blue-500" target-page="about">About</a>
+                <a href="#" class="nav-button text-blue-500" target-page="contact">Contact</a>
+            </nav>
+        </div>
+    </template>
+
+    <template id="about">
+        <div> I'm on about! </div>
+        <nav class="flex justify-center space-x-4 p-4 bg-gray-200">
+            <a href="#" class="nav-button text-blue-500" target-page="home">Home</a>
+            <a href="#" class="nav-button text-blue-500" target-page="about">About</a>
+            <a href="#" class="nav-button text-blue-500" target-page="contact">Contact</a>
+        </nav>
+    </template>
+
+    <template id="contact">
+        <div> I'm on contact! </div>
+        <nav class="flex justify-center space-x-4 p-4 bg-gray-200">
+            <a href="#" class="nav-button text-blue-500" target-page="home">Home</a>
+            <a href="#" class="nav-button text-blue-500" target-page="about">About</a>
+            <a href="#" class="nav-button text-blue-500" target-page="contact">Contact</a>
+        </nav>
+    </template>
+
 </body>
 
 </html>

@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2015",                     // Change target to ES2015
-    "lib": ["ES5", "ES2015", "dom"],        // Include both ES5 and ES2015 libraries (ES2015 provides Promise support)
-    "outDir": "./",                         // Output directory for the compiled JavaScript files
-    "module": "commonjs",                   // Module system (CommonJS is used for Node.js or many bundlers)
-    "strict": true,                         // Optional: Enables strict type checking
-    "esModuleInterop": true                 // Optional: Allows compatibility with ES Modules
+    "module": "ES6",
+    "target": "ES6",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "./"
   },
-  "include": ["src/*.ts"],                  // Specify files to be included (changed to reflect 'src' directory)
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
