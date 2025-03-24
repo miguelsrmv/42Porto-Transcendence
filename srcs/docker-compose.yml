@@ -12,7 +12,7 @@ services:
       - public-transcendence-network
       - private-transcendence-network
     volumes:
-      - ./frontend:/app
+      - ./requirements/frontend:/app
       - ./requirements/frontend/public:/var/www/ft_transcendence/
 
   backend:
