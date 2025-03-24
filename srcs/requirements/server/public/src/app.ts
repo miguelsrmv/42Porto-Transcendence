@@ -1,39 +1,22 @@
-// app.ts
+/**
+ * @file app.ts
+ * @brief Loads other scripts and sets up scripts
+ * 
+ * This file contains the logic to handle navigation events and load the appropriate
+ * views into the main application container. It listens for the DOMContentLoaded event
+ * to load the default view and custom navigation events to switch views.
+ */
+
+// import "./navigation.js";
+import { navigateTo } from "./navigation.js";
 
 /**
+ * @brief Event listener for DOMContentLoaded.
  * 
- * @brief Event listener for DOMContentLoaded
- * It will trigger the loading of the default page when the DOM content is fully loaded and parsed
+ * Triggers the loading of the default page when the DOM content is fully loaded and parsed.
  */
 document.addEventListener("DOMContentLoaded", () => {
-    loadPage("home.html"); // Load default page on startup
+    navigateTo("home"); // Load default page on startup
 });
 
-/**
- * 
- * @brief Loads a specified HTML page into the #app element
- */
-async function loadPage(page: string): Promise<void> {
-    const app = document.getElementById("app") as HTMLElement | null;
 
-    if (!app) {
-        console.log("Error: app not found");
-        return;
-    }
-
-    try {
-        // Fetch the page content
-        const response = await fetch("pages/" + page);
-        if (!response.ok) throw new Error("Page not found");
-
-        // Load content into #app with fade transition
-        app.style.opacity = "0";
-        setTimeout(async () => {
-            app.innerHTML = await response.text();
-            app.style.opacity = "1";
-        }, 300); // Small delay for smooth transition
-    } catch (error) {
-        app.innerHTML = "<p class='text-red-500'>Error loading page.</p>";
-        console.error(error);
-    }
-}
