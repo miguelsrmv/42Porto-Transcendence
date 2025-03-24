@@ -29,7 +29,7 @@ document.addEventListener("navigate", (e: Event) => {
  */
 export function navigateTo(view: string): void {
     document.dispatchEvent(new CustomEvent("navigate", { detail: view }));
-    addEventListeners();
+    addNavigationEventListeners();
 }
 
 /**
@@ -39,7 +39,7 @@ export function navigateTo(view: string): void {
  * It listens for clicks on elements with the class "nav-button" and triggers navigation
  * to the view specified in the element's 'target-page' attribute.
  */
-function addEventListeners(): void {
+function addNavigationEventListeners(): void {
     document.getElementById("app")?.addEventListener("click", (event) => {
         const target = event.target as HTMLElement;
 
@@ -61,10 +61,13 @@ function addEventListeners(): void {
  * @param view The name of the view to load.
  */
 function loadView(view: string) {
-    const HTMLElement = document.getElementById(view);
+    const viewElement = document.getElementById(view) as HTMLTemplateElement;
     const appElement = document.getElementById("app");
-    if (HTMLElement)
-        appElement!.innerHTML = HTMLElement.innerHTML;
+    if (viewElement) {
+        const clone = viewElement.content.cloneNode(true);  // Clone the template content
+        appElement!.innerHTML = "";
+        appElement!.appendChild(clone);
+    }
     else
         appElement!.innerHTML = "<h1>Error! Page not found</h1>";
 }
