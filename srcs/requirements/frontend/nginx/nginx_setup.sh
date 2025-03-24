@@ -22,7 +22,7 @@ nginx &
 apk add --no-cache inotify-tools
 
 # Watch the HTML file for changes and reload Nginx
-while inotifywait -e modify /var/www/ft_transcendence/index.html; do
+while inotifywait -e modify /var/www/ft_transcendence/static/index.html; do
     echo "Detected change in index.html, reloading Nginx..."
     nginx -s reload
 done
