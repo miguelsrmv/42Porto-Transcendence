@@ -7,8 +7,8 @@
  * to load the default view and custom navigation events to switch views.
  */
 
-// import "./navigation.js";
 import { navigateTo } from "./navigation.js";
+import { setupHistoryListener } from "./events.js";
 
 /**
  * @brief Event listener for DOMContentLoaded.
@@ -16,7 +16,15 @@ import { navigateTo } from "./navigation.js";
  * Triggers the loading of the default page when the DOM content is fully loaded and parsed.
  */
 document.addEventListener("DOMContentLoaded", () => {
-    navigateTo("home"); // Load default page on startup
+    // Setup history listener first
+    setupHistoryListener();
+
+    // Determine initial view
+    const initialView = window.location.hash.replace('#', '') || "login-template";
+
+    // Replace the initial state to ensure correct history behavior
+    history.replaceState({ view: initialView }, "", `#${initialView}`);
+
+    // Navigate to the initial view
+    navigateTo(initialView, true);
 });
-
-
