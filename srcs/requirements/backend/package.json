@@ -9,8 +9,8 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/app.js",
-    "dev": "npx tsx src/app.ts",
+    "start": "node dist/server.js",
+    "dev": "npx tsx src/server.ts",
     "test": "vitest"
   },
   "keywords": [],
@@ -19,6 +19,7 @@
   "dependencies": {
     "@fastify/jwt": "^9.0.4",
     "@prisma/client": "^6.4.1",
+    "dotenv": "^16.4.7",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1"
   },

@@ -1,6 +1,9 @@
 import fastify from 'fastify';
 import { userRoutes } from './routes/user.routes';
 import jwtPlugin from './middlewares/auth';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = fastify({
   logger: true,
