@@ -23,7 +23,11 @@ interface UserUpdate {
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        profile: true,
+      },
+    });
     reply.send(users);
   } catch (error) {
     reply.status(500).send(error);
