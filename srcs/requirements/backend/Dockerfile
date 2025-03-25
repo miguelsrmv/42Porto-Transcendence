@@ -1,4 +1,18 @@
-FROM alpine
+FROM node:20-slim
 
-# Set a default command to keep the container alive
-CMD ["sleep", "infinity"]
+# Required by latest Prisma version
+RUN apt-get update -y && apt-get install -y openssl
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN chmod 755 ./init.sh
+
+EXPOSE 3000
+
+ENTRYPOINT ["./init.sh"]

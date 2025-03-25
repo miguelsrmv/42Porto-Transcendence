@@ -19,3 +19,9 @@
 ### Branch: "Frontend"
 ### Context: We are supposed to delived Typescript files
 #### For development, it is easier to compile .ts files locally and have the .js files automatically sync with the frontend container. Once frontend development is finished, our server container should be able to compile the .ts file and create the .js files the website will be using.
+
+## 4. make clean deletes volumes on Docker, but not the files themselves
+### Date Created: 11/03/2025
+### Branch: "Backend"
+### Context: There should be a rule that completely "zeroes" the app's state
+#### Adding a sudo rm -rf DB_DATA to the Makefile clean rule would solve this
