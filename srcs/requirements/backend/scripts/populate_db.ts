@@ -20,7 +20,7 @@ async function seedUsers() {
 async function main() {
   try {
     await seedUsers();
-    console.log(await prisma.user.findMany());
+    console.log(await prisma.user.findMany({ include: { profile: true } }));
   } catch (e) {
     console.error(e);
   } finally {
