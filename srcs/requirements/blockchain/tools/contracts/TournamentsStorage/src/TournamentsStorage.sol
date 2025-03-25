@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.29;
+pragma solidity ^0.8.19;
 
 contract TournamentsStorage {
     uint8 constant MAX_PARTICIPANTS = 4;
@@ -10,6 +10,7 @@ contract TournamentsStorage {
         uint16 time;
         uint8 maxParticipants;
         string[] participants;
+        string[] matchedParticipants;
         uint8[] scores;
     }
 
@@ -23,6 +24,7 @@ contract TournamentsStorage {
                 time: _time,
                 maxParticipants: MAX_PARTICIPANTS,
                 participants: new string[](0),
+                matchedParticipants: new string[](0),
                 scores: new uint8[](0)
             })
         );
@@ -34,8 +36,31 @@ contract TournamentsStorage {
 
     function getTournament(
         uint256 _id
-    ) public view returns (Tournament memory) {
-        return tournaments[_id];
+    )
+        public
+        view
+        returns (
+            uint256 id,
+            uint32 date,
+            uint16 time,
+            uint8 maxParticipants,
+            string[] memory participants,
+            string[] memory matchedParticipants,
+            uint8[] memory scores
+        )
+    {
+        require(_id < tournaments.length, "Tournament does not exist");
+        Tournament memory tournament = tournaments[_id];
+
+        return (
+            tournament.id,
+            tournament.date,
+            tournament.time,
+            tournament.maxParticipants,
+            tournament.participants,
+            tournament.matchedParticipants,
+            tournament.scores
+        );
     }
 
     function getParticipants(
@@ -44,7 +69,13 @@ contract TournamentsStorage {
         return tournaments[_id].participants;
     }
 
-    function getScores( uint256 _id) public view returns (uint8[] memory) {
+    function getMatchedParticipants(
+        uint256 _id
+    ) public view returns (string[] memory) {
+        return tournaments[_id].matchedParticipants;
+    }
+
+    function getScores(uint256 _id) public view returns (uint8[] memory) {
         return tournaments[_id].scores;
     }
 
@@ -58,6 +89,7 @@ contract TournamentsStorage {
         );
 
         tournaments[_id].participants.push(_participantName);
+        tournaments[_id].matchedParticipants.push(_participantName);
     }
 
     function saveScore(
