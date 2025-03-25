@@ -8,67 +8,165 @@
  */
 
 /**
- * @brief Event listener for custom "navigate" events.
- * 
- * Loads the specified view when a "navigate" event is dispatched.
- * 
- * @param e The navigation event containing the view name in its detail.
- */
-document.addEventListener("navigate", (e: Event) => {
-    const customEvent = e as CustomEvent; // Explicit cast
-    const view = customEvent.detail;
-    loadView(view);
-})
-
-/**
  * @brief Navigates to a specified view.
  * 
- * Dispatches a custom "navigate" event with the specified view as detail.
+ * This function updates the main application container with the content of the specified view's template.
+ * It also updates the browser history and sets up event listeners for the new view.
  * 
- * @param view The name of the view to navigate to.
+ * @param view The ID of the view to navigate to.
+ * @param replace A boolean indicating whether to replace the current history state or push a new one.
  */
-export function navigateTo(view: string): void {
-    document.dispatchEvent(new CustomEvent("navigate", { detail: view }));
-    addNavigationEventListeners();
-}
 
-/**
- * @brief Adds event listeners to the application container.
- * 
- * This function attaches a click event listener to the main application container.
- * It listens for clicks on elements with the class "nav-button" and triggers navigation
- * to the view specified in the element's 'target-page' attribute.
- */
-function addNavigationEventListeners(): void {
-    document.getElementById("app")?.addEventListener("click", (event) => {
-        const target = event.target as HTMLElement;
-
-        if (target && target.classList.contains("nav-button")) {
-            const view = target.getAttribute('target-page');  // Get the 'data-page' attribute
-            if (view) {
-                navigateTo(view);
-            }
-        }
-    })
-}
-
-/**
- * @brief Loads the specified view into the application container.
- * 
- * Retrieves the HTML content of the specified view and inserts it into the
- * main application container. Displays an error message if the view is not found.
- * 
- * @param view The name of the view to load.
- */
-function loadView(view: string) {
-    const viewElement = document.getElementById(view) as HTMLTemplateElement;
+export function navigateTo(view: string, replace: boolean = false): void {
     const appElement = document.getElementById("app");
-    if (viewElement) {
-        const clone = viewElement.content.cloneNode(true);  // Clone the template content
-        appElement!.innerHTML = "";
-        appElement!.appendChild(clone);
+    const templateElement = document.getElementById(view) as HTMLTemplateElement;
+
+    if (templateElement && appElement) {
+        // Update app content
+        updateView(appElement, templateElement);
+
+        // Update browser history
+        const state = { view };
+        if (replace) {
+            history.replaceState(state, "", `#${view}`);
+        } else {
+            history.pushState(state, "", `#${view}`);
+        }
+
+        // Update Events on page
+        addEvents(view);
     }
-    else
-        appElement!.innerHTML = "<h1>Error! Page not found</h1>";
 }
 
+/**
+ * @brief Updates the content of a host element with a template.
+ * 
+ * This function clears the current content of the host element and replaces it with the content
+ * of the specified template element.
+ * 
+ * @param hostElement The element to update.
+ * @param templateElement The template element whose content will be used to update the host element.
+ */
+function updateView(hostElement: HTMLElement, templateElement: HTMLTemplateElement) {
+    const clone = document.importNode(templateElement.content, true);
+    hostElement.replaceChildren(clone);
+
+    const navigationElement = document.getElementById("navigation");
+    if (navigationElement && templateElement.id === "login-template") {
+        navigationElement.innerText = "";
+    }
+}
+
+/**
+ * @brief Adds event listeners for a specified view.
+ * 
+ * This function sets up event listeners specific to the view being loaded.
+ * 
+ * @param view The ID of the view for which to add events.
+ */
+function addEvents(view: string): void {
+    switch (view) {
+        case ("login-template"):
+            addLoginEvents();
+            break;
+        case ("home-template"):
+            addHomeEvents();
+            break;
+        case ("local-template"):
+            addLocalEvents();
+            break;
+        case ("multiplayer-template"):
+            addMultiplayerEvents();
+            break;
+        case ("tournament-template"):
+            addTournamentEvents();
+            break;
+        case ("rankings-template"):
+            addRankingEvents();
+            break;
+    }
+}
+
+/**
+ * @brief Adds event listeners for the login view.
+ * 
+ * This function sets up the event listener for the login button, which navigates to the home view upon click.
+ */
+function addLoginEvents(): void {
+    document.getElementById("login-button")!.addEventListener("click", () => {
+        navigateTo("home-template")
+    });
+}
+
+/**
+* @brief Adds event listeners for the home view.
+* 
+* This function sets up the navigation bar for the home view.
+*/
+// TODO: Change "addNavBar" for when login is done??
+function addHomeEvents(): void {
+    addNavBar();
+}
+
+/**
+* @brief Adds event listeners for the local view.
+* 
+* This function is a placeholder for setting up events specific to the local view.
+*/
+function addLocalEvents(): void {
+}
+
+/**
+ * @brief Adds event listeners for the multiplayer view.
+ * 
+ * This function is a placeholder for setting up events specific to the multiplayer view.
+ */
+function addMultiplayerEvents(): void {
+}
+
+/**
+ * @brief Adds event listeners for the tournament view.
+ * 
+ * This function is a placeholder for setting up events specific to the tournament view.
+ */
+function addTournamentEvents(): void {
+}
+
+/**
+* @brief Adds event listeners for the rankings view.
+* 
+* This function is a placeholder for setting up events specific to the rankings view.
+*/
+function addRankingEvents(): void {
+}
+
+/**
+ * @brief Adds the navigation bar to the application.
+ * 
+ * This function updates the navigation bar with its template content and sets up event listeners
+ * for navigation buttons within the bar.
+ */
+function addNavBar(): void {
+    const navBar = document.getElementById("navigation");
+    const navBarTemplate = document.getElementById("nav-bar") as HTMLTemplateElement;
+    if (navBar && navBarTemplate) {
+        // Shows navigation bar elements
+        updateView(navBar, navBarTemplate);
+
+        // Updates navigation bar to allow for navigation
+        const navButtons = document.querySelectorAll(".nav-button");
+        navButtons.forEach(button => {
+            const target_view = button.getAttribute("target-nav");
+            if (target_view) {
+                const oldButton = button.cloneNode(true);
+                button.parentNode?.replaceChild(oldButton, button);
+
+                oldButton.addEventListener("click", (event) => {
+                    event.preventDefault(); // Prevent default link behavior
+                    const replace_history = document.getElementById("app")?.innerHTML === document.getElementById(target_view)?.innerHTML;
+                    navigateTo(target_view, replace_history);
+                });
+            }
+        });
+    }
+}
