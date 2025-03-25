@@ -5,27 +5,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tournaments DApp</title>
-    <script defer src="./scripts/TournamentsScore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script defer src="./scripts/TournamentsStorage.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        input {
+            display: block;
+            margin: 10px auto;
+            padding: 5px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Tournaments DApp</h1>
+
     <button onclick="getAllTournaments()">Get All Tournaments</button>
+
     <input type="number" id="tournamentId" placeholder="Tournament ID">
-    <button onclick="getTournament(document.getElementById('tournamentId').value)">Get Tournament</button>
-    <button onclick="getParticipants(document.getElementById('tournamentId').value)">Get Participants</button>
-    <button onclick="getScores(document.getElementById('tournamentId').value)">Get Scores</button>
+    <button onclick="fetchTournament()">Get Tournament</button>
+    <button onclick="fetchParticipants()">Get Participants</button>
+    <button onclick="fetchScores()">Get Scores</button>
 
     <input type="text" id="date" placeholder="Date (YYYYMMDD)">
     <input type="text" id="time" placeholder="Time (HHMM)">
-    <button
-        onclick="createTournament(parseInt(document.getElementById('date').value), parseInt(document.getElementById('time').value))">Create
-        Tournament</button>
+    <button onclick="createNewTournament()">Create Tournament</button>
 
+    <input type="text" id="matchID" placeholder="Match ID">
     <input type="text" id="participantName" placeholder="Participant Name">
-    <button
-        onclick="joinTournament(document.getElementById('tournamentId').value, document.getElementById('participantName').value)">Join
-        Tournament</button>
+    <button onclick="joinTournamentAction()">Join Tournament</button>
+
+    <script>
+        async function fetchTournament() {
+            const id = document.getElementById('tournamentId').value;
+            if (id) {
+                try {
+                    await getTournament(parseInt(id));
+                } catch (error) {
+                    console.error("Error fetching tournament:", error);
+                }
+            } else {
+                alert("Please enter a valid Tournament ID");
+            }
+        }
+
+        async function fetchParticipants() {
+            const id = document.getElementById('tournamentId').value;
+            if (id) {
+                try {
+                    await getParticipants(parseInt(id));
+                } catch (error) {
+                    console.error("Error fetching participants:", error);
+                }
+            } else {
+                alert("Please enter a valid Tournament ID");
+            }
+        }
+
+        async function fetchScores() {
+            const id = document.getElementById('tournamentId').value;
+            if (id) {
+                try {
+                    await getScores(parseInt(id));
+                } catch (error) {
+                    console.error("Error fetching scores:", error);
+                }
+            } else {
+                alert("Please enter a valid Tournament ID");
+            }
+        }
+
+        async function createNewTournament() {
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            if (date && time) {
+                try {
+                    await createTournament(parseInt(date), parseInt(time));
+                } catch (error) {
+                    console.error("Error creating tournament:", error);
+                }
+            } else {
+                alert("Please enter valid date and time");
+            }
+        }
+
+        async function joinTournamentAction() {
+            const id = document.getElementById('tournamentId').value;
+            const name = document.getElementById('participantName').value;
+            if (id && name) {
+                try {
+                    await joinTournament(parseInt(id), name);
+                } catch (error) {
+                    console.error("Error joining tournament:", error);
+                }
+            } else {
+                alert("Please enter a valid Tournament ID and Participant Name");
+            }
+        }
+    </script>
 </body>
 
 </html>
