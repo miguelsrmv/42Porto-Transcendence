@@ -12,3 +12,8 @@
 ### Branch: "Frontend"
 ### Solution: implemented makefile rule with hostsed
 
+## 4. Database permanence between make clean
+
+### Date Created: 11/03/2025
+### Branch: "Backend"
+### Solution: added sudo rm -rf DATA to makefile clean rule

@@ -1,2 +1,6 @@
 data
 *.js
+node_modules
+package-lock.json
+dev.db
+.env
