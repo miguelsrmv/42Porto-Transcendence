@@ -36,31 +36,8 @@ contract TournamentsStorage {
 
     function getTournament(
         uint256 _id
-    )
-        public
-        view
-        returns (
-            uint256 id,
-            uint32 date,
-            uint16 time,
-            uint8 maxParticipants,
-            string[] memory participants,
-            string[] memory matchedParticipants,
-            uint8[] memory scores
-        )
-    {
-        require(_id < tournaments.length, "Tournament does not exist");
-        Tournament memory tournament = tournaments[_id];
-
-        return (
-            tournament.id,
-            tournament.date,
-            tournament.time,
-            tournament.maxParticipants,
-            tournament.participants,
-            tournament.matchedParticipants,
-            tournament.scores
-        );
+    ) public view returns (Tournament memory) {
+        return tournaments[_id];
     }
 
     function getParticipants(
