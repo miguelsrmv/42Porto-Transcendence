@@ -18,7 +18,7 @@ async function connectWallet() {
 }
 
 // Contract details
-const contractAddress = "0x949D9a1C66dafD1231e654D1A0df3ed8aC64A753"; // Replace with your deployed contract address
+const contractAddress = "0x57535E1c43D04cff635b193f3132Cf7C5a5Bc14e"; // Replace with your deployed contract address
 const contractABI = [
     {
         "inputs": [
@@ -106,39 +106,46 @@ const contractABI = [
         "name": "getTournament",
         "outputs": [
             {
-                "internalType": "uint256",
-                "name": "id",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint32",
-                "name": "date",
-                "type": "uint32"
-            },
-            {
-                "internalType": "uint16",
-                "name": "time",
-                "type": "uint16"
-            },
-            {
-                "internalType": "uint8",
-                "name": "maxParticipants",
-                "type": "uint8"
-            },
-            {
-                "internalType": "string[]",
-                "name": "participants",
-                "type": "string[]"
-            },
-            {
-                "internalType": "string[]",
-                "name": "matchedParticipants",
-                "type": "string[]"
-            },
-            {
-                "internalType": "uint8[]",
-                "name": "scores",
-                "type": "uint8[]"
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "id",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint32",
+                        "name": "date",
+                        "type": "uint32"
+                    },
+                    {
+                        "internalType": "uint16",
+                        "name": "time",
+                        "type": "uint16"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "maxParticipants",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "string[]",
+                        "name": "participants",
+                        "type": "string[]"
+                    },
+                    {
+                        "internalType": "string[]",
+                        "name": "matchedParticipants",
+                        "type": "string[]"
+                    },
+                    {
+                        "internalType": "uint8[]",
+                        "name": "scores",
+                        "type": "uint8[]"
+                    }
+                ],
+                "internalType": "struct TournamentsStorage.Tournament",
+                "name": "",
+                "type": "tuple"
             }
         ],
         "stateMutability": "view",
@@ -281,34 +288,31 @@ async function getAllTournaments() {
 }
 
 // Fetch a tournament
-async function getTournament(id) {
+async function getTournament(tournamentId) {
     const provider = await connectWallet();
     if (!provider) return;
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
     try {
-        const [
-            id,
-            date,
-            time,
-            maxParticipants,
-            participants,
-            matchedParticipants,
-            scores
-        ] = await contract.getTournament(id);
+        const tournamentData = await contract.getTournament(tournamentId);
+
+        if (!tournamentData || tournamentData.id === undefined) {
+            console.error("Tournament not found");
+            return;
+        }
 
         const tournament = {
-            id: id.toString(),
-            date: date.toString(),
-            time: time.toString(),
-            maxParticipants: maxParticipants.toString(),
-            participants: participants,
-            matchedParticipants: matchedParticipants,
-            scores: scores.map(score => score.toNumber())
+            id: tournamentData.id.toString(),
+            date: tournamentData.date.toString(),
+            time: tournamentData.time.toString(),
+            maxParticipants: tournamentData.maxParticipants.toString(),
+            participants: tournamentData.participants,
+            matchedParticipants: tournamentData.matchedParticipants,
+            scores: tournamentData.scores.map(score => score.toNumber())
         };
 
-        console.log(tournament);
+        console.log("Fetched Tournament:", tournament);
     } catch (error) {
         console.error("Error fetching tournament:", error);
     }
