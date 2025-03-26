@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ft_transcendence</title>
+    <link rel="icon" href="./static/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="../dist/navigation.js"></script>
+    <script type="module" src="../dist/events.js"></script>
+    <script type="module" src="../dist/app.js"></script>
+</head>
+
+<body>
+    <nav id="navigation">
+    </nav>
+    <template id="nav-bar">
+        <ul>
+            <li><a href="#" class="nav-button text-blue-500" id="home-nav" target-nav="home-template">Home</a> </li>
+            <li><a href="#" class="nav-button text-blue-500" id="local-nav" target-nav="local-template">Local</a></li>
+            <li><a href="#" class="nav-button text-blue-500" id="multiplayer-nav"
+                    target-nav="multiplayer-template">Multiplayer</a>
+            </li>
+            <li><a href="#" class="nav-button text-blue-500" id="tournament-nav"
+                    target-nav="tournament-template">Tournament</a>
+            </li>
+            <li><a href="#" class="nav-button text-blue-500" id="rankings-nav"
+                    target-nav="rankings-template">Rankings</a>
+            </li>
+        </ul>
+    </template>
+
+    <main id="app"></main>
+
+    <template id="login-template">
+        <div> Welcome to Transcendence! To login, click <a href="#" id="login-button"
+                target-page="home-template">Here!</a>
+        </div>
+    </template>
+
+    <template id="home-template">
+        <div> I'm on home! </div>
+    </template>
+
+    <template id="local-template">
+        <div> I'm on local! </div>
+    </template>
+
+    <template id="multiplayer-template">
+        <div> I'm on multiplayer! </div>
+    </template>
+
+    <template id="tournament-template">
+        <div> I'm on tournament! </div>
+    </template>
+
+    <template id="rankings-template">
+        <div> I'm on rankings! </div>
+    </template>
+</body>
+
+</html>

@@ -51,19 +51,18 @@ status:
 	@docker network ls
 	@echo ""
 
-server:
-	@$(COMPOSE) build server
+frontend:
+	@$(COMPOSE) build frontend
 
 backend:
 	@$(COMPOSE) build backend
 
-
 bc:
 	@$(COMPOSE) build blockchain
 
-server_clean:
-	$(COMPOSE) rm -sf server
-	@docker rmi -f server || true
+frontend_clean:
+	$(COMPOSE) rm -sf frontend
+	@docker rmi -f frontend || true
 
 backend_clean:
 	$(COMPOSE) rm -sf backend
@@ -76,4 +75,4 @@ bc_clean:
 test: 
 	@./docs/scripts/build_dockerfile_test.sh  #Tests build
 
-.PHONY: all up down build clean re prune status server backend bc server_clean backend_clean bc_clean test 
+.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test 
