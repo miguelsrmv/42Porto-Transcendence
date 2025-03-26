@@ -10,21 +10,21 @@
 import { navigateTo } from "./navigation.js";
 import { setupHistoryListener } from "./events.js";
 
+
 /**
  * @brief Event listener for DOMContentLoaded.
  * 
  * Triggers the loading of the default page when the DOM content is fully loaded and parsed.
  */
 document.addEventListener("DOMContentLoaded", () => {
+    const initialView = "login-template";
+
     // Setup history listener first
     setupHistoryListener();
-
-    // Determine initial view
-    const initialView = window.location.hash.replace('#', '') || "login-template";
 
     // Replace the initial state to ensure correct history behavior
     history.replaceState({ view: initialView }, "", `#${initialView}`);
 
     // Navigate to the initial view
-    navigateTo(initialView, true);
+    navigateTo(initialView);
 });
