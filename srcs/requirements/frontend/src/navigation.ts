@@ -59,8 +59,8 @@ function renderView(hostElement: HTMLElement, templateElement: HTMLTemplateEleme
     hostElement.replaceChildren(clone);
 
     const navigationElement = document.getElementById("navigation");
-    if (currentView === "login-template") {
-        navigationElement!.innerText = "";
+    if (currentView === "login-template" && navigationElement) {
+        navigationElement.innerText = "";
     }
 }
 
@@ -192,8 +192,7 @@ function addNavBarListener(): void {
             const target_view = target.getAttribute("data-target");
             if (target_view) {
                 event.preventDefault();
-                const update_history = document.getElementById("app")?.innerHTML !== document.getElementById(target_view)?.innerHTML;
-                navigateTo(target_view, update_history);
+                navigateTo(target_view);
             }
         }
     });
