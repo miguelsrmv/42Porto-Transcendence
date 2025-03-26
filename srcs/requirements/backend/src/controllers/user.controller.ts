@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { verifyPassword } from '../utils/hash';
+import { handleError } from '../utils/errorHandler';
 
 interface IParams {
   id: string;
@@ -28,9 +29,12 @@ export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) 
         profile: true,
       },
     });
+    if (users.length === 0) {
+      return reply.status(404).send({ message: 'No users found' });
+    }
     reply.send(users);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
@@ -44,7 +48,7 @@ export async function getUserById(
     });
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
@@ -62,7 +66,7 @@ export async function createUser(
     });
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
@@ -75,9 +79,12 @@ export async function updateUser(
       where: { id: request.params.id },
       data: request.body.data,
     });
+    if (!user) {
+      return reply.status(400).send({ message: 'Unable to update user data' });
+    }
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
@@ -91,7 +98,7 @@ export async function deleteUser(
     });
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
@@ -121,6 +128,6 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
 
     reply.send({ token });
   } catch (error) {
-    reply.status(500).send({ message: 'An error occurred', error });
+    handleError(error, reply);
   }
 }
