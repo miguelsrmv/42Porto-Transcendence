@@ -4,7 +4,12 @@ module.exports = {
     "./static/index.html",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        pokemongb: ['PokemonGB', 'sans-serif'],
+      },
+      }
+    },
   },
   plugins: [],
 }

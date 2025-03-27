@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ft_transcendence</title>
     <link rel="icon" href="./static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../dist/output.css">
+    <link rel="stylesheet" href="./dist/output.css">
     <script type="module" src="../dist/navigation.js"></script>
     <script type="module" src="../dist/events.js"></script>
     <script type="module" src="../dist/app.js"></script>
@@ -28,12 +28,14 @@
     </template>
 
     <template id="login-template">
-        <div class="flex flex-col items-center justify-center min-h-screen text-center">
-            <img src="./static/images/Pongkemon_title.png" class="w-full max-w-md">
-            <div class="mt-8 text-3xl"> Welcome to Transcendence! To
-                login,
-                click
-                <button id="login-button" data-target="home-template">Here!</button>
+        <div
+            class="flex flex-col items-center justify-center min-h-screen text-center text-5xl font-pokemongb bg-[url('/static/images/login_background.jpg')] bg-cover bg-center min-h-screen">
+            <img src=" ./static/images/Pongkemon_title.png" class="w-2/3 absolute top-1">
+            <div class="mt-128">
+                <div class="z-10">Welcome to Transcendence!</div>
+                <div class="z-10">To login, click <button id="login-button" data-target="home-template"
+                        class="underline">here!</button>
+                </div>
             </div>
         </div>
     </template>

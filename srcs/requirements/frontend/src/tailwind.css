@@ -5,12 +5,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom fontes */
 @font-face {
-    font-family: 'PokemonGB'; /* Choose a name */
-    src: url('/static/fonts/PokemonGB.ttf') format('truetype'); 
+    font-family: 'PokemonGB'; 
+    src: url('/static/fonts/PokemonGB.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+} 
+
+.font-pokemongb {
+  font-family: 'PokemonGB', sans-serif;
 }
 
 /* Custom styles using @apply */
 .nav-button {
   @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
 }
+
