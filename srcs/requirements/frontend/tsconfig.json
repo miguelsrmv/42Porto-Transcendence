@@ -5,7 +5,11 @@
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
-    "outDir": "./dist/"
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "lib": ["ES6", "DOM", "DOM.Iterable"],
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.ts"
