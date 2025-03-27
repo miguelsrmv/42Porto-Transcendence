@@ -7,6 +7,12 @@ dotenv.config();
 
 const app = fastify({
   logger: true,
+  ajv: {
+    // JSON schema validation options
+    customOptions: {
+      removeAdditional: false, // Do not remove additional properties in JSON schema validation
+    },
+  },
 });
 
 app.register(jwtPlugin);
