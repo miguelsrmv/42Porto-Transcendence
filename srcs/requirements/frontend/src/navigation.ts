@@ -7,6 +7,8 @@
  * to load the default view and custom navigation events to switch views.
  */
 
+let currentView = "";
+
 /**
  * @brief Navigates to a specified view.
  * 
@@ -17,23 +19,28 @@
  * @param replace A boolean indicating whether to replace the current history state or push a new one.
  */
 
-export function navigateTo(view: string, replace: boolean = false): void {
+export function navigateTo(view: string, update_history: boolean = true): void {
+    // If I'm already at a given view, do nothing
+    if (view === currentView)
+        return;
+
     const appElement = document.getElementById("app");
     const templateElement = document.getElementById(view) as HTMLTemplateElement;
 
     if (templateElement && appElement) {
-        // Update app content
-        updateView(appElement, templateElement);
+        // Updates current view
+        currentView = view;
+
+        // Renders view content
+        renderView(appElement, templateElement);
 
         // Update browser history
         const state = { view };
-        if (replace) {
-            history.replaceState(state, "", `#${view}`);
-        } else {
+        if (update_history) {
             history.pushState(state, "", `#${view}`);
         }
 
-        // Update Events on page
+        // Update events on page
         addEvents(view);
     }
 }
@@ -47,12 +54,12 @@ export function navigateTo(view: string, replace: boolean = false): void {
  * @param hostElement The element to update.
  * @param templateElement The template element whose content will be used to update the host element.
  */
-function updateView(hostElement: HTMLElement, templateElement: HTMLTemplateElement) {
+function renderView(hostElement: HTMLElement, templateElement: HTMLTemplateElement) {
     const clone = document.importNode(templateElement.content, true);
     hostElement.replaceChildren(clone);
 
     const navigationElement = document.getElementById("navigation");
-    if (navigationElement && templateElement.id === "login-template") {
+    if (currentView === "login-template" && navigationElement) {
         navigationElement.innerText = "";
     }
 }
@@ -149,24 +156,44 @@ function addRankingEvents(): void {
 function addNavBar(): void {
     const navBar = document.getElementById("navigation");
     const navBarTemplate = document.getElementById("nav-bar") as HTMLTemplateElement;
+
     if (navBar && navBarTemplate) {
         // Shows navigation bar elements
-        updateView(navBar, navBarTemplate);
+        renderNavBar(navBar, navBarTemplate);
 
-        // Updates navigation bar to allow for navigation
-        const navButtons = document.querySelectorAll(".nav-button");
-        navButtons.forEach(button => {
-            const target_view = button.getAttribute("target-nav");
-            if (target_view) {
-                const oldButton = button.cloneNode(true);
-                button.parentNode?.replaceChild(oldButton, button);
-
-                oldButton.addEventListener("click", (event) => {
-                    event.preventDefault(); // Prevent default link behavior
-                    const replace_history = document.getElementById("app")?.innerHTML === document.getElementById(target_view)?.innerHTML;
-                    navigateTo(target_view, replace_history);
-                });
-            }
-        });
+        // Sets up event litener for navigation bar (event delegation)
+        addNavBarListener();
     }
+}
+/**
+ * @brief Renders the navigation bar content.
+ * 
+ * This function replaces the current content of the navigation bar location with the content
+ * of the specified navigation bar template.
+ * 
+ * @param navBarLocation The element where the navigation bar will be rendered.
+ * @param navBar The template element containing the navigation bar content.
+ */
+function renderNavBar(navBarLocation: HTMLElement, navBar: HTMLTemplateElement): void {
+    const clone = document.importNode(navBar.content, true);
+    navBarLocation.replaceChildren(clone);
+}
+
+/**
+ * @brief Sets up event listeners for the navigation bar.
+ * 
+ * This function adds a click event listener to the navigation bar to handle navigation button clicks.
+ * It uses event delegation to determine which button was clicked and navigates to the corresponding view.
+ */
+function addNavBarListener(): void {
+    document.getElementById("navigation")?.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        if (target.classList.contains("nav-button")) {
+            const target_view = target.getAttribute("data-target");
+            if (target_view) {
+                event.preventDefault();
+                navigateTo(target_view);
+            }
+        }
+    });
 }
