@@ -6,36 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ft_transcendence</title>
     <link rel="icon" href="./static/favicon.ico" type="image/x-icon">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../dist/output.css">
     <script type="module" src="../dist/navigation.js"></script>
     <script type="module" src="../dist/events.js"></script>
     <script type="module" src="../dist/app.js"></script>
 </head>
 
 <body>
-    <nav id="navigation">
-    </nav>
-    <template id="nav-bar">
-        <ul>
-            <li><a href="#" class="nav-button text-blue-500" id="home-nav" data-target="home-template">Home</a> </li>
-            <li><a href="#" class="nav-button text-blue-500" id="local-nav" data-target="local-template">Local</a></li>
-            <li><a href="#" class="nav-button text-blue-500" id="multiplayer-nav"
-                    data-target="multiplayer-template">Multiplayer</a>
-            </li>
-            <li><a href="#" class="nav-button text-blue-500" id="tournament-nav"
-                    data-target="tournament-template">Tournament</a>
-            </li>
-            <li><a href="#" class="nav-button text-blue-500" id="rankings-nav"
-                    data-target="rankings-template">Rankings</a>
-            </li>
-        </ul>
-    </template>
+    <nav id="navigation"> </nav>
 
     <main id="app"></main>
 
+    <template id="nav-bar">
+        <div class="flex-row justify-center">
+            <button class="nav-button" id="home-nav" data-target="home-template">Home</button>
+            <button class="nav-button" id="local-nav" data-target="local-template">Local</button>
+            <button class="nav-button" id="multiplayer-nav" data-target="multiplayer-template">Multiplayer</button>
+            <button class="nav-button" id="tournament-nav" data-target="tournament-template">Tournament</button>
+            <button class="nav-button" id="rankings-nav" data-target="rankings-template">Rankings</button>
+        </div>
+    </template>
+
     <template id="login-template">
-        <div> Welcome to Transcendence! To login, click <button id="login-button"
-                data-target="home-template">Here!</button>
+        <div class="flex flex-col items-center justify-center min-h-screen text-center">
+            <img src="./static/images/Pongkemon_title.png" class="w-full max-w-md">
+            <div class="mt-8 text-3xl"> Welcome to Transcendence! To
+                login,
+                click
+                <button id="login-button" data-target="home-template">Here!</button>
+            </div>
         </div>
     </template>
 
