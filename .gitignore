@@ -1,5 +1,6 @@
 data
 *.js
+*.js.map
 node_modules
 dev.db
 .env

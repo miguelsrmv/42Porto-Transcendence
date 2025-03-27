@@ -21,9 +21,9 @@ export function setupHistoryListener(): void {
     window.addEventListener("popstate", (event) => {
         const state = event.state;
 
-        if (state && state.view) {
+        if (state?.view) {
             // Navigate to the view stored in the state
-            navigateTo(state.view, true);
+            navigateTo(state.view, false);
         }
     });
 }
