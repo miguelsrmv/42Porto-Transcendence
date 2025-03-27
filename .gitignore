@@ -2,6 +2,5 @@ data
 *.js
 *.js.map
 node_modules
-package-lock.json
 dev.db
 .env

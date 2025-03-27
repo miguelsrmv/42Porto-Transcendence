@@ -8,11 +8,6 @@
     "strict": true /* Enable strict type-checking */,
     "skipLibCheck": true /* Skip type checking of declaration files */
   },
-  "include": [
-    "src/**/*",
-    "src/fastify.d.ts"
-  ] /* Specify the files to be included in compilation */,
-  "exclude": [
-    "node_modules"
-  ] /* Specify the files to be excluded from compilation */
+  "include": ["src/**/*", "src/fastify.d.ts"] /* Specify the files to be included in compilation */,
+  "exclude": ["node_modules"] /* Specify the files to be excluded from compilation */
 }
