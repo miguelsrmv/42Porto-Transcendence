@@ -1,6 +1,6 @@
 /* Script to interact with the database */
-import { prisma } from "../src/utils/prisma";
-import { faker } from "@faker-js/faker";
+import { prisma } from '../src/utils/prisma';
+import { faker } from '@faker-js/faker';
 
 const NUMBER_OF_USERS = 4;
 
@@ -20,7 +20,7 @@ async function seedUsers() {
 async function main() {
   try {
     await seedUsers();
-    console.log(await prisma.user.findMany());
+    console.log(await prisma.user.findMany({ include: { profile: true } }));
   } catch (e) {
     console.error(e);
   } finally {

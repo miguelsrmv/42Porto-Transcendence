@@ -1,6 +1,7 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { prisma } from "../utils/prisma";
-import { verifyPassword } from "../utils/hash";
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { prisma } from '../utils/prisma';
+import { verifyPassword } from '../utils/hash';
+import { handleError } from '../utils/errorHandler';
 
 interface IParams {
   id: string;
@@ -21,21 +22,25 @@ interface UserUpdate {
   data: { username?: string; email?: string };
 }
 
-export async function getAllUsers(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        profile: true,
+      },
+    });
+    if (users.length === 0) {
+      return reply.status(404).send({ message: 'No users found' });
+    }
     reply.send(users);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
 export async function getUserById(
   request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   try {
     const user = await prisma.user.findUniqueOrThrow({
@@ -43,13 +48,13 @@ export async function getUserById(
     });
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
 export async function createUser(
   request: FastifyRequest<{ Body: UserCreate }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   try {
     const user = await prisma.user.create({
@@ -61,28 +66,31 @@ export async function createUser(
     });
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
 export async function updateUser(
   request: FastifyRequest<{ Params: IParams; Body: UserUpdate }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   try {
     const user = await prisma.user.update({
       where: { id: request.params.id },
       data: request.body.data,
     });
+    if (!user) {
+      return reply.status(400).send({ message: 'Unable to update user data' });
+    }
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
 export async function deleteUser(
   request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   try {
     const user = await prisma.user.delete({
@@ -90,38 +98,36 @@ export async function deleteUser(
     });
     reply.send(user);
   } catch (error) {
-    reply.status(500).send(error);
+    handleError(error, reply);
   }
 }
 
-export async function login(
-  request: FastifyRequest<{ Body: UserLogin }>,
-  reply: FastifyReply
-) {
+export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { email: request.body.email },
-      select: { username: true, email: true, hashedPassword: true, salt: true }
+      select: { username: true, email: true, hashedPassword: true, salt: true },
     });
 
     const isMatch = verifyPassword({
       candidatePassword: request.body.password,
       hash: user.hashedPassword,
-      salt: user.salt
+      salt: user.salt,
     });
 
     if (!isMatch) {
-      return reply.status(401).send({ message: "Invalid credentials" });
+      return reply.status(401).send({ message: 'Invalid credentials' });
     }
 
     const token = request.server.jwt.sign({
       payload: {
-        email: user.email, userName: user.username
-      }
-    })
+        email: user.email,
+        userName: user.username,
+      },
+    });
 
-    reply.send({ token })
+    reply.send({ token });
   } catch (error) {
-    reply.status(500).send({ message: "An error occurred", error });
+    handleError(error, reply);
   }
 }
