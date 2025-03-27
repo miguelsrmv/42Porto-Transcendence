@@ -17,16 +17,16 @@
     </nav>
     <template id="nav-bar">
         <ul>
-            <li><a href="#" class="nav-button text-blue-500" id="home-nav" target-nav="home-template">Home</a> </li>
-            <li><a href="#" class="nav-button text-blue-500" id="local-nav" target-nav="local-template">Local</a></li>
+            <li><a href="#" class="nav-button text-blue-500" id="home-nav" data-target="home-template">Home</a> </li>
+            <li><a href="#" class="nav-button text-blue-500" id="local-nav" data-target="local-template">Local</a></li>
             <li><a href="#" class="nav-button text-blue-500" id="multiplayer-nav"
-                    target-nav="multiplayer-template">Multiplayer</a>
+                    data-target="multiplayer-template">Multiplayer</a>
             </li>
             <li><a href="#" class="nav-button text-blue-500" id="tournament-nav"
-                    target-nav="tournament-template">Tournament</a>
+                    data-target="tournament-template">Tournament</a>
             </li>
             <li><a href="#" class="nav-button text-blue-500" id="rankings-nav"
-                    target-nav="rankings-template">Rankings</a>
+                    data-target="rankings-template">Rankings</a>
             </li>
         </ul>
     </template>
@@ -34,8 +34,8 @@
     <main id="app"></main>
 
     <template id="login-template">
-        <div> Welcome to Transcendence! To login, click <a href="#" id="login-button"
-                target-page="home-template">Here!</a>
+        <div> Welcome to Transcendence! To login, click <button id="login-button"
+                data-target="home-template">Here!</button>
         </div>
     </template>
 
