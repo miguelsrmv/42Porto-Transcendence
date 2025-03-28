@@ -76,9 +76,6 @@ export async function updateUser(
       where: { id: request.params.id },
       data: request.body.data,
     });
-    if (!user) {
-      return reply.status(400).send({ message: 'Unable to update user data' });
-    }
     reply.send(user);
   } catch (error) {
     handleError(error, reply);
