@@ -1,4 +1,3 @@
-// TODO: enforce the schema with ajv (not allow extra properties)
 export const createUserSchema = {
   body: {
     type: 'object',
