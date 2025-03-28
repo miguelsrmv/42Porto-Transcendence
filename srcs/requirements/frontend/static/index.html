@@ -29,13 +29,12 @@
 
     <template id="login-template">
         <div
-            class="flex flex-col items-center justify-center min-h-screen text-center text-5xl font-pokemongb bg-[url('/static/images/login_background.jpg')] bg-cover bg-center min-h-screen">
-            <img src=" ./static/images/Pongkemon_title.png" class="w-2/3 absolute top-1">
-            <div class="mt-128">
-                <div class="z-10">Welcome to Transcendence!</div>
-                <div class="z-10">To login, click <button id="login-button" data-target="home-template"
-                        class="underline">here!</button>
-                </div>
+            class="h-screen w-screen bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')] flex justify-center items-center">
+            <div id="title-screen" class="text-center">
+                <img src="./static/images/supersmash_titlescreen.png" class="w-3/4 mx-auto">
+                <div class="text-6xl font-serpentine -mt-40 tracking-wider"> Transcendence </div>
+                <button id="login-button" data-target="home-template"
+                    class="text-7xl mt-56 font-serpentine">Enter</button>
             </div>
         </div>
     </template>
