@@ -29,9 +29,6 @@ export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) 
         profile: true,
       },
     });
-    if (users.length === 0) {
-      return reply.status(404).send({ message: 'No users found' });
-    }
     reply.send(users);
   } catch (error) {
     handleError(error, reply);

@@ -10,6 +10,9 @@ export function handleError(error: unknown, reply: FastifyReply) {
       return reply.status(404).send(error);
     }
     return reply.status(400).send(error);
+  } else if (error instanceof Prisma.PrismaClientValidationError) {
+    error.message = error.message.split('\n').pop()?.trim() || 'An unexpected error occurred';
+    return reply.status(400).send(error);
   }
   return reply.status(500).send(error);
 }
