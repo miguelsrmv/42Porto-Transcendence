@@ -35,6 +35,8 @@ export function navigateTo(view, update_history = true) {
         }
         // Update events on page
         addEvents(view);
+        // Trigger animations
+        addAnimations(view);
     }
 }
 /**
@@ -65,7 +67,6 @@ function addEvents(view) {
     switch (view) {
         case ("landing-template"):
             addLandingEvents();
-            addLandingAnimations();
             break;
         case ("home-template"):
             addHomeEvents();
@@ -81,6 +82,18 @@ function addEvents(view) {
             break;
         case ("rankings-template"):
             addRankingEvents();
+            break;
+    }
+}
+/**
+ * @brief Adds animations for a specified view.
+ *
+ * This function sets up animations.
+ */
+function addAnimations(view) {
+    switch (view) {
+        case ("landing-template"):
+            addLandingAnimations();
             break;
     }
 }
