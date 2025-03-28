@@ -10,8 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { wait } from "./helpers.js";
 export function addLandingAnimations() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield wait(1);
+        const subTitle = document.getElementById("sub-title");
         const enterButton = document.getElementById("enter-button");
+        yield wait(1);
+        subTitle === null || subTitle === void 0 ? void 0 : subTitle.classList.remove("opacity-0", "invisible");
+        subTitle === null || subTitle === void 0 ? void 0 : subTitle.classList.add("fade-in");
+        yield wait(1);
+        enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.remove("opacity-0", "invisible");
         enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.add("fade-in");
         enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.add("animate-bounce");
     });

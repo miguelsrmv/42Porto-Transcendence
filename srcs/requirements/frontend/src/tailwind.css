@@ -34,13 +34,22 @@
 }
 
 /* Add this to your CSS or tailwind classes */
+/*
 #enter-button-hidden {
-    opacity: 0; /* Initially hidden */
-    visibility: hidden; /* Initially hidden */
-    transition: opacity 1s ease-in-out, visibility 0s linear 1s; /* Transition opacity over 1 second */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 2s ease-in-out, visibility 0s linear 1s;
 }
+*/
 
 #enter-button.fade-in {
-    opacity: 1; /* Make it fully visible */
-    visibility: visible; /* Ensure it is visible */
+  opacity: 1; /* Make it fully visible */
+  visibility: visible; /* Ensure it is visible */
+  transition: opacity 1s
+}
+
+#sub-title.fade-in {
+  opacity: 1; 
+  visibility: visible; 
+  transition: opacity 1s
 }
