@@ -5,20 +5,32 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom fontes */
+/* Fonts */
 @font-face {
-    font-family: 'PokemonGB'; 
-    src: url('/static/fonts/PokemonGB.ttf') format('truetype');
+    font-family: 'supersmash_title';
+    src: url('/static/fonts/super_smash_title_screen.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 } 
 
-.font-pokemongb {
-  font-family: 'PokemonGB', sans-serif;
+.font-supersmash_title {
+  font-family: 'supersmash_title', sans-serif;
+}
+
+@font-face {
+    font-family: 'serpentine';
+    src: url('/static/fonts/serpentine_std-medium.ttf') format('truetype'); /* Ensure the font file exists at this path */
+    font-weight: normal;
+    font-style: normal;
+}
+
+.font-serpentine {
+  font-family: 'serpentine', sans-serif;
 }
 
 /* Custom styles using @apply */
 .nav-button {
   @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
 }
+
 

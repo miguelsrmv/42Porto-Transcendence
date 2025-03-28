@@ -6,9 +6,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        pokemongb: ['PokemonGB', 'sans-serif'],
+        supersmash_title: ['supersmash_title', 'sans-serif'],
+        serpentine: ['serpentine', 'sans-serif'],
       },
-      }
     },
   },
   plugins: [],
