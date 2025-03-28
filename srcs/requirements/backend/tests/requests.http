@@ -1,6 +1,8 @@
 # Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
 
-# Get all users from database
+### USER
+
+### Get all users from database
 GET http://localhost:3000/users/ HTTP/1.1
 
 ### Get user by id
@@ -16,7 +18,7 @@ content-type: application/json
 	"password": "secure123441"
 }
 
-### Update user info (only username or email, for now)
+### Update user info (only username and/or email, for now)
 PUT http://localhost:3000/users/<id> HTTP/1.1
 content-type: application/json
 
@@ -37,4 +39,23 @@ content-type: application/json
 {
 	"email": "test@gmail.com",
 	"password": "secure123"
+}
+
+### PROFILE
+
+### Get all profiles from database
+GET http://localhost:3000/profiles/ HTTP/1.1
+
+### Get profile by id
+GET http://localhost:3000/profiles/<id> HTTP/1.1
+
+### Update profile info (only name and/or bio, for now)
+PUT http://localhost:3000/profiles/<id> HTTP/1.1
+content-type: application/json
+
+{
+	"data": {
+		"name": "modified",
+		"bio": "I am the greatest!"
+	}
 }
