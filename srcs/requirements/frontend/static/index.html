@@ -27,16 +27,15 @@
         </div>
     </template>
 
-    <template id="login-template">
+    <template id="landing-template">
         <div
             class="h-screen w-screen bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')] flex justify-center items-center">
             <div id="title-screen" class="text-center">
                 <img src="./static/images/supersmash_titlescreen.png" class="w-3/4 mx-auto">
                 <div class="text-6xl font-serpentine -mt-40 tracking-wider"> Transcendence </div>
-                <button id="login-button" data-target="home-template"
-                    class="text-7xl mt-56 font-serpentine">Enter</button>
+                <button id="enter-button" data-target="home-template"
+                    class="text-7xl mt-48 font-serpentine opacity-0 invisible transition-opacity duration-1000">Enter</button>
             </div>
-        </div>
     </template>
 
     <template id="home-template">

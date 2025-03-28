@@ -9,6 +9,8 @@
 
 let currentView = "";
 
+import { addLandingAnimations } from "./landing.js"
+
 /**
  * @brief Navigates to a specified view.
  * 
@@ -59,7 +61,7 @@ function renderView(hostElement: HTMLElement, templateElement: HTMLTemplateEleme
     hostElement.replaceChildren(clone);
 
     const navigationElement = document.getElementById("navigation");
-    if (currentView === "login-template" && navigationElement) {
+    if (currentView === "landing-template" && navigationElement) {
         navigationElement.innerText = "";
     }
 }
@@ -73,8 +75,9 @@ function renderView(hostElement: HTMLElement, templateElement: HTMLTemplateEleme
  */
 function addEvents(view: string): void {
     switch (view) {
-        case ("login-template"):
-            addLoginEvents();
+        case ("landing-template"):
+            addLandingEvents();
+            addLandingAnimations();
             break;
         case ("home-template"):
             addHomeEvents();
@@ -95,12 +98,12 @@ function addEvents(view: string): void {
 }
 
 /**
- * @brief Adds event listeners for the login view.
+ * @brief Adds event listeners for the landing view.
  * 
- * This function sets up the event listener for the login button, which navigates to the home view upon click.
+ * This function sets up the event listener for the landing button, which navigates to the home view upon click.
  */
-function addLoginEvents(): void {
-    document.getElementById("login-button")!.addEventListener("click", () => {
+function addLandingEvents(): void {
+    document.getElementById("enter-button")!.addEventListener("click", () => {
         navigateTo("home-template")
     });
 }

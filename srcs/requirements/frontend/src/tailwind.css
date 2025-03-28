@@ -33,4 +33,14 @@
   @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
 }
 
+/* Add this to your CSS or tailwind classes */
+#enter-button-hidden {
+    opacity: 0; /* Initially hidden */
+    visibility: hidden; /* Initially hidden */
+    transition: opacity 1s ease-in-out, visibility 0s linear 1s; /* Transition opacity over 1 second */
+}
 
+#enter-button.fade-in {
+    opacity: 1; /* Make it fully visible */
+    visibility: visible; /* Ensure it is visible */
+}
