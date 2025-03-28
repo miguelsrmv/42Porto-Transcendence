@@ -6,12 +6,6 @@ interface JwtUserPayload {
   username: string;
 }
 
-interface UserCreate {
-  username: string;
-  email: string;
-  password: string;
-}
-
 declare module 'fastify' {
   interface FastifyInstance {
     jwt: {
