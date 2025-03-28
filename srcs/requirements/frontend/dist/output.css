@@ -8,6 +8,7 @@
       "Courier New", monospace;
     --color-blue-500: oklch(0.623 0.214 259.815);
     --color-blue-700: oklch(0.488 0.243 264.376);
+    --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
     --text-6xl: 3.75rem;
@@ -245,6 +246,9 @@
   .justify-center {
     justify-content: center;
   }
+  .bg-black {
+    background-color: var(--color-black);
+  }
   .bg-\[url\(\'\/static\/images\/homescreen_background\.jpg\'\)\] {
     background-image: url('/static/images/homescreen_background.jpg');
   }
@@ -268,6 +272,9 @@
   .tracking-wide {
     --tw-tracking: var(--tracking-wide);
     letter-spacing: var(--tracking-wide);
+  }
+  .text-white {
+    color: var(--color-white);
   }
   .opacity-0 {
     opacity: 0%;
