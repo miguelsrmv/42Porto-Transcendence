@@ -12,10 +12,10 @@
     <script type="module" src="../dist/app.js"></script>
 </head>
 
-<body>
+<body id="body" class="flex flex-col h-screen overflow-hidden">
     <nav id="navigation"> </nav>
 
-    <main id="app"></main>
+    <main id="app" class="flex-1 overflow-hidden"></main>
 
     <footer id="footer" class="text-center bg-black text-white">
         <p>ft_transcendence by <a href="https: //github.com/miguelsrmv">mde-sa--</a>, <a
@@ -36,16 +36,15 @@
     </template>
 
     <template id="landing-template">
-        <div
-            class="h-screen w-screen bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')] flex flex-col justify-center items-center">
+        <div class="w-screen h-screenbg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')] flex flex-col flex-grow justify-center
+            items-center">
             <div id="title-screen" class="text-center">
-                <img id="main-title" src="./static/images/supersmash_titlescreen.png"
-                    class="w-3/4 mx-auto min-w-[1000px]">
+                <img id="main-title" src="./static/images/supersmash_titlescreen.png" class="mx-auto min-w-[1200px]">
                 <div id="sub-title"
-                    class="text-6xl font-serpentine mx-auto relative top-[-20vh] tracking-wide opacity-0 invisible">
+                    class="text-6xl font-serpentine mx-auto relative top-[-25vh] tracking-wide opacity-0 invisible">
                     Transcendence </div>
                 <button id="enter-button" data-target="home-template"
-                    class="text-7xl font-serpentine opacity-0 invisible">Enter</button>
+                    class="text-7xl font-serpentine opacity-0 invisible relative top-[-10vh]">Enter</button>
             </div>
     </template>
 
