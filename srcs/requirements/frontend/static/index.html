@@ -53,13 +53,55 @@
             <!-- Login Options -->
             <div class="grid grid-cols-2 gap-6 h-[95%]">
                 <div id="guest-button"
-                    class="w-full h-full flex items-center justify-center bg-blue-800 hover:bg-blue-700 text-white text-2xl cursor-pointer rounded transition-colors overflow-hidden">
-                    Play as Guest
+                    class="w-full h-full flex items-center justify-center hover:bg-blue-400 cursor-pointer rounded transition-colors overflow-hidden">
+                    <div
+                        class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
+                        <!-- Image that takes up entire card -->
+                        <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                            style="background-image: url('/static/images/supersmashmix.jpg');">
+                        </div>
+
+                        <!-- Polygon color overlay -->
+                        <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
+
+                        <!-- Text overlay -->
+                        <div
+                            class="absolute bottom-4 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                            Guest
+                        </div>
+                    </div>
                 </div>
+                <div id="login-button"
+                    class="w-full h-full flex items-center justify-center hover:bg-red-400 cursor-pointer rounded transition-colors overflow-hidden">
+                    <div
+                        class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
+                        <!-- Image that takes up entire card -->
+                        <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                            style="background-image: url('/static/images/pokemon_trainer.png');">
+                        </div>
+
+                        <!-- Polygon color overlay -->
+                        <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+
+                        <!-- Text overlay -->
+                        <div
+                            class="absolute bottom-4 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                            Login
+                        </div>
+                    </div>
+                </div>
+                <!--
+                <div id=" guest-button"
+                            class="w-full h-full flex items-center justify-center bg-blue-800 hover:bg-blue-700 text-white text-2xl cursor-pointer rounded transition-colors">
+                            Login
+                        </div>
+                        -->
+                <!--
                 <div id="login-button"
                     class="w-full h-full flex items-center justify-center bg-red-800 hover:bg-red-700 text-white text-2xl cursor-pointer rounded transition-colors">
                     Login
                 </div>
+                -->
             </div>
             <!-- Back Button -->
             <div class="flex justify-end pt-6">
