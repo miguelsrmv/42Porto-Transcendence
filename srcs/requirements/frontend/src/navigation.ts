@@ -126,7 +126,7 @@ function addLandingEvents(): void {
     if (modal && enterButton && backButton) {
         // Open modal when the "enter-button" is clicked
         enterButton.addEventListener("click", () => {
-            modal.style.display = "block";
+            modal.style.display = "block";  // Make visible
         });
 
         // Close modal when the "back-button" is clicked

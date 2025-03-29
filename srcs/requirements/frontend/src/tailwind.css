@@ -76,5 +76,6 @@ clip-path: polygon(0% 30%, 100% 0%, 100% 100%, 0% 100%);
 }
 
 .text-outline {
-  -webkit-text-stroke: 3px black; /* Black outline */
+  -webkit-text-stroke: 4px black; /* Black outline */
 }
+
