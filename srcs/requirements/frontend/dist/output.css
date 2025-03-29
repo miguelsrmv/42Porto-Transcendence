@@ -347,8 +347,26 @@
   .h-screen {
     height: 100vh;
   }
+  .min-h-\[300px\] {
+    min-height: 300px;
+  }
   .min-h-\[400px\] {
     min-height: 400px;
+  }
+  .min-h-\[420px\] {
+    min-height: 420px;
+  }
+  .min-h-\[450px\] {
+    min-height: 450px;
+  }
+  .min-h-\[500px\] {
+    min-height: 500px;
+  }
+  .min-h-\[750px\] {
+    min-height: 750px;
+  }
+  .min-h-\[800px\] {
+    min-height: 800px;
   }
   .w-1\/2 {
     width: calc(1/2 * 100%);
