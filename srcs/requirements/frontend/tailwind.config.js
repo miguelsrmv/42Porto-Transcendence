@@ -14,15 +14,13 @@ module.exports = {
         'xl': '4px 4px 8px rgba(0, 0, 0, 0.6)',
       },
       clipPath: {
-      'polygon': 'polygon(0 30%, 100% 00%, 100% 100%, 0% 100%)',
-
-      }
+        'polygon': 'polygon(0 30%, 100% 0%, 100% 100%, 0% 100%)',
+      },
     },
   },
   plugins: [
     require('tailwindcss-textshadow'),
     require('@tailwindcss/forms'),
-    // Add a custom plugin for clip-path
     function({ addUtilities, theme }) {
       const newUtilities = {}
       Object.entries(theme('clipPath') || {}).forEach(([name, value]) => {
@@ -31,4 +29,4 @@ module.exports = {
       addUtilities(newUtilities)
     }
   ],
-}
+};
