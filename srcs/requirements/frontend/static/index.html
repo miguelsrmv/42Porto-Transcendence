@@ -49,12 +49,12 @@
             </div>
         </div>
         <div id="login-modal"
-            class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[800px] h-full bg-black/80 rounded-lg p-6 pb-10 grid grid-rows-[auto_1fr] gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50"> 
-            <div class=" grid grid-cols-2 gap-6 h-[90%]">
+            class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50"> 
+            <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
                 <div id="guest-button"
                     class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group">
                     <div
-                        class="w-full h-[90%] overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
+                        class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
                         <!-- Image that takes up entire card -->
                         <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
                             style="background-image: url('/static/images/pokemon_trainer_female.png');">
@@ -78,7 +78,7 @@
                 <div id="login-button"
                     class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group">
                     <div
-                        class="w-full h-[90%] overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
+                        class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
                         <!-- Image that takes up entire card -->
                         <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
                             style="background-image: url('/static/images/pokemon_trainer_male.png');">
@@ -99,11 +99,12 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             <!-- Back Button -->
-            <div class="flex justify-end items-center pt-12">
-                <button id="back-button" class="text-black text-xl hover:text-gray-300">← Back</button>
+            <div class="flex justify-end items-center h-[10%]">
+            <button id="back-button" class="h-full">
+                <img src="./static/icons/backarrow.png" alt="Back" class="h-[80%] w-auto hover:opacity-80">
+            </button>
             </div>
         </div>
     </template>
