@@ -239,6 +239,9 @@
   .mx-auto {
     margin-inline: auto;
   }
+  .mt-auto {
+    margin-top: auto;
+  }
   .block {
     display: block;
   }
@@ -248,11 +251,41 @@
   .grid {
     display: grid;
   }
+  .h-1 {
+    height: calc(var(--spacing) * 1);
+  }
+  .h-1\/2 {
+    height: calc(1/2 * 100%);
+  }
+  .h-1\/4 {
+    height: calc(1/4 * 100%);
+  }
+  .h-8 {
+    height: calc(var(--spacing) * 8);
+  }
+  .h-100 {
+    height: calc(var(--spacing) * 100);
+  }
+  .h-\[10\%\] {
+    height: 10%;
+  }
   .h-\[20\%\] {
     height: 20%;
   }
+  .h-\[80\%\] {
+    height: 80%;
+  }
   .h-\[90\%\] {
     height: 90%;
+  }
+  .h-\[95\%\] {
+    height: 95%;
+  }
+  .h-\[100\%\] {
+    height: 100%;
+  }
+  .h-auto {
+    height: auto;
   }
   .h-full {
     height: 100%;
@@ -260,14 +293,26 @@
   .h-screen {
     height: 100vh;
   }
+  .min-h-\[85vh\] {
+    min-height: 85vh;
+  }
   .min-h-\[750px\] {
     min-height: 750px;
   }
   .min-h-\[800px\] {
     min-height: 800px;
   }
+  .w-1\/4 {
+    width: calc(1/4 * 100%);
+  }
   .w-2\/3 {
     width: calc(2/3 * 100%);
+  }
+  .w-8 {
+    width: calc(var(--spacing) * 8);
+  }
+  .w-auto {
+    width: auto;
   }
   .w-full {
     width: 100%;
@@ -287,6 +332,9 @@
   .flex-1 {
     flex: 1;
   }
+  .flex-grow {
+    flex-grow: 1;
+  }
   .-translate-x-1\/2 {
     --tw-translate-x: calc(calc(1/2 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -303,6 +351,15 @@
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .grid-rows-\[1ft_auto\] {
+    grid-template-rows: 1ft auto;
+  }
+  .grid-rows-\[85\%_auto\] {
+    grid-template-rows: 85% auto;
+  }
+  .grid-rows-\[95\%_auto\] {
+    grid-template-rows: 95% auto;
+  }
   .grid-rows-\[auto_1fr\] {
     grid-template-rows: auto 1fr;
   }
@@ -314,6 +371,9 @@
   }
   .items-center {
     align-items: center;
+  }
+  .items-end {
+    align-items: flex-end;
   }
   .justify-center {
     justify-content: center;
@@ -375,6 +435,9 @@
   }
   .pt-6 {
     padding-top: calc(var(--spacing) * 6);
+  }
+  .pt-10 {
+    padding-top: calc(var(--spacing) * 10);
   }
   .pt-12 {
     padding-top: calc(var(--spacing) * 12);
@@ -459,6 +522,13 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-gray-300);
+      }
+    }
+  }
+  .hover\:opacity-80 {
+    &:hover {
+      @media (hover: hover) {
+        opacity: 80%;
       }
     }
   }
