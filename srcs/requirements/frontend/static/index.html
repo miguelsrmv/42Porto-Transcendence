@@ -46,6 +46,60 @@
                 <button id="enter-button" data-target="home-template"
                     class="text-7xl font-serpentine opacity-0 invisible relative top-[-10vh]">Enter</button>
             </div>
+            <div id="login-modal" class="login-modal -mt-10%">
+                <div class="modal-content flex flex-col h-[80%]">
+                    <span class="h-[10%] w-full"> X </span>
+                    <div class="flex flex-1">
+                        <div id="menu-model"
+                            class="bg-white w-1/2 h-full p-8 relative items-center justify-center bg-red-300">
+                            <!-- Image on the top -->
+                            <img src="./static/images/mr_game_and_watch.png" alt="Image"
+                                class="w-full h-[80%] object-cover bg-blue-300">
+                            <!-- Bottom row with angled background -->
+                            <div class="w-full h-[20%] relative">
+                                <div class="w-full">
+                                    <!-- Filling the rest with bg-red-300 -->
+                                    <div class="w-full h-full bg-blue-300 absolute bottom-0"></div>
+
+                                    <!-- Polygon shape with bg-red-700 -->
+                                    <div class="w-full h-full bg-blue-700 angled-top absolute bottom-0">
+                                    </div>
+
+                                    <!-- Text -->
+                                    <div
+                                        class="w-full h-full text-white text-left font-bold font-serpentine text-7xl text-shadow-xl text-outline flex items-end absolute bottom-0 ml-4">
+                                        <br>
+                                        GUEST
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="menu-model"
+                            class="bg-white w-1/2 h-full p-8 relative items-center justify-center bg-blue-300">
+                            <!-- Image on the top -->
+                            <img src="./static/images/pokemon_trainer.png" alt="Image"
+                                class="w-full h-[80%] object-cover bg-red-300">
+                            <!-- Bottom row with angled background -->
+                            <div class="w-full h-[20%] relative">
+                                <div class="w-full">
+                                    <!-- Filling the rest with bg-red-300 -->
+                                    <div class="w-full h-full bg-red-300 absolute bottom-0"></div>
+
+                                    <!-- Polygon shape with bg-red-700 -->
+                                    <div class="w-full h-full bg-red-700 angled-top absolute bottom-0">
+                                    </div>
+
+                                    <!-- Text -->
+                                    <div
+                                        class="w-full h-full text-white text-left font-bold font-serpentine text-7xl text-shadow-xl text-outline flex items-end absolute bottom-0 ml-4">
+                                        <br>
+                                        LOGIN
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
     </template>
 
     <template id="home-template">

@@ -42,6 +42,7 @@
 }
 */
 
+/* Animations */
 #enter-button.fade-in {
   opacity: 1; /* Make it fully visible */
   visibility: visible; /* Ensure it is visible */
@@ -52,4 +53,28 @@
   opacity: 1; 
   visibility: visible; 
   transition: opacity 1s
+}
+
+/* Modal */
+.login-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 1200px;
+  height: 80%;
+  background-color: white;
+  border: 4px solid black;
+  opacity: 1;
+  z-index: 100;
+}
+
+.angled-top {
+clip-path: polygon(0% 30%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.text-outline {
+  -webkit-text-stroke: 3px black; /* Black outline */
 }

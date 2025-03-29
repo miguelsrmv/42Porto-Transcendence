@@ -118,9 +118,14 @@ function addAnimations(view: string): void {
  * This function sets up the event listener for the landing button, which navigates to the home view upon click.
  */
 function addLandingEvents(): void {
-    document.getElementById("enter-button")!.addEventListener("click", () => {
-        navigateTo("home-template")
-    });
+    const modal = document.getElementById("login-modal");
+    if (modal) {
+        document.getElementById("enter-button")!.addEventListener("click", () => {
+            console.log("Hi");
+            modal.style.display = "block";
+            //navigateTo("home-template")
+        })
+    }
 }
 
 /**
