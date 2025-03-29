@@ -106,15 +106,20 @@ function addLandingEvents() {
     const modal = document.getElementById("login-modal");
     const enterButton = document.getElementById("enter-button");
     const backButton = document.getElementById("back-button");
-    // Ensure modal and buttons are found before adding event listeners
     if (modal && enterButton && backButton) {
-        // Open modal when the "enter-button" is clicked
         enterButton.addEventListener("click", () => {
-            modal.style.display = "block"; // Make visible
+            modal.style.display = "block";
+            // Force reflow to ensure animation plays
+            void modal.offsetWidth;
+            modal.classList.remove("exiting");
+            modal.classList.add("entering");
         });
-        // Close modal when the "back-button" is clicked
         backButton.addEventListener("click", () => {
-            modal.style.display = "none";
+            modal.classList.remove("entering");
+            modal.classList.add("exiting");
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 300);
         });
     }
 }
