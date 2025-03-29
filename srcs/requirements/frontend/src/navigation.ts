@@ -121,6 +121,8 @@ function addLandingEvents(): void {
     const modal = document.getElementById("login-modal");
     const enterButton = document.getElementById("enter-button");
     const backButton = document.getElementById("back-button");
+    const guestButton = document.getElementById("guest-button");
+    const loginButton = document.getElementById("login-button");
 
     if (modal && enterButton && backButton) {
         enterButton.addEventListener("click", () => {
@@ -139,6 +141,11 @@ function addLandingEvents(): void {
             }, 300);
         });
     }
+    if (guestButton)
+        guestButton.addEventListener("click", () => navigateTo("home-template"));
+
+    if (loginButton)
+        loginButton.addEventListener("click", () => navigateTo("home-template"));
 }
 
 /**
