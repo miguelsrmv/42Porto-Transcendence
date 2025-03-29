@@ -119,12 +119,20 @@ function addAnimations(view: string): void {
  */
 function addLandingEvents(): void {
     const modal = document.getElementById("login-modal");
-    if (modal) {
-        document.getElementById("enter-button")!.addEventListener("click", () => {
-            console.log("Hi");
+    const enterButton = document.getElementById("enter-button");
+    const backButton = document.getElementById("back-button");
+
+    // Ensure modal and buttons are found before adding event listeners
+    if (modal && enterButton && backButton) {
+        // Open modal when the "enter-button" is clicked
+        enterButton.addEventListener("click", () => {
             modal.style.display = "block";
-            //navigateTo("home-template")
-        })
+        });
+
+        // Close modal when the "back-button" is clicked
+        backButton.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
     }
 }
 
