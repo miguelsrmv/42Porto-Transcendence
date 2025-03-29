@@ -53,16 +53,21 @@
             <!-- Login Options -->
             <div class="grid grid-cols-2 gap-6 h-[95%]">
                 <div id="guest-button"
-                    class="w-full h-full flex items-center justify-center hover:bg-blue-400 cursor-pointer rounded transition-colors overflow-hidden min-h-[750px]">
+                    class="w-full h-full flex items-center justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group">
                     <div
                         class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
                         <!-- Image that takes up entire card -->
                         <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                            style="background-image: url('/static/images/supersmashmix.jpg');">
+                            style="background-image: url('/static/images/pokemon_trainer_female.png');">
                         </div>
 
                         <!-- Polygon color overlay -->
                         <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
+
+                        <!-- Full-menu colour overlay -->
+                        <div
+                            class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                        </div>
 
                         <!-- Text overlay -->
                         <div
@@ -72,16 +77,21 @@
                     </div>
                 </div>
                 <div id="login-button"
-                    class="w-full h-full flex items-center justify-center hover:bg-red-400 cursor-pointer rounded transition-colors overflow-hidden min-h-[750px]">
+                    class="w-full h-full flex items-center justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group">
                     <div
                         class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
                         <!-- Image that takes up entire card -->
                         <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                            style="background-image: url('/static/images/pokemon_trainer.png');">
+                            style="background-image: url('/static/images/pokemon_trainer_male.png');">
                         </div>
 
                         <!-- Polygon color overlay -->
                         <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+
+                        <!-- Full-menu colour overlay -->
+                        <div
+                            class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                        </div>
 
                         <!-- Text overlay -->
                         <div
