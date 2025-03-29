@@ -17,7 +17,7 @@
 
     <main id="app" class="flex-1 overflow-hidden"></main>
 
-    <footer id="footer" class="text-center bg-black text-white">
+    <footer id="footer" class="w-full text-center bg-black text-white">
         <p>ft_transcendence by <a href="https: //github.com/miguelsrmv">mde-sa--</a>, <a
                 href="https://github.com/damachad">damachad</a> & <a
                 href="https://github.com/TiagoMartins14">tiaferna</a> @
@@ -36,70 +36,19 @@
     </template>
 
     <template id="landing-template">
-        <div class="w-screen h-screenbg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')] flex flex-col flex-grow justify-center
-            items-center">
-            <div id="title-screen" class="text-center">
+        <div
+            class="w-full h-full bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')] flex flex-col justify-center items-center">
+            <div id="title-screen" class="text-center relative">
                 <img id="main-title" src="./static/images/supersmash_titlescreen.png" class="mx-auto min-w-[1200px]">
                 <div id="sub-title"
-                    class="text-6xl font-serpentine mx-auto relative top-[-25vh] tracking-wide opacity-0 invisible">
+                    class="text-6xl font-serpentine absolute bottom-[+10vh] left-0 right-0 mx-auto tracking-wide opacity-0 invisible">
                     Transcendence </div>
                 <button id="enter-button" data-target="home-template"
-                    class="text-7xl font-serpentine opacity-0 invisible relative top-[-10vh]">Enter</button>
+                    class="text-7xl font-serpentine absolute bottom-[-10vh] left-1/2 transform -translate-x-1/2 opacity-0 invisible ">Enter</button>
             </div>
             <div id="login-modal" class="login-modal -mt-10%">
-                <div class="modal-content flex flex-col h-[80%]">
-                    <span class="h-[10%] w-full"> X </span>
-                    <div class="flex flex-1">
-                        <div id="menu-model"
-                            class="bg-white w-1/2 h-full p-8 relative items-center justify-center bg-red-300">
-                            <!-- Image on the top -->
-                            <img src="./static/images/mr_game_and_watch.png" alt="Image"
-                                class="w-full h-[80%] object-cover bg-blue-300">
-                            <!-- Bottom row with angled background -->
-                            <div class="w-full h-[20%] relative">
-                                <div class="w-full">
-                                    <!-- Filling the rest with bg-red-300 -->
-                                    <div class="w-full h-full bg-blue-300 absolute bottom-0"></div>
-
-                                    <!-- Polygon shape with bg-red-700 -->
-                                    <div class="w-full h-full bg-blue-700 angled-top absolute bottom-0">
-                                    </div>
-
-                                    <!-- Text -->
-                                    <div
-                                        class="w-full h-full text-white text-left font-bold font-serpentine text-7xl text-shadow-xl text-outline flex items-end absolute bottom-0 ml-4">
-                                        <br>
-                                        GUEST
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="menu-model"
-                            class="bg-white w-1/2 h-full p-8 relative items-center justify-center bg-blue-300">
-                            <!-- Image on the top -->
-                            <img src="./static/images/pokemon_trainer.png" alt="Image"
-                                class="w-full h-[80%] object-cover bg-red-300">
-                            <!-- Bottom row with angled background -->
-                            <div class="w-full h-[20%] relative">
-                                <div class="w-full">
-                                    <!-- Filling the rest with bg-red-300 -->
-                                    <div class="w-full h-full bg-red-300 absolute bottom-0"></div>
-
-                                    <!-- Polygon shape with bg-red-700 -->
-                                    <div class="w-full h-full bg-red-700 angled-top absolute bottom-0">
-                                    </div>
-
-                                    <!-- Text -->
-                                    <div
-                                        class="w-full h-full text-white text-left font-bold font-serpentine text-7xl text-shadow-xl text-outline flex items-end absolute bottom-0 ml-4">
-                                        <br>
-                                        LOGIN
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+        </div>
     </template>
 
     <template id="home-template">
