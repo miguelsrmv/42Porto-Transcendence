@@ -189,11 +189,32 @@
   .top-\[-25vh\] {
     top: -25vh;
   }
+  .right-0 {
+    right: calc(var(--spacing) * 0);
+  }
   .bottom-0 {
     bottom: calc(var(--spacing) * 0);
   }
   .bottom-9 {
     bottom: calc(var(--spacing) * 9);
+  }
+  .bottom-\[\+10vh\] {
+    bottom: +10vh;
+  }
+  .bottom-\[-10vh\] {
+    bottom: -10vh;
+  }
+  .bottom-\[-20vh\] {
+    bottom: -20vh;
+  }
+  .bottom-\[-30vh\] {
+    bottom: -30vh;
+  }
+  .left-0 {
+    left: calc(var(--spacing) * 0);
+  }
+  .left-1\/2 {
+    left: calc(1/2 * 100%);
   }
   .container {
     width: 100%;
@@ -285,6 +306,13 @@
   .flex-grow {
     flex-grow: 1;
   }
+  .-translate-x-1\/2 {
+    --tw-translate-x: calc(calc(1/2 * 100%) * -1);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .transform {
+    transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);
+  }
   .animate-bounce {
     animation: var(--animate-bounce);
   }
@@ -333,6 +361,9 @@
   }
   .bg-\[url\(\'\/static\/images\/homescreen_background\.jpg\'\)\] {
     background-image: url('/static/images/homescreen_background.jpg');
+  }
+  .bg-cover {
+    background-size: cover;
   }
   .bg-center {
     background-position: center;
@@ -446,6 +477,46 @@
 }
 .text-outline {
   -webkit-text-stroke: 3px black;
+}
+@property --tw-translate-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: rotateX(0);
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: rotateY(0);
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: rotateZ(0);
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: skewX(0);
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: skewY(0);
 }
 @property --tw-border-style {
   syntax: "*";
