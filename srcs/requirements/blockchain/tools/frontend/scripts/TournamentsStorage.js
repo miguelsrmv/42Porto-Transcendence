@@ -1,18 +1,29 @@
 // Avalanche C-Chain RPC URL
 const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
 
-// MetaMask connection
+// Detect multiple wallet providers
 async function connectWallet() {
-    if (typeof window.ethereum === "undefined") {
-        alert("MetaMask is not installed. Please install it to continue.");
+    let provider;
+
+    if (window.ethereum) {
+        // Check if multiple wallets exist
+        if (window.ethereum.providers?.length) {
+            provider = window.ethereum.providers.find((prov) => prov.isMetaMask) || window.ethereum.providers[0];
+        } else {
+            provider = window.ethereum;
+        }
+    }
+
+    if (!provider) {
+        alert("No Ethereum wallet detected. Please install MetaMask or another wallet.");
         return null;
     }
 
     try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        return new ethers.providers.Web3Provider(window.ethereum);
+        await provider.request({ method: "eth_requestAccounts" });
+        return new ethers.providers.Web3Provider(provider);
     } catch (error) {
-        console.error("User rejected MetaMask connection:", error);
+        console.error("User rejected wallet connection:", error);
         return null;
     }
 }
