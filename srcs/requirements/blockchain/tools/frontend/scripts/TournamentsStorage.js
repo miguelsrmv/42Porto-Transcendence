@@ -29,7 +29,7 @@ async function connectWallet() {
 }
 
 // Contract details
-const contractAddress = "0xAD9B6d35f55b35627c5E00eF15FEb418b87B0ba2"; // Replace with your deployed contract address
+const contractAddress = "0xaB04F0D5bF79c36D2448Bc9C629398532Be43615"; // Replace with your deployed contract address
 const contractABI = [
     {
         "inputs": [
