@@ -78,11 +78,12 @@ contract TournamentsStorage {
         string memory _participantName
     ) public {
         uint8 tournamentLength = 0;
-        uint8 i = 0;
 
         while (
             keccak256(
-                abi.encodePacked(tournaments[_tournamentId].participants[i])
+                abi.encodePacked(
+                    tournaments[_tournamentId].participants[tournamentLength]
+                )
             ) != keccak256(abi.encodePacked(""))
         ) tournamentLength++;
 
