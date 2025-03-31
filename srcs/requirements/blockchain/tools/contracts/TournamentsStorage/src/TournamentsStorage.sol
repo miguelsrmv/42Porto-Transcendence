@@ -9,26 +9,12 @@ contract TournamentsStorage {
         uint32 date;
         uint16 time;
         uint8 maxParticipants;
-        string[] participants;
-        string[] matchedParticipants;
-        uint8[] scores;
+        string[MAX_PARTICIPANTS] participants;
+        string[(MAX_PARTICIPANTS - 1) * 2] matchedParticipants;
+        uint8[(MAX_PARTICIPANTS - 1) * 2] scores;
     }
 
     Tournament[] public tournaments;
-
-    function createTournament(uint32 _date, uint16 _time) public {
-        tournaments.push(
-            Tournament({
-                id: tournaments.length,
-                date: _date,
-                time: _time,
-                maxParticipants: MAX_PARTICIPANTS,
-                participants: new string[](0),
-                matchedParticipants: new string[](0),
-                scores: new uint8[](0)
-            })
-        );
-    }
 
     function getTournaments() public view returns (Tournament[] memory) {
         return tournaments;
@@ -42,39 +28,91 @@ contract TournamentsStorage {
 
     function getParticipants(
         uint256 _id
-    ) public view returns (string[] memory) {
+    ) public view returns (string[MAX_PARTICIPANTS] memory) {
         return tournaments[_id].participants;
     }
 
     function getMatchedParticipants(
         uint256 _id
-    ) public view returns (string[] memory) {
+    ) public view returns (string[(MAX_PARTICIPANTS - 1) * 2] memory) {
         return tournaments[_id].matchedParticipants;
     }
 
-    function getScores(uint256 _id) public view returns (uint8[] memory) {
+    function getScores(
+        uint256 _id
+    ) public view returns (uint8[(MAX_PARTICIPANTS - 1) * 2] memory) {
         return tournaments[_id].scores;
     }
 
+    function createTournament(uint32 _date, uint16 _time) public {
+        string[MAX_PARTICIPANTS] memory emptyParticipants;
+
+        for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
+            emptyParticipants[i] = "";
+        }
+
+        string[(MAX_PARTICIPANTS - 1) * 2] memory emptyMatchedParticipants;
+
+        for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
+            emptyMatchedParticipants[i] = "";
+        }
+
+        uint8[(MAX_PARTICIPANTS - 1) * 2] memory emptyScores;
+
+        for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
+            emptyScores[i] = 0;
+        }
+
+        tournaments.push(
+            Tournament({
+                id: tournaments.length,
+                date: _date,
+                time: _time,
+                maxParticipants: MAX_PARTICIPANTS,
+                participants: emptyParticipants,
+                matchedParticipants: emptyMatchedParticipants,
+                scores: emptyScores
+            })
+        );
+    }
+
     function joinTournament(
-        uint256 _id,
+        uint256 _tournamentId,
         string memory _participantName
     ) public {
         require(
-            tournaments[_id].participants.length < MAX_PARTICIPANTS,
+            tournaments[_tournamentId].participants.length < MAX_PARTICIPANTS,
             "Tournament is full"
         );
 
-        tournaments[_id].participants.push(_participantName);
-        tournaments[_id].matchedParticipants.push(_participantName);
+        tournaments[_tournamentId].participants[
+            tournaments[_tournamentId].participants.length
+        ] = _participantName;
+        tournaments[_tournamentId].matchedParticipants[
+            tournaments[_tournamentId].matchedParticipants.length
+        ] = _participantName;
+    }
+
+    function matchParticipants(
+        uint8 _tournamentId,
+        string memory _participantNameOne,
+        string memory _participantNameTwo
+    ) public {
+        tournaments[_tournamentId].matchedParticipants.push(
+            _participantNameOne
+        );
+        tournaments[_tournamentId].matchedParticipants.push(
+            _participantNameTwo
+        );
     }
 
     function saveScore(
-        uint8 matchId,
-        uint8 scorePlayerOne,
-        uint8 scorePlayerTwo
+        uint8 _matchIndex,
+        uint8 _tournamentId,
+        uint8 _participantScoreOne,
+        uint8 _participantScoreTwo
     ) public {
-        tournaments[matchId].scores.push(scorePlayerOne);
-        tournaments[matchId].scores.push(scorePlayerTwo);
+        tournaments[_tournamentId].scores[_matchIndex] = _participantScoreOne;
+        tournaments[_tournamentId].scores[_matchIndex] = _participantScoreTwo;
     }
 }
