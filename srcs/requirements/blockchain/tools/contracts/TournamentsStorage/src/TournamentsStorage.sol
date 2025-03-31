@@ -137,9 +137,9 @@ contract TournamentsStorage {
     function saveScore(
         uint8 _tournamentId,
         string memory _playerOneName,
-        uint8 _participantScoreOne,
+        uint8 _playerOneScore,
         string memory _playerTwoName,
-        uint8 _participantScoreTwo
+        uint8 _playerTwoScore
     ) public {
         uint8 playerOneIndex = findLastIndexOfPlayer(
             _tournamentId,
@@ -151,11 +151,7 @@ contract TournamentsStorage {
             _playerTwoName
         );
 
-        tournaments[_tournamentId].scores[
-            playerOneIndex
-        ] = _participantScoreOne;
-        tournaments[_tournamentId].scores[
-            playerTwoIndex
-        ] = _participantScoreTwo;
+        tournaments[_tournamentId].scores[playerOneIndex] = _playerOneScore;
+        tournaments[_tournamentId].scores[playerTwoIndex] = _playerTwoScore;
     }
 }
