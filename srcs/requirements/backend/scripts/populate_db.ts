@@ -24,7 +24,7 @@ async function createFriends(profiles: Profile[]) {
   for (let index = 0; index < profiles.length; index++) {
     const profile = profiles[index];
     const friendId = profiles[(index + 1) % profiles.length].id;
-    await prisma.friend.create({
+    await prisma.friendship.create({
       data: {
         profileId: profile.id,
         friendId: friendId,

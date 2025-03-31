@@ -3,7 +3,7 @@ import { userRoutes } from './routes/user.routes';
 import jwtPlugin from './middlewares/auth';
 import dotenv from 'dotenv';
 import { profileRoutes } from './routes/profile.routes';
-import { friendRoutes } from './routes/friend.routes';
+import { friendRoutes } from './routes/friendship.routes';
 
 dotenv.config();
 
