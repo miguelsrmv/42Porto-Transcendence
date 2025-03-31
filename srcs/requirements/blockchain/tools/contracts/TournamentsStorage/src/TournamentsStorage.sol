@@ -46,19 +46,16 @@ contract TournamentsStorage {
 
     function createTournament(uint32 _date, uint16 _time) public {
         string[MAX_PARTICIPANTS] memory emptyParticipants;
-
         for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
             emptyParticipants[i] = "";
         }
 
         string[(MAX_PARTICIPANTS - 1) * 2] memory emptyMatchedParticipants;
-
         for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
             emptyMatchedParticipants[i] = "";
         }
 
         uint8[(MAX_PARTICIPANTS - 1) * 2] memory emptyScores;
-
         for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
             emptyScores[i] = 0;
         }
@@ -93,12 +90,31 @@ contract TournamentsStorage {
         ] = _participantName;
     }
 
-    function addWinner(
+    function findLastIndexOfPlayer(
         uint8 _tournamentId,
-        uint8 _winnerIndex,
-        string memory _winnerName
-    ) public {
-        uint8 i = _winnerIndex;
+        string memory _playerName
+    ) public view returns (uint8) {
+        uint8 lastIndex = 0;
+
+        for (
+            uint8 i = 0;
+            i < tournaments[_tournamentId].participants.length;
+            i++
+        ) {
+            if (
+                keccak256(
+                    abi.encodePacked(tournaments[_tournamentId].participants[i])
+                ) == keccak256(abi.encodePacked(_playerName))
+            ) {
+                lastIndex = i;
+            }
+        }
+
+        return lastIndex;
+    }
+
+    function addWinner(uint8 _tournamentId, string memory _winnerName) public {
+        uint8 i = findLastIndexOfPlayer(_tournamentId, _winnerName);
 
         if (i % 2 == 1) {
             i += 1;
@@ -113,16 +129,26 @@ contract TournamentsStorage {
 
     function saveScore(
         uint8 _tournamentId,
-        uint8 _playerOneIndex,
+        string memory _playerOneName,
         uint8 _participantScoreOne,
-        uint8 _playerTwoIndex,
+        string memory _playerTwoName,
         uint8 _participantScoreTwo
     ) public {
+        uint8 playerOneIndex = findLastIndexOfPlayer(
+            _tournamentId,
+            _playerOneName
+        );
+
+        uint8 playerTwoIndex = findLastIndexOfPlayer(
+            _tournamentId,
+            _playerTwoName
+        );
+
         tournaments[_tournamentId].scores[
-            _playerOneIndex
+            playerOneIndex
         ] = _participantScoreOne;
         tournaments[_tournamentId].scores[
-            _playerTwoIndex
+            playerTwoIndex
         ] = _participantScoreTwo;
     }
 }
