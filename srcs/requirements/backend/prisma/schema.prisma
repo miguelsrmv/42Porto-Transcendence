@@ -37,11 +37,19 @@ model Profile {
 }
 
 model Friend {
-  id        String   @id @default(uuid())
-  profile   Profile  @relation("ProfileToFriends", fields: [profileId], references: [id], onDelete: Cascade)
+  id        String       @id @default(uuid())
+  profile   Profile      @relation("ProfileToFriends", fields: [profileId], references: [id], onDelete: Cascade)
   profileId String
-  friendOf  Profile  @relation("FriendsToProfile", fields: [friendId], references: [id], onDelete: Cascade)
+  friendOf  Profile      @relation("FriendsToProfile", fields: [friendId], references: [id], onDelete: Cascade)
   friendId  String
-  createdAt DateTime @default(now())
-  status    String   @default("pending") // pending, accepted, blocked
+  createdAt DateTime     @default(now())
+  status    FriendStatus @default(PENDING)
+
+  @@unique([profileId, friendId])
+}
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
 }
