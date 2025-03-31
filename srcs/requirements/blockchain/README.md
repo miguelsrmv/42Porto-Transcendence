@@ -10,4 +10,4 @@ Currency Symbol: AVAX
 Explorer: https://testnet.snowtrace.io/
 Click Save
 
-Run npx http-server -p 8080 to localy test the contract
+Run npx http-server -p 8080 (inside the html folder) to localy test the contract
