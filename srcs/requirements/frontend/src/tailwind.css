@@ -76,6 +76,7 @@
   display: block;
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
+}
 
   /* Add this to your CSS */
 @keyframes modalEnter {
@@ -106,7 +107,7 @@
 }
 
 .login-modal.exiting {
-  animation: modalExit 0.3s ease-out forwards;
+  animation: modalExit 0.3s ease-out forwards; }
 
 .angled-top {
 clip-path: polygon(0% 30%, 100% 0%, 100% 100%, 0% 100%);

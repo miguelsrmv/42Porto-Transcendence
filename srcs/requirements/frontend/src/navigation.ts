@@ -81,8 +81,8 @@ function addEvents(view: string): void {
         case ("landing-template"):
             addLandingEvents();
             break;
-        case ("home-template"):
-            addHomeEvents();
+        case ("main-menu-template"):
+            addMainMenuEvents();
             break;
         case ("local-template"):
             addLocalEvents();
@@ -142,10 +142,10 @@ function addLandingEvents(): void {
         });
     }
     if (guestButton)
-        guestButton.addEventListener("click", () => navigateTo("home-template"));
+        guestButton.addEventListener("click", () => navigateTo("main-menu-template"));
 
     if (loginButton)
-        loginButton.addEventListener("click", () => navigateTo("home-template"));
+        loginButton.addEventListener("click", () => navigateTo("main-menu-template"));
 }
 
 /**
@@ -154,7 +154,7 @@ function addLandingEvents(): void {
 * This function sets up the navigation bar for the home view.
 */
 // TODO: Change "addNavBar" for when login is done??
-function addHomeEvents(): void {
+function addMainMenuEvents(): void {
     addNavBar();
 }
 

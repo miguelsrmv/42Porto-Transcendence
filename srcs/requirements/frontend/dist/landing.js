@@ -21,5 +21,4 @@ export function addLandingAnimations() {
         enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.add("animate-bounce");
     });
 }
-//TODO: Uncomment awaits so that it looks good
 //# sourceMappingURL=landing.js.map

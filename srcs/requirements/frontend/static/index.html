@@ -27,7 +27,7 @@
 
     <template id="nav-bar">
         <div class="flex-row justify-center">
-            <button class="nav-button" id="home-nav" data-target="home-template">Home</button>
+            <button class="nav-button" id="main-menu-nav" data-target="main-menu-template">Home</button>
             <button class="nav-button" id="local-nav" data-target="local-template">Local</button>
             <button class="nav-button" id="multiplayer-nav" data-target="multiplayer-template">Multiplayer</button>
             <button class="nav-button" id="tournament-nav" data-target="tournament-template">Tournament</button>
@@ -44,12 +44,12 @@
                 <div id="sub-title"
                     class="text-6xl font-serpentine absolute bottom-[+10vh] left-0 right-0 mx-auto tracking-wide opacity-0 invisible">
                     Transcendence </div>
-                <button id="enter-button" data-target="home-template"
+                <button id="enter-button" data-target="main-menu-template"
                     class="text-7xl font-serpentine absolute bottom-[-10vh] left-1/2 transform -translate-x-1/2 opacity-0 invisible ">Enter</button>
             </div>
         </div>
         <div id="login-modal"
-            class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50"> 
+            class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50">
             <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
                 <div id="guest-button"
                     class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group">
@@ -102,15 +102,15 @@
             </div>
             <!-- Back Button -->
             <div class="flex justify-end items-center h-[10%]">
-            <button id="back-button" class="h-full">
-                <img src="./static/icons/backarrow.png" alt="Back" class="h-[80%] w-auto hover:opacity-80">
-            </button>
+                <button id="back-button" class="h-full">
+                    <img src="./static/icons/backarrow.png" alt="Back" class="h-[80%] w-auto hover:opacity-80">
+                </button>
             </div>
         </div>
     </template>
 
-    <template id="home-template">
-        <div> I'm on home! </div>
+    <template id="main-menu-template">
+        <div> I'm on main-menu! </div>
     </template>
 
     <template id="local-template">
