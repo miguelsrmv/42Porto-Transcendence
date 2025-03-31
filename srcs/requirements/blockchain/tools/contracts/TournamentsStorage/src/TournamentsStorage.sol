@@ -105,7 +105,7 @@ contract TournamentsStorage {
 
         for (
             uint8 i = 0;
-            i < tournaments[_tournamentId].participants.length;
+            i < tournaments[_tournamentId].matchedParticipants.length;
             i++
         ) {
             if (
