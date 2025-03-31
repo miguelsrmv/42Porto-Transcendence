@@ -9,6 +9,8 @@
 
 let currentView = "";
 
+import { addLandingAnimations } from "./landing.js"
+
 /**
  * @brief Navigates to a specified view.
  * 
@@ -42,6 +44,9 @@ export function navigateTo(view: string, update_history: boolean = true): void {
 
         // Update events on page
         addEvents(view);
+
+        // Trigger animations
+        addAnimations(view);
     }
 }
 
@@ -59,7 +64,7 @@ function renderView(hostElement: HTMLElement, templateElement: HTMLTemplateEleme
     hostElement.replaceChildren(clone);
 
     const navigationElement = document.getElementById("navigation");
-    if (currentView === "login-template" && navigationElement) {
+    if (currentView === "landing-template" && navigationElement) {
         navigationElement.innerText = "";
     }
 }
@@ -73,8 +78,8 @@ function renderView(hostElement: HTMLElement, templateElement: HTMLTemplateEleme
  */
 function addEvents(view: string): void {
     switch (view) {
-        case ("login-template"):
-            addLoginEvents();
+        case ("landing-template"):
+            addLandingEvents();
             break;
         case ("home-template"):
             addHomeEvents();
@@ -95,14 +100,52 @@ function addEvents(view: string): void {
 }
 
 /**
- * @brief Adds event listeners for the login view.
+ * @brief Adds animations for a specified view.
  * 
- * This function sets up the event listener for the login button, which navigates to the home view upon click.
+ * This function sets up animations. 
  */
-function addLoginEvents(): void {
-    document.getElementById("login-button")!.addEventListener("click", () => {
-        navigateTo("home-template")
-    });
+function addAnimations(view: string): void {
+    switch (view) {
+        case ("landing-template"):
+            addLandingAnimations();
+            break;
+    }
+}
+
+/**
+ * @brief Adds event listeners for the landing view.
+ * 
+ * This function sets up the event listener for the landing button, which navigates to the home view upon click.
+ */
+function addLandingEvents(): void {
+    const modal = document.getElementById("login-modal");
+    const enterButton = document.getElementById("enter-button");
+    const backButton = document.getElementById("back-button");
+    const guestButton = document.getElementById("guest-button");
+    const loginButton = document.getElementById("login-button");
+
+    if (modal && enterButton && backButton) {
+        enterButton.addEventListener("click", () => {
+            modal.style.display = "block";
+            // Force reflow to ensure animation plays
+            void modal.offsetWidth;
+            modal.classList.remove("exiting");
+            modal.classList.add("entering");
+        });
+
+        backButton.addEventListener("click", () => {
+            modal.classList.remove("entering");
+            modal.classList.add("exiting");
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 300);
+        });
+    }
+    if (guestButton)
+        guestButton.addEventListener("click", () => navigateTo("home-template"));
+
+    if (loginButton)
+        loginButton.addEventListener("click", () => navigateTo("home-template"));
 }
 
 /**
