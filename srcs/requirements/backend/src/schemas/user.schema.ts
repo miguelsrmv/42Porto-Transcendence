@@ -1,3 +1,5 @@
+import { getByIdSchema } from './global.schema';
+
 export const createUserSchema = {
   body: {
     type: 'object',
@@ -11,24 +13,8 @@ export const createUserSchema = {
   },
 };
 
-export const getUserByIdSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
-  },
-};
-
 export const updateUserSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
-  },
+  params: getByIdSchema.params,
   body: {
     type: 'object',
     required: ['data'],
@@ -46,16 +32,6 @@ export const updateUserSchema = {
   },
 };
 
-export const deleteUserSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
-  },
-};
-
 export const loginSchema = {
   body: {
     type: 'object',
@@ -64,5 +40,6 @@ export const loginSchema = {
       email: { type: 'string', format: 'email' },
       password: { type: 'string', minLength: 6 },
     },
+    additionalProperties: false,
   },
 };

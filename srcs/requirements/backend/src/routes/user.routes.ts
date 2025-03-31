@@ -7,20 +7,15 @@ import {
   deleteUser,
   login,
 } from '../controllers/user.controller';
-import {
-  createUserSchema,
-  deleteUserSchema,
-  getUserByIdSchema,
-  loginSchema,
-  updateUserSchema,
-} from '../schemas/user.schema';
+import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
+import { getByIdSchema } from '../schemas/global.schema';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllUsers);
-  fastify.get('/:id', { schema: getUserByIdSchema }, getUserById);
+  fastify.get('/:id', { schema: getByIdSchema }, getUserById);
   fastify.post('/create', { schema: createUserSchema }, createUser);
   fastify.put('/:id', { schema: updateUserSchema }, updateUser);
-  fastify.delete('/:id', { schema: deleteUserSchema }, deleteUser);
+  fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
   fastify.post('/login', { schema: loginSchema }, login);
 }

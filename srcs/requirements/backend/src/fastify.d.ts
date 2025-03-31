@@ -1,6 +1,12 @@
 import '@fastify/jwt';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
+declare global {
+  interface IParams {
+    id: string;
+  }
+}
+
 interface JwtUserPayload {
   email: string;
   username: string;
