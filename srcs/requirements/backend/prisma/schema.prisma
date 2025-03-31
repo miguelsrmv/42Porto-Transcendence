@@ -23,13 +23,25 @@ model User {
 // TODO: Manage user online status somewhere else
 // TODO: Add default avatar picture URL
 model Profile {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String?
   bio       String?
   avatarUrl String?
-  expPoints Int     @default(0)
-  wins      Int     @default(0)
-  losses    Int     @default(0)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String  @unique
+  expPoints Int      @default(0)
+  wins      Int      @default(0)
+  losses    Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+  friends   Friend[] @relation("ProfileToFriends")
+  friendOf  Friend[] @relation("FriendsToProfile")
+}
+
+model Friend {
+  id        String   @id @default(uuid())
+  profile   Profile  @relation("ProfileToFriends", fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+  friendOf  Profile  @relation("FriendsToProfile", fields: [friendId], references: [id], onDelete: Cascade)
+  friendId  String
+  createdAt DateTime @default(now())
+  status    String   @default("pending") // pending, accepted, blocked
 }
