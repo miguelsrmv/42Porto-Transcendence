@@ -36,15 +36,27 @@
     <input type="number" id="tournamentId" placeholder="Tournament ID">
     <button onclick="fetchTournament()">Get Tournament</button>
     <button onclick="fetchParticipants()">Get Participants</button>
+    <button onclick="fetchMatchedParticipants()">Get Matched Participants</button>
     <button onclick="fetchScores()">Get Scores</button>
 
     <input type="text" id="date" placeholder="Date (DDMMYYYY)">
     <input type="text" id="time" placeholder="Time (HHMM)">
     <button onclick="createNewTournament()">Create Tournament</button>
 
-    <input type="text" id="matchID" placeholder="Match ID">
+    <input type="text" id="tournamentId" placeholder="Tournament ID">
     <input type="text" id="participantName" placeholder="Participant Name">
     <button onclick="joinTournamentAction()">Join Tournament</button>
+
+    <input type="text" id="tournamentId" placeholder="Tournament ID">
+    <input type="text" id="winnerName" placeholder="Winner Name">
+    <button onclick="addWinnerAction()">Add Winner</button>
+
+    <input type="text" id="tournamentId" placeholder="Tournament ID">
+    <input type="text" id="playerOneName" placeholder="Player One Name">
+    <input type="text" id="playerOneScore" placeholder="Player One Score">
+    <input type="text" id="playerTwoName" placeholder="Player Two Name">
+    <input type="text" id="playerTwoScore" placeholder="Player Two Score">
+    <button onclick="saveScoreAction()">saveScore</button>
 
     <script>
         async function fetchTournament() {
@@ -67,6 +79,19 @@
                     await getParticipants(parseInt(id));
                 } catch (error) {
                     console.error("Error fetching participants:", error);
+                }
+            } else {
+                alert("Please enter a valid Tournament ID");
+            }
+        }
+
+        async function fetchMatchedParticipants() {
+            const id = document.getElementById('tournamentId').value;
+            if (id) {
+                try {
+                    await getMatchedParticipants(parseInt(id));
+                } catch (error) {
+                    console.error("Error fetching matched participants:", error);
                 }
             } else {
                 alert("Please enter a valid Tournament ID");
@@ -111,6 +136,37 @@
                 }
             } else {
                 alert("Please enter a valid Tournament ID and Participant Name");
+            }
+        }
+
+        async function addWinnerAction() {
+            const id = document.getElementById('tournamentId').value;
+            const name = document.getElementById('winnerName').value;
+            if (id && name) {
+                try {
+                    await addWinner(parseInt(id), name);
+                } catch (error) {
+                    console.error("Error adding winner:", error);
+                }
+            } else {
+                alert("Please enter a valid Tournament ID and Participant Name");
+            }
+        }
+
+        async function saveScoreAction() {
+            const id = document.getElementById('tournamentId').value;
+            const playerOneName = document.getElementById('playerOneName').value;
+            const playerOneScore = document.getElementById('playerOneScore').value;
+            const playerTwoName = document.getElementById('playerTwoName').value;
+            const playerTwoScore = document.getElementById('playerTwoScore').value;
+            if (id && playerOneName && playerOneScore && playerTwoName && playerTwoScore) {
+                try {
+                    await saveScore(parseInt(id), playerOneName, parseInt(playerOneScore), playerTwoName, parseInt(playerTwoScore));
+                } catch (error) {
+                    console.error("Error saving score:", error);
+                }
+            } else {
+                alert("Please enter valid Tournament ID and Player details");
             }
         }
     </script>
