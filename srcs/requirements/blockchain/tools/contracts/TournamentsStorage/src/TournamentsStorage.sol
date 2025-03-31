@@ -93,26 +93,36 @@ contract TournamentsStorage {
         ] = _participantName;
     }
 
-    function matchParticipants(
+    function addWinner(
         uint8 _tournamentId,
-        string memory _participantNameOne,
-        string memory _participantNameTwo
+        uint8 _winnerIndex,
+        string memory _winnerName
     ) public {
-        tournaments[_tournamentId].matchedParticipants.push(
-            _participantNameOne
-        );
-        tournaments[_tournamentId].matchedParticipants.push(
-            _participantNameTwo
-        );
+        uint8 i = _winnerIndex;
+
+        if (i % 2 == 1) {
+            i += 1;
+        }
+
+        i /= 2;
+
+        tournaments[_tournamentId].matchedParticipants[
+            i + MAX_PARTICIPANTS
+        ] = _winnerName;
     }
 
     function saveScore(
-        uint8 _matchIndex,
         uint8 _tournamentId,
+        uint8 _playerOneIndex,
         uint8 _participantScoreOne,
+        uint8 _playerTwoIndex,
         uint8 _participantScoreTwo
     ) public {
-        tournaments[_tournamentId].scores[_matchIndex] = _participantScoreOne;
-        tournaments[_tournamentId].scores[_matchIndex] = _participantScoreTwo;
+        tournaments[_tournamentId].scores[
+            _playerOneIndex
+        ] = _participantScoreOne;
+        tournaments[_tournamentId].scores[
+            _playerTwoIndex
+        ] = _participantScoreTwo;
     }
 }
