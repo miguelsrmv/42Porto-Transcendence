@@ -59,3 +59,17 @@ content-type: application/json
 		"bio": "I am the greatest!"
 	}
 }
+
+### FRIEND
+
+### Get all friends of a profile
+GET http://localhost:3000/profiles/<id>/friends HTTP/1.1
+
+### Add a friend to a profile
+POST http://localhost:3000/friends/ HTTP/1.1
+content-type: application/json
+
+{
+	"profileId": "f6d06da7-446e-4e1b-86a2-eb76db76279f",
+	"friendId": "303a7e81-d2d2-471e-9571-6c25d3b5b7f6"
+}
