@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { createFriendSchema, updateFriendSchema } from '../schemas/friend.schema';
-import { createFriend, deleteFriend, updateFriend } from '../controllers/friend.controller';
+import { createFriendSchema, updateFriendSchema } from '../schemas/friendship.schema';
+import { createFriend, deleteFriend, updateFriend } from '../controllers/friendship.controller';
 import { getByIdSchema } from '../schemas/global.schema';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route

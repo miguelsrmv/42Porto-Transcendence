@@ -1,21 +1,21 @@
 # Endpoints
 
-| Method   | Route                    | URL parameters  |             Body             | Description                              |
-| -------- | ------------------------ | :-------------: | :--------------------------: | ---------------------------------------- |
-| `GET`    | `/`                      |                 |                              | Base route for test                      |
-| `GET`    | `/users`                 |                 |                              | Get all users                            |
-| `GET`    | `/users/:id`             |  `id` user id   |                              | Get a specific user                      |
-| `POST`   | `/users/create`          |                 | username, email and password | Create a new user                        |
-| `PUT`    | `/users/:id`             |  `id` user id   |        data to update        | Update data on a specific user           |
-| `DELETE` | `/users/:id`             |  `id` user id   |                              | Delete a user                            |
-| `POST`   | `/users/login`           |                 |      email and password      | Get JWT (if user is valid)               |
-| `GET`    | `/profiles`              |                 |                              | Get all profiles                         |
-| `GET`    | `/profiles/:id`          | `id` profile id |                              | Get a specific profile                   |
-| `PUT`    | `/profiles/:id`          | `id` profile id |        data to update        | Update data on a specific profile        |
-| `GET`    | `/profiles//:id/friends` | `id` profile id |                              | Get all friends of that profile          |
-| `POST`   | `/friends`               |                 |    profileId and friendId    | Create a friendship between two profiles |
-| `PUT`    | `/friends/:id`           | `id` friend id  |            status            | Update friendship status                 |
-| `DELETE` | `/friends/:id`           | `id` friend id  |                              | Delete a friendship                      |
+| Method   | Route                    |   URL parameters   |             Body             | Description                              |
+| -------- | ------------------------ | :----------------: | :--------------------------: | ---------------------------------------- |
+| `GET`    | `/`                      |                    |                              | Base route for test                      |
+| `GET`    | `/users`                 |                    |                              | Get all users                            |
+| `GET`    | `/users/:id`             |    `id` user id    |                              | Get a specific user                      |
+| `POST`   | `/users/create`          |                    | username, email and password | Create a new user                        |
+| `PUT`    | `/users/:id`             |    `id` user id    |        data to update        | Update data on a specific user           |
+| `DELETE` | `/users/:id`             |    `id` user id    |                              | Delete a user                            |
+| `POST`   | `/users/login`           |                    |      email and password      | Get JWT (if user is valid)               |
+| `GET`    | `/profiles`              |                    |                              | Get all profiles                         |
+| `GET`    | `/profiles/:id`          |  `id` profile id   |                              | Get a specific profile                   |
+| `PUT`    | `/profiles/:id`          |  `id` profile id   |        data to update        | Update data on a specific profile        |
+| `GET`    | `/profiles//:id/friends` |  `id` profile id   |                              | Get all friends of that profile          |
+| `POST`   | `/friends`               |                    |    profileId and friendId    | Create a friendship between two profiles |
+| `PUT`    | `/friends/:id`           | `id` friendship id |            status            | Update friendship status                 |
+| `DELETE` | `/friends/:id`           | `id` friendship id |                              | Delete a friendship                      |
 
 ## Base
 
@@ -94,9 +94,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2V
 }
 ```
 
-## Friends
+## Friendships
 
-- To get all friends associated with a profile (GET), the endpoint is `http://backend:3000/api/profiles/:id/friends`
+- To get all friendships associated with a profile (GET), the endpoint is `http://backend:3000/api/profiles/:id/friends`
 - To create a new friendship between two profiles (POST), the endpoint is `http://backend:3000/api/friends` and the schema for the JSON data is
 
 ```json
@@ -105,6 +105,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2V
   "profileId": "<id>"
 }
 ```
+
 - To delete a friendship (DELETE), the endpoint is `http://backend:3000/api/friends/:id`
 - To update a friendship status (PUT), the endpoint is `http://backend:3000/api/friends/:id`
 

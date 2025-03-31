@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
-import { FriendStatus } from '@prisma/client';
+import { FriendshipStatus } from '@prisma/client';
 
 interface FriendCreate {
   profileId: string;
@@ -13,7 +13,7 @@ export async function getAllFriends(
   reply: FastifyReply,
 ) {
   try {
-    const friends = await prisma.friend.findMany({
+    const friends = await prisma.friendship.findMany({
       where: {
         OR: [{ profileId: request.params.id }, { friendId: request.params.id }],
       },
@@ -32,28 +32,28 @@ export async function createFriend(
     const { profileId } = request.body;
     const { friendId } = request.body;
 
-    const friend = await prisma.friend.create({
+    const friendship = await prisma.friendship.create({
       data: {
         profileId: profileId,
         friendId,
       },
     });
-    reply.send(friend);
+    reply.send(friendship);
   } catch (error) {
     handleError(error, reply);
   }
 }
 
 export async function updateFriend(
-  request: FastifyRequest<{ Params: IParams; Body: { status: FriendStatus } }>,
+  request: FastifyRequest<{ Params: IParams; Body: { status: FriendshipStatus } }>,
   reply: FastifyReply,
 ) {
   try {
-    // Friend id
+    // Friendship id
     const { id } = request.params;
     const { status } = request.body;
 
-    const friend = await prisma.friend.update({
+    const friendship = await prisma.friendship.update({
       where: {
         id: id,
       },
@@ -61,7 +61,7 @@ export async function updateFriend(
         status: status,
       },
     });
-    reply.send(friend);
+    reply.send(friendship);
   } catch (error) {
     handleError(error, reply);
   }
@@ -74,12 +74,12 @@ export async function deleteFriend(
   try {
     const { id } = request.params;
 
-    const friend = await prisma.friend.delete({
+    const friendship = await prisma.friendship.delete({
       where: {
         id: id,
       },
     });
-    reply.send(friend);
+    reply.send(friendship);
   } catch (error) {
     handleError(error, reply);
   }
