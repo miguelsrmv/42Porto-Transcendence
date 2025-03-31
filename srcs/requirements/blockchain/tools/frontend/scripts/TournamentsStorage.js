@@ -29,8 +29,26 @@ async function connectWallet() {
 }
 
 // Contract details
-const contractAddress = "0xF0C67A909AF380C1248560be49c1ad9ccf5853d7"; // Replace with your deployed contract address
+const contractAddress = "0xAD9B6d35f55b35627c5E00eF15FEb418b87B0ba2"; // Replace with your deployed contract address
 const contractABI = [
+    {
+        "inputs": [
+            {
+                "internalType": "uint8",
+                "name": "_tournamentId",
+                "type": "uint8"
+            },
+            {
+                "internalType": "string",
+                "name": "_winnerName",
+                "type": "string"
+            }
+        ],
+        "name": "addWinner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
     {
         "inputs": [
             {
@@ -52,6 +70,30 @@ const contractABI = [
     {
         "inputs": [
             {
+                "internalType": "uint8",
+                "name": "_tournamentId",
+                "type": "uint8"
+            },
+            {
+                "internalType": "string",
+                "name": "_playerName",
+                "type": "string"
+            }
+        ],
+        "name": "findLastIndexOfPlayer",
+        "outputs": [
+            {
+                "internalType": "uint8",
+                "name": "",
+                "type": "uint8"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint256",
                 "name": "_id",
                 "type": "uint256"
@@ -60,9 +102,9 @@ const contractABI = [
         "name": "getMatchedParticipants",
         "outputs": [
             {
-                "internalType": "string[]",
+                "internalType": "string[6]",
                 "name": "",
-                "type": "string[]"
+                "type": "string[6]"
             }
         ],
         "stateMutability": "view",
@@ -79,9 +121,9 @@ const contractABI = [
         "name": "getParticipants",
         "outputs": [
             {
-                "internalType": "string[]",
+                "internalType": "string[4]",
                 "name": "",
-                "type": "string[]"
+                "type": "string[4]"
             }
         ],
         "stateMutability": "view",
@@ -98,9 +140,9 @@ const contractABI = [
         "name": "getScores",
         "outputs": [
             {
-                "internalType": "uint8[]",
+                "internalType": "uint8[6]",
                 "name": "",
-                "type": "uint8[]"
+                "type": "uint8[6]"
             }
         ],
         "stateMutability": "view",
@@ -139,19 +181,19 @@ const contractABI = [
                         "type": "uint8"
                     },
                     {
-                        "internalType": "string[]",
+                        "internalType": "string[4]",
                         "name": "participants",
-                        "type": "string[]"
+                        "type": "string[4]"
                     },
                     {
-                        "internalType": "string[]",
+                        "internalType": "string[6]",
                         "name": "matchedParticipants",
-                        "type": "string[]"
+                        "type": "string[6]"
                     },
                     {
-                        "internalType": "uint8[]",
+                        "internalType": "uint8[6]",
                         "name": "scores",
-                        "type": "uint8[]"
+                        "type": "uint8[6]"
                     }
                 ],
                 "internalType": "struct TournamentsStorage.Tournament",
@@ -189,19 +231,19 @@ const contractABI = [
                         "type": "uint8"
                     },
                     {
-                        "internalType": "string[]",
+                        "internalType": "string[4]",
                         "name": "participants",
-                        "type": "string[]"
+                        "type": "string[4]"
                     },
                     {
-                        "internalType": "string[]",
+                        "internalType": "string[6]",
                         "name": "matchedParticipants",
-                        "type": "string[]"
+                        "type": "string[6]"
                     },
                     {
-                        "internalType": "uint8[]",
+                        "internalType": "uint8[6]",
                         "name": "scores",
-                        "type": "uint8[]"
+                        "type": "uint8[6]"
                     }
                 ],
                 "internalType": "struct TournamentsStorage.Tournament[]",
@@ -216,7 +258,7 @@ const contractABI = [
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_id",
+                "name": "_tournamentId",
                 "type": "uint256"
             },
             {
@@ -234,17 +276,27 @@ const contractABI = [
         "inputs": [
             {
                 "internalType": "uint8",
-                "name": "matchId",
+                "name": "_tournamentId",
                 "type": "uint8"
             },
             {
-                "internalType": "uint8",
-                "name": "scorePlayerOne",
-                "type": "uint8"
+                "internalType": "string",
+                "name": "_playerOneName",
+                "type": "string"
             },
             {
                 "internalType": "uint8",
-                "name": "scorePlayerTwo",
+                "name": "_participantScoreOne",
+                "type": "uint8"
+            },
+            {
+                "internalType": "string",
+                "name": "_playerTwoName",
+                "type": "string"
+            },
+            {
+                "internalType": "uint8",
+                "name": "_participantScoreTwo",
                 "type": "uint8"
             }
         ],
@@ -318,16 +370,18 @@ async function getTournament(tournamentId) {
             date: tournamentData.date.toString(),
             time: tournamentData.time.toString(),
             maxParticipants: tournamentData.maxParticipants.toString(),
-            participants: tournamentData.participants,
-            matchedParticipants: tournamentData.matchedParticipants,
-            scores: tournamentData.scores.map(score => score.toNumber())
+            participants: tournamentData.participants.map(p => p.trim()), // Remove empty strings if needed
+            matchedParticipants: tournamentData.matchedParticipants.map(p => p.trim()),
+            scores: tournamentData.scores.map(score => Number(score)) // Ensure scores are numbers
         };
 
         console.log("Fetched Tournament:", tournament);
+        return tournament; // Return the object if needed
     } catch (error) {
         console.error("Error fetching tournament:", error);
     }
 }
+
 
 // Fetch participants of a tournament
 async function getParticipants(id) {
