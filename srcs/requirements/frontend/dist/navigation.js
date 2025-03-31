@@ -21,23 +21,44 @@ export function navigateTo(view, update_history = true) {
     // If I'm already at a given view, do nothing
     if (view === currentView)
         return;
-    const appElement = document.getElementById("app");
-    const templateElement = document.getElementById(view);
-    if (templateElement && appElement) {
-        // Updates current view
-        currentView = view;
-        // Renders view content
-        renderView(appElement, templateElement);
-        // Update browser history
-        const state = { view };
-        if (update_history) {
-            history.pushState(state, "", `#${view}`);
-        }
-        // Update events on page
-        addEvents(view);
-        // Trigger animations
-        addAnimations(view);
+    // Updates currentView variable
+    currentView = view;
+    // Gets contents of each view
+    const bodyContents = getBodyContents(view);
+    // Renders view content
+    renderView(bodyContents);
+    // Update browser history
+    const state = { view };
+    if (update_history) {
+        history.pushState(state, "", `#${view}`);
     }
+    // Update events on page
+    addEvents(view);
+    // Trigger animations
+    addAnimations(view);
+}
+/**
+ * @brief Creates the structure for each view
+ *
+ * This function returns an object which describes the structure of each view
+ * The body contents will eventually be replaced by each part of the returned object
+ *
+ * @param view The ID of the view to navigate to.
+ */
+function getBodyContents(view) {
+    const bodyContents = {
+        header: null,
+        main: null,
+        nav: null,
+    };
+    if (view === "landing-template")
+        bodyContents.main = document.getElementById("landing-template");
+    else if (view === "main-menu-template") {
+        bodyContents.header = document.getElementById("main-menu-header");
+        bodyContents.main = document.getElementById("main-menu-template");
+        bodyContents.nav = document.getElementById("nav-bar-no-back-button");
+    }
+    return bodyContents;
 }
 /**
  * @brief Updates the content of a host element with a template.
@@ -48,12 +69,22 @@ export function navigateTo(view, update_history = true) {
  * @param hostElement The element to update.
  * @param templateElement The template element whose content will be used to update the host element.
  */
-function renderView(hostElement, templateElement) {
-    const clone = document.importNode(templateElement.content, true);
-    hostElement.replaceChildren(clone);
-    const navigationElement = document.getElementById("navigation");
-    if (currentView === "landing-template" && navigationElement) {
-        navigationElement.innerText = "";
+function renderView(bodyContents) {
+    const { header, main, nav } = bodyContents;
+    const headerHost = document.getElementById("header");
+    const mainHost = document.getElementById("app");
+    const navHost = document.getElementById("navigation");
+    if (headerHost && header) {
+        const headerClone = document.importNode(header.content, true);
+        headerHost.replaceChildren(headerClone);
+    }
+    if (mainHost && main) {
+        const mainClone = document.importNode(main.content, true);
+        mainHost.replaceChildren(mainClone);
+    }
+    if (navHost && nav) {
+        const navClone = document.importNode(nav.content, true);
+        navHost.replaceChildren(navClone);
     }
 }
 /**
@@ -72,13 +103,16 @@ function addEvents(view) {
             addMainMenuEvents();
             break;
         case ("local-template"):
-            addLocalEvents();
+            addLocalPlayEvents();
             break;
-        case ("multiplayer-template"):
-            addMultiplayerEvents();
+        case ("remote-template"):
+            addRemotePlayEvents();
             break;
         case ("tournament-template"):
-            addTournamentEvents();
+            addTournamentPlayEvents();
+            break;
+        case ("friends-template"):
+            addFriendsEvents();
             break;
         case ("rankings-template"):
             addRankingEvents();
@@ -134,30 +168,28 @@ function addLandingEvents() {
 *
 * This function sets up the navigation bar for the home view.
 */
-// TODO: Change "addNavBar" for when login is done??
 function addMainMenuEvents() {
-    addNavBar();
 }
 /**
 * @brief Adds event listeners for the local view.
 *
 * This function is a placeholder for setting up events specific to the local view.
 */
-function addLocalEvents() {
+function addLocalPlayEvents() {
 }
 /**
  * @brief Adds event listeners for the multiplayer view.
  *
  * This function is a placeholder for setting up events specific to the multiplayer view.
  */
-function addMultiplayerEvents() {
+function addRemotePlayEvents() {
 }
 /**
  * @brief Adds event listeners for the tournament view.
  *
  * This function is a placeholder for setting up events specific to the tournament view.
  */
-function addTournamentEvents() {
+function addTournamentPlayEvents() {
 }
 /**
 * @brief Adds event listeners for the rankings view.
@@ -167,51 +199,10 @@ function addTournamentEvents() {
 function addRankingEvents() {
 }
 /**
- * @brief Adds the navigation bar to the application.
- *
- * This function updates the navigation bar with its template content and sets up event listeners
- * for navigation buttons within the bar.
- */
-function addNavBar() {
-    const navBar = document.getElementById("navigation");
-    const navBarTemplate = document.getElementById("nav-bar");
-    if (navBar && navBarTemplate) {
-        // Shows navigation bar elements
-        renderNavBar(navBar, navBarTemplate);
-        // Sets up event litener for navigation bar (event delegation)
-        addNavBarListener();
-    }
-}
-/**
- * @brief Renders the navigation bar content.
- *
- * This function replaces the current content of the navigation bar location with the content
- * of the specified navigation bar template.
- *
- * @param navBarLocation The element where the navigation bar will be rendered.
- * @param navBar The template element containing the navigation bar content.
- */
-function renderNavBar(navBarLocation, navBar) {
-    const clone = document.importNode(navBar.content, true);
-    navBarLocation.replaceChildren(clone);
-}
-/**
- * @brief Sets up event listeners for the navigation bar.
- *
- * This function adds a click event listener to the navigation bar to handle navigation button clicks.
- * It uses event delegation to determine which button was clicked and navigates to the corresponding view.
- */
-function addNavBarListener() {
-    var _a;
-    (_a = document.getElementById("navigation")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", (event) => {
-        const target = event.target;
-        if (target.classList.contains("nav-button")) {
-            const target_view = target.getAttribute("data-target");
-            if (target_view) {
-                event.preventDefault();
-                navigateTo(target_view);
-            }
-        }
-    });
+* @brief Adds event listeners for the rankings view.
+*
+* This function is a placeholder for setting up events specific to the rankings view.
+*/
+function addFriendsEvents() {
 }
 //# sourceMappingURL=navigation.js.map
