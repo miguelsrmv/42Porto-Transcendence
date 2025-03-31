@@ -141,17 +141,31 @@ contract TournamentsStorage {
         string memory _playerTwoName,
         uint8 _playerTwoScore
     ) public {
-        uint8 playerOneIndex = findLastIndexOfPlayer(
+        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(
             _tournamentId,
             _playerOneName
         );
 
-        uint8 playerTwoIndex = findLastIndexOfPlayer(
+        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(
             _tournamentId,
             _playerTwoName
         );
 
-        tournaments[_tournamentId].scores[playerOneIndex] = _playerOneScore;
-        tournaments[_tournamentId].scores[playerTwoIndex] = _playerTwoScore;
+        if (updatedPlayerOneIndex % 2 == 1) {
+            updatedPlayerOneIndex += 1;
+        }
+        updatedPlayerOneIndex /= 2;
+
+        if (updatedPlayerTwoIndex % 2 == 1) {
+            updatedPlayerTwoIndex += 1;
+        }
+        updatedPlayerTwoIndex /= 2;
+
+        tournaments[_tournamentId].scores[
+            updatedPlayerOneIndex
+        ] = _playerOneScore;
+        tournaments[_tournamentId].scores[
+            updatedPlayerTwoIndex
+        ] = _playerTwoScore;
     }
 }
