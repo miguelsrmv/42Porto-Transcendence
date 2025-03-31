@@ -151,21 +151,11 @@ contract TournamentsStorage {
             _playerTwoName
         );
 
-        if (updatedPlayerOneIndex % 2 == 1) {
-            updatedPlayerOneIndex += 1;
-        }
-        updatedPlayerOneIndex /= 2;
-
-        if (updatedPlayerTwoIndex % 2 == 1) {
-            updatedPlayerTwoIndex += 1;
-        }
-        updatedPlayerTwoIndex /= 2;
-
         tournaments[_tournamentId].scores[
-            updatedPlayerOneIndex + MAX_PARTICIPANTS
+            updatedPlayerOneIndex
         ] = _playerOneScore;
         tournaments[_tournamentId].scores[
-            updatedPlayerTwoIndex + MAX_PARTICIPANTS
+            updatedPlayerTwoIndex
         ] = _playerTwoScore;
     }
 }
