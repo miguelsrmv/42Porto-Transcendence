@@ -162,10 +162,10 @@ contract TournamentsStorage {
         updatedPlayerTwoIndex /= 2;
 
         tournaments[_tournamentId].scores[
-            updatedPlayerOneIndex
+            updatedPlayerOneIndex + MAX_PARTICIPANTS
         ] = _playerOneScore;
         tournaments[_tournamentId].scores[
-            updatedPlayerTwoIndex
+            updatedPlayerTwoIndex + MAX_PARTICIPANTS
         ] = _playerTwoScore;
     }
 }
