@@ -77,16 +77,22 @@ contract TournamentsStorage {
         uint256 _tournamentId,
         string memory _participantName
     ) public {
-        require(
-            tournaments[_tournamentId].participants.length < MAX_PARTICIPANTS,
-            "Tournament is full"
-        );
+        uint8 tournamentLength = 0;
+        uint8 i = 0;
+
+        while (
+            keccak256(
+                abi.encodePacked(tournaments[_tournamentId].participants[i])
+            ) != keccak256(abi.encodePacked(""))
+        ) tournamentLength++;
+
+        require(tournamentLength < MAX_PARTICIPANTS, "Tournament is full");
 
         tournaments[_tournamentId].participants[
-            tournaments[_tournamentId].participants.length
+            tournamentLength
         ] = _participantName;
         tournaments[_tournamentId].matchedParticipants[
-            tournaments[_tournamentId].matchedParticipants.length
+            tournamentLength
         ] = _participantName;
     }
 
