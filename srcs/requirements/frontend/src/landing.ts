@@ -15,5 +15,3 @@ export async function addLandingAnimations(): Promise<void> {
     enterButton?.classList.add("fade-in");
     enterButton?.classList.add("animate-bounce");
 }
-
-//TODO: Uncomment awaits so that it looks good
