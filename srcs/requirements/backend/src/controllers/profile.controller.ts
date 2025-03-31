@@ -2,17 +2,17 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 
-interface IParams {
-  id: string;
-}
-
 interface ProfileUpdate {
   data: { name?: string; bio?: string };
 }
 
 export async function getAllProfiles(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const profiles = await prisma.profile.findMany();
+    const profiles = await prisma.profile.findMany({
+      include: {
+        friends: true,
+      },
+    });
     reply.send(profiles);
   } catch (error) {
     handleError(error, reply);
@@ -26,6 +26,9 @@ export async function getProfileById(
   try {
     const profile = await prisma.profile.findUniqueOrThrow({
       where: { id: request.params.id },
+      include: {
+        friends: true,
+      },
     });
     reply.send(profile);
   } catch (error) {

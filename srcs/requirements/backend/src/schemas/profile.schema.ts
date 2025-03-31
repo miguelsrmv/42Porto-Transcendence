@@ -1,22 +1,7 @@
-// TODO: Create global schema for id search
-export const getProfileByIdSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
-  },
-};
+import { getByIdSchema } from './global.schema';
 
 export const updateProfileSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
-  },
+  params: getByIdSchema.params,
   body: {
     type: 'object',
     required: ['data'],
