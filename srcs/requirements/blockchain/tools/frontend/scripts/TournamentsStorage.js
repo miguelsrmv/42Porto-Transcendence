@@ -29,7 +29,7 @@ async function connectWallet() {
 }
 
 // Contract details
-const contractAddress = "0x0aAE778c2083b2111eDdd5bf44d3b41947d43F08"; // Replace with your deployed contract address
+const contractAddress = "0x65d98ad4E478334158d7371EdF38D70CA303B933"; // Replace with your deployed contract address
 const contractABI = [
     {
         "inputs": [
@@ -102,9 +102,9 @@ const contractABI = [
         "name": "getMatchedParticipants",
         "outputs": [
             {
-                "internalType": "string[6]",
+                "internalType": "string[7]",
                 "name": "",
-                "type": "string[6]"
+                "type": "string[7]"
             }
         ],
         "stateMutability": "view",
@@ -186,9 +186,9 @@ const contractABI = [
                         "type": "string[4]"
                     },
                     {
-                        "internalType": "string[6]",
+                        "internalType": "string[7]",
                         "name": "matchedParticipants",
-                        "type": "string[6]"
+                        "type": "string[7]"
                     },
                     {
                         "internalType": "uint8[6]",
@@ -236,9 +236,9 @@ const contractABI = [
                         "type": "string[4]"
                     },
                     {
-                        "internalType": "string[6]",
+                        "internalType": "string[7]",
                         "name": "matchedParticipants",
-                        "type": "string[6]"
+                        "type": "string[7]"
                     },
                     {
                         "internalType": "uint8[6]",
@@ -376,12 +376,11 @@ async function getTournament(tournamentId) {
         };
 
         console.log("Fetched Tournament:", tournament);
-        return tournament; // Return the object if needed
+        return tournament;
     } catch (error) {
         console.error("Error fetching tournament:", error);
     }
 }
-
 
 // Fetch participants of a tournament
 async function getParticipants(id) {
@@ -389,7 +388,24 @@ async function getParticipants(id) {
     if (!provider) return;
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
-    console.log(await contract.getParticipants(id));
+    try {
+        if (!contract) throw new Error("Contract is not defined!");
+
+        let participants = await contract.getParticipants(id);
+
+        if (!participants || !Array.isArray(participants)) {
+            console.error("Invalid participants data:", participants);
+            return [];
+        }
+
+        const formattedParticipants = participants.map(p => p.toString().trim());
+
+        console.log("Formatted Participants:", formattedParticipants);
+        return formattedParticipants;
+    } catch (error) {
+        console.error("Error in getParticipants:", error);
+        return [];
+    }
 }
 
 // Fetch matched participants
@@ -398,7 +414,22 @@ async function getMatchedParticipants(id) {
     if (!provider) return;
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
-    console.log(await contract.getMatchedParticipants(id));
+    try {
+        const matchedParticipants = await contract.getMatchedParticipants(id);
+
+        if (!matchedParticipants || !Array.isArray(matchedParticipants)) {
+            console.error("Invalid matched participants data:", matchedParticipants);
+            return [];
+        }
+
+        const formattedMatchedParticipants = matchedParticipants.map(p => p.toString().trim()); // Format and trim
+
+        console.log("Formatted Matched Participants:", formattedMatchedParticipants);
+        return formattedMatchedParticipants;
+    } catch (error) {
+        console.error("Error in getMatchedParticipants:", error);
+        return [];
+    }
 }
 
 // Fetch scores of a tournament
@@ -407,8 +438,24 @@ async function getScores(id) {
     if (!provider) return;
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
-    console.log(await contract.getScores(id));
+    try {
+        const scores = await contract.getScores(id);
+
+        if (!scores || !Array.isArray(scores)) {
+            console.error("Invalid scores data:", scores);
+            return [];
+        }
+
+        const formattedScores = scores.map(score => Number(score)); // Ensure the scores are numbers
+
+        console.log("Formatted Scores:", formattedScores);
+        return formattedScores;
+    } catch (error) {
+        console.error("Error in getScores:", error);
+        return [];
+    }
 }
+
 
 // Create a new tournament
 async function createTournament(date, time) {
