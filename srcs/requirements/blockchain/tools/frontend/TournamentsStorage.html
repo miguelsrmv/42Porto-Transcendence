@@ -43,15 +43,15 @@
     <input type="text" id="time" placeholder="Time (HHMM)">
     <button onclick="createNewTournament()">Create Tournament</button>
 
-    <input type="text" id="tournamentId" placeholder="Tournament ID">
+    <input type="text" id="joinTournamentId" placeholder="Tournament ID">
     <input type="text" id="participantName" placeholder="Participant Name">
     <button onclick="joinTournamentAction()">Join Tournament</button>
 
-    <input type="text" id="tournamentId" placeholder="Tournament ID">
+    <input type="text" id="winnerTournamentId" placeholder="Tournament ID">
     <input type="text" id="winnerName" placeholder="Winner Name">
     <button onclick="addWinnerAction()">Add Winner</button>
 
-    <input type="text" id="tournamentId" placeholder="Tournament ID">
+    <input type="text" id="SaveScoreTournamentId" placeholder="Tournament ID">
     <input type="text" id="playerOneName" placeholder="Player One Name">
     <input type="text" id="playerOneScore" placeholder="Player One Score">
     <input type="text" id="playerTwoName" placeholder="Player Two Name">
@@ -126,7 +126,7 @@
         }
 
         async function joinTournamentAction() {
-            const id = document.getElementById('tournamentId').value;
+            const id = document.getElementById('joinTournamentId').value;
             const name = document.getElementById('participantName').value;
             if (id && name) {
                 try {
@@ -140,7 +140,7 @@
         }
 
         async function addWinnerAction() {
-            const id = document.getElementById('tournamentId').value;
+            const id = document.getElementById('winnerTournamentId').value;
             const name = document.getElementById('winnerName').value;
             if (id && name) {
                 try {
@@ -154,7 +154,7 @@
         }
 
         async function saveScoreAction() {
-            const id = document.getElementById('tournamentId').value;
+            const id = document.getElementById('SaveScoreTournamentId').value;
             const playerOneName = document.getElementById('playerOneName').value;
             const playerOneScore = document.getElementById('playerOneScore').value;
             const playerTwoName = document.getElementById('playerTwoName').value;
