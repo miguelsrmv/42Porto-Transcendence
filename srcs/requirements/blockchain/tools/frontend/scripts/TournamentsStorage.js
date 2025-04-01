@@ -29,7 +29,7 @@ async function connectWallet() {
 }
 
 // Contract details
-const contractAddress = "0xaB04F0D5bF79c36D2448Bc9C629398532Be43615"; // Replace with your deployed contract address
+const contractAddress = "0x0aAE778c2083b2111eDdd5bf44d3b41947d43F08"; // Replace with your deployed contract address
 const contractABI = [
     {
         "inputs": [
@@ -286,7 +286,7 @@ const contractABI = [
             },
             {
                 "internalType": "uint8",
-                "name": "_participantScoreOne",
+                "name": "_playerOneScore",
                 "type": "uint8"
             },
             {
@@ -296,7 +296,7 @@ const contractABI = [
             },
             {
                 "internalType": "uint8",
-                "name": "_participantScoreTwo",
+                "name": "_playerTwoScore",
                 "type": "uint8"
             }
         ],
@@ -424,27 +424,40 @@ async function createTournament(date, time) {
 }
 
 // Join a tournament
-async function joinTournament(id, participantName) {
+async function joinTournament(tournamentId, participantName) {
     const provider = await connectWallet();
     if (!provider) return;
 
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-    const tx = await contract.joinTournament(id, participantName);
+    const tx = await contract.joinTournament(tournamentId, participantName);
     console.log("Joining tournament:", tx.hash);
     await tx.wait();
-    console.log(`Joined Tournament ${id} as ${participantName}!`);
+    console.log(`Joined Tournament ${tournamentId} as ${participantName}!`);
+}
+
+// Add a winner to a tournament
+async function addWinner(tournamentId, winnerName) {
+    const provider = await connectWallet();
+    if (!provider) return;
+
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    const tx = await contract.addWinner(tournamentId, winnerName);
+    console.log("Joining tournament:", tx.hash);
+    await tx.wait();
+    console.log(`Added winner ${winnerName} to tournament: ${tournamentId}!`);
 }
 
 // Save scores for a match
-async function saveScore(matchId, scoreOne, scoreTwo) {
+async function saveScore(tournamentId, playerOneName, playerScoreOne, playerTwoName, playerScoreTwo) {
     const provider = await connectWallet();
     if (!provider) return;
 
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-    const tx = await contract.saveScore(matchId, scoreOne, scoreTwo);
+    const tx = await contract.saveScore(tournamentId, playerOneName, playerScoreOne, playerTwoName, playerScoreTwo);
     console.log("Saving scores:", tx.hash);
     await tx.wait();
-    console.log(`Scores saved for Match ${matchId}: ${scoreOne} - ${scoreTwo}`);
+    console.log(`Scores saved for Tournament ${tournamentId}: ${playerOneName} ${playerScoreOne} - ${playerTwoName} ${playerScoreTwo}`);
 }
