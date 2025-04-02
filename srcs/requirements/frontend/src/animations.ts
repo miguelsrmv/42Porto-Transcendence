@@ -15,3 +15,16 @@ export async function addLandingAnimations(): Promise<void> {
     enterButton?.classList.add("fade-in");
     enterButton?.classList.add("animate-bounce");
 }
+
+export function addNavBarText(menu: HTMLElement, message: string): void {
+    const navBarText = document.getElementById("nav-bar-text");
+
+    if (navBarText) {
+        menu.addEventListener("mouseover", () => {
+            navBarText.innerHTML = message;
+        })
+        menu.addEventListener("mouseout", () => {
+            navBarText.innerHTML = "";
+        })
+    }
+}

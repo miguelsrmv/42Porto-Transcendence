@@ -21,4 +21,15 @@ export function addLandingAnimations() {
         enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.add("animate-bounce");
     });
 }
-//# sourceMappingURL=landing.js.map
+export function addNavBarText(menu, message) {
+    const navBarText = document.getElementById("nav-bar-text");
+    if (navBarText) {
+        menu.addEventListener("mouseover", () => {
+            navBarText.innerHTML = message;
+        });
+        menu.addEventListener("mouseout", () => {
+            navBarText.innerHTML = "";
+        });
+    }
+}
+//# sourceMappingURL=animations.js.map

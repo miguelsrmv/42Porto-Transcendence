@@ -14,7 +14,7 @@
 
 <body id="body"
     class="h-screen w-screen overflow-hidden bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')]">
-    <header id="header" class="h-[0%] w-full"></header>
+    <header id="header" class="h-[0%] w-full relative flex items-center justify-center"></header>
 
     <main id="app" class="h-full w-full"></main>
 
@@ -214,11 +214,26 @@
     </div>
 </template>
 
-<template id="local-template">
-    <button> I'm on local play! </button>
+<template id="game-menu-template">
+    <div id="game-menu" class="flex w-[85%] mx-auto">
+        <div id="player-settings" class="flex-1 flex items-center justify-center">Player Settings</div>
+        <div id="match-settings" class="flex-1 flex items-center justify-center">Match settings</div>
+    </div>
 </template>
 
-<template id="remote-template">
+<template id="player-settings-template">
+    <div id="player-settings"></div>
+</template>
+
+<template id="match-settings-template">
+    <div id="match-settings-menu"></div>
+</template>
+
+<template id="local-play-template">
+    <div> I'm on local play! </div>
+</template>
+
+<template id="remote-play-template">
     <div> I'm on remote play! </div>
 </template>
 
@@ -227,29 +242,34 @@
 </template>
 
 <template id="friends-template">
-    <div> I'm on friends! </div>
+    <div id="friends-menu" class="flex w-[85%] mx-auto">
+        <div> I'm on friends! </div>
 </template>
 
 <template id="rankings-template">
-    <div> I'm on rankings! </div>
+    <div id="rankings-menu" class="flex w-[85%] mx-auto">
+        <div> I'm on rankings! </div>
 </template>
 
-<template id="main-menu-header">
-    <div>
-        I'm the main menu header!
+<template id="header-template">
+    <div id="header-menu" class="w-[85%] flex justify-between items-center">
+        <div id="header-menu-text" class="font-serpentine text-5xl text-center"></div>
     </div>
 </template>
 
-<template id="nav-bar">
-    <div class="flex text-7xl absolute bottom-20 right-35">
-        <button id="nav-back-button">⬅️</button>
-        <button id="nav-settings-button">⚙️</button>
-        <div id="settings-dropdown"
-            class="absolute bottom-full left-0 mb-2 w-48 bg-white shadow-lg rounded-md text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div class="py-2">
-                <a href="#" class="block px-4 py-2 text-sm">Option 1</a>
-                <a href="#" class="block px-4 py-2 text-sm">Option 2</a>
-                <a href="#" class="block px-4 py-2 text-sm">Option 3</a>
+<template id="nav-bar-template">
+    <div id="nav-bar" class="w-[85%] flex justify-between items-center mx-auto my-10">
+        <div id="nav-bar-text" class="font-serpentine text-3xl w-[80%] text-center mx-auto"></div>
+        <div class="flex text-7xl justify-end relative w-[20%]">
+            <button id="nav-back-button">⬅️</button>
+            <button id="nav-settings-button">⚙️</button>
+            <div id="settings-dropdown"
+                class="absolute bottom-full left-0 mb-2 w-48 bg-white shadow-lg rounded-md text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div class="py-2">
+                    <a href="#" class="block px-4 py-2 text-sm">Option 1</a>
+                    <a href="#" class="block px-4 py-2 text-sm">Option 2</a>
+                    <a href="#" class="block px-4 py-2 text-sm">Option 3</a>
+                </div>
             </div>
         </div>
     </div>
