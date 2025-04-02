@@ -41,10 +41,8 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ```json
 {
-  "data": {
-    "username": "new_user_name", // optional
-    "email": "new_user@email.com" // optional
-  }
+  "username": "new_user_name", // optional
+  "email": "new_user@email.com" // optional
 }
 ```
 
@@ -87,10 +85,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2V
 
 ```json
 {
-  "data": {
-    "name": "John Smith", // optional
-    "bio": "Hello everyone!" // optional
-  }
+  "name": "John Smith", // optional
+  "bio": "Hello everyone!" // optional
 }
 ```
 
