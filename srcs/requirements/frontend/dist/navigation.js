@@ -59,12 +59,30 @@ function getBodyContents(view) {
         main: null,
         nav: null,
     };
-    if (view === "landing-template")
-        bodyContents.main = document.getElementById("landing-template");
-    else if (view === "main-menu-template") {
-        bodyContents.header = document.getElementById("main-menu-header");
-        bodyContents.main = document.getElementById("main-menu-template");
-        bodyContents.nav = document.getElementById("nav-bar-no-back-button");
+    // Loads main view
+    const mainContent = document.getElementById(view);
+    bodyContents.main = mainContent.content.cloneNode(true);
+    if (view !== "landing-template") {
+        // Loads header if not in landing-template
+        const headerContent = document.getElementById(view.replace("template", "header"));
+        bodyContents.header = headerContent.content.cloneNode(true);
+        // Loads nav-bar if not in landing-template
+        const navContent = document.getElementById("nav-bar");
+        bodyContents.nav = navContent.content.cloneNode(true);
+        if (view === "main-menu-template") {
+            // Erases back-button if on main-menu
+            const backButton = bodyContents.nav.querySelector("#nav-back-button");
+            if (backButton) {
+                backButton.remove();
+            }
+        }
+        else if (view === "guest-menu-template") {
+            // Erases settings-button if on guest menu
+            const settingsButton = bodyContents.nav.querySelector("#nav-settings-button");
+            if (settingsButton) {
+                settingsButton.remove();
+            }
+        }
     }
     return bodyContents;
 }
@@ -104,16 +122,13 @@ function renderView(bodyContents) {
     const mainHost = document.getElementById("app");
     const navHost = document.getElementById("navigation");
     if (headerHost && header) {
-        const headerClone = document.importNode(header.content, true);
-        headerHost.replaceChildren(headerClone);
+        headerHost.replaceChildren(header);
     }
     if (mainHost && main) {
-        const mainClone = document.importNode(main.content, true);
-        mainHost.replaceChildren(mainClone);
+        mainHost.replaceChildren(main);
     }
     if (navHost && nav) {
-        const navClone = document.importNode(nav.content, true);
-        navHost.replaceChildren(navClone);
+        navHost.replaceChildren(nav);
         addNavEvents();
     }
 }

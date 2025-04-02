@@ -240,35 +240,19 @@
     </div>
 </template>
 
-<template id="nav-bar-no-back-button">
+<template id="nav-bar">
     <div class="flex text-7xl absolute bottom-20 right-35">
+        <button id="nav-back-button">⬅️</button>
         <button id="nav-settings-button">⚙️</button>
         <div id="settings-dropdown"
             class="absolute bottom-full left-0 mb-2 w-48 bg-white shadow-lg rounded-md text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <div class="py-2">
-                <a href="#" class="block px-4 py-2 text-sm">Dark / Light theme toggle</a>
-                <a href="#" class="block px-4 py-2 text-sm">Profile</a>
-                <a href="#" class="block px-4 py-2 text-sm">Log Out</a>
+                <a href="#" class="block px-4 py-2 text-sm">Option 1</a>
+                <a href="#" class="block px-4 py-2 text-sm">Option 2</a>
+                <a href="#" class="block px-4 py-2 text-sm">Option 3</a>
             </div>
         </div>
     </div>
 </template>
-
-<template id="nav-bar-with-back-button">
-    <div class="flex text-7xl absolute bottom-20 right-35">
-        <button id="nav-back-button">⬅️</button> <button id="nav-settings-button">⚙️</button>
-        <div
-            class="absolute bottom-full left-0 mb-2 w-48 bg-white shadow-lg rounded-md text-black opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-4">
-            <div class="py-2">
-                <a href="#" class="block px-4 py-2 text-sm">Dark / Light theme toggle</a>
-                <a href="#" class="block px-4 py-2 text-sm">Profile</a>
-                <a href="#" class="block px-4 py-2 text-sm">Log Out</a>
-            </div>
-        </div>
-
-    </div>
-</template>
-
-
 
 </html>
