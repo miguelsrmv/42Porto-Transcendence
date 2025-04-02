@@ -8,7 +8,7 @@
  */
 let currentView = "";
 let previousView = "";
-import { addLandingAnimations } from "./landing.js";
+import { addLandingAnimations, addNavBarText } from "./animations.js";
 import { addNavEvents } from "./events.js";
 /**
  * @brief Navigates to a specified view.
@@ -60,22 +60,35 @@ function getBodyContents(view) {
         nav: null,
     };
     // Loads main view
-    const mainContent = document.getElementById(view);
-    bodyContents.main = mainContent.content.cloneNode(true);
+    let mainContent;
+    // If view is not a game view, load it
+    if (view !== "local-play-template" && view !== "remote-play-template" && view != "tournament-template")
+        mainContent = document.getElementById(view);
+    // If view is a game view, load game view and customize it depending on game type
+    else
+        mainContent = getGameMenu(view);
+    if (mainContent)
+        bodyContents.main = mainContent.content.cloneNode(true);
+    // Add Header and Nav bar if not on landing page
     if (view !== "landing-template") {
         // Loads header if not in landing-template
-        const headerContent = document.getElementById(view.replace("template", "header"));
+        const headerContent = document.getElementById("header-template");
         bodyContents.header = headerContent.content.cloneNode(true);
+        const headerText = bodyContents.header.querySelector("#header-menu-text");
+        if (headerText) {
+            headerText.innerHTML = view.replace("-template", "").split("-").map(view => view.charAt(0).toUpperCase() + view.slice(1)).join(" ");
+        }
         // Loads nav-bar if not in landing-template
-        const navContent = document.getElementById("nav-bar");
+        const navContent = document.getElementById("nav-bar-template");
         bodyContents.nav = navContent.content.cloneNode(true);
+        // Erases back button if on main-menu
         if (view === "main-menu-template") {
-            // Erases back-button if on main-menu
             const backButton = bodyContents.nav.querySelector("#nav-back-button");
             if (backButton) {
                 backButton.remove();
             }
         }
+        // Erases settings button if on guest menu
         else if (view === "guest-menu-template") {
             // Erases settings-button if on guest menu
             const settingsButton = bodyContents.nav.querySelector("#nav-settings-button");
@@ -85,6 +98,10 @@ function getBodyContents(view) {
         }
     }
     return bodyContents;
+}
+function getGameMenu(view) {
+    const mainContent = document.getElementById("game-menu-template");
+    return mainContent;
 }
 function adjustHeaderAndNav(view) {
     const header = document.getElementById("header");
@@ -147,10 +164,10 @@ function addPageEvents(view) {
         case ("main-menu-template"):
             addMainMenuEvents();
             break;
-        case ("local-template"):
+        case ("local-play-template"):
             addLocalPlayEvents();
             break;
-        case ("remote-template"):
+        case ("remote-play-template"):
             addRemotePlayEvents();
             break;
         case ("tournament-template"):
@@ -214,6 +231,31 @@ function addLandingEvents() {
 * This function sets up the navigation bar for the home view.
 */
 function addMainMenuEvents() {
+    const localPlayMenu = document.getElementById("local-play-button");
+    if (localPlayMenu) {
+        addNavBarText(localPlayMenu, "Play locally with friends!");
+        localPlayMenu.addEventListener("click", () => { navigateTo("local-play-template"); });
+    }
+    const remotePlayMenu = document.getElementById("remote-play-button");
+    if (remotePlayMenu) {
+        addNavBarText(remotePlayMenu, "Play online on the ladder!");
+        remotePlayMenu.addEventListener("click", () => { navigateTo("remote-play-template"); });
+    }
+    const tourneyMenu = document.getElementById("tournament-play-button");
+    if (tourneyMenu) {
+        addNavBarText(tourneyMenu, "Face other players in a tournament!");
+        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-template"); });
+    }
+    const friendsMenu = document.getElementById("rankings-button");
+    if (friendsMenu) {
+        friendsMenu.addEventListener("click", () => { navigateTo("rankings-template"); });
+        addNavBarText(friendsMenu, "Check your stats!");
+    }
+    const rankingsMenu = document.getElementById("friends-button");
+    if (rankingsMenu) {
+        rankingsMenu.addEventListener("click", () => { navigateTo("friends-template"); });
+        addNavBarText(rankingsMenu, "See who's online!");
+    }
 }
 /**
 * @brief Adds event listeners for the local view.

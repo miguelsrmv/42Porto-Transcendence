@@ -1,0 +1,6 @@
+Customization options:
+» Paddle size
+» Pokemons
+» Background
+» # of wins
+» Ball speed
