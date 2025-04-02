@@ -29,7 +29,7 @@ async function connectWallet() {
 }
 
 // Contract details
-const contractAddress = "0x65d98ad4E478334158d7371EdF38D70CA303B933"; // Replace with your deployed contract address
+const contractAddress = "0xfB23004cFf66cF1cC385A43F428344A43a9a25a1"; // Replace with your deployed contract address
 const contractABI = [
     {
         "inputs": [
@@ -50,45 +50,10 @@ const contractABI = [
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint32",
-                "name": "_date",
-                "type": "uint32"
-            },
-            {
-                "internalType": "uint16",
-                "name": "_time",
-                "type": "uint16"
-            }
-        ],
+        "inputs": [],
         "name": "createTournament",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint8",
-                "name": "_tournamentId",
-                "type": "uint8"
-            },
-            {
-                "internalType": "string",
-                "name": "_playerName",
-                "type": "string"
-            }
-        ],
-        "name": "findLastIndexOfPlayer",
-        "outputs": [
-            {
-                "internalType": "uint8",
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -166,14 +131,14 @@ const contractABI = [
                         "type": "uint256"
                     },
                     {
-                        "internalType": "uint32",
+                        "internalType": "uint16[3]",
                         "name": "date",
-                        "type": "uint32"
+                        "type": "uint16[3]"
                     },
                     {
-                        "internalType": "uint16",
+                        "internalType": "uint8[3]",
                         "name": "time",
-                        "type": "uint16"
+                        "type": "uint8[3]"
                     },
                     {
                         "internalType": "uint8",
@@ -216,14 +181,14 @@ const contractABI = [
                         "type": "uint256"
                     },
                     {
-                        "internalType": "uint32",
+                        "internalType": "uint16[3]",
                         "name": "date",
-                        "type": "uint32"
+                        "type": "uint16[3]"
                     },
                     {
-                        "internalType": "uint16",
+                        "internalType": "uint8[3]",
                         "name": "time",
-                        "type": "uint16"
+                        "type": "uint8[3]"
                     },
                     {
                         "internalType": "uint8",
@@ -319,16 +284,6 @@ const contractABI = [
                 "internalType": "uint256",
                 "name": "id",
                 "type": "uint256"
-            },
-            {
-                "internalType": "uint32",
-                "name": "date",
-                "type": "uint32"
-            },
-            {
-                "internalType": "uint16",
-                "name": "time",
-                "type": "uint16"
             },
             {
                 "internalType": "uint8",
@@ -458,13 +413,13 @@ async function getScores(id) {
 
 
 // Create a new tournament
-async function createTournament(date, time) {
+async function createTournament() {
     const provider = await connectWallet();
     if (!provider) return;
 
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-    const tx = await contract.createTournament(date, time);
+    const tx = await contract.createTournament();
     console.log("Transaction sent:", tx.hash);
     await tx.wait();
     console.log("Tournament created!");
