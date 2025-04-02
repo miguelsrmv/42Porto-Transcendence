@@ -19,7 +19,8 @@ interface UserLogin {
 }
 
 interface UserUpdate {
-  data: { username?: string; email?: string };
+  username?: string;
+  email?: string;
 }
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
@@ -74,7 +75,7 @@ export async function updateUser(
   try {
     const user = await prisma.user.update({
       where: { id: request.params.id },
-      data: request.body.data,
+      data: request.body,
     });
     reply.send(user);
   } catch (error) {

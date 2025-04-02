@@ -3,7 +3,8 @@ import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 
 interface ProfileUpdate {
-  data: { name?: string; bio?: string };
+  name?: string;
+  bio?: string;
 }
 
 export async function getAllProfiles(request: FastifyRequest, reply: FastifyReply) {
@@ -43,7 +44,7 @@ export async function updateProfile(
   try {
     const profile = await prisma.profile.update({
       where: { id: request.params.id },
-      data: request.body.data,
+      data: request.body,
     });
     reply.send(profile);
   } catch (error) {

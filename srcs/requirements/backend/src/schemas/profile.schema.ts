@@ -4,16 +4,10 @@ export const updateProfileSchema = {
   params: getByIdSchema.params,
   body: {
     type: 'object',
-    required: ['data'],
     properties: {
-      data: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          bio: { type: 'string', maxLength: 300 },
-        },
-        additionalProperties: false,
-      },
+      name: { type: 'string' },
+      bio: { type: 'string', maxLength: 300 },
     },
+    additionalProperties: false,
   },
 };
