@@ -7,7 +7,9 @@
  * to load the default view and custom navigation events to switch views.
  */
 let currentView = "";
+let previousView = "";
 import { addLandingAnimations } from "./landing.js";
+import { addNavEvents } from "./events.js";
 /**
  * @brief Navigates to a specified view.
  *
@@ -21,10 +23,13 @@ export function navigateTo(view, update_history = true) {
     // If I'm already at a given view, do nothing
     if (view === currentView)
         return;
-    // Updates currentView variable
+    // Updates previousView and currentView variable
+    previousView = currentView;
     currentView = view;
     // Gets contents of each view
     const bodyContents = getBodyContents(view);
+    // Adjust header and navigation
+    adjustHeaderAndNav(view);
     // Renders view content
     renderView(bodyContents);
     // Update browser history
@@ -33,9 +38,12 @@ export function navigateTo(view, update_history = true) {
         history.pushState(state, "", `#${view}`);
     }
     // Update events on page
-    addEvents(view);
+    addPageEvents(view);
     // Trigger animations
     addAnimations(view);
+}
+export function getPreviousView() {
+    return previousView;
 }
 /**
  * @brief Creates the structure for each view
@@ -59,6 +67,27 @@ function getBodyContents(view) {
         bodyContents.nav = document.getElementById("nav-bar-no-back-button");
     }
     return bodyContents;
+}
+function adjustHeaderAndNav(view) {
+    const header = document.getElementById("header");
+    const main = document.getElementById("app");
+    const nav = document.getElementById("navigation");
+    if (view != "landing-template") {
+        header === null || header === void 0 ? void 0 : header.classList.remove("h-[0%]");
+        main === null || main === void 0 ? void 0 : main.classList.remove("h-full");
+        nav === null || nav === void 0 ? void 0 : nav.classList.remove("h-[0%]");
+        header === null || header === void 0 ? void 0 : header.classList.add("h-[15%]");
+        main === null || main === void 0 ? void 0 : main.classList.add("h-[70vh]");
+        nav === null || nav === void 0 ? void 0 : nav.classList.add("h-[15%]");
+    }
+    else {
+        header === null || header === void 0 ? void 0 : header.classList.remove("h-[15%]");
+        main === null || main === void 0 ? void 0 : main.classList.remove("h-[70vh]");
+        nav === null || nav === void 0 ? void 0 : nav.classList.remove("h-[15%]");
+        header === null || header === void 0 ? void 0 : header.classList.add("h-[0%]");
+        main === null || main === void 0 ? void 0 : main.classList.add("h-full");
+        nav === null || nav === void 0 ? void 0 : nav.classList.add("h-[0%]");
+    }
 }
 /**
  * @brief Updates the content of a host element with a template.
@@ -85,6 +114,7 @@ function renderView(bodyContents) {
     if (navHost && nav) {
         const navClone = document.importNode(nav.content, true);
         navHost.replaceChildren(navClone);
+        addNavEvents();
     }
 }
 /**
@@ -94,7 +124,7 @@ function renderView(bodyContents) {
  *
  * @param view The ID of the view for which to add events.
  */
-function addEvents(view) {
+function addPageEvents(view) {
     switch (view) {
         case ("landing-template"):
             addLandingEvents();
