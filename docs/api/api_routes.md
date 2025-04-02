@@ -1,21 +1,21 @@
 # Endpoints
 
-| Method   | Route                    |   URL parameters   |             Body             | Description                              |
-| -------- | ------------------------ | :----------------: | :--------------------------: | ---------------------------------------- |
-| `GET`    | `/`                      |                    |                              | Base route for test                      |
-| `GET`    | `/users`                 |                    |                              | Get all users                            |
-| `GET`    | `/users/:id`             |    `id` user id    |                              | Get a specific user                      |
-| `POST`   | `/users/create`          |                    | username, email and password | Create a new user                        |
-| `PUT`    | `/users/:id`             |    `id` user id    |        data to update        | Update data on a specific user           |
-| `DELETE` | `/users/:id`             |    `id` user id    |                              | Delete a user                            |
-| `POST`   | `/users/login`           |                    |      email and password      | Get JWT (if user is valid)               |
-| `GET`    | `/profiles`              |                    |                              | Get all profiles                         |
-| `GET`    | `/profiles/:id`          |  `id` profile id   |                              | Get a specific profile                   |
-| `PUT`    | `/profiles/:id`          |  `id` profile id   |        data to update        | Update data on a specific profile        |
-| `GET`    | `/profiles//:id/friends` |  `id` profile id   |                              | Get all friends of that profile          |
-| `POST`   | `/friends`               |                    |    profileId and friendId    | Create a friendship between two profiles |
-| `PUT`    | `/friends/:id`           | `id` friendship id |            status            | Update friendship status                 |
-| `DELETE` | `/friends/:id`           | `id` friendship id |                              | Delete a friendship                      |
+| Method   | Route                   |   URL parameters   |             Body             | Description                              |
+| -------- | ----------------------- | :----------------: | :--------------------------: | ---------------------------------------- |
+| `GET`    | `/`                     |                    |                              | Base route for test                      |
+| `GET`    | `/users`                |                    |                              | Get all users                            |
+| `GET`    | `/users/:id`            |    `id` user id    |                              | Get a specific user                      |
+| `POST`   | `/users`                |                    | username, email and password | Create a new user                        |
+| `PUT`    | `/users/:id`            |    `id` user id    |        data to update        | Update data on a specific user           |
+| `DELETE` | `/users/:id`            |    `id` user id    |                              | Delete a user                            |
+| `POST`   | `/users/login`          |                    |      email and password      | Get JWT (if user is valid)               |
+| `GET`    | `/profiles`             |                    |                              | Get all profiles                         |
+| `GET`    | `/profiles/:id`         |  `id` profile id   |                              | Get a specific profile                   |
+| `PUT`    | `/profiles/:id`         |  `id` profile id   |        data to update        | Update data on a specific profile        |
+| `GET`    | `/profiles/:id/friends` |  `id` profile id   |                              | Get all friends of that profile          |
+| `POST`   | `/friends`              |                    |    profileId and friendId    | Create a friendship between two profiles |
+| `PUT`    | `/friends/:id`          | `id` friendship id |            status            | Update friendship status                 |
+| `DELETE` | `/friends/:id`          | `id` friendship id |                              | Delete a friendship                      |
 
 ## Base
 
@@ -25,9 +25,9 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ## Users
 
-- To get all users in the database (GET), the endpoint is `http://backend:3000/api/users`
-- To get data on a specific user by ID (GET), the endpoint is `http://backend:3000/api/users/:id`
-- To create a new user (POST), the endpoint is `http://backend:3000/api/users/create` and the schema for the JSON data is
+- **Get all users:** `GET /users`
+- **Get a specific user:** `GET /users/:id`
+- **Create a new user:** `POST /users`
 
 ```json
 {
@@ -37,7 +37,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- To update user data (PUT), the endpoint is `http://backend:3000/api/users/:id` and the schema for the JSON data is
+- **Update a user:** `PUT /users/:id`
 
 ```json
 {
@@ -46,13 +46,12 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- To delete a user from the database (DELETE), the endpoint is `http://backend:3000/api/users/:id`
-- To login user (get JWT) (POST), the endpoint is `http://backend:3000/api/users/login` and (if the login data is correct and the user exists in the database) will return a token that is required in the headers when making requests to protected routes.  
-  Example request:
+- **Delete a user:** `DELETE /users/:id`
+- **User login (Get JWT):** `POST /users/login`
 
 ```http
 POST http://localhost:3000/users/login HTTP/1.1
-content-type: application/json
+Content-Type: application/json
 
 {
 	"email": "test@gmail.com",
@@ -61,7 +60,7 @@ content-type: application/json
 
 ```
 
-The response will contain a json token (JWT) similar to the one bellow:
+**Response:** (if the login data is correct and the user exists in the database)
 
 ```json
 {
@@ -69,19 +68,19 @@ The response will contain a json token (JWT) similar to the one bellow:
 }
 ```
 
-This token then needs to be used in subsequent requests to protected routes in the `Authorization` header, like so:
+**Usage in Authorization Header:**
 
 ```http
 GET http://localhost:3000/<protected_route> HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2VyTmFtZSiaWF0.JwQiR3SOzVbsc7QmR-oM_GaNIB6kXhC
+Authorization: Bearer <JWT>
 
 ```
 
 ## Profiles
 
-- To get all profiles in the database (GET), the endpoint is `http://backend:3000/api/profiles`
-- To get data on a specific profile by ID (GET), the endpoint is `http://backend:3000/api/profiles/:id`
-- To update a profile's data (PUT), the endpoint is `http://backend:3000/api/profiles/:id` and the schema for the JSON data is
+- **Get all profiles:**  `GET /profiles`
+- **Get a specific profile:** `GET /profiles/:id`
+- **Update a profile:** `PUT /profiles/:id`
 
 ```json
 {
@@ -92,8 +91,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2V
 
 ## Friendships
 
-- To get all friendships associated with a profile (GET), the endpoint is `http://backend:3000/api/profiles/:id/friends`
-- To create a new friendship between two profiles (POST), the endpoint is `http://backend:3000/api/friends` and the schema for the JSON data is
+- **Get all friendships for a profile:** `GET /profiles/:id/friends`
+- **Create a new friendship:** `POST /friends`
 
 ```json
 {
@@ -102,11 +101,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2V
 }
 ```
 
-- To delete a friendship (DELETE), the endpoint is `http://backend:3000/api/friends/:id`
-- To update a friendship status (PUT), the endpoint is `http://backend:3000/api/friends/:id`
+- **Delete a friendship:** `DELETE /friends/:id`
+- **Update a friendship status:** `PUT /friends/:id`
 
-**Notes**:
+```json
+{
+  "status": "pending" // or "accepted", "blocked"
+}
+```
 
-- Don't forget to replace the base api endpoint if you are running it locally;
-- `POST` and `PUT` requests need the `content-type: application/json` header;
-- Protected routes need the `Authorization: Bearer <JWT>` header;
+### Notes
+
+- **Protected routes** require the `Authorization: Bearer <JWT>` header.
+- **Ensure `Content-Type: application/json`** is included in `POST` and `PUT` requests.
+- **Replace base API URL** (`backend:3000/api`) with `localhost:3000` if running locally.
