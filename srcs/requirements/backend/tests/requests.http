@@ -9,7 +9,7 @@ GET http://localhost:3000/users/ HTTP/1.1
 GET http://localhost:3000/users/<id> HTTP/1.1
 
 ### Create a new user
-POST http://localhost:3000/users/create HTTP/1.1
+POST http://localhost:3000/users/ HTTP/1.1
 content-type: application/json
 
 {
