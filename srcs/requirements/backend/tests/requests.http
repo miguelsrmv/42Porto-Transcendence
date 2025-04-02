@@ -23,10 +23,8 @@ PUT http://localhost:3000/users/<id> HTTP/1.1
 content-type: application/json
 
 {
-	"data": {
-		"username": "modified",
-		"email": "modified@gmail.com"
-	}
+	"username": "modified",
+	"email": "modified@gmail.com"
 }
 
 ### Delete user from database
@@ -54,10 +52,8 @@ PUT http://localhost:3000/profiles/<id> HTTP/1.1
 content-type: application/json
 
 {
-	"data": {
-		"name": "modified",
-		"bio": "I am the greatest!"
-	}
+	"name": "modified",
+	"bio": "I am the greatest!"
 }
 
 ### FRIEND
