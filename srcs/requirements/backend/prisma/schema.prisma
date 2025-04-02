@@ -27,9 +27,6 @@ model Profile {
   name      String?
   bio       String?
   avatarUrl String?
-  expPoints Int          @default(0)
-  wins      Int          @default(0)
-  losses    Int          @default(0)
   user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String       @unique
   friends   Friendship[] @relation("ProfileToFriends")
