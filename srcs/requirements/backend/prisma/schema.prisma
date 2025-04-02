@@ -23,15 +23,17 @@ model User {
 // TODO: Manage user online status somewhere else
 // TODO: Add default avatar picture URL
 model Player {
-  id        String             @id @default(uuid())
-  name      String?
-  bio       String?
-  avatarUrl String?
-  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String             @unique
-  friends   Friendship[]       @relation("PlayerToFriends")
-  friendOf  Friendship[]       @relation("FriendsToPlayer")
-  matches   MatchParticipant[]
+  id         String       @id @default(uuid())
+  name       String?
+  bio        String?
+  avatarUrl  String?
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String       @unique
+  friends    Friendship[] @relation("PlayerToFriends")
+  friendOf   Friendship[] @relation("FriendsToPlayer")
+  matches    Match[]      @relation("MatchPlayer1")
+  matches2   Match[]      @relation("MatchPlayer2")
+  matchesWon Match[]      @relation("MatchWinner")
 }
 
 model Friendship {
@@ -54,15 +56,23 @@ enum FriendshipStatus {
 }
 
 model Match {
-  id           String             @id @default(uuid())
-  mode         MatchMode          @default(CLASSIC)
-  duration     Int                @default(0)
+  id           String         @id @default(uuid())
+  mode         MatchMode      @default(CLASSIC)
+  duration     Int            @default(0)
+  player1Id    String
+  player1      Player         @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
+  player2Id    String
+  player2      Player         @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
+  player1Score Int            @default(0)
+  player2Score Int            @default(0)
+  winnerId     String?
+  winner       Player?         @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
   // tournamentId String?
   // tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
   roundNumber  Int?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @default(now()) @updatedAt
-  participants MatchParticipant[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  settings     MatchSettings?
 }
 
 enum MatchMode {
@@ -70,14 +80,12 @@ enum MatchMode {
   CUSTOM
 }
 
-model MatchParticipant {
-  id       String  @id @default(uuid())
-  match    Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  matchId  String
-  player   Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId String
-  score    Int     @default(0)
-  isWinner Boolean @default(false)
-
-  @@unique([matchId, playerId])
+model MatchSettings {
+  id            String  @id @default(uuid())
+  match         Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId       String  @unique
+  allowPowerUps Boolean @default(false)
+  map           String?
+  rounds        Int     @default(5)
+  ballSpeed     Float   @default(1)
 }

@@ -35,7 +35,7 @@ export async function createFriend(
     const friendship = await prisma.friendship.create({
       data: {
         playerId: playerId,
-        friendId,
+        friendId: friendId,
       },
     });
     reply.send(friendship);
