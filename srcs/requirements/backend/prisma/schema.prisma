@@ -17,37 +17,67 @@ model User {
   hashedPassword String
   salt           String   @default("")
   createdAt      DateTime @default(now())
-  profile        Profile?
+  player         Player?
 }
 
 // TODO: Manage user online status somewhere else
 // TODO: Add default avatar picture URL
-model Profile {
-  id        String       @id @default(uuid())
+model Player {
+  id        String             @id @default(uuid())
   name      String?
   bio       String?
   avatarUrl String?
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String       @unique
-  friends   Friendship[] @relation("ProfileToFriends")
-  friendOf  Friendship[] @relation("FriendsToProfile")
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String             @unique
+  friends   Friendship[]       @relation("PlayerToFriends")
+  friendOf  Friendship[]       @relation("FriendsToPlayer")
+  matches   MatchParticipant[]
 }
 
 model Friendship {
   id        String           @id @default(uuid())
-  profile   Profile          @relation("ProfileToFriends", fields: [profileId], references: [id], onDelete: Cascade)
-  profileId String
-  friendOf  Profile          @relation("FriendsToProfile", fields: [friendId], references: [id], onDelete: Cascade)
+  player    Player           @relation("PlayerToFriends", fields: [playerId], references: [id], onDelete: Cascade)
+  playerId  String
+  friendOf  Player           @relation("FriendsToPlayer", fields: [friendId], references: [id], onDelete: Cascade)
   friendId  String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @default(now()) @updatedAt
   status    FriendshipStatus @default(PENDING)
 
-  @@unique([profileId, friendId])
+  @@unique([playerId, friendId])
 }
 
 enum FriendshipStatus {
   PENDING
   ACCEPTED
   BLOCKED
+}
+
+model Match {
+  id           String             @id @default(uuid())
+  mode         MatchMode          @default(CLASSIC)
+  duration     Int                @default(0)
+  // tournamentId String?
+  // tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  roundNumber  Int?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @default(now()) @updatedAt
+  participants MatchParticipant[]
+}
+
+enum MatchMode {
+  CLASSIC
+  CUSTOM
+}
+
+model MatchParticipant {
+  id       String  @id @default(uuid())
+  match    Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId  String
+  player   Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId String
+  score    Int     @default(0)
+  isWinner Boolean @default(false)
+
+  @@unique([matchId, playerId])
 }

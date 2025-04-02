@@ -27,7 +27,7 @@ export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) 
   try {
     const users = await prisma.user.findMany({
       include: {
-        profile: true,
+        player: true,
       },
     });
     reply.send(users);

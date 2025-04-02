@@ -39,16 +39,16 @@ content-type: application/json
 	"password": "secure123"
 }
 
-### PROFILE
+### PLAYER
 
-### Get all profiles from database
-GET http://localhost:3000/profiles/ HTTP/1.1
+### Get all players from database
+GET http://localhost:3000/players/ HTTP/1.1
 
-### Get profile by id
-GET http://localhost:3000/profiles/<id> HTTP/1.1
+### Get player by id
+GET http://localhost:3000/players/<id> HTTP/1.1
 
-### Update profile info (only name and/or bio, for now)
-PUT http://localhost:3000/profiles/<id> HTTP/1.1
+### Update player info (only name and/or bio, for now)
+PUT http://localhost:3000/players/<id> HTTP/1.1
 content-type: application/json
 
 {
@@ -58,15 +58,15 @@ content-type: application/json
 
 ### FRIEND
 
-### Get all friends of a profile
-GET http://localhost:3000/profiles/<id>/friends HTTP/1.1
+### Get all friends of a player
+GET http://localhost:3000/players/<id>/friends HTTP/1.1
 
-### Add a friend to a profile
+### Add a friend to a player
 POST http://localhost:3000/friends/ HTTP/1.1
 content-type: application/json
 
 {
-	"profileId": "<id>",
+	"playerId": "<id>",
 	"friendId": "<id>"
 }
 

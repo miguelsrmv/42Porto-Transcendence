@@ -1,5 +1,5 @@
 /* Script to interact with the database */
-import { Profile } from '@prisma/client';
+import { Player } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
@@ -20,13 +20,13 @@ async function seedUsers() {
   }
 }
 
-async function createFriends(profiles: Profile[]) {
-  for (let index = 0; index < profiles.length; index++) {
-    const profile = profiles[index];
-    const friendId = profiles[(index + 1) % profiles.length].id;
+async function createFriends(players: Player[]) {
+  for (let index = 0; index < players.length; index++) {
+    const player = players[index];
+    const friendId = players[(index + 1) % players.length].id;
     await prisma.friendship.create({
       data: {
-        profileId: profile.id,
+        playerId: player.id,
         friendId: friendId,
       },
     });
@@ -36,9 +36,9 @@ async function createFriends(profiles: Profile[]) {
 async function main() {
   try {
     await seedUsers();
-    const profiles = await prisma.profile.findMany();
-    await createFriends(profiles);
-    console.log(await prisma.user.findMany({ include: { profile: true } }));
+    const players = await prisma.player.findMany();
+    await createFriends(players);
+    console.log(await prisma.user.findMany({ include: { player: true } }));
   } catch (e) {
     console.error(e);
   } finally {
