@@ -8,6 +8,7 @@
  */
 
 let currentView = "";
+let previousView = "";
 
 interface BodyContents {
     header: HTMLTemplateElement | null;
@@ -16,6 +17,7 @@ interface BodyContents {
 }
 
 import { addLandingAnimations } from "./landing.js"
+import { addNavEvents } from "./events.js"
 
 /**
  * @brief Navigates to a specified view.
@@ -32,11 +34,15 @@ export function navigateTo(view: string, update_history: boolean = true): void {
     if (view === currentView)
         return;
 
-    // Updates currentView variable
+    // Updates previousView and currentView variable
+    previousView = currentView;
     currentView = view;
 
     // Gets contents of each view
     const bodyContents = getBodyContents(view);
+
+    // Adjust header and navigation
+    adjustHeaderAndNav(view);
 
     // Renders view content
     renderView(bodyContents);
@@ -48,10 +54,14 @@ export function navigateTo(view: string, update_history: boolean = true): void {
     }
 
     // Update events on page
-    addEvents(view);
+    addPageEvents(view);
 
     // Trigger animations
     addAnimations(view);
+}
+
+export function getPreviousView(): string {
+    return previousView;
 }
 
 /**
@@ -78,6 +88,29 @@ function getBodyContents(view: string): BodyContents {
     }
 
     return bodyContents;
+}
+
+function adjustHeaderAndNav(view: string) {
+    const header = document.getElementById("header");
+    const main = document.getElementById("app");
+    const nav = document.getElementById("navigation");
+
+    if (view != "landing-template") {
+        header?.classList.remove("h-[0%]");
+        main?.classList.remove("h-full");
+        nav?.classList.remove("h-[0%]");
+        header?.classList.add("h-[15%]");
+        main?.classList.add("h-[70vh]");
+        nav?.classList.add("h-[15%]");
+    }
+    else {
+        header?.classList.remove("h-[15%]");
+        main?.classList.remove("h-[70vh]");
+        nav?.classList.remove("h-[15%]");
+        header?.classList.add("h-[0%]");
+        main?.classList.add("h-full");
+        nav?.classList.add("h-[0%]");
+    }
 }
 
 /**
@@ -108,6 +141,7 @@ function renderView(bodyContents: BodyContents) {
     if (navHost && nav) {
         const navClone = document.importNode(nav.content, true);
         navHost.replaceChildren(navClone);
+        addNavEvents();
     }
 }
 
@@ -118,7 +152,7 @@ function renderView(bodyContents: BodyContents) {
  * 
  * @param view The ID of the view for which to add events.
  */
-function addEvents(view: string): void {
+function addPageEvents(view: string): void {
     switch (view) {
         case ("landing-template"):
             addLandingEvents();
