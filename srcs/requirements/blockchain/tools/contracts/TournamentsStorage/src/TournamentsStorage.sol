@@ -105,7 +105,7 @@ contract TournamentsStorage {
     function findLastIndexOfPlayer(
         uint8 _tournamentId,
         string memory _playerName
-    ) public view returns (uint8) {
+    ) private view returns (uint8) {
         uint8 lastIndex = 0;
         uint8 tournamentLength = 0;
 
