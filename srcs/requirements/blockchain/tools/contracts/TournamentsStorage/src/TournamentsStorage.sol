@@ -6,8 +6,8 @@ contract TournamentsStorage {
 
     struct Tournament {
         uint256 id;
-        uint32 date;
-        uint16 time;
+        uint16[3] date;
+        uint8[3] time;
         uint8 maxParticipants;
         string[MAX_PARTICIPANTS] participants;
         string[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
@@ -44,7 +44,92 @@ contract TournamentsStorage {
         return tournaments[_id].scores;
     }
 
-    function createTournament(uint32 _date, uint16 _time) public {
+    function getCurrentTimestamp() internal view returns (uint256) {
+        return block.timestamp; // Avalanche timestamp in UTC
+    }
+
+    function _daysToDate(
+        uint256 _days
+    ) internal pure returns (uint256 year, uint256 month, uint256 day) {
+        int256 OFFSET19700101 = 2440588;
+        int256 L = int256(_days) + 68569 + OFFSET19700101;
+        int256 N = (4 * L) / 146097;
+        L = L - (146097 * N + 3) / 4;
+        int256 _year = (4000 * (L + 1)) / 1461001;
+        L = L - (1461 * _year) / 4 + 31;
+        int256 _month = (80 * L) / 2447;
+        int256 _day = L - (2447 * _month) / 80;
+        L = _month / 11;
+        _month = _month + 2 - 12 * L;
+        _year = 100 * (N - 49) + _year + L;
+
+        return (uint256(_year), uint256(_month), uint256(_day));
+    }
+
+    function getCurrentDateTimeUTC()
+        internal
+        view
+        returns (
+            uint256 year,
+            uint256 month,
+            uint256 day,
+            uint256 hour,
+            uint256 minute,
+            uint256 second
+        )
+    {
+        uint256 timestamp = block.timestamp;
+        uint256 SECONDS_PER_DAY = 86400;
+        uint256 SECONDS_PER_HOUR = 3600;
+        uint256 SECONDS_PER_MINUTE = 60;
+
+        uint256 daysSinceEpoch = timestamp / SECONDS_PER_DAY;
+        uint256 secondsInDay = timestamp % SECONDS_PER_DAY;
+
+        hour = secondsInDay / SECONDS_PER_HOUR;
+        minute = (secondsInDay % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE;
+        second = (secondsInDay % SECONDS_PER_HOUR) % SECONDS_PER_MINUTE;
+
+        (year, month, day) = _daysToDate(daysSinceEpoch);
+
+        return (year, month, day, hour, minute, second);
+    }
+
+    function getCurrentDate() internal view returns (uint16[3] memory date) {
+        (
+            uint256 year,
+            uint256 month,
+            uint256 day,
+            ,
+            ,
+
+        ) = getCurrentDateTimeUTC();
+
+        date[0] = uint16(day);
+        date[1] = uint16(month);
+        date[2] = uint16(year);
+
+        return date;
+    }
+
+    function getCurrentTime() internal view returns (uint8[3] memory time) {
+        (
+            ,
+            ,
+            ,
+            uint256 hour,
+            uint256 minute,
+            uint256 second
+        ) = getCurrentDateTimeUTC();
+
+        time[0] = uint8(hour);
+        time[1] = uint8(minute);
+        time[2] = uint8(second);
+
+        return time;
+    }
+
+    function createTournament() public {
         string[MAX_PARTICIPANTS] memory emptyParticipants;
         for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
             emptyParticipants[i] = "";
@@ -63,8 +148,8 @@ contract TournamentsStorage {
         tournaments.push(
             Tournament({
                 id: tournaments.length,
-                date: _date,
-                time: _time,
+                date: getCurrentDate(),
+                time: getCurrentTime(),
                 maxParticipants: MAX_PARTICIPANTS,
                 participants: emptyParticipants,
                 matchedParticipants: emptyMatchedParticipants,
@@ -105,7 +190,7 @@ contract TournamentsStorage {
     function findLastIndexOfPlayer(
         uint8 _tournamentId,
         string memory _playerName
-    ) private view returns (uint8) {
+    ) internal view returns (uint8) {
         uint8 lastIndex = 0;
         uint8 tournamentLength = 0;
 
