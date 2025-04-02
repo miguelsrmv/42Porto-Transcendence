@@ -12,7 +12,7 @@ export const prisma = new PrismaClient().$extends({
           create: {
             name: args.data.username,
             bio: `Hello, I am ${args.data.username}!`,
-            avatarUrl: 'static/avatar_default.png',
+            avatarUrl: 'static/avatar/default/1.png',
           },
         };
         return query(args);
