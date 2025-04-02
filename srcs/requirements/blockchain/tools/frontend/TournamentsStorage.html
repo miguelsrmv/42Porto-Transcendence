@@ -114,7 +114,7 @@
 
     </div>
 
-    <!-- <div id="resultBox">Results will appear here...</div> -->
+    <div id="bracket"></div>
 
     <script>
         function displayResult(data) {
@@ -161,6 +161,7 @@
             try {
                 const result = await getMatchedParticipants(parseInt(id));
                 displayResult(result);
+                displayBracket(result);
             } catch (error) {
                 displayResult({ error: error.message });
             }
@@ -176,6 +177,32 @@
                 displayResult({ error: error.message });
             }
         }
+
+        function displayBracket(matchedParticipants) {
+            const bracketDiv = document.getElementById('bracket');
+            bracketDiv.innerHTML = '';
+
+            let levels = [
+                [ // Round 1: Initial Matches (4 participants → 2 winners)
+                    `${matchedParticipants[0]} vs ${matchedParticipants[1]}`,
+                    `${matchedParticipants[2]} vs ${matchedParticipants[3]}`
+                ],
+                [ // Round 2: 2 winners → 1 final match
+                    matchedParticipants[4] ? `${matchedParticipants[4]} vs ${matchedParticipants[5]}` : 'TBD'
+                ],
+                [ // Finals: 1 winner
+                    matchedParticipants[6] ? `Winner: ${matchedParticipants[6]}` : 'TBD'
+                ]
+            ];
+
+            levels.forEach((round, index) => {
+                const roundDiv = document.createElement('div');
+                roundDiv.innerHTML = `<h3>Round ${index + 1}</h3>` + round.map(match => `<p>${match}</p>`).join('');
+                bracketDiv.appendChild(roundDiv);
+            });
+        }
+
+
 
         async function createNewTournament() {
             const date = document.getElementById('date').value;
