@@ -7,7 +7,7 @@
  * uses the browser's back and forward buttons.
  */
 
-import { navigateTo } from "./navigation.js"
+import { navigateTo, getPreviousView } from "./navigation.js"
 
 /**
  * @brief Sets up a listener for the popstate event.
@@ -26,4 +26,27 @@ export function setupHistoryListener(): void {
             navigateTo(state.view, false);
         }
     });
+}
+
+export function addNavEvents(): void {
+    addSettingsMenu();
+    addBackArrow();
+}
+
+function addSettingsMenu(): void {
+    const settingsButton = document.getElementById("nav-settings-button");
+    const settingsMenu = document.getElementById("settings-dropdown");
+
+    settingsButton?.addEventListener("click", () => {
+        settingsMenu?.classList.toggle("opacity-0");
+        settingsMenu?.classList.toggle("pointer-events-none");
+    });
+}
+
+function addBackArrow(): void {
+    const backButton = document.getElementById("nav-back-button");
+
+    backButton?.addEventListener("click", () => {
+        navigateTo(getPreviousView(), false);
+    })
 }
