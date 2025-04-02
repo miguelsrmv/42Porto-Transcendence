@@ -81,8 +81,6 @@
 
         <div class="box">
             <h3>Create Tournament</h3>
-            <input type="text" id="date" placeholder="Date (DDMMYYYY)">
-            <input type="text" id="time" placeholder="Time (HHMM)">
             <button onclick="createNewTournament()">Create Tournament</button>
         </div>
 
@@ -197,7 +195,8 @@
 
             levels.forEach((round, index) => {
                 const roundDiv = document.createElement('div');
-                roundDiv.innerHTML = `<h3>Round ${index + 1}</h3>` + round.map(match => `<p>${match}</p>`).join('');
+                if (index === 2) { roundDiv.innerHTML = `<h3>Winner ${index + 1}</h3>` + round.map(match => `<p>${match}</p>`).join(''); }
+                else { roundDiv.innerHTML = `<h3>Round ${index + 1}</h3>` + round.map(match => `<p>${match}</p>`).join(''); }
                 bracketDiv.appendChild(roundDiv);
             });
         }
@@ -205,11 +204,8 @@
 
 
         async function createNewTournament() {
-            const date = document.getElementById('date').value;
-            const time = document.getElementById('time').value;
-            if (!date || !time) return alert("Enter valid date and time");
             try {
-                const result = await createTournament(parseInt(date), parseInt(time));
+                const result = await createTournament();
                 displayResult(result);
             } catch (error) {
                 displayResult({ error: error.message });
