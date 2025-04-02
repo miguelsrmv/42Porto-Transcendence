@@ -106,7 +106,7 @@ Authorization: Bearer <JWT>
 
 ```json
 {
-  "status": "pending" // or "accepted", "blocked"
+  "status": "PENDING" // or "ACCEPTED", "BLOCKED"
 }
 ```
 
