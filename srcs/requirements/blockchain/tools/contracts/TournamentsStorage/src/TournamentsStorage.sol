@@ -16,6 +16,7 @@ contract TournamentsStorage {
 
     Tournament[] public tournaments;
 
+    // GETTER FUNCTIONS *********************************************************
     function getTournaments() public view returns (Tournament[] memory) {
         return tournaments;
     }
@@ -44,6 +45,135 @@ contract TournamentsStorage {
         return tournaments[_id].scores;
     }
 
+    // ACTION FUNCTIONS *********************************************************
+    function createTournament() public {
+        string[MAX_PARTICIPANTS] memory emptyParticipants;
+        for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
+            emptyParticipants[i] = "";
+        }
+
+        string[MAX_PARTICIPANTS * 2 - 1] memory emptyMatchedParticipants;
+        for (uint8 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
+            emptyMatchedParticipants[i] = "";
+        }
+
+        uint8[(MAX_PARTICIPANTS - 1) * 2] memory emptyScores;
+        for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
+            emptyScores[i] = 0;
+        }
+
+        tournaments.push(
+            Tournament({
+                id: tournaments.length,
+                date: getCurrentDate(),
+                time: getCurrentTime(),
+                maxParticipants: MAX_PARTICIPANTS,
+                participants: emptyParticipants,
+                matchedParticipants: emptyMatchedParticipants,
+                scores: emptyScores
+            })
+        );
+    }
+
+    function joinTournament(
+        uint256 _tournamentId,
+        string memory _participantName
+    ) public {
+        uint8 tournamentLength = 0;
+
+        while (
+            keccak256(
+                abi.encodePacked(
+                    tournaments[_tournamentId].participants[tournamentLength]
+                )
+            ) != keccak256(abi.encodePacked(""))
+        ) tournamentLength++;
+
+        require(tournamentLength < MAX_PARTICIPANTS, "Tournament is full");
+
+        tournaments[_tournamentId].participants[
+            tournamentLength
+        ] = _participantName;
+        tournaments[_tournamentId].matchedParticipants[
+            tournamentLength
+        ] = _participantName;
+    }
+
+    function addWinner(uint8 _tournamentId, string memory _winnerName) public {
+        uint8 winnerNextIndex = findLastIndexOfPlayer(
+            _tournamentId,
+            _winnerName
+        ) /
+            2 +
+            MAX_PARTICIPANTS;
+
+        tournaments[_tournamentId].matchedParticipants[
+            winnerNextIndex
+        ] = _winnerName;
+    }
+
+    function saveScore(
+        uint8 _tournamentId,
+        string memory _playerOneName,
+        uint8 _playerOneScore,
+        string memory _playerTwoName,
+        uint8 _playerTwoScore
+    ) public {
+        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(
+            _tournamentId,
+            _playerOneName
+        );
+
+        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(
+            _tournamentId,
+            _playerTwoName
+        );
+
+        tournaments[_tournamentId].scores[
+            updatedPlayerOneIndex
+        ] = _playerOneScore;
+        tournaments[_tournamentId].scores[
+            updatedPlayerTwoIndex
+        ] = _playerTwoScore;
+    }
+
+    //HELPER FUNCTIONS **********************************************************
+    /* Find last index of a player in the tournament */
+    function isEmptyString(string memory str) internal pure returns (bool) {
+        return
+            keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
+    }
+
+    function findLastIndexOfPlayer(
+        uint8 _tournamentId,
+        string memory _playerName
+    ) internal view returns (uint8) {
+        uint8 lastIndex = 0;
+        uint8 tournamentLength = 0;
+
+        while (
+            tournamentLength < (MAX_PARTICIPANTS - 1) * 2 &&
+            !isEmptyString(
+                tournaments[_tournamentId].matchedParticipants[tournamentLength]
+            )
+        ) tournamentLength++;
+
+        for (uint8 i = 0; i < tournamentLength; i++) {
+            if (
+                keccak256(
+                    abi.encodePacked(
+                        tournaments[_tournamentId].matchedParticipants[i]
+                    )
+                ) == keccak256(abi.encodePacked(_playerName))
+            ) {
+                lastIndex = i;
+            }
+        }
+
+        return lastIndex;
+    }
+
+    /* Get the current timestamp */
     function getCurrentTimestamp() internal view returns (uint256) {
         return block.timestamp; // Avalanche timestamp in UTC
     }
@@ -127,130 +257,5 @@ contract TournamentsStorage {
         time[2] = uint8(second);
 
         return time;
-    }
-
-    function createTournament() public {
-        string[MAX_PARTICIPANTS] memory emptyParticipants;
-        for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
-            emptyParticipants[i] = "";
-        }
-
-        string[MAX_PARTICIPANTS * 2 - 1] memory emptyMatchedParticipants;
-        for (uint8 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
-            emptyMatchedParticipants[i] = "";
-        }
-
-        uint8[(MAX_PARTICIPANTS - 1) * 2] memory emptyScores;
-        for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
-            emptyScores[i] = 0;
-        }
-
-        tournaments.push(
-            Tournament({
-                id: tournaments.length,
-                date: getCurrentDate(),
-                time: getCurrentTime(),
-                maxParticipants: MAX_PARTICIPANTS,
-                participants: emptyParticipants,
-                matchedParticipants: emptyMatchedParticipants,
-                scores: emptyScores
-            })
-        );
-    }
-
-    function joinTournament(
-        uint256 _tournamentId,
-        string memory _participantName
-    ) public {
-        uint8 tournamentLength = 0;
-
-        while (
-            keccak256(
-                abi.encodePacked(
-                    tournaments[_tournamentId].participants[tournamentLength]
-                )
-            ) != keccak256(abi.encodePacked(""))
-        ) tournamentLength++;
-
-        require(tournamentLength < MAX_PARTICIPANTS, "Tournament is full");
-
-        tournaments[_tournamentId].participants[
-            tournamentLength
-        ] = _participantName;
-        tournaments[_tournamentId].matchedParticipants[
-            tournamentLength
-        ] = _participantName;
-    }
-
-    function isEmptyString(string memory str) internal pure returns (bool) {
-        return
-            keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
-    }
-
-    function findLastIndexOfPlayer(
-        uint8 _tournamentId,
-        string memory _playerName
-    ) internal view returns (uint8) {
-        uint8 lastIndex = 0;
-        uint8 tournamentLength = 0;
-
-        while (
-            tournamentLength < (MAX_PARTICIPANTS - 1) * 2 &&
-            !isEmptyString(
-                tournaments[_tournamentId].matchedParticipants[tournamentLength]
-            )
-        ) tournamentLength++;
-
-        for (uint8 i = 0; i < tournamentLength; i++) {
-            if (
-                keccak256(
-                    abi.encodePacked(
-                        tournaments[_tournamentId].matchedParticipants[i]
-                    )
-                ) == keccak256(abi.encodePacked(_playerName))
-            ) {
-                lastIndex = i;
-            }
-        }
-
-        return lastIndex;
-    }
-
-    function addWinner(uint8 _tournamentId, string memory _winnerName) public {
-        uint8 winnerNextIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _winnerName
-        ) /
-            2 +
-            MAX_PARTICIPANTS;
-
-        tournaments[_tournamentId].matchedParticipants[
-            winnerNextIndex
-        ] = _winnerName;
-    }
-
-    function saveScore(
-        uint8 _tournamentId,
-        string memory _playerOneName,
-        uint8 _playerOneScore,
-        string memory _playerTwoName,
-        uint8 _playerTwoScore
-    ) public {
-        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _playerOneName
-        );
-
-        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _playerTwoName
-        );
-
-        tournaments[_tournamentId].scores[
-            updatedPlayerOneIndex
-        ] = _playerOneScore;
-        tournaments[_tournamentId].scores[
-            updatedPlayerTwoIndex
-        ] = _playerTwoScore;
     }
 }
