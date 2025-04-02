@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 /* src/tailwind.css */
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
 
 /* Fonts */
