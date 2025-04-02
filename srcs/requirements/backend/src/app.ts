@@ -2,7 +2,7 @@ import fastify from 'fastify';
 import { userRoutes } from './routes/user.routes';
 import jwtPlugin from './middlewares/auth';
 import dotenv from 'dotenv';
-import { profileRoutes } from './routes/profile.routes';
+import { playerRoutes } from './routes/player.routes';
 import { friendRoutes } from './routes/friendship.routes';
 
 dotenv.config();
@@ -24,7 +24,7 @@ app.get('/', async (request, reply) => {
 });
 
 app.register(userRoutes, { prefix: '/users' });
-app.register(profileRoutes, { prefix: '/profiles' });
+app.register(playerRoutes, { prefix: '/players' });
 app.register(friendRoutes, { prefix: '/friends' });
 
 export default app;

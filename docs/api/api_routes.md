@@ -1,21 +1,21 @@
 # Endpoints
 
-| Method   | Route                   |   URL parameters   |             Body             | Description                              |
-| -------- | ----------------------- | :----------------: | :--------------------------: | ---------------------------------------- |
-| `GET`    | `/`                     |                    |                              | Base route for test                      |
-| `GET`    | `/users`                |                    |                              | Get all users                            |
-| `GET`    | `/users/:id`            |    `id` user id    |                              | Get a specific user                      |
-| `POST`   | `/users`                |                    | username, email and password | Create a new user                        |
-| `PUT`    | `/users/:id`            |    `id` user id    |        data to update        | Update data on a specific user           |
-| `DELETE` | `/users/:id`            |    `id` user id    |                              | Delete a user                            |
-| `POST`   | `/users/login`          |                    |      email and password      | Get JWT (if user is valid)               |
-| `GET`    | `/profiles`             |                    |                              | Get all profiles                         |
-| `GET`    | `/profiles/:id`         |  `id` profile id   |                              | Get a specific profile                   |
-| `PUT`    | `/profiles/:id`         |  `id` profile id   |        data to update        | Update data on a specific profile        |
-| `GET`    | `/profiles/:id/friends` |  `id` profile id   |                              | Get all friends of that profile          |
-| `POST`   | `/friends`              |                    |    profileId and friendId    | Create a friendship between two profiles |
-| `PUT`    | `/friends/:id`          | `id` friendship id |            status            | Update friendship status                 |
-| `DELETE` | `/friends/:id`          | `id` friendship id |                              | Delete a friendship                      |
+| Method   | Route                  |   URL parameters   |             Body             | Description                             |
+| -------- | ---------------------- | :----------------: | :--------------------------: | --------------------------------------- |
+| `GET`    | `/`                    |                    |                              | Base route for test                     |
+| `GET`    | `/users`               |                    |                              | Get all users                           |
+| `GET`    | `/users/:id`           |    `id` user id    |                              | Get a specific user                     |
+| `POST`   | `/users`               |                    | username, email and password | Create a new user                       |
+| `PUT`    | `/users/:id`           |    `id` user id    |        data to update        | Update data on a specific user          |
+| `DELETE` | `/users/:id`           |    `id` user id    |                              | Delete a user                           |
+| `POST`   | `/users/login`         |                    |      email and password      | Get JWT (if user is valid)              |
+| `GET`    | `/players`             |                    |                              | Get all players                         |
+| `GET`    | `/players/:id`         |   `id` player id   |                              | Get a specific player                   |
+| `PUT`    | `/players/:id`         |   `id` player id   |        data to update        | Update data on a specific player        |
+| `GET`    | `/players/:id/friends` |   `id` player id   |                              | Get all friends of that player          |
+| `POST`   | `/friends`             |                    |    playerId and friendId     | Create a friendship between two players |
+| `PUT`    | `/friends/:id`         | `id` friendship id |            status            | Update friendship status                |
+| `DELETE` | `/friends/:id`         | `id` friendship id |                              | Delete a friendship                     |
 
 ## Base
 
@@ -76,11 +76,11 @@ Authorization: Bearer <JWT>
 
 ```
 
-## Profiles
+## Players
 
-- **Get all profiles:**  `GET /profiles`
-- **Get a specific profile:** `GET /profiles/:id`
-- **Update a profile:** `PUT /profiles/:id`
+- **Get all players:** `GET /players`
+- **Get a specific player:** `GET /players/:id`
+- **Update a player:** `PUT /players/:id`
 
 ```json
 {
@@ -91,13 +91,13 @@ Authorization: Bearer <JWT>
 
 ## Friendships
 
-- **Get all friendships for a profile:** `GET /profiles/:id/friends`
+- **Get all friendships for a player:** `GET /players/:id/friends`
 - **Create a new friendship:** `POST /friends`
 
 ```json
 {
-  "friendId": "<id>",
-  "profileId": "<id>"
+  "playerId": "<id>",
+  "friendId": "<id>"
 }
 ```
 

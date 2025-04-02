@@ -4,7 +4,7 @@ import { handleError } from '../utils/errorHandler';
 import { FriendshipStatus } from '@prisma/client';
 
 interface FriendCreate {
-  profileId: string;
+  playerId: string;
   friendId: string;
 }
 
@@ -15,7 +15,7 @@ export async function getAllFriends(
   try {
     const friends = await prisma.friendship.findMany({
       where: {
-        OR: [{ profileId: request.params.id }, { friendId: request.params.id }],
+        OR: [{ playerId: request.params.id }, { friendId: request.params.id }],
       },
     });
     reply.send(friends);
@@ -29,12 +29,12 @@ export async function createFriend(
   reply: FastifyReply,
 ) {
   try {
-    const { profileId } = request.body;
+    const { playerId } = request.body;
     const { friendId } = request.body;
 
     const friendship = await prisma.friendship.create({
       data: {
-        profileId: profileId,
+        playerId: playerId,
         friendId,
       },
     });

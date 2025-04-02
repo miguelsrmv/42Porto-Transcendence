@@ -1,6 +1,6 @@
 import { getByIdSchema } from './global.schema';
 
-export const updateProfileSchema = {
+export const updatePlayerSchema = {
   params: getByIdSchema.params,
   body: {
     type: 'object',

@@ -2,51 +2,51 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 
-interface ProfileUpdate {
+interface PlayerUpdate {
   name?: string;
   bio?: string;
 }
 
-export async function getAllProfiles(request: FastifyRequest, reply: FastifyReply) {
+export async function getAllPlayers(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const profiles = await prisma.profile.findMany({
+    const players = await prisma.player.findMany({
       include: {
         friends: true,
       },
     });
-    reply.send(profiles);
+    reply.send(players);
   } catch (error) {
     handleError(error, reply);
   }
 }
 
-export async function getProfileById(
+export async function getPlayerById(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
   try {
-    const profile = await prisma.profile.findUniqueOrThrow({
+    const player = await prisma.player.findUniqueOrThrow({
       where: { id: request.params.id },
       include: {
         friends: true,
       },
     });
-    reply.send(profile);
+    reply.send(player);
   } catch (error) {
     handleError(error, reply);
   }
 }
 
-export async function updateProfile(
-  request: FastifyRequest<{ Params: IParams; Body: ProfileUpdate }>,
+export async function updatePlayer(
+  request: FastifyRequest<{ Params: IParams; Body: PlayerUpdate }>,
   reply: FastifyReply,
 ) {
   try {
-    const profile = await prisma.profile.update({
+    const player = await prisma.player.update({
       where: { id: request.params.id },
       data: request.body,
     });
-    reply.send(profile);
+    reply.send(player);
   } catch (error) {
     handleError(error, reply);
   }
