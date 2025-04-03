@@ -1,13 +1,13 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
-import { MatchMode, MatchSettings } from '@prisma/client';
+import { MatchMode, GameSettings } from '@prisma/client';
 
 interface MatchCreate {
   mode: MatchMode;
   player1Id: string;
   player2Id: string;
-  settings: MatchSettings;
+  settings: GameSettings;
 }
 
 export async function getPlayerMatches(
@@ -46,7 +46,7 @@ export async function createMatch(
 ) {
   try {
     const { player1Id, player2Id, mode } = request.body;
-    const settings = request.body.settings as MatchSettings;
+    const settings = request.body.settings as GameSettings;
 
     const match = await prisma.match.create({
       data: {
