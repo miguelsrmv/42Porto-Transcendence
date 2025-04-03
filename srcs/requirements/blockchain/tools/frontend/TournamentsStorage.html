@@ -189,13 +189,13 @@
                     matchedParticipants[4] ? `${matchedParticipants[4]} vs ${matchedParticipants[5]}` : 'TBD'
                 ],
                 [ // Finals: 1 winner
-                    matchedParticipants[6] ? `Winner: ${matchedParticipants[6]}` : 'TBD'
+                    matchedParticipants[6] ? `${matchedParticipants[6]}` : 'TBD'
                 ]
             ];
 
             levels.forEach((round, index) => {
                 const roundDiv = document.createElement('div');
-                if (index === 2) { roundDiv.innerHTML = `<h3>Winner ${index + 1}</h3>` + round.map(match => `<p>${match}</p>`).join(''); }
+                if (index === 2) { roundDiv.innerHTML = `<h3>Winner</h3>` + round.map(match => `<p>${match}</p>`).join(''); }
                 else { roundDiv.innerHTML = `<h3>Round ${index + 1}</h3>` + round.map(match => `<p>${match}</p>`).join(''); }
                 bracketDiv.appendChild(roundDiv);
             });
