@@ -45,6 +45,21 @@ contract TournamentsStorage {
         return tournaments[_id].scores;
     }
 
+    // ERROR CHECKER FUNCTIONS **************************************************
+    function isTournamentFull(uint256 _tournamentId) internal view {
+        uint8 tournamentLength = 0;
+
+        while (
+            keccak256(
+                abi.encodePacked(
+                    tournaments[_tournamentId].participants[tournamentLength]
+                )
+            ) != keccak256(abi.encodePacked(""))
+        ) tournamentLength++;
+
+        require(tournamentLength < MAX_PARTICIPANTS, "Tournament is full");
+    }
+
     // ACTION FUNCTIONS *********************************************************
     function createTournament() public {
         string[MAX_PARTICIPANTS] memory emptyParticipants;
