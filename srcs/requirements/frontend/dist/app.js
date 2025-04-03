@@ -14,7 +14,7 @@ import { setupHistoryListener } from "./events.js";
  * Triggers the loading of the default page when the DOM content is fully loaded and parsed.
  */
 document.addEventListener("DOMContentLoaded", () => {
-    const initialView = "landing-template";
+    const initialView = "landing-page";
     // Setup history listener first
     setupHistoryListener();
     // Replace the initial state to ensure correct history behavior

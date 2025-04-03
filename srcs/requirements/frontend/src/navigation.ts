@@ -81,8 +81,8 @@ function getBodyContents(view: string): BodyContents {
     // Loads main view
     let mainContent;
     // If view is not a game view, load it
-    if (view !== "local-play-template" && view !== "remote-play-template" && view != "tournament-template")
-        mainContent = document.getElementById(view) as HTMLTemplateElement;
+    if (view !== "local-play-page" && view !== "remote-play-page" && view != "tournament-page")
+        mainContent = document.getElementById(view.replace("-page", "-template")) as HTMLTemplateElement;
     // If view is a game view, load game view and customize it depending on game type
     else
         mainContent = getGameMenu(view);
@@ -90,28 +90,28 @@ function getBodyContents(view: string): BodyContents {
         bodyContents.main = mainContent.content.cloneNode(true) as DocumentFragment;
 
     // Add Header and Nav bar if not on landing page
-    if (view !== "landing-template") {
-        // Loads header if not in landing-template
+    if (view !== "landing-page") {
+        // Loads header if not in landing-page
         const headerContent = document.getElementById("header-template") as HTMLTemplateElement;
         bodyContents.header = headerContent.content.cloneNode(true) as DocumentFragment;
         const headerText = bodyContents.header.querySelector("#header-menu-text");
         if (headerText) {
-            headerText.innerHTML = view.replace("-template", "").split("-").map(view => view.charAt(0).toUpperCase() + view.slice(1)).join(" ");
+            headerText.innerHTML = view.replace("-page", "").split("-").map(view => view.charAt(0).toUpperCase() + view.slice(1)).join(" ");
         }
 
-        // Loads nav-bar if not in landing-template
+        // Loads nav-bar if not in landing-page
         const navContent = document.getElementById("nav-bar-template") as HTMLTemplateElement;
         bodyContents.nav = navContent.content.cloneNode(true) as DocumentFragment;
 
         // Erases back button if on main-menu
-        if (view === "main-menu-template") {
+        if (view === "main-menu-page") {
             const backButton = bodyContents.nav.querySelector("#nav-back-button");
             if (backButton) {
                 backButton.remove();
             }
         }
         // Erases settings button if on guest menu
-        else if (view === "guest-menu-template") {
+        else if (view === "guest-menu-page") {
             // Erases settings-button if on guest menu
             const settingsButton = bodyContents.nav.querySelector("#nav-settings-button");
             if (settingsButton) {
@@ -123,9 +123,19 @@ function getBodyContents(view: string): BodyContents {
 }
 
 function getGameMenu(view: string): HTMLTemplateElement {
-    const mainContent = document.getElementById("game-menu-template") as HTMLTemplateElement;
+    const resultTemplate = document.createElement("template");
 
-    return mainContent;
+    const gameMenuTemplate = document.getElementById("game-menu-template") as HTMLTemplateElement;
+    const gameMenuContent = gameMenuTemplate.content.cloneNode(true) as DocumentFragment;
+
+    const playerSettings = gameMenuContent.querySelector("#player-settings") as HTMLElement;
+    const playerSettingsTemplate = document.getElementById("player-settings-template") as HTMLTemplateElement;
+    const playerSettingsContent = playerSettingsTemplate.content.cloneNode(true) as DocumentFragment;
+
+    playerSettings.replaceChildren(playerSettingsContent);
+    resultTemplate.content.appendChild(gameMenuContent);
+
+    return resultTemplate;
 }
 
 function adjustHeaderAndNav(view: string) {
@@ -133,18 +143,18 @@ function adjustHeaderAndNav(view: string) {
     const main = document.getElementById("app");
     const nav = document.getElementById("navigation");
 
-    if (view != "landing-template") {
+    if (view != "landing-page") {
         header?.classList.remove("h-[0%]");
         main?.classList.remove("h-full");
         nav?.classList.remove("h-[0%]");
-        header?.classList.add("h-[15%]");
-        main?.classList.add("h-[70vh]");
-        nav?.classList.add("h-[15%]");
+        header?.classList.add("h-[10%]");
+        main?.classList.add("h-[75%]");
+        nav?.classList.add("h-[13%]");
     }
     else {
-        header?.classList.remove("h-[15%]");
-        main?.classList.remove("h-[70vh]");
-        nav?.classList.remove("h-[15%]");
+        header?.classList.remove("h-[10%]");
+        main?.classList.remove("h-[75%]");
+        nav?.classList.remove("h-[13%]");
         header?.classList.add("h-[0%]");
         main?.classList.add("h-full");
         nav?.classList.add("h-[0%]");
@@ -189,25 +199,25 @@ function renderView(bodyContents: BodyContents) {
  */
 function addPageEvents(view: string): void {
     switch (view) {
-        case ("landing-template"):
+        case ("landing-page"):
             addLandingEvents();
             break;
-        case ("main-menu-template"):
+        case ("main-menu-page"):
             addMainMenuEvents();
             break;
-        case ("local-play-template"):
+        case ("local-play-page"):
             addLocalPlayEvents();
             break;
-        case ("remote-play-template"):
+        case ("remote-play-page"):
             addRemotePlayEvents();
             break;
-        case ("tournament-template"):
+        case ("tournament-page"):
             addTournamentPlayEvents();
             break;
-        case ("friends-template"):
+        case ("friends-page"):
             addFriendsEvents();
             break;
-        case ("rankings-template"):
+        case ("rankings-page"):
             addRankingEvents();
             break;
     }
@@ -220,7 +230,7 @@ function addPageEvents(view: string): void {
  */
 function addAnimations(view: string): void {
     switch (view) {
-        case ("landing-template"):
+        case ("landing-page"):
             addLandingAnimations();
             break;
     }
@@ -256,10 +266,10 @@ function addLandingEvents(): void {
         });
     }
     if (guestButton)
-        guestButton.addEventListener("click", () => navigateTo("main-menu-template"));
+        guestButton.addEventListener("click", () => navigateTo("main-menu-page"));
 
     if (loginButton)
-        loginButton.addEventListener("click", () => navigateTo("main-menu-template"));
+        loginButton.addEventListener("click", () => navigateTo("main-menu-page"));
 }
 
 /**
@@ -272,30 +282,30 @@ function addMainMenuEvents(): void {
     const localPlayMenu = document.getElementById("local-play-button");
     if (localPlayMenu) {
         addNavBarText(localPlayMenu, "Play locally with friends!");
-        localPlayMenu.addEventListener("click", () => { navigateTo("local-play-template") });
+        localPlayMenu.addEventListener("click", () => { navigateTo("local-play-page") });
     }
 
     const remotePlayMenu = document.getElementById("remote-play-button");
     if (remotePlayMenu) {
         addNavBarText(remotePlayMenu, "Play online on the ladder!");
-        remotePlayMenu.addEventListener("click", () => { navigateTo("remote-play-template") });
+        remotePlayMenu.addEventListener("click", () => { navigateTo("remote-play-page") });
     }
 
     const tourneyMenu = document.getElementById("tournament-play-button");
     if (tourneyMenu) {
         addNavBarText(tourneyMenu, "Face other players in a tournament!");
-        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-template") });
+        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-page") });
     }
 
     const friendsMenu = document.getElementById("rankings-button");
     if (friendsMenu) {
-        friendsMenu.addEventListener("click", () => { navigateTo("rankings-template") });
+        friendsMenu.addEventListener("click", () => { navigateTo("rankings-page") });
         addNavBarText(friendsMenu, "Check your stats!")
     }
 
     const rankingsMenu = document.getElementById("friends-button");
     if (rankingsMenu) {
-        rankingsMenu.addEventListener("click", () => { navigateTo("friends-template") });
+        rankingsMenu.addEventListener("click", () => { navigateTo("friends-page") });
         addNavBarText(rankingsMenu, "See who's online!");
     }
 
