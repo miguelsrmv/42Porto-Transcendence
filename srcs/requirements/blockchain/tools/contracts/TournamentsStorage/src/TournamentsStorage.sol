@@ -170,6 +170,15 @@ contract TournamentsStorage {
             }
         }
 
+        require(
+            keccak256(
+                abi.encodePacked(
+                    tournaments[_tournamentId].matchedParticipants[lastIndex]
+                )
+            ) == keccak256(abi.encodePacked(_playerName)),
+            "Player not found"
+        );
+
         return lastIndex;
     }
 
