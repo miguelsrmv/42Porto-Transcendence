@@ -45,25 +45,6 @@ contract TournamentsStorage {
         return tournaments[_id].scores;
     }
 
-    // ERROR CHECKER FUNCTIONS **************************************************
-    function isTournamentFull(
-        uint256 _tournamentId
-    ) public view returns (bool) {
-        uint8 tournamentLength = 0;
-
-        while (
-            tournamentLength < MAX_PARTICIPANTS &&
-            keccak256(
-                abi.encodePacked(
-                    tournaments[_tournamentId].participants[tournamentLength]
-                )
-            ) !=
-            keccak256(abi.encodePacked(""))
-        ) tournamentLength++;
-
-        return tournamentLength >= MAX_PARTICIPANTS;
-    }
-
     // ACTION FUNCTIONS *********************************************************
     function createTournament() public {
         string[MAX_PARTICIPANTS] memory emptyParticipants;
@@ -155,7 +136,26 @@ contract TournamentsStorage {
     }
 
     //HELPER FUNCTIONS **********************************************************
-    /* Find last index of a player in the tournament */
+    /* Check if a tournament is full */
+    function isTournamentFull(
+        uint256 _tournamentId
+    ) public view returns (bool) {
+        uint8 tournamentLength = 0;
+
+        while (
+            tournamentLength < MAX_PARTICIPANTS &&
+            keccak256(
+                abi.encodePacked(
+                    tournaments[_tournamentId].participants[tournamentLength]
+                )
+            ) !=
+            keccak256(abi.encodePacked(""))
+        ) tournamentLength++;
+
+        return tournamentLength >= MAX_PARTICIPANTS;
+    }
+
+    /* Find last index of a player in a tournament */
     function isEmptyString(string memory str) internal pure returns (bool) {
         return
             keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
