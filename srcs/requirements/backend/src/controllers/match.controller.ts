@@ -10,6 +10,13 @@ interface MatchCreate {
   settings: GameSettings;
 }
 
+interface MatchUpdate {
+  duration: number;
+  winnerId: string;
+  player1Score: number;
+  player2Score: number;
+}
+
 export async function getPlayerMatches(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
@@ -57,6 +64,21 @@ export async function createMatch(
           create: settings,
         },
       },
+    });
+    reply.send(match);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function updateMatch(
+  request: FastifyRequest<{ Params: IParams; Body: MatchUpdate }>,
+  reply: FastifyReply,
+) {
+  try {
+    const match = await prisma.match.update({
+      where: { id: request.params.id },
+      data: request.body,
     });
     reply.send(match);
   } catch (error) {
