@@ -46,18 +46,22 @@ contract TournamentsStorage {
     }
 
     // ERROR CHECKER FUNCTIONS **************************************************
-    function isTournamentFull(uint256 _tournamentId) internal view {
+    function isTournamentFull(
+        uint256 _tournamentId
+    ) public view returns (bool) {
         uint8 tournamentLength = 0;
 
         while (
+            tournamentLength < MAX_PARTICIPANTS &&
             keccak256(
                 abi.encodePacked(
                     tournaments[_tournamentId].participants[tournamentLength]
                 )
-            ) != keccak256(abi.encodePacked(""))
+            ) !=
+            keccak256(abi.encodePacked(""))
         ) tournamentLength++;
 
-        require(tournamentLength < MAX_PARTICIPANTS, "Tournament is full");
+        return tournamentLength >= MAX_PARTICIPANTS;
     }
 
     // ACTION FUNCTIONS *********************************************************
@@ -103,8 +107,6 @@ contract TournamentsStorage {
                 )
             ) != keccak256(abi.encodePacked(""))
         ) tournamentLength++;
-
-        require(tournamentLength < MAX_PARTICIPANTS, "Tournament is full");
 
         tournaments[_tournamentId].participants[
             tournamentLength
