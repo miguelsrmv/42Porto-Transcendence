@@ -29,7 +29,7 @@ async function connectWallet() {
 }
 
 // Contract details
-const contractAddress = "0xB109335B03c9619d081a8c642A4191B624F0f141"; // Replace with your deployed contract address
+const contractAddress = "0x013f7a4A471450D51678a27568Dc224f208462A9"; // Replace with your deployed contract address
 const contractABI = [
     {
         "inputs": [
@@ -225,6 +225,25 @@ const contractABI = [
                 "internalType": "uint256",
                 "name": "_tournamentId",
                 "type": "uint256"
+            }
+        ],
+        "name": "isTournamentFull",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_tournamentId",
+                "type": "uint256"
             },
             {
                 "internalType": "string",
@@ -299,7 +318,10 @@ const contractABI = [
 // Fetch all tournaments
 async function getAllTournaments() {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
     console.log(await contract.getTournaments());
@@ -308,7 +330,10 @@ async function getAllTournaments() {
 // Fetch a tournament
 async function getTournament(tournamentId) {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
@@ -340,7 +365,10 @@ async function getTournament(tournamentId) {
 // Fetch participants of a tournament
 async function getParticipants(id) {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
     try {
@@ -366,7 +394,10 @@ async function getParticipants(id) {
 // Fetch matched participants
 async function getMatchedParticipants(id) {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
     try {
@@ -390,7 +421,10 @@ async function getMatchedParticipants(id) {
 // Fetch scores of a tournament
 async function getScores(id) {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
     try {
@@ -415,7 +449,10 @@ async function getScores(id) {
 // Create a new tournament
 async function createTournament() {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -428,20 +465,32 @@ async function createTournament() {
 // Join a tournament
 async function joinTournament(tournamentId, participantName) {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-    const tx = await contract.joinTournament(tournamentId, participantName);
-    console.log("Joining tournament:", tx.hash);
-    await tx.wait();
-    console.log(`Joined Tournament ${tournamentId} as ${participantName}!`);
+    const isTournamentFull = await contract.isTournamentFull(tournamentId);
+    if (!isTournamentFull) {
+        const tx = await contract.joinTournament(tournamentId, participantName);
+        console.log("Joining tournament:", tx.hash);
+        await tx.wait();
+        console.log(`Joined Tournament ${tournamentId} as ${participantName}!`);
+    }
+    else {
+        await createTournament();
+    }
 }
 
 // Add a winner to a tournament
 async function addWinner(tournamentId, winnerName) {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -454,7 +503,10 @@ async function addWinner(tournamentId, winnerName) {
 // Save scores for a match
 async function saveScore(tournamentId, playerOneName, playerScoreOne, playerTwoName, playerScoreTwo) {
     const provider = await connectWallet();
-    if (!provider) return;
+    if (!provider) {
+        console.error("Wallet connection failed.");
+        return;
+    }
 
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
