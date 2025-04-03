@@ -44,6 +44,11 @@ backend/
 - `npx prisma migrate dev --name <migration_name>` to migrate changes to the database (it also generates a prisma client)
 - `npx prisma generate` to generate a new prisma client
 
-# Notes
+## Notes
 
-- When testing locally, an `.env` file is required with the DATABASE_URL key, in the `prisma/` directory
+- When testing locally, an `.env` file is required with the DATABASE_URL key, in the project root directory `.`
+
+## TODOs
+- Update API documentation
+- Test newly created routes (match and tournament related)
+- Add more tests

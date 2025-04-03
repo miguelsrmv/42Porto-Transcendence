@@ -1,3 +1,5 @@
+import { getByIdSchema } from "./global.schema";
+
 export const createMatchSchema = {
   body: {
     type: 'object',
@@ -17,6 +19,20 @@ export const createMatchSchema = {
         },
         additionalProperties: false,
       },
+    },
+    additionalProperties: false,
+  },
+};
+
+export const updateMatchSchema = {
+  params: getByIdSchema.params,
+  body: {
+    type: 'object',
+    properties: {
+      duration: { type: 'integer' },
+      winnerId: { type: 'string', format: 'uuid' },
+      player1Score: { type: 'integer' },
+      player2Score: { type: 'integer' },
     },
     additionalProperties: false,
   },
