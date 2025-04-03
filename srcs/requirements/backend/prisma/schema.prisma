@@ -1,5 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -21,19 +19,21 @@ model User {
 }
 
 // TODO: Manage user online status somewhere else
-// TODO: Add default avatar picture URL
 model Player {
-  id         String       @id @default(uuid())
-  name       String?
-  bio        String?
-  avatarUrl  String?
-  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String       @unique
-  friends    Friendship[] @relation("PlayerToFriends")
-  friendOf   Friendship[] @relation("FriendsToPlayer")
-  matches    Match[]      @relation("MatchPlayer1")
-  matches2   Match[]      @relation("MatchPlayer2")
-  matchesWon Match[]      @relation("MatchWinner")
+  id                 String                  @id @default(uuid())
+  name               String?
+  bio                String?
+  avatarUrl          String?
+  user               User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String                  @unique
+  friends            Friendship[]            @relation("PlayerToFriends")
+  friendOf           Friendship[]            @relation("FriendsToPlayer")
+  matches            Match[]                 @relation("MatchPlayer1")
+  matches2           Match[]                 @relation("MatchPlayer2")
+  matchesWon         Match[]                 @relation("MatchWinner")
+  tournamentsCreated Tournament[]
+  leaderboard        Leaderboard[]
+  tournaments        TournamentParticipant[]
 }
 
 model Friendship {
@@ -56,23 +56,23 @@ enum FriendshipStatus {
 }
 
 model Match {
-  id           String         @id @default(uuid())
-  mode         MatchMode      @default(CLASSIC)
-  duration     Int            @default(0)
+  id           String        @id @default(uuid())
+  mode         MatchMode     @default(CLASSIC)
+  duration     Int           @default(0)
   player1Id    String
-  player1      Player         @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
+  player1      Player        @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
   player2Id    String
-  player2      Player         @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
-  player1Score Int            @default(0)
-  player2Score Int            @default(0)
+  player2      Player        @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
+  player1Score Int           @default(0)
+  player2Score Int           @default(0)
   winnerId     String?
-  winner       Player?         @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
-  // tournamentId String?
-  // tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  winner       Player?       @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
+  tournamentId String?
+  tournament   Tournament?   @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
   roundNumber  Int?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now()) @updatedAt
-  settings     MatchSettings?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
+  settings     GameSettings?
 }
 
 enum MatchMode {
@@ -80,12 +80,55 @@ enum MatchMode {
   CUSTOM
 }
 
-model MatchSettings {
-  id            String  @id @default(uuid())
-  match         Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  matchId       String  @unique
-  allowPowerUps Boolean @default(false)
+model GameSettings {
+  id            String      @id @default(uuid())
+  match         Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId       String      @unique
+  tournamentId  String?     @unique
+  tournament    Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  allowPowerUps Boolean     @default(false)
   map           String?
-  rounds        Int     @default(5)
-  ballSpeed     Float   @default(1)
+  rounds        Int         @default(5)
+  ballSpeed     Float       @default(1)
+}
+
+model Leaderboard {
+  id       String @id @default(uuid())
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId String
+  classic  Int    @default(0)
+  custom   Int    @default(0)
+}
+
+model Tournament {
+  id              String                  @id @default(uuid())
+  name            String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @default(now()) @updatedAt
+  matches         Match[]
+  createdBy       Player                  @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById     String
+  gameSettings    GameSettings?
+  maxParticipants Int
+  status          TournamentStatus        @default(PENDING)
+  currentRound    Int                     @default(1)
+  participants    TournamentParticipant[]
+}
+
+enum TournamentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+}
+
+model TournamentParticipant {
+  id           String     @id @default(uuid())
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournamentId String
+  player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId     String
+  alias        String
+
+  @@unique([tournamentId, playerId])
+  @@unique([tournamentId, alias])
 }
