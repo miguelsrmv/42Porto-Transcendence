@@ -481,6 +481,7 @@ async function joinTournament(tournamentId, participantName) {
     }
     else {
         await createTournament();
+        await joinTournament(tournamentId + 1, participantName);
     }
 }
 
