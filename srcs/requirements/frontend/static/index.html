@@ -20,7 +20,7 @@
 
     <nav id="navigation" class="h-[0%] w-full relative"> </nav>
 
-    <footer id="footer" class="w-full text-center bg-black text-white fixed bottom-0">
+    <footer id="footer" class="w-full h-[2%] text-center bg-black text-white fixed bottom-0">
         <p>ft_transcendence by <a href="https://github.com/miguelsrmv">mde-sa--</a>, <a
                 href="https://github.com/damachad">damachad</a> & <a
                 href="https://github.com/TiagoMartins14">tiaferna</a> @
@@ -99,7 +99,7 @@
 </template>
 
 <template id="main-menu-template">
-    <div id="main-menu" class="w-[85%] h-[70vh] mx-auto flex justify-center items-center gap-4">
+    <div id="main-menu" class="w-[85%] h-full mx-auto flex justify-center items-center gap-4">
         <div id="local-play-button"
             class="relative h-full flex-1 justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
             <!-- Image that takes up entire card -->
@@ -222,7 +222,16 @@
 </template>
 
 <template id="player-settings-template">
-    <div id="player-settings"></div>
+    <div id="player-settings">
+        <div
+            class="absolute top-0 left-0 right-0 p-4 bg-white/30 backdrop-blur-lg shadow-lg rounded-lg max-w-lg mx-auto mt-6">
+            <ul class="flex space-x-4 text-white">
+                <li><a href="#" class="hover:text-gray-200">Home</a></li>
+                <li><a href="#" class="hover:text-gray-200">About</a></li>
+                <li><a href="#" class="hover:text-gray-200">Contact</a></li>
+            </ul>
+        </div>
+    </div>
 </template>
 
 <template id="match-settings-template">
@@ -258,9 +267,9 @@
 </template>
 
 <template id="nav-bar-template">
-    <div id="nav-bar" class="w-[85%] flex justify-between items-center mx-auto my-10">
+    <div id="nav-bar" class="w-[85%] h-full flex justify-between items-center mx-auto">
         <div id="nav-bar-text" class="font-serpentine text-3xl w-[80%] text-center mx-auto"></div>
-        <div class="flex text-7xl justify-end relative w-[20%]">
+        <div class="flex text-7xl justify-end items-center relative w-[20%] h-full">
             <button id="nav-back-button">⬅️</button>
             <button id="nav-settings-button">⚙️</button>
             <div id="settings-dropdown"

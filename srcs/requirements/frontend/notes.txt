@@ -4,3 +4,7 @@ Customization options:
 » Background
 » # of wins
 » Ball speed
+
+
+TODO:
+Change some "templates" to "pages"?
