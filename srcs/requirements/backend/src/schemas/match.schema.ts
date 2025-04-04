@@ -1,4 +1,4 @@
-import { getByIdSchema } from "./global.schema";
+import { getByIdSchema } from './global.schema';
 
 export const createMatchSchema = {
   body: {
@@ -15,7 +15,7 @@ export const createMatchSchema = {
           allowPowerUps: { type: 'boolean' },
           map: { type: 'string' },
           rounds: { type: 'integer' },
-          ballSpeed: { type: 'float', minimum: 0.1, maximum: 2.0 },
+          ballSpeed: { type: 'number', minimum: 0.1, maximum: 2.0 },
         },
         additionalProperties: false,
       },
