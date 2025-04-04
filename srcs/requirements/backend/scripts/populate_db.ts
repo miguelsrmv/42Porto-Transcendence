@@ -3,7 +3,7 @@ import { Player } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
-const NUMBER_OF_USERS = 4;
+const NUMBER_OF_USERS = 8;
 
 async function seedUsers() {
   await prisma.user.deleteMany();
@@ -33,12 +33,32 @@ async function createFriends(players: Player[]) {
   }
 }
 
+async function createTournaments(players: Player[]) {
+  const tournamentSize = 4;
+  for (let i = 0; i < players.length; i += tournamentSize) {
+    const participants = players.slice(i, i + tournamentSize);
+    if (participants.length === tournamentSize) {
+      await prisma.tournament.create({
+        data: {
+          name: `Tournament ${Math.floor(i / tournamentSize) + 1}`,
+          maxParticipants: tournamentSize,
+          createdBy: {
+            connect: { id: players[i].id },
+          },
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   try {
     await seedUsers();
     const players = await prisma.player.findMany();
     await createFriends(players);
-    console.log(await prisma.user.findMany({ include: { player: true } }));
+    await createTournaments(players);
+    if (await prisma.user.findMany({ include: { player: true } }))
+      console.log('Database populated successfully.');
   } catch (e) {
     console.error(e);
   } finally {

@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { getByIdSchema } from '../schemas/global.schema';
 import {
   createTournament,
+  getAllTournaments,
   getPlayerTournaments,
   getTournamentById,
   updateTournament,
@@ -10,6 +11,7 @@ import { createTournamentSchema, updateTournamentSchema } from '../schemas/tourn
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function tournamentRoutes(fastify: FastifyInstance) {
+  fastify.get('/', getAllTournaments);
   fastify.get('/player/:id', { schema: getByIdSchema }, getPlayerTournaments);
   fastify.get('/:id', { schema: getByIdSchema }, getTournamentById);
   fastify.post('/', { schema: createTournamentSchema }, createTournament);
