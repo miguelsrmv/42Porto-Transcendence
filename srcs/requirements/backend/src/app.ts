@@ -4,6 +4,8 @@ import jwtPlugin from './middlewares/auth';
 import dotenv from 'dotenv';
 import { playerRoutes } from './routes/player.routes';
 import { friendRoutes } from './routes/friendship.routes';
+import { matchRoutes } from './routes/match.routes';
+import { tournamentRoutes } from './routes/tournament.routes';
 
 dotenv.config();
 
@@ -26,5 +28,7 @@ app.get('/', async (request, reply) => {
 app.register(userRoutes, { prefix: '/users' });
 app.register(playerRoutes, { prefix: '/players' });
 app.register(friendRoutes, { prefix: '/friends' });
+app.register(matchRoutes, { prefix: '/matches' });
+app.register(tournamentRoutes, { prefix: '/tournaments' });
 
 export default app;

@@ -7,7 +7,7 @@ interface MatchCreate {
   mode: MatchMode;
   player1Id: string;
   player2Id: string;
-  settings: GameSettings;
+  settings?: GameSettings;
 }
 
 interface MatchUpdate {
