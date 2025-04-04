@@ -14,6 +14,20 @@ interface TournamentUpdate {
   currentRound: number;
 }
 
+export async function getAllTournaments(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const tournaments = await prisma.tournament.findMany({
+      include: {
+        participants: true,
+        matches: true,
+      },
+    });
+    reply.send(tournaments);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
 export async function getPlayerTournaments(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply,

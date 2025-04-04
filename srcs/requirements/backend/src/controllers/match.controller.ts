@@ -17,6 +17,19 @@ interface MatchUpdate {
   player2Score: number;
 }
 
+export async function getAllMatches(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const matches = await prisma.match.findMany({
+      include: {
+        settings: true,
+      },
+    });
+    reply.send(matches);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
 export async function getPlayerMatches(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
