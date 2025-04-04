@@ -1,0 +1,26 @@
+# Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
+
+### FRIENDSHIP
+
+### Get all friends of a player
+GET http://localhost:3000/players/<id>/friends HTTP/1.1
+
+### Add a friend to a player
+POST http://localhost:3000/friends/ HTTP/1.1
+content-type: application/json
+
+{
+	"playerId": "<id>",
+	"friendId": "<id>"
+}
+
+### Update a friendship status
+PUT http://localhost:3000/friends/<id> HTTP/1.1
+content-type: application/json
+
+{
+	"status": "ACCEPTED"
+}
+
+### Delete a friendship
+DELETE http://localhost:3000/friends/<id> HTTP/1.1

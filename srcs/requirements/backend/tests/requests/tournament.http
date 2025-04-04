@@ -1,0 +1,28 @@
+# Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
+
+### TOURNAMENT
+
+### Get all tournaments from a specific player
+GET http://localhost:3000/tournaments/player/<id> HTTP/1.1
+
+### Get specific tournament
+GET http://localhost:3000/tournaments/<id> HTTP/1.1
+
+### Create a new tournament
+POST http://localhost:3000/tournaments/ HTTP/1.1
+content-type: application/json
+
+{
+	"name": "newTournament",
+	"maxParticipants": 4,
+	"createdBy": "<id>"
+}
+
+### Update a tournament
+PUT http://localhost:3000/tournaments/<id> HTTP/1.1
+content-type: application/json
+
+{
+	"status": "ACTIVE",
+	"currentRound": 2,
+}
