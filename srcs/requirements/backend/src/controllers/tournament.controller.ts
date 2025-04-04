@@ -7,6 +7,7 @@ interface TournamentCreate {
   name?: string;
   maxParticipants: number;
   createdBy: string;
+  gameSettings?: object;
 }
 
 interface TournamentUpdate {
@@ -73,12 +74,13 @@ export async function createTournament(
   reply: FastifyReply,
 ) {
   try {
-    const { name, maxParticipants, createdBy } = request.body;
+    const { name, maxParticipants, createdBy, gameSettings } = request.body;
 
     const tournament = await prisma.tournament.create({
       data: {
         name: name,
         maxParticipants: maxParticipants,
+        gameSettings: gameSettings,
         createdBy: {
           connect: { id: createdBy },
         },
