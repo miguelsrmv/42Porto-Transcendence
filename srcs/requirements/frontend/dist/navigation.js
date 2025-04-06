@@ -8,8 +8,9 @@
  */
 let currentView = "";
 let previousView = "";
-import { addLandingAnimations, addNavBarText } from "./animations.js";
-import { addNavEvents } from "./events.js";
+import { addLandingAnimations, addMenuHelperText } from "./animations.js";
+import { toggleDropdown } from "./events.js";
+import { removeHeightClasses } from "./helpers.js";
 /**
  * @brief Navigates to a specified view.
  *
@@ -57,7 +58,6 @@ function getBodyContents(view) {
     const bodyContents = {
         header: null,
         main: null,
-        nav: null,
     };
     // Loads main view
     let mainContent;
@@ -69,7 +69,7 @@ function getBodyContents(view) {
         mainContent = getGameMenu(view);
     if (mainContent)
         bodyContents.main = mainContent.content.cloneNode(true);
-    // Add Header and Nav bar if not on landing page
+    // Add Header if not on landing page
     if (view !== "landing-page") {
         // Loads header if not in landing-page
         const headerContent = document.getElementById("header-template");
@@ -77,24 +77,6 @@ function getBodyContents(view) {
         const headerText = bodyContents.header.querySelector("#header-menu-text");
         if (headerText) {
             headerText.innerHTML = view.replace("-page", "").split("-").map(view => view.charAt(0).toUpperCase() + view.slice(1)).join(" ");
-        }
-        // Loads nav-bar if not in landing-page
-        const navContent = document.getElementById("nav-bar-template");
-        bodyContents.nav = navContent.content.cloneNode(true);
-        // Erases back button if on main-menu
-        if (view === "main-menu-page") {
-            const backButton = bodyContents.nav.querySelector("#nav-back-button");
-            if (backButton) {
-                backButton.remove();
-            }
-        }
-        // Erases settings button if on guest menu
-        else if (view === "guest-menu-page") {
-            // Erases settings-button if on guest menu
-            const settingsButton = bodyContents.nav.querySelector("#nav-settings-button");
-            if (settingsButton) {
-                settingsButton.remove();
-            }
         }
     }
     return bodyContents;
@@ -113,22 +95,18 @@ function getGameMenu(view) {
 function adjustHeaderAndNav(view) {
     const header = document.getElementById("header");
     const main = document.getElementById("app");
-    const nav = document.getElementById("navigation");
-    if (view != "landing-page") {
-        header === null || header === void 0 ? void 0 : header.classList.remove("h-[0%]");
-        main === null || main === void 0 ? void 0 : main.classList.remove("h-full");
-        nav === null || nav === void 0 ? void 0 : nav.classList.remove("h-[0%]");
-        header === null || header === void 0 ? void 0 : header.classList.add("h-[10%]");
-        main === null || main === void 0 ? void 0 : main.classList.add("h-[75%]");
-        nav === null || nav === void 0 ? void 0 : nav.classList.add("h-[13%]");
-    }
-    else {
-        header === null || header === void 0 ? void 0 : header.classList.remove("h-[10%]");
-        main === null || main === void 0 ? void 0 : main.classList.remove("h-[75%]");
-        nav === null || nav === void 0 ? void 0 : nav.classList.remove("h-[13%]");
-        header === null || header === void 0 ? void 0 : header.classList.add("h-[0%]");
-        main === null || main === void 0 ? void 0 : main.classList.add("h-full");
-        nav === null || nav === void 0 ? void 0 : nav.classList.add("h-[0%]");
+    if (header && main) {
+        removeHeightClasses(header);
+        removeHeightClasses(main);
+        if (view === "landing-page") {
+            header.classList.add("h-[0%]");
+            header.innerText = "";
+            main === null || main === void 0 ? void 0 : main.classList.add("h-[98%]");
+        }
+        else {
+            header.classList.add("h-[10%]");
+            main.classList.add("h-[88%]");
+        }
     }
 }
 /**
@@ -141,19 +119,15 @@ function adjustHeaderAndNav(view) {
  * @param templateElement The template element whose content will be used to update the host element.
  */
 function renderView(bodyContents) {
-    const { header, main, nav } = bodyContents;
+    const { header, main } = bodyContents;
     const headerHost = document.getElementById("header");
     const mainHost = document.getElementById("app");
-    const navHost = document.getElementById("navigation");
     if (headerHost && header) {
         headerHost.replaceChildren(header);
+        toggleDropdown();
     }
     if (mainHost && main) {
         mainHost.replaceChildren(main);
-    }
-    if (navHost && nav) {
-        navHost.replaceChildren(nav);
-        addNavEvents();
     }
 }
 /**
@@ -240,28 +214,28 @@ function addLandingEvents() {
 function addMainMenuEvents() {
     const localPlayMenu = document.getElementById("local-play-button");
     if (localPlayMenu) {
-        addNavBarText(localPlayMenu, "Play locally with friends!");
+        addMenuHelperText(localPlayMenu, "Play locally with friends!");
         localPlayMenu.addEventListener("click", () => { navigateTo("local-play-page"); });
     }
     const remotePlayMenu = document.getElementById("remote-play-button");
     if (remotePlayMenu) {
-        addNavBarText(remotePlayMenu, "Play online on the ladder!");
+        addMenuHelperText(remotePlayMenu, "Play online on the ladder!");
         remotePlayMenu.addEventListener("click", () => { navigateTo("remote-play-page"); });
     }
     const tourneyMenu = document.getElementById("tournament-play-button");
     if (tourneyMenu) {
-        addNavBarText(tourneyMenu, "Face other players in a tournament!");
+        addMenuHelperText(tourneyMenu, "Face other players in a tournament!");
         tourneyMenu.addEventListener("click", () => { navigateTo("tournament-page"); });
     }
     const friendsMenu = document.getElementById("rankings-button");
     if (friendsMenu) {
         friendsMenu.addEventListener("click", () => { navigateTo("rankings-page"); });
-        addNavBarText(friendsMenu, "Check your stats!");
+        addMenuHelperText(friendsMenu, "Check your stats!");
     }
     const rankingsMenu = document.getElementById("friends-button");
     if (rankingsMenu) {
         rankingsMenu.addEventListener("click", () => { navigateTo("friends-page"); });
-        addNavBarText(rankingsMenu, "See who's online!");
+        addMenuHelperText(rankingsMenu, "See who's online!");
     }
 }
 /**

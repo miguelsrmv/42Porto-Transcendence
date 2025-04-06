@@ -6,7 +6,7 @@
  * navigation events to ensure the application navigates to the correct view when the user
  * uses the browser's back and forward buttons.
  */
-import { navigateTo, getPreviousView } from "./navigation.js";
+import { navigateTo } from "./navigation.js";
 /**
  * @brief Sets up a listener for the popstate event.
  *
@@ -23,22 +23,10 @@ export function setupHistoryListener() {
         }
     });
 }
-export function addNavEvents() {
-    addSettingsMenu();
-    addBackArrow();
-}
-function addSettingsMenu() {
-    const settingsButton = document.getElementById("nav-settings-button");
-    const settingsMenu = document.getElementById("settings-dropdown");
-    settingsButton === null || settingsButton === void 0 ? void 0 : settingsButton.addEventListener("click", () => {
-        settingsMenu === null || settingsMenu === void 0 ? void 0 : settingsMenu.classList.toggle("opacity-0");
-        settingsMenu === null || settingsMenu === void 0 ? void 0 : settingsMenu.classList.toggle("pointer-events-none");
-    });
-}
-function addBackArrow() {
-    const backButton = document.getElementById("nav-back-button");
-    backButton === null || backButton === void 0 ? void 0 : backButton.addEventListener("click", () => {
-        navigateTo(getPreviousView(), false);
-    });
+export function toggleDropdown() {
+    const dropdown = document.getElementById('settings-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
 }
 //# sourceMappingURL=events.js.map

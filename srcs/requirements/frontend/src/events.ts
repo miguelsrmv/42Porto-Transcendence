@@ -28,25 +28,9 @@ export function setupHistoryListener(): void {
     });
 }
 
-export function addNavEvents(): void {
-    addSettingsMenu();
-    addBackArrow();
-}
-
-function addSettingsMenu(): void {
-    const settingsButton = document.getElementById("nav-settings-button");
-    const settingsMenu = document.getElementById("settings-dropdown");
-
-    settingsButton?.addEventListener("click", () => {
-        settingsMenu?.classList.toggle("opacity-0");
-        settingsMenu?.classList.toggle("pointer-events-none");
-    });
-}
-
-function addBackArrow(): void {
-    const backButton = document.getElementById("nav-back-button");
-
-    backButton?.addEventListener("click", () => {
-        navigateTo(getPreviousView(), false);
-    })
+export function toggleDropdown(): void {
+    const dropdown = document.getElementById('settings-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
 }

@@ -21,14 +21,14 @@ export function addLandingAnimations() {
         enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.add("animate-bounce");
     });
 }
-export function addNavBarText(menu, message) {
-    const navBarText = document.getElementById("nav-bar-text");
-    if (navBarText) {
+export function addMenuHelperText(menu, message) {
+    const menuHelperText = document.getElementById("menu-helper-text");
+    if (menuHelperText) {
         menu.addEventListener("mouseover", () => {
-            navBarText.innerHTML = message;
+            menuHelperText.innerHTML = message;
         });
         menu.addEventListener("mouseout", () => {
-            navBarText.innerHTML = "";
+            menuHelperText.innerHTML = "";
         });
     }
 }
