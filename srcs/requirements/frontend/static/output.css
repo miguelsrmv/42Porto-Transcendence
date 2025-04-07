@@ -346,6 +346,9 @@
   .mx-auto {
     margin-inline: auto;
   }
+  .-mt-4 {
+    margin-top: calc(var(--spacing) * -4);
+  }
   .-mt-5 {
     margin-top: calc(var(--spacing) * -5);
   }
@@ -415,6 +418,12 @@
   .h-\[2vh\] {
     height: 2vh;
   }
+  .h-\[3\%\] {
+    height: 3%;
+  }
+  .h-\[5\%\] {
+    height: 5%;
+  }
   .h-\[10\%\] {
     height: 10%;
   }
@@ -430,8 +439,20 @@
   .h-\[25\%\] {
     height: 25%;
   }
+  .h-\[30\%\] {
+    height: 30%;
+  }
+  .h-\[70\%\] {
+    height: 70%;
+  }
   .h-\[75\%\] {
     height: 75%;
+  }
+  .h-\[77\%\] {
+    height: 77%;
+  }
+  .h-\[78\%\] {
+    height: 78%;
   }
   .h-\[80\%\] {
     height: 80%;
@@ -441,6 +462,9 @@
   }
   .h-\[90\%\] {
     height: 90%;
+  }
+  .h-\[97\%\] {
+    height: 97%;
   }
   .h-\[98\%\] {
     height: 98%;
@@ -457,6 +481,9 @@
   .h-screen {
     height: 100vh;
   }
+  .min-h-3\/4 {
+    min-height: calc(3/4 * 100%);
+  }
   .min-h-\[2vh\] {
     min-height: 2vh;
   }
@@ -468,6 +495,12 @@
   }
   .min-h-\[85vh\] {
     min-height: 85vh;
+  }
+  .min-h-\[250px\] {
+    min-height: 250px;
+  }
+  .min-h-\[700px\] {
+    min-height: 700px;
   }
   .min-h-\[750px\] {
     min-height: 750px;
@@ -516,6 +549,9 @@
   }
   .flex-1 {
     flex: 1;
+  }
+  .flex-shrink-0 {
+    flex-shrink: 0;
   }
   .flex-grow {
     flex-grow: 1;
