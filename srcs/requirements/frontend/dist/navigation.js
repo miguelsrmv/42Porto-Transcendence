@@ -97,15 +97,15 @@ function adjustHeader(view) {
     const main = document.getElementById("app");
     if (header && main) {
         removeHeightClasses(header);
-        removeHeightClasses(main);
+        //removeHeightClasses(main);
         if (view === "landing-page") {
             header.classList.add("h-[0%]");
             header.innerText = "";
-            main.classList.add("h-full");
+            //main.classList.add("h-full")
         }
         else {
             header.classList.add("h-[10%]");
-            main.classList.add("h-[90%]");
+            //main.classList.add("h-[80%]")
         }
     }
 }
