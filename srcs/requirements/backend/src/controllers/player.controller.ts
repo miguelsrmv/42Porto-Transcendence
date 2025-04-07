@@ -2,10 +2,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 
-interface PlayerUpdate {
+type PlayerUpdate = {
   name?: string;
   bio?: string;
-}
+};
 
 export async function getAllPlayers(request: FastifyRequest, reply: FastifyReply) {
   try {

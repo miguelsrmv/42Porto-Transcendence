@@ -3,19 +3,19 @@ import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 import { MatchMode, GameSettings } from '@prisma/client';
 
-interface MatchCreate {
+type MatchCreate = {
   mode: MatchMode;
   player1Id: string;
   player2Id: string;
   settings?: GameSettings;
-}
+};
 
-interface MatchUpdate {
+type MatchUpdate = {
   duration: number;
   winnerId: string;
   player1Score: number;
   player2Score: number;
-}
+};
 
 export async function getAllMatches(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -76,6 +76,9 @@ export async function createMatch(
         settings: {
           create: settings,
         },
+      },
+      include: {
+        settings: true,
       },
     });
     reply.send(match);

@@ -3,10 +3,10 @@ import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 import { FriendshipStatus } from '@prisma/client';
 
-interface FriendCreate {
+type FriendCreate = {
   playerId: string;
   friendId: string;
-}
+};
 
 export async function getAllFriends(
   request: FastifyRequest<{ Params: IParams }>,

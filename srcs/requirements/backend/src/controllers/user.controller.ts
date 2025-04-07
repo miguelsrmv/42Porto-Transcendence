@@ -3,22 +3,18 @@ import { prisma } from '../utils/prisma';
 import { verifyPassword } from '../utils/hash';
 import { handleError } from '../utils/errorHandler';
 
-interface IParams {
-  id: string;
-}
-
-interface UserCreate {
+type UserCreate = {
   username: string;
   email: string;
   password: string;
-}
+};
 
-interface UserLogin {
+type UserLogin = {
   email: string;
   password: string;
-}
+};
 
-interface UserUpdate {
+type UserUpdate = {
   username?: string;
   email?: string;
 }
