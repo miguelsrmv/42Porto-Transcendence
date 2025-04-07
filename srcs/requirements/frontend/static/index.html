@@ -101,121 +101,80 @@
 
 <template id="main-menu-template">
     <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
-        <div id="main-menu-buttons" class="w-full h-[70%] gap-4 flex">
+
+        <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex">
+
             <div id="local-play-button"
-                class="min-h-[750px] relative flex-1 justify-center cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <!-- Image that takes up entire card -->
-                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                </div>
-                <!-- Polygon color overlay -->
+                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
+                <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
                 <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                <!-- Full-menu colour overlay -->
                 <div
-                    class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                 </div>
-                <!-- Text overlay -->
                 <div
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                    Local Play
-                </div>
+                    Local Play</div>
             </div>
+
             <div id="remote-play-button"
-                class="min-h-[750px] relative flex-1 justify-center cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <!-- Image that takes up entire card -->
-                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                </div>
-
-                <!-- Polygon color overlay -->
+                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
+                <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
                 <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                <!-- Full-menu colour overlay -->
                 <div
-                    class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                 </div>
-
-                <!-- Text overlay -->
                 <div
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                    Remote Play
-                </div>
+                    Remote Play</div>
             </div>
+
             <div id="tournament-play-button"
-                class="min-h-[750px] relative flex-1 justify-center cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <!-- Image that takes up entire card -->
-                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                </div>
-
-                <!-- Polygon color overlay -->
+                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
+                <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
                 <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                <!-- Full-menu colour overlay -->
                 <div
-                    class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                 </div>
-
-                <!-- Text overlay -->
                 <div
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                    Tourney
-                </div>
+                    Tourney</div>
             </div>
-            <div id="networking-section"
-                class="min-h-[750px] flex flex-1 flex-col justify-center rounded overflow-hidden ">
+
+            <div id="networking-section" class="flex flex-1 flex-col justify-center rounded overflow-hidden ">
                 <div id="rankings-button"
-                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2">
-                    <!-- Image that takes up entire card -->
+                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
                     <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                    </div>
-
-                    <!-- Polygon color overlay -->
+                        style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
                     <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                    <!-- Full-menu colour overlay -->
                     <div
-                        class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                        class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                     </div>
-
-                    <!-- Text overlay -->
                     <div
                         class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                        Rankings
-                    </div>
+                        Rankings</div>
                 </div>
-
                 <div id="friends-button"
-                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2">
-                    <!-- Image that takes up entire card -->
+                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
                     <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                    </div>
-
-                    <!-- Polygon color overlay -->
+                        style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
                     <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                    <!-- Full-menu colour overlay -->
                     <div
-                        class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                        class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                     </div>
-
-                    <!-- Text overlay -->
                     <div
                         class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                        Friends
-                    </div>
+                        Friends</div>
                 </div>
             </div>
         </div>
         <div id="menu-helper-text"
-            class="flex w-full min-h-[250px] items-center justify-center mx-auto text-3xl font-serpentine"
-            style="border: 2px solid blue"> HELLO!
+            class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine">
         </div>
     </div>
 </template>
-
 
 <template id="game-menu-template">
     <div id="game-menu" class="flex w-[85%] mx-auto">
