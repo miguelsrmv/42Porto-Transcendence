@@ -3,17 +3,17 @@ import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 import { TournamentStatus } from '@prisma/client';
 
-interface TournamentCreate {
+type TournamentCreate = {
   name?: string;
   maxParticipants: number;
   createdBy: string;
   gameSettings?: object;
-}
+};
 
-interface TournamentUpdate {
+type TournamentUpdate = {
   status: TournamentStatus;
   currentRound: number;
-}
+};
 
 export async function getAllTournaments(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -21,6 +21,7 @@ export async function getAllTournaments(request: FastifyRequest, reply: FastifyR
       include: {
         participants: true,
         matches: true,
+        gameSettings: true,
       },
     });
     reply.send(tournaments);
