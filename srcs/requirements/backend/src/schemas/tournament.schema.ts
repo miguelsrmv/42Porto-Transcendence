@@ -1,4 +1,3 @@
-import { gameSettingsSchema } from './gameSettings.schema';
 import { getByIdSchema } from './global.schema';
 
 export const createTournamentSchema = {
@@ -9,7 +8,7 @@ export const createTournamentSchema = {
       name: { type: 'string', minLength: 3 },
       maxParticipants: { type: 'integer' },
       createdBy: { type: 'string', format: 'uuid' },
-      gameSettings: gameSettingsSchema,
+      settings: { type: 'string' },
     },
     additionalProperties: false,
   },

@@ -1,15 +1,14 @@
-import { gameSettingsSchema } from './gameSettings.schema';
 import { getByIdSchema } from './global.schema';
 
 export const createMatchSchema = {
   body: {
     type: 'object',
-    required: ['mode', 'player1Id', 'player2Id', 'settings'],
+    required: ['mode', 'player1Id', 'player2Id'],
     properties: {
       mode: { type: 'string', enum: ['CLASSIC', 'CUSTOM'] },
       player1Id: { type: 'string', format: 'uuid' },
       player2Id: { type: 'string', format: 'uuid' },
-      settings: gameSettingsSchema,
+      settings: { type: 'string' },
     },
     additionalProperties: false,
   },

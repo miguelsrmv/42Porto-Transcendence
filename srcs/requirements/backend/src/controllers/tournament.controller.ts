@@ -2,12 +2,13 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 import { TournamentStatus } from '@prisma/client';
+import { defaultGameSettings } from '../utils/gameSettings';
 
-type TournamentCreate = {
+export type TournamentCreate = {
   name?: string;
   maxParticipants: number;
   createdBy: string;
-  gameSettings?: object;
+  settings?: string;
 };
 
 type TournamentUpdate = {
@@ -21,7 +22,6 @@ export async function getAllTournaments(request: FastifyRequest, reply: FastifyR
       include: {
         participants: true,
         matches: true,
-        gameSettings: true,
       },
     });
     reply.send(tournaments);
@@ -75,13 +75,16 @@ export async function createTournament(
   reply: FastifyReply,
 ) {
   try {
-    const { name, maxParticipants, createdBy, gameSettings } = request.body;
+    const { name, maxParticipants, createdBy } = request.body;
+    const { settings } = request.body;
+
+    const finalSettings = { ...defaultGameSettings, ...(settings ? JSON.parse(settings) : {}) };
 
     const tournament = await prisma.tournament.create({
       data: {
         name: name,
         maxParticipants: maxParticipants,
-        gameSettings: gameSettings,
+        settings: JSON.stringify({ finalSettings }),
         createdBy: {
           connect: { id: createdBy },
         },

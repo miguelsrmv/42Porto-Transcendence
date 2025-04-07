@@ -18,7 +18,8 @@ content-type: application/json
 {
 	"name": "newTournament",
 	"maxParticipants": 4,
-	"createdBy": "<id>"
+	"createdBy": "<id>",
+	"settings": "{\"map\":\"testing\",\"rounds\":3}"
 }
 
 ### Update a tournament
