@@ -24,9 +24,19 @@ export function setupHistoryListener() {
     });
 }
 export function toggleDropdown() {
-    const dropdown = document.getElementById('settings-dropdown');
-    if (dropdown) {
-        dropdown.classList.toggle('hidden');
-    }
+    const button = document.getElementById("nav-settings-button");
+    const dropdown = document.getElementById("settings-dropdown");
+    if (!button || !dropdown)
+        return;
+    button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("hidden");
+    });
+    document.addEventListener("click", (e) => {
+        const target = e.target;
+        if (!button.contains(target) && !dropdown.contains(target)) {
+            dropdown.classList.add("hidden");
+        }
+    });
 }
 //# sourceMappingURL=events.js.map
