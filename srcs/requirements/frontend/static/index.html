@@ -222,11 +222,6 @@
         <div> I'm on rankings! </div>
 </template>
 
-<!-- <template id="header-template"> -->
-<!--     <div id="header-menu" class="w-[85%] flex justify-between items-center"> -->
-<!--         <div id="header-menu-text" class="font-serpentine text-5xl text-center"></div> -->
-<!--     </div> -->
-<!-- </template> -->
 <template id="header-template">
     <div id="header-menu" class="w-[85%] flex justify-between items-center">
         <!-- Left: Header Text -->
@@ -234,20 +229,21 @@
         </div>
 
         <!-- Right: Player Info -->
-        <div id="player-info" class="flex text-3xl items-center space-x-2">
+        <div id="player-info" class="flex text-3xl items-center space-x-2 relative">
             <span id="player-name" class="font-semibold">Username</span>
+
             <button id="nav-settings-button" class="rounded-full overflow-hidden" style="width: 25px; height: 25px;">
                 <img src="./static/images/avatar_placeholder.png" class="w-full h-full object-cover">
             </button>
-            <!-- <div id="settings-dropdown" -->
-            <!--     class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-black hidden group-hover:block"> -->
-            <!--     <div class="py-2"> -->
-            <!--         <a href="#" class="block px-4 py-2 text-sm">Profile</a> -->
-            <!--         <a href="#" class="block px-4 py-2 text-sm">Log Out</a> -->
-            <!--     </div> -->
-            <!-- </div> -->
+
+            <div id="settings-dropdown"
+                class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-black z-30">
+                <div class="py-2">
+                    <a href="#" class="block px-4 py-2 text-sm">Profile</a>
+                    <a href="#" class="block px-4 py-2 text-sm">Log Out</a>
+                </div>
+            </div>
         </div>
-    </div>
 </template>
 
 </html>

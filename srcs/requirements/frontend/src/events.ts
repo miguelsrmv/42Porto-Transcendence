@@ -29,8 +29,20 @@ export function setupHistoryListener(): void {
 }
 
 export function toggleDropdown(): void {
-    const dropdown = document.getElementById('settings-dropdown');
-    if (dropdown) {
-        dropdown.classList.toggle('hidden');
-    }
+    const button = document.getElementById("nav-settings-button");
+    const dropdown = document.getElementById("settings-dropdown");
+
+    if (!button || !dropdown) return;
+
+    button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", (e: MouseEvent) => {
+        const target = e.target as Node;
+        if (!button.contains(target) && !dropdown.contains(target)) {
+            dropdown.classList.add("hidden");
+        }
+    });
 }
