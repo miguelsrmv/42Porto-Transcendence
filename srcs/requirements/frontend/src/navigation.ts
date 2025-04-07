@@ -41,7 +41,7 @@ export function navigateTo(view: string, update_history: boolean = true): void {
     const bodyContents = getBodyContents(view);
 
     // Adjust header and navigation
-    adjustHeaderAndNav(view);
+    adjustHeader(view);
 
     // Renders view content
     renderView(bodyContents);
@@ -117,7 +117,7 @@ function getGameMenu(view: string): HTMLTemplateElement {
     return resultTemplate;
 }
 
-function adjustHeaderAndNav(view: string) {
+function adjustHeader(view: string) {
     const header = document.getElementById("header");
     const main = document.getElementById("app");
 
@@ -128,11 +128,11 @@ function adjustHeaderAndNav(view: string) {
         if (view === "landing-page") {
             header.classList.add("h-[0%]");
             header.innerText = "";
-            main?.classList.add("h-[98%]");
+            main.classList.add("h-full")
         }
         else {
             header.classList.add("h-[10%]");
-            main.classList.add("h-[88%]");
+            main.classList.add("h-[90%]");
         }
     }
 }

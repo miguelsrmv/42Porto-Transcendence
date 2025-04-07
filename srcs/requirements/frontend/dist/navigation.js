@@ -30,7 +30,7 @@ export function navigateTo(view, update_history = true) {
     // Gets contents of each view
     const bodyContents = getBodyContents(view);
     // Adjust header and navigation
-    adjustHeaderAndNav(view);
+    adjustHeader(view);
     // Renders view content
     renderView(bodyContents);
     // Update browser history
@@ -92,7 +92,7 @@ function getGameMenu(view) {
     resultTemplate.content.appendChild(gameMenuContent);
     return resultTemplate;
 }
-function adjustHeaderAndNav(view) {
+function adjustHeader(view) {
     const header = document.getElementById("header");
     const main = document.getElementById("app");
     if (header && main) {
@@ -101,11 +101,11 @@ function adjustHeaderAndNav(view) {
         if (view === "landing-page") {
             header.classList.add("h-[0%]");
             header.innerText = "";
-            main === null || main === void 0 ? void 0 : main.classList.add("h-[98%]");
+            main.classList.add("h-full");
         }
         else {
             header.classList.add("h-[10%]");
-            main.classList.add("h-[88%]");
+            main.classList.add("h-[90%]");
         }
     }
 }
