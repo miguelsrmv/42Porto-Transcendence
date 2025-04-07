@@ -94,18 +94,14 @@ function getGameMenu(view) {
 }
 function adjustHeader(view) {
     const header = document.getElementById("header");
-    const main = document.getElementById("app");
-    if (header && main) {
+    if (header) {
         removeHeightClasses(header);
-        //removeHeightClasses(main);
         if (view === "landing-page") {
             header.classList.add("h-[0%]");
             header.innerText = "";
-            //main.classList.add("h-full")
         }
         else {
-            header.classList.add("h-[10%]");
-            //main.classList.add("h-[80%]")
+            header.classList.add("h-[20%]");
         }
     }
 }
