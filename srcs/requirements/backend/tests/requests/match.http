@@ -14,10 +14,11 @@ GET http://localhost:3000/matches/<id> HTTP/1.1
 ### Create a match
 POST http://localhost:3000/matches HTTP/1.1
 Content-Type: application/json
+
 {
 	"mode": "CLASSIC",
-	"player1": "<id>",
-	"player2": "<id>",
+	"player1Id": "<id>",
+	"player2Id": "<id>"
 }
 
 ### Update a match

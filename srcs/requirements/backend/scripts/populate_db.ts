@@ -42,6 +42,7 @@ async function createTournaments(players: Player[]) {
         data: {
           name: `Tournament ${Math.floor(i / tournamentSize) + 1}`,
           maxParticipants: tournamentSize,
+          settings: '',
           createdBy: {
             connect: { id: players[i].id },
           },
