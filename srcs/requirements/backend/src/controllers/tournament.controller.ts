@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 import { TournamentStatus } from '@prisma/client';
-import { defaultGameSettings } from '../utils/gameSettings';
+import { defaultGameSettings } from '../utils/defaults';
 
 export type TournamentCreate = {
   name?: string;
@@ -108,6 +108,24 @@ export async function updateTournament(
       data: {
         status: status,
         currentRound: currentRound,
+      },
+    });
+    reply.send(tournament);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function startTournament(
+  request: FastifyRequest<{ Params: { id: string } }>,
+  reply: FastifyReply,
+) {
+  try {
+    const tournament = await prisma.tournament.update({
+      where: { id: request.params.id },
+      data: {
+        status: TournamentStatus.ACTIVE,
+        currentRound: 1,
       },
     });
     reply.send(tournament);

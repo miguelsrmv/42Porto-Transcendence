@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { hashPassword } from './hash';
-import { defaultGameSettings } from './gameSettings';
+import { defaultGameSettings } from './defaults';
 
 export const userExtension = Prisma.defineExtension({
   query: {

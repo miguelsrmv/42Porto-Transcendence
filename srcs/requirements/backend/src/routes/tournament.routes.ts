@@ -8,7 +8,7 @@ import {
   updateTournament,
 } from '../controllers/tournament.controller';
 import { createTournamentSchema, updateTournamentSchema } from '../schemas/tournament.schema';
-import { validateGameSettings } from '../utils/validateJson';
+import { validateGameSettings } from '../schemas/settingsValidation';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function tournamentRoutes(fastify: FastifyInstance) {
