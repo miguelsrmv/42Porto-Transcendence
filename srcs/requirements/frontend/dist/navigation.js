@@ -17,6 +17,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 let currentView = "";
 let previousView = "";
+let loginStatus = "";
 import { addLandingAnimations, showMenuHelperText } from "./animations.js";
 import { toggleDropdown, createCharacterLoop, createBackgroundLoop } from "./events.js";
 /**
@@ -166,6 +167,16 @@ function addLandingEvents() {
             }, 300);
         });
     }
+    const loginButton = document.getElementById("login-button");
+    const guestButton = document.getElementById("guest-button");
+    if (loginButton && guestButton) {
+        loginButton.addEventListener("click", () => {
+            loginStatus = "login";
+        }, { once: true });
+        guestButton.addEventListener("click", () => {
+            loginStatus = "guest";
+        }, { once: true });
+    }
 }
 function getGameType() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -191,14 +202,44 @@ function getGameType() {
 function addMainMenuEvents() {
     // For each <a> inside #main-menu-buttons, apply Helper Text
     // NOTE: Faster than event delegation!!
-    document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
-        showMenuHelperText(anchor);
-    });
+    if (loginStatus === "login")
+        document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
+            showMenuHelperText(anchor);
+        });
+    else if (loginStatus === "guest") {
+        const availableButton = document.getElementById("local-play-button");
+        if (availableButton)
+            showMenuHelperText(availableButton);
+        const disableButton = (buttonId, bannerId, overlayId) => {
+            const button = document.getElementById(buttonId);
+            const banner = document.getElementById(bannerId);
+            const overlay = document.getElementById(overlayId);
+            if (button) {
+                button.classList.remove("hover:scale-105", "transition", "duration-200");
+                button.removeAttribute("href");
+                button.removeAttribute("data-target");
+            }
+            if (banner) {
+                banner.classList.remove("bg-red-700");
+                banner.classList.add("bg-gray-700");
+            }
+            if (overlay) {
+                overlay.classList.remove("bg-red-700", "group-hover:opacity-0", "transition-opacity", "duration-200");
+                overlay.classList.add("bg-gray-700");
+            }
+            if (button)
+                button.classList.add("disabled-button");
+        };
+        disableButton("remote-play-button", "banner-remote-play", "overlay-remote-play");
+        disableButton("tournament-play-button", "banner-tournament-play", "overlay-tournament-play");
+        disableButton("rankings-button", "banner-rankings", "overlay-rankings");
+        disableButton("friends-button", "banner-friends", "overlay-friends");
+    }
 }
 /**
 * @brief Adds event listeners for the local, ranked or tournament view
 *
-* This function sets up the website depending on the imported view
+* This function sets up the pre-game page depending on the imported view
 */
 function addPlayEvents(view) {
     return __awaiter(this, void 0, void 0, function* () {

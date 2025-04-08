@@ -56,6 +56,7 @@ export function addNavigationListener(): void {
  * It toggles the dropdown's visibility when the button is clicked and hides the dropdown
  * when clicking outside of it.
  */
+// TODO: If guest login, don't show Profile option!! And change "Log out" to "Exit"
 export function toggleDropdown(): void {
     const button = document.getElementById("nav-settings-button");
     const dropdown = document.getElementById("settings-dropdown");
