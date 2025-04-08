@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 import { MatchMode } from '@prisma/client';
-import { defaultGameSettings } from '../utils/gameSettings';
+import { defaultGameSettings } from '../utils/defaults';
 
 export type MatchCreate = {
   mode: MatchMode;
