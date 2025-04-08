@@ -43,52 +43,48 @@
     <div id="login-modal"
         class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50">
         <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
-            <div id="guest-button"
+            <a href="#main-menu-page" data-target="main-menu-page" id="guest-button"
                 class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
-                <div class="">
-                    <!-- Image that takes up entire card -->
-                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_female.png');">
-                    </div>
-
-                    <!-- Polygon color overlay -->
-                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
-
-                    <!-- Full-menu colour overlay -->
-                    <div
-                        class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
-                    </div>
-
-                    <!-- Text overlay -->
-                    <div
-                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                        Guest
-                    </div>
+                <!-- Image that takes up entire card -->
+                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_female.png');">
                 </div>
-            </div>
-            <div id="login-button"
+
+                <!-- Polygon color overlay -->
+                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
+
+                <!-- Full-menu colour overlay -->
+                <div
+                    class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                </div>
+
+                <!-- Text overlay -->
+                <div
+                    class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                    Guest
+                </div>
+            </a>
+            <a href="#main-menu-page" data-target="main-menu-page" id="login-button"
                 class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
-                <div class="">
-                    <!-- Image that takes up entire card -->
-                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                    </div>
-
-                    <!-- Polygon color overlay -->
-                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                    <!-- Full-menu colour overlay -->
-                    <div
-                        class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
-                    </div>
-
-                    <!-- Text overlay -->
-                    <div
-                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                        Login
-                    </div>
+                <!-- Image that takes up entire card -->
+                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');">
                 </div>
-            </div>
+
+                <!-- Polygon color overlay -->
+                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+
+                <!-- Full-menu colour overlay -->
+                <div
+                    class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                </div>
+
+                <!-- Text overlay -->
+                <div
+                    class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                    Login
+                </div>
+            </a>
         </div>
         <!-- Back Button -->
         <div class="flex justify-end items-center h-[10%]">
@@ -104,7 +100,8 @@
 
         <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex">
 
-            <a href="#local-play-page" data-target="local-play-page" id="local-play-button"
+            <a href="#local-play-page" id="local-play-button" data-target="local-play-page"
+                data-helper-message="Play locally with friends!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
                 <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -117,7 +114,8 @@
                     Local Play</div>
             </a>
 
-            <a href="#remote-play-page" data-target="remote-play-page" id="remote-play-button"
+            <a href="#remote-play-page" id="remote-play-button" data-target="remote-play-page"
+                data-helper-message="Play online!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
                 <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -130,7 +128,8 @@
                     Remote Play</div>
             </a>
 
-            <a href="#tournament-play-page" data-target="tournament-play-page" id="tournament-play-button"
+            <a href="#tournament-play-page" id="tournament-play-button" data-target="tournament-play-page"
+                data-helper-message="Play in a tournament!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
                 <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -144,7 +143,8 @@
             </a>
 
             <div id="networking-section" class="flex flex-1 flex-col justify-center rounded overflow-hidden ">
-                <a href="#rankings-page" data-target="rankings-page" id="rankings-button"
+                <a href="#rankings-page" id="rankings-button" data-target="rankings-page"
+                    data-helper-message="Check the rankings!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
                     <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                         style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -156,7 +156,8 @@
                         class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                         Rankings</div>
                 </a>
-                <a href="#friends-page" data-target="friends-page" id="friends-button"
+                <a href="#friends-page" id="friends-button" data-target="friends-page"
+                    data-helper-message="See your friends!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
                     <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                         style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>

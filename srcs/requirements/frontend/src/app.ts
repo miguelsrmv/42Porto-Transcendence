@@ -8,7 +8,7 @@
  */
 
 import { navigateTo } from "./navigation.js";
-import { setupHistoryListener } from "./events.js";
+import { setupHistoryListener, addNavigationListener } from "./events.js";
 
 
 /**
@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Setup history listener first
     setupHistoryListener();
+
+    // Setup global navigation listener
+    addNavigationListener();
 
     // Replace the initial state to ensure correct history behavior
     history.replaceState({ view: initialView }, "", `#${initialView}`);

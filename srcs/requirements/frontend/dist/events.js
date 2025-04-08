@@ -23,7 +23,33 @@ export function setupHistoryListener() {
         }
     });
 }
-
+/**
+ * @brief Adds a navigation listener to the document.
+ *
+ * This function sets up a global click event listener on the document to handle
+ * navigation. It intercepts clicks on anchor elements with a `data-target` attribute
+ * and navigates to the specified view without reloading the page.
+ */
+export function addNavigationListener() {
+    // Sets up global navigation function
+    document.addEventListener("click", function (e) {
+        const target = e.target;
+        const anchor = target.closest("a[data-target]");
+        if (anchor) {
+            e.preventDefault();
+            const view = anchor.getAttribute("data-target");
+            if (view)
+                navigateTo(view);
+        }
+    });
+}
+/**
+ * @brief Toggles the visibility of a dropdown menu.
+ *
+ * This function manages the visibility of a dropdown menu associated with a button.
+ * It toggles the dropdown's visibility when the button is clicked and hides the dropdown
+ * when clicking outside of it.
+ */
 export function toggleDropdown() {
     const button = document.getElementById("nav-settings-button");
     const dropdown = document.getElementById("settings-dropdown");
