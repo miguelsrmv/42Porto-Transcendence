@@ -104,7 +104,7 @@
 
         <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex">
 
-            <div id="local-play-button"
+            <a href="#local-play-page" data-target="local-play-page" id="local-play-button"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
                 <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -115,9 +115,9 @@
                 <div
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                     Local Play</div>
-            </div>
+            </a>
 
-            <div id="remote-play-button"
+            <a href="#remote-play-page" data-target="remote-play-page" id="remote-play-button"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
                 <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -128,9 +128,9 @@
                 <div
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                     Remote Play</div>
-            </div>
+            </a>
 
-            <div id="tournament-play-button"
+            <a href="#tournament-play-page" data-target="tournament-play-page" id="tournament-play-button"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
                 <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -141,10 +141,10 @@
                 <div
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                     Tourney</div>
-            </div>
+            </a>
 
             <div id="networking-section" class="flex flex-1 flex-col justify-center rounded overflow-hidden ">
-                <div id="rankings-button"
+                <a href="#rankings-page" data-target="rankings-page" id="rankings-button"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
                     <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                         style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -155,8 +155,8 @@
                     <div
                         class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                         Rankings</div>
-                </div>
-                <div id="friends-button"
+                </a>
+                <a href="#friends-page" data-target="friends-page" id="friends-button"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
                     <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                         style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
@@ -167,7 +167,7 @@
                     <div
                         class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                         Friends</div>
-                </div>
+                </a>
             </div>
         </div>
         <div id="menu-helper-text"
@@ -183,21 +183,9 @@
     </div>
 </template>
 
-<template id="player-settings-template">
-    <div id="player-settings">
-        <div
-            class="absolute top-0 left-0 right-0 p-4 bg-white/30 backdrop-blur-lg shadow-lg rounded-lg max-w-lg mx-auto mt-6">
-            <ul class="flex space-x-4 text-white">
-                <li><a href="#" class="hover:text-gray-200">Home</a></li>
-                <li><a href="#" class="hover:text-gray-200">About</a></li>
-                <li><a href="#" class="hover:text-gray-200">Contact</a></li>
-            </ul>
-        </div>
-    </div>
-</template>
 
-<template id="match-settings-template">
-    <div id="match-settings-menu"></div>
+<template id="profile-template">
+    <div> I'm on profile!</div>
 </template>
 
 <template id="local-play-template">
@@ -208,7 +196,7 @@
     <div> I'm on remote play! </div>
 </template>
 
-<template id="tournament-template">
+<template id="tournament-play-template">
     <div> I'm on tournament play! </div>
 </template>
 
@@ -237,10 +225,10 @@
             </button>
             <!-- TODO: Add function to dropdown buttons -->
             <div id="settings-dropdown"
-                class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-black z-30">
+                class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-black z-30 hidden">
                 <div class="py-2">
-                    <a href="#" class="block px-4 py-2 text-sm">Profile</a>
-                    <a href="#" class="block px-4 py-2 text-sm">Log Out</a>
+                    <a href="#" data-target="profile-template" class="block px-4 py-2 text-sm">Profile</a>
+                    <a href="#" data-target="landing-page" class="block px-4 py-2 text-sm">Log Out</a>
                 </div>
             </div>
         </div>

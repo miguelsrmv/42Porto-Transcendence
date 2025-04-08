@@ -46,3 +46,4 @@ export function toggleDropdown(): void {
         }
     });
 }
+

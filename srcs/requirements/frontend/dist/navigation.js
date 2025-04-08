@@ -35,6 +35,8 @@ export function navigateTo(view, update_history = true) {
     if (update_history) {
         history.pushState(state, "", `#${view}`);
     }
+    // Adds navigation events
+    addNavEvents();
     // Update events on page
     addPageEvents(view);
     // Trigger animations
@@ -81,6 +83,17 @@ function renderView(view) {
         }
     }
 }
+function addNavEvents() {
+    document.addEventListener("click", function (e) {
+        const target = e.target;
+        if (target.matches("a[data-target]")) {
+            e.preventDefault(); // prevents default <a> behavior
+            const view = target.getAttribute("data-target");
+            if (view)
+                navigateTo(view);
+        }
+    });
+}
 /**
  * @brief Adds event listeners for a specified view.
  *
@@ -102,7 +115,7 @@ function addPageEvents(view) {
         case ("remote-play-page"):
             addRemotePlayEvents();
             break;
-        case ("tournament-page"):
+        case ("tournament-play-page"):
             addTournamentPlayEvents();
             break;
         case ("friends-page"):
@@ -176,7 +189,7 @@ function addMainMenuEvents() {
     const tourneyMenu = document.getElementById("tournament-play-button");
     if (tourneyMenu) {
         addMenuHelperText(tourneyMenu, "Face other players in a tournament!");
-        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-page"); });
+        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-play-page"); });
     }
     const friendsMenu = document.getElementById("rankings-button");
     if (friendsMenu) {
