@@ -178,27 +178,65 @@
 </template>
 
 <template id="game-menu-template">
-    <div id="game-menu" class="flex w-[85%] mx-auto">
-        <div id="player-settings" class="flex-1 flex items-center justify-center">Player Settings</div>
-        <div id="match-settings" class="flex-1 flex items-center justify-center">Match settings</div>
+    <div id="game-menu" class="flex w-[85%] h-[90%] mx-auto relative">
+        <div id="game-type-modal" class=" absolute inset-0 z-10 min-h-full bg-white rounded-lg p-6 pb-10 gap-6
+        shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50 flex flex-col justify-between">
+            <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
+                <button id="classic-pong-button"
+                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[500px] group transform transition duration-200 hover:scale-105">
+                    <!-- Image that takes up entire card -->
+                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                        style="background-image: url('/static/images/pokemon_trainer_female.png');">
+                    </div>
+
+                    <!-- Polygon color overlay -->
+                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
+
+                    <!-- Full-menu colour overlay -->
+                    <div
+                        class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    </div>
+
+                    <!-- Text overlay -->
+                    <div
+                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                        Classic Pong
+                    </div>
+                </button>
+                <button id="crazy-pong-button"
+                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[500px] group transform transition duration-200 hover:scale-105">
+                    <!-- Image that takes up entire card -->
+                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                        style="background-image: url('/static/images/pokemon_trainer_male.png');">
+                    </div>
+
+                    <!-- Polygon color overlay -->
+                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+
+                    <!-- Full-menu colour overlay -->
+                    <div
+                        class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    </div>
+
+                    <!-- Text overlay -->
+                    <div
+                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                        Crazy Pong
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div id="game-settings-menu" class="flex w-full justify-between hidden">
+            <div id="player-settings" class="flex-1 flex items-center justify-center">Player Settings</div>
+            <div id="match-settings" class="flex-1 flex items-center justify-center">Match settings</div>
+        </div>
     </div>
 </template>
 
 
+
 <template id="profile-template">
     <div> I'm on profile!</div>
-</template>
-
-<template id="local-play-template">
-    <div> I'm on local play! </div>
-</template>
-
-<template id="remote-play-template">
-    <div> I'm on remote play! </div>
-</template>
-
-<template id="tournament-play-template">
-    <div> I'm on tournament play! </div>
 </template>
 
 <template id="friends-template">

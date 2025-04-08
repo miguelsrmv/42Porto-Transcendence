@@ -40,6 +40,7 @@ export async function addLandingAnimations(): Promise<void> {
  * @param menu The menu element to which the helper text will be added.
  * @param message The helper text message to display when the menu is hovered over.
  */
+
 export function showMenuHelperText(anchor: Element): void {
     const menuHelperText = document.getElementById("menu-helper-text");
 
@@ -53,3 +54,5 @@ export function showMenuHelperText(anchor: Element): void {
         })
     }
 }
+
+
