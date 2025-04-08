@@ -6,5 +6,9 @@ Customization options:
 » Ball speed
 
 
-TODO:
-Change some "templates" to "pages"?
+
+				Local		Remote			Tournament
+Player Alias	1, 2		1				1	
+Paddle Colour	1, 2		1				1
+Toggle			Yes			Yes				Yes
+Buttons			Play		Play, Find		Create Tourmanent, Join Tournament

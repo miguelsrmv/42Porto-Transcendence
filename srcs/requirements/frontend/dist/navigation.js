@@ -6,6 +6,15 @@
  * views into the main application container. It listens for the DOMContentLoaded event
  * to load the default view and custom navigation events to switch views.
  */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 let currentView = "";
 let previousView = "";
 import { addLandingAnimations, showMenuHelperText } from "./animations.js";
@@ -68,7 +77,11 @@ function adjustHeaderSize(view) {
 function renderView(view) {
     // Loads main view
     const mainHost = document.getElementById("app");
-    const mainTemplate = document.getElementById(view.replace("-page", "-template"));
+    let mainTemplate;
+    if (view === "local-play-page" || view === "remote-play-page" || view == "tournament-play-page")
+        mainTemplate = document.getElementById("game-menu-template");
+    else
+        mainTemplate = document.getElementById(view.replace("-page", "-template"));
     if (mainHost && mainTemplate)
         mainHost.replaceChildren(mainTemplate.content.cloneNode(true));
     // Loads header view
@@ -158,6 +171,22 @@ function addLandingEvents() {
         });
     }
 }
+function getGameType() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => {
+            const classicButton = document.getElementById("classic-pong-button");
+            const crazyButton = document.getElementById("crazy-pong-button");
+            if (classicButton && crazyButton) {
+                classicButton.addEventListener("click", () => {
+                    resolve("classic");
+                }, { once: true });
+                crazyButton.addEventListener("click", () => {
+                    resolve("crazy");
+                }, { once: true });
+            }
+        });
+    });
+}
 /**
 * @brief Adds event listeners for the home view.
 *
@@ -165,6 +194,7 @@ function addLandingEvents() {
 */
 function addMainMenuEvents() {
     // For each <a> inside #main-menu-buttons, apply Helper Text
+    // NOTE: Faster than event delegation!!
     document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
         showMenuHelperText(anchor);
     });
@@ -175,6 +205,16 @@ function addMainMenuEvents() {
 * This function is a placeholder for setting up events specific to the local view.
 */
 function addLocalPlayEvents() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const gameType = yield getGameType();
+        console.log(gameType);
+        const gameTypeModal = document.getElementById("game-type-modal");
+        const gameSettingsMenu = document.getElementById("game-settings-menu");
+        if (gameTypeModal && gameSettingsMenu) {
+            gameTypeModal.classList.toggle("hidden");
+            gameSettingsMenu.classList.toggle("hidden");
+        }
+    });
 }
 /**
  * @brief Adds event listeners for the multiplayer view.
@@ -182,6 +222,7 @@ function addLocalPlayEvents() {
  * This function is a placeholder for setting up events specific to the multiplayer view.
  */
 function addRemotePlayEvents() {
+    getGameType();
 }
 /**
  * @brief Adds event listeners for the tournament view.
@@ -189,6 +230,7 @@ function addRemotePlayEvents() {
  * This function is a placeholder for setting up events specific to the tournament view.
  */
 function addTournamentPlayEvents() {
+    getGameType();
 }
 /**
 * @brief Adds event listeners for the rankings view.

@@ -70,7 +70,6 @@ function adjustHeaderSize(view: string) {
     header.innerText = isLanding ? "" : header.innerText;
 }
 
-
 /**
  * @brief Renders the specified view's content.
  * 
@@ -82,7 +81,11 @@ function adjustHeaderSize(view: string) {
 function renderView(view: string): void {
     // Loads main view
     const mainHost = document.getElementById("app");
-    const mainTemplate = document.getElementById(view.replace("-page", "-template")) as HTMLTemplateElement;
+    let mainTemplate;
+    if (view === "local-play-page" || view === "remote-play-page" || view == "tournament-play-page")
+        mainTemplate = document.getElementById("game-menu-template") as HTMLTemplateElement;
+    else
+        mainTemplate = document.getElementById(view.replace("-page", "-template")) as HTMLTemplateElement;
 
     if (mainHost && mainTemplate)
         mainHost.replaceChildren(mainTemplate.content.cloneNode(true));
@@ -180,6 +183,22 @@ function addLandingEvents(): void {
     }
 }
 
+async function getGameType(): Promise<string> {
+    return new Promise((resolve) => {
+        const classicButton = document.getElementById("classic-pong-button");
+        const crazyButton = document.getElementById("crazy-pong-button");
+
+        if (classicButton && crazyButton) {
+            classicButton.addEventListener("click", () => {
+                resolve("classic");
+            }, { once: true });
+            crazyButton.addEventListener("click", () => {
+                resolve("crazy");
+            }, { once: true });
+        }
+    });
+}
+
 /**
 * @brief Adds event listeners for the home view.
 * 
@@ -187,6 +206,7 @@ function addLandingEvents(): void {
 */
 function addMainMenuEvents(): void {
     // For each <a> inside #main-menu-buttons, apply Helper Text
+    // NOTE: Faster than event delegation!!
     document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function(anchor) {
         showMenuHelperText(anchor);
     });
@@ -197,7 +217,17 @@ function addMainMenuEvents(): void {
 * 
 * This function is a placeholder for setting up events specific to the local view.
 */
-function addLocalPlayEvents(): void {
+async function addLocalPlayEvents(): Promise<void> {
+    const gameType = await getGameType();
+    console.log(gameType);
+
+    const gameTypeModal = document.getElementById("game-type-modal");
+    const gameSettingsMenu = document.getElementById("game-settings-menu");
+    if (gameTypeModal && gameSettingsMenu) {
+        gameTypeModal.classList.toggle("hidden");
+        gameSettingsMenu.classList.toggle("hidden");
+
+    }
 }
 
 /**
@@ -206,6 +236,7 @@ function addLocalPlayEvents(): void {
  * This function is a placeholder for setting up events specific to the multiplayer view.
  */
 function addRemotePlayEvents(): void {
+    getGameType();
 }
 
 /**
@@ -214,6 +245,7 @@ function addRemotePlayEvents(): void {
  * This function is a placeholder for setting up events specific to the tournament view.
  */
 function addTournamentPlayEvents(): void {
+    getGameType();
 }
 
 /**
