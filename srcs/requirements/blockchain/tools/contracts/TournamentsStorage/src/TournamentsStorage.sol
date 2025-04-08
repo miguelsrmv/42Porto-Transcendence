@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 contract TournamentsStorage {
-    uint8 constant MAX_PARTICIPANTS = 4;
+    uint8 public constant MAX_PARTICIPANTS = 4;
 
     struct Tournament {
         uint256 id;
