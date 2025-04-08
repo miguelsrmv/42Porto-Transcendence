@@ -84,7 +84,7 @@ export async function createTournament(
       data: {
         name: name,
         maxParticipants: maxParticipants,
-        settings: JSON.stringify({ finalSettings }),
+        settings: JSON.stringify(finalSettings),
         createdBy: {
           connect: { id: createdBy },
         },

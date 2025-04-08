@@ -52,12 +52,29 @@ async function createTournaments(players: Player[]) {
   }
 }
 
+async function createMatches(players: Player[]) {
+  const matchSize = 2;
+  for (let i = 0; i < players.length; i += matchSize) {
+    const participants = players.slice(i, i + matchSize);
+    if (participants.length === matchSize) {
+      await prisma.match.create({
+        data: {
+          settings: '',
+          player1Id: participants[0].id,
+          player2Id: participants[1].id,
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   try {
     await seedUsers();
     const players = await prisma.player.findMany();
     await createFriends(players);
     await createTournaments(players);
+    await createMatches(players);
     if (await prisma.user.findMany({ include: { player: true } }))
       console.log('Database populated successfully.');
   } catch (e) {
