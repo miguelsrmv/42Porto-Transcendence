@@ -298,9 +298,6 @@
   .h-\[90\%\] {
     height: 90%;
   }
-  .h-\[full\] {
-    height: full;
-  }
   .h-full {
     height: 100%;
   }
@@ -548,13 +545,6 @@
   .duration-200 {
     --tw-duration: 200ms;
     transition-duration: 200ms;
-  }
-  .group-hover\:block {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        display: block;
-      }
-    }
   }
   .group-hover\:opacity-0 {
     &:is(:where(.group):hover *) {

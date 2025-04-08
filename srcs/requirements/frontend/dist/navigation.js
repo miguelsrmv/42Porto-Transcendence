@@ -10,7 +10,6 @@ let currentView = "";
 let previousView = "";
 import { addLandingAnimations, addMenuHelperText } from "./animations.js";
 import { toggleDropdown } from "./events.js";
-import { removeHeightClasses } from "./helpers.js";
 /**
  * @brief Navigates to a specified view.
  *
@@ -27,12 +26,10 @@ export function navigateTo(view, update_history = true) {
     // Updates previousView and currentView variable
     previousView = currentView;
     currentView = view;
-    // Gets contents of each view
-    const bodyContents = getBodyContents(view);
-    // Adjust header and navigation
-    adjustHeader(view);
+    // Adjust header size
+    adjustHeaderSize(view);
     // Renders view content
-    renderView(bodyContents);
+    renderView(view);
     // Update browser history
     const state = { view };
     if (update_history) {
@@ -46,6 +43,15 @@ export function navigateTo(view, update_history = true) {
 export function getPreviousView() {
     return previousView;
 }
+function adjustHeaderSize(view) {
+    const header = document.getElementById("header");
+    if (!header)
+        return;
+    const isLanding = view === "landing-page";
+    header.classList.toggle("h-[0%]", isLanding);
+    header.classList.toggle("h-[20%]", !isLanding);
+    header.innerText = isLanding ? "" : header.innerText;
+}
 /**
  * @brief Creates the structure for each view
  *
@@ -54,76 +60,25 @@ export function getPreviousView() {
  *
  * @param view The ID of the view to navigate to.
  */
-function getBodyContents(view) {
-    const bodyContents = {
-        header: null,
-        main: null,
-    };
+function renderView(view) {
     // Loads main view
-    let mainContent;
-    // If view is not a game view, load it
-    if (view !== "local-play-page" && view !== "remote-play-page" && view != "tournament-page")
-        mainContent = document.getElementById(view.replace("-page", "-template"));
-    // If view is a game view, load game view and customize it depending on game type
-    else
-        mainContent = getGameMenu(view);
-    if (mainContent)
-        bodyContents.main = mainContent.content.cloneNode(true);
-    // Add Header if not on landing page
-    if (view !== "landing-page") {
+    const mainHost = document.getElementById("app");
+    const mainTemplate = document.getElementById(view.replace("-page", "-template"));
+    if (mainHost && mainTemplate)
+        mainHost.replaceChildren(mainTemplate.content.cloneNode(true));
+    // Loads header view
+    const headerHost = document.getElementById("header");
+    const headerContent = document.getElementById("header-template");
+    if (headerHost && headerContent && view !== "landing-page") {
         // Loads header if not in landing-page
-        const headerContent = document.getElementById("header-template");
-        bodyContents.header = headerContent.content.cloneNode(true);
-        const headerText = bodyContents.header.querySelector("#header-menu-text");
+        headerHost.replaceChildren(headerContent.content.cloneNode(true));
+        // Toggles dropdown
+        toggleDropdown();
+        // Updates headerText
+        const headerText = headerHost.querySelector("#header-menu-text");
         if (headerText) {
             headerText.innerHTML = view.replace("-page", "").split("-").map(view => view.charAt(0).toUpperCase() + view.slice(1)).join(" ");
         }
-    }
-    return bodyContents;
-}
-function getGameMenu(view) {
-    const resultTemplate = document.createElement("template");
-    const gameMenuTemplate = document.getElementById("game-menu-template");
-    const gameMenuContent = gameMenuTemplate.content.cloneNode(true);
-    const playerSettings = gameMenuContent.querySelector("#player-settings");
-    const playerSettingsTemplate = document.getElementById("player-settings-template");
-    const playerSettingsContent = playerSettingsTemplate.content.cloneNode(true);
-    playerSettings.replaceChildren(playerSettingsContent);
-    resultTemplate.content.appendChild(gameMenuContent);
-    return resultTemplate;
-}
-function adjustHeader(view) {
-    const header = document.getElementById("header");
-    if (header) {
-        removeHeightClasses(header);
-        if (view === "landing-page") {
-            header.classList.add("h-[0%]");
-            header.innerText = "";
-        }
-        else {
-            header.classList.add("h-[20%]");
-        }
-    }
-}
-/**
- * @brief Updates the content of a host element with a template.
- *
- * This function clears the current content of the host element and replaces it with the content
- * of the specified template element.
- *
- * @param hostElement The element to update.
- * @param templateElement The template element whose content will be used to update the host element.
- */
-function renderView(bodyContents) {
-    const { header, main } = bodyContents;
-    const headerHost = document.getElementById("header");
-    const mainHost = document.getElementById("app");
-    if (headerHost && header) {
-        headerHost.replaceChildren(header);
-        toggleDropdown();
-    }
-    if (mainHost && main) {
-        mainHost.replaceChildren(main);
     }
 }
 /**
