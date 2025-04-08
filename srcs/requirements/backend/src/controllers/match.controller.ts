@@ -72,7 +72,7 @@ export async function createMatch(
         mode: mode,
         player1Id: player1Id,
         player2Id: player2Id,
-        settings: JSON.stringify({ finalSettings }),
+        settings: JSON.stringify(finalSettings),
       },
     });
     reply.send(match);

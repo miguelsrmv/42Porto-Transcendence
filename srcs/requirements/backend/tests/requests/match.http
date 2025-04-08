@@ -16,9 +16,9 @@ POST http://localhost:3000/matches HTTP/1.1
 Content-Type: application/json
 
 {
-	"mode": "CLASSIC",
 	"player1Id": "<id>",
-	"player2Id": "<id>"
+	"player2Id": "<id>",
+	"settings": "{\"map\":\"default\",\"allowPowerUps\":false,\"ballSpeed\": 1,\"rounds\":5}"
 }
 
 ### Update a match

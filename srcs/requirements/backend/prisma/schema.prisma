@@ -72,6 +72,8 @@ model Match {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @default(now()) @updatedAt
   settings     String
+
+  @@unique([player1Id, player2Id, tournamentId])
 }
 
 enum MatchMode {
