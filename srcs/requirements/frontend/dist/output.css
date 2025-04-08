@@ -534,6 +534,9 @@
   .bg-blue-700 {
     background-color: var(--color-blue-700);
   }
+  .bg-gray-700 {
+    background-color: var(--color-gray-700);
+  }
   .bg-red-700 {
     background-color: var(--color-red-700);
   }

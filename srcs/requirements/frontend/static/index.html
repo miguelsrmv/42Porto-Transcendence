@@ -103,13 +103,14 @@
             <a href="#local-play-page" id="local-play-button" data-target="local-play-page"
                 data-helper-message="Play locally with friends!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                <div id="bg-image-local-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                <div
+                <div id="banner-local-play" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                </div>
+                <div id="overlay-local-play"
                     class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                 </div>
-                <div
+                <div id="local-play-text"
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                     Local Play</div>
             </a>
@@ -117,13 +118,14 @@
             <a href="#remote-play-page" id="remote-play-button" data-target="remote-play-page"
                 data-helper-message="Play online!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                <div id="bg-image-remote-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                <div
+                <div id="banner-remote-play" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                </div>
+                <div id="overlay-remote-play"
                     class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                 </div>
-                <div
+                <div id="remote-play-text"
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                     Remote Play</div>
             </a>
@@ -131,13 +133,14 @@
             <a href="#tournament-play-page" id="tournament-play-button" data-target="tournament-play-page"
                 data-helper-message="Play in a tournament!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                <div id="bg-image-tournament-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                <div
+                <div id="banner-tournament-play"
+                    class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+                <div id="overlay-tournament-play"
                     class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                 </div>
-                <div
+                <div id="tournament-play-text"
                     class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                     Tourney</div>
             </a>
@@ -146,26 +149,28 @@
                 <a href="#rankings-page" id="rankings-button" data-target="rankings-page"
                     data-helper-message="Check the rankings!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
-                    <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    <div id="bg-image-rankings" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                         style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                    <div
+                    <div id="banner-rankings"
+                        class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+                    <div id="overlay-rankings"
                         class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                     </div>
-                    <div
+                    <div id="rankings-text"
                         class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                         Rankings</div>
                 </a>
                 <a href="#friends-page" id="friends-button" data-target="friends-page"
                     data-helper-message="See your friends!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
-                    <div class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    <div id="bg-image-friends" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
                         style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                    <div
+                    <div id="banner-friends" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                    </div>
+                    <div id="overlay-friends"
                         class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
                     </div>
-                    <div
+                    <div id="friends-text"
                         class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
                         Friends</div>
                 </a>
