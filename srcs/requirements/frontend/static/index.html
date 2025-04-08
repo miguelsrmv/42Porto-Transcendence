@@ -226,9 +226,65 @@
                 </button>
             </div>
         </div>
-        <div id="game-settings-menu" class="flex w-full justify-between hidden">
-            <div id="player-settings" class="flex-1 flex items-center justify-center">Player Settings</div>
-            <div id="match-settings" class="flex-1 flex items-center justify-center">Match settings</div>
+
+        <div id="game-settings-menu" class="flex flex-col w-full hidden">
+            <div id="player-settings-title" class="text-center h-[10%] text-4xl underline">Player Settings</div>
+            <div id="player-settings" class="flex flex-row items-center h-[40%]">
+                <div id="player-1-settings" class="flex flex-col flex-1 h-full">
+                    <div id="player-1-name" class="flex items-center justify-center h-[15%] ">
+                        <label for="player-1-alias" class="sr-only"></label>
+                        <input id="player-1-alias" type="text" class="text-3xl font-bold items-center text-center"
+                            placeholder="Player 1" />
+                    </div>
+                    <div id="player-1-paddle-colour" class="flex items-center justify-center h-[15%]">
+                        <label for="player-1-paddle-colour-input" class="text-gray text-3xl font-bold mr-2">Paddle
+                            Colour</label>
+                        <input id="player-1-paddle-colour-input" type="color" value="#ff0000" />
+                    </div>
+                    <div id="player-1-character" class="flex items-center justify-center h-[70%] hidden">
+                        <button id="prev-character-1" class="text-5xl px-4"> &lt; </button>
+                        <div id="character-display-1" class="flex items-center justify-center h-full">
+                            <img id="character-img-1" src="./static/character_select/mario.png" alt="Character 1"
+                                class="w-full h-full object-contain" />
+                        </div>
+                        <button id="next-character-1" class="text-5xl px-4"> &gt; </button>
+                    </div>
+                </div>
+                <div id="player-2-settings" class="flex flex-col flex-1 h-full hidden">
+                    <div id="player-2-name" class="flex items-center justify-center h-[15%]">
+                        <label for="player-2-alias" class="sr-only"></label>
+                        <input id="player-2-alias" type="text" class="text-3xl font-bold items-center text-center"
+                            placeholder="Player 2" />
+                    </div>
+                    <div id="player-2-paddle-colour" class="flex items-center justify-center h-[15%]">
+                        <label for="player-2-paddle-colour-input" class="text-gray text-3xl font-bold mr-2">Paddle
+                            Colour</label>
+                        <input id="player-2-paddle-colour-input" type="color" value="#0000ff" />
+                    </div>
+                    <div id="player-2-character" class="flex items-center justify-center h-[70%] hidden">
+                        <button id="prev-character-2" class="text-5xl px-4"> &lt; </button>
+                        <div id="character-display-2" class="flex items-center justify-center h-full">
+                            <img id="character-img-2" src="./static/character_select/mario.png" alt="Character 2"
+                                class="w-full h-full object-contain" />
+                        </div>
+                        <button id="next-character-2" class="text-5xl px-4"> &gt; </button>
+                    </div>
+                </div>
+            </div>
+            <div id="board-settings-title" class="text-center h-[10%] text-4xl underline">Board Settings</div>
+            <div id="match-background" class="flex items-center justify-center h-[30%]">
+                <button id="prev-background" class="text-5xl px-4"> &lt; </button>
+                <div id="background-display" class="flex items-center justify-center h-[90%] w-[30%]">
+                    <!--<img id="background-img" src="./static/backgrounds/Backyard.png" alt="Character 2"
+                        class="w-full h-full object-contain" />-->
+                    <div id="background-img" class="w-full h-full bg-repeat-x"
+                        style="background-image: url('./static/backgrounds/Backyard.png');"></div>
+                </div>
+                <button id="next-background" class="text-5xl px-4"> &gt; </button>
+            </div>
+            <div id="play-button" class="flex items-center justify-center text-center h-[10%]">
+                <button class="rounded-full bg-black text-white h-[80%] w-[50%]">Play Game!</button>
+            </div>
         </div>
     </div>
 </template>

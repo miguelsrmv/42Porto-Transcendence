@@ -75,3 +75,107 @@ export function toggleDropdown(): void {
     });
 }
 
+export function createCharacterLoop(player_number: number = 1) {
+    const characters: string[] = [
+        'mario.png',
+        'yoshi.png',
+        'donkey_kong.png',
+        'pikachu.png',
+        'mewtwo.png',
+        'link.png',
+        'sonic.png',
+        'samus.png'
+    ];
+
+    const location: string = "./static/character_select/";
+
+    let currentCharacterIndex: number = 0;
+
+    const prevButton: HTMLButtonElement | null = document.getElementById(`prev-character-${player_number}`) as HTMLButtonElement;
+    const nextButton: HTMLButtonElement | null = document.getElementById(`next-character-${player_number}`) as HTMLButtonElement;
+    const characterDisplay: HTMLImageElement | null = document.getElementById(`character-img-${player_number}`) as HTMLImageElement;
+
+    function updateCharacterDisplay(): void {
+        if (characterDisplay)
+            characterDisplay.src = location + characters[currentCharacterIndex];
+    }
+
+    // Event listener for previous button
+    if (prevButton) {
+        prevButton.addEventListener('click', () => {
+            // Decrement the index and cycle back to the end if necessary
+            currentCharacterIndex = (currentCharacterIndex === 0) ? characters.length - 1 : currentCharacterIndex - 1;
+            updateCharacterDisplay();
+        });
+    }
+
+    // Event listener for next button
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            // Increment the index and cycle back to the start if necessary
+            currentCharacterIndex = (currentCharacterIndex === characters.length - 1) ? 0 : currentCharacterIndex + 1;
+            updateCharacterDisplay();
+        });
+    }
+
+    // Initialize the first character
+    updateCharacterDisplay();
+}
+
+export function createBackgroundLoop() {
+    const backgrounds: string[] = [
+        'Backyard.png',
+        'Beach.png',
+        'Cave.png',
+        'Checks.png',
+        'City.png',
+        'Desert.png',
+        'Forest.png',
+        'Machine.png',
+        'Nostalgic.png',
+        'Pikapika_Platinum.png',
+        'River.png',
+        'Savanna.png',
+        'Seafloor.png',
+        'Simple.png',
+        'Sky.png',
+        'Snow.png',
+        'Space.png',
+        'Torchic.png',
+        'Volcano.png'
+    ];
+
+    const location: string = "./static/backgrounds/";
+
+    let currentBackgroundIndex: number = 0;
+
+    const prevButton: HTMLButtonElement | null = document.getElementById('prev-background') as HTMLButtonElement;
+    const nextButton: HTMLButtonElement | null = document.getElementById('next-background') as HTMLButtonElement;
+    const backgroundDisplay: HTMLDivElement | null = document.getElementById('background-img') as HTMLDivElement;
+
+    function updateBackgroundDisplay(): void {
+        if (backgroundDisplay)
+            backgroundDisplay.style.backgroundImage = `url('${location}${backgrounds[currentBackgroundIndex]}`;
+    }
+
+    // Event listener for previous button
+    if (prevButton) {
+        prevButton.addEventListener('click', () => {
+            // Decrement the index and cycle back to the end if necessary
+            currentBackgroundIndex = (currentBackgroundIndex === 0) ? backgrounds.length - 1 : currentBackgroundIndex - 1;
+            updateBackgroundDisplay();
+        });
+    }
+
+    // Event listener for next button
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            // Increment the index and cycle back to the start if necessary
+            currentBackgroundIndex = (currentBackgroundIndex === backgrounds.length - 1) ? 0 : currentBackgroundIndex + 1;
+            updateBackgroundDisplay();
+        });
+    }
+
+    // Initialize the first character
+    updateBackgroundDisplay();
+}

@@ -12,7 +12,7 @@ let previousView = "";
 
 
 import { addLandingAnimations, showMenuHelperText } from "./animations.js"
-import { toggleDropdown } from "./events.js"
+import { toggleDropdown, createCharacterLoop, createBackgroundLoop } from "./events.js"
 
 /**
  * @brief Navigates to a specified view.
@@ -122,13 +122,9 @@ function addPageEvents(view: string): void {
             addMainMenuEvents();
             break;
         case ("local-play-page"):
-            addLocalPlayEvents();
-            break;
         case ("remote-play-page"):
-            addRemotePlayEvents();
-            break;
         case ("tournament-play-page"):
-            addTournamentPlayEvents();
+            addPlayEvents(view);
             break;
         case ("friends-page"):
             addFriendsEvents();
@@ -213,39 +209,63 @@ function addMainMenuEvents(): void {
 }
 
 /**
-* @brief Adds event listeners for the local view.
+* @brief Adds event listeners for the local, ranked or tournament view
 * 
-* This function is a placeholder for setting up events specific to the local view.
+* This function sets up the website depending on the imported view
 */
-async function addLocalPlayEvents(): Promise<void> {
+async function addPlayEvents(view: string): Promise<void> {
+    // Gets Classic or Crazy Pong
     const gameType = await getGameType();
-    console.log(gameType);
 
+    // Gets number of players
+    const playerNumber = view === "local-play-page" ? 2 : 1;
+
+    // Closes model, shows up remaining website
     const gameTypeModal = document.getElementById("game-type-modal");
     const gameSettingsMenu = document.getElementById("game-settings-menu");
     if (gameTypeModal && gameSettingsMenu) {
         gameTypeModal.classList.toggle("hidden");
         gameSettingsMenu.classList.toggle("hidden");
-
     }
-}
 
-/**
- * @brief Adds event listeners for the multiplayer view.
- * 
- * This function is a placeholder for setting up events specific to the multiplayer view.
- */
-function addRemotePlayEvents(): void {
-    getGameType();
-}
+    // If 2 players, toggles player-2-settings on
+    const player2section = document.getElementById("player-2-settings");
+    if (playerNumber === 2 && player2section)
+        player2section.classList.toggle("hidden");
 
-/**
- * @brief Adds event listeners for the tournament view.
- * 
- * This function is a placeholder for setting up events specific to the tournament view.
- */
-function addTournamentPlayEvents(): void {
-    getGameType();
+    // Creates background loop
+    createBackgroundLoop();
+
+    // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
+    if (gameType === "crazy") {
+
+        const player1name = document.getElementById("player-1-name");
+        const player1paddle = document.getElementById("player-1-paddle-colour")
+        const player1char = document.getElementById("player-1-character");
+        if (player1name && player1paddle && player1char) {
+            player1name.classList.remove("h-[15%]");
+            player1name.classList.add("h-[50%]");
+            player1paddle.classList.remove("h-[15%]");
+            player1paddle.classList.add("h-[50%]");
+            player1char.classList.toggle("hidden");
+        }
+
+        const player2name = document.getElementById("player-2-name");
+        const player2paddle = document.getElementById("player-2-paddle-colour")
+        const player2char = document.getElementById("player-2-character");
+        if (player2name && player2paddle && player2char && playerNumber === 2) {
+            player2name.classList.remove("h-[15%]");
+            player2name.classList.add("h-[50%]");
+            player2paddle.classList.remove("h-[15%]");
+            player2paddle.classList.add("h-[50%]");
+            player2char.classList.toggle("hidden");
+        }
+
+        // Creates character loop (for both players, if needed)
+        createCharacterLoop();
+        if (playerNumber === 2)
+            createCharacterLoop(2);
+    }
 }
 
 /**
