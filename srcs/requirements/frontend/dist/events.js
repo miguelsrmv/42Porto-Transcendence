@@ -23,6 +23,7 @@ export function setupHistoryListener() {
         }
     });
 }
+
 export function toggleDropdown() {
     const button = document.getElementById("nav-settings-button");
     const dropdown = document.getElementById("settings-dropdown");

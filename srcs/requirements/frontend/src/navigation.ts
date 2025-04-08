@@ -10,6 +10,7 @@
 let currentView = "";
 let previousView = "";
 
+
 import { addLandingAnimations, addMenuHelperText } from "./animations.js"
 import { toggleDropdown } from "./events.js"
 
@@ -42,6 +43,9 @@ export function navigateTo(view: string, update_history: boolean = true): void {
     if (update_history) {
         history.pushState(state, "", `#${view}`);
     }
+
+    // Adds navigation events
+    addNavEvents();
 
     // Update events on page
     addPageEvents(view);
@@ -97,6 +101,17 @@ function renderView(view: string): void {
     }
 }
 
+function addNavEvents(): void {
+    document.addEventListener("click", function(e) {
+        const target = e.target as HTMLElement;
+        if (target.matches("a[data-target]")) {
+            e.preventDefault(); // prevents default <a> behavior
+            const view = target.getAttribute("data-target");
+            if (view) navigateTo(view);
+        }
+    })
+}
+
 /**
  * @brief Adds event listeners for a specified view.
  * 
@@ -118,7 +133,7 @@ function addPageEvents(view: string): void {
         case ("remote-play-page"):
             addRemotePlayEvents();
             break;
-        case ("tournament-page"):
+        case ("tournament-play-page"):
             addTournamentPlayEvents();
             break;
         case ("friends-page"):
@@ -201,7 +216,7 @@ function addMainMenuEvents(): void {
     const tourneyMenu = document.getElementById("tournament-play-button");
     if (tourneyMenu) {
         addMenuHelperText(tourneyMenu, "Face other players in a tournament!");
-        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-page") });
+        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-play-page") });
     }
 
     const friendsMenu = document.getElementById("rankings-button");
