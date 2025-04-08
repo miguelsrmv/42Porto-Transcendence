@@ -7,7 +7,7 @@
  * to load the default view and custom navigation events to switch views.
  */
 import { navigateTo } from "./navigation.js";
-import { setupHistoryListener } from "./events.js";
+import { setupHistoryListener, addNavigationListener } from "./events.js";
 /**
  * @brief Event listener for DOMContentLoaded.
  *
@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialView = "landing-page";
     // Setup history listener first
     setupHistoryListener();
+    // Setup global navigation listener
+    addNavigationListener();
     // Replace the initial state to ensure correct history behavior
     history.replaceState({ view: initialView }, "", `#${initialView}`);
     // Navigate to the initial view

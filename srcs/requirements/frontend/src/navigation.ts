@@ -11,7 +11,7 @@ let currentView = "";
 let previousView = "";
 
 
-import { addLandingAnimations, addMenuHelperText } from "./animations.js"
+import { addLandingAnimations, showMenuHelperText } from "./animations.js"
 import { toggleDropdown } from "./events.js"
 
 /**
@@ -44,9 +44,6 @@ export function navigateTo(view: string, update_history: boolean = true): void {
         history.pushState(state, "", `#${view}`);
     }
 
-    // Adds navigation events
-    addNavEvents();
-
     // Update events on page
     addPageEvents(view);
 
@@ -54,10 +51,14 @@ export function navigateTo(view: string, update_history: boolean = true): void {
     addAnimations(view);
 }
 
-export function getPreviousView(): string {
-    return previousView;
-}
-
+/**
+ * @brief Adjusts the header size based on the current view.
+ * 
+ * This function modifies the header's height and content depending on whether the current view
+ * is the landing page or another view.
+ * 
+ * @param view The ID of the current view.
+ */
 function adjustHeaderSize(view: string) {
     const header = document.getElementById("header");
     if (!header) return;
@@ -69,13 +70,14 @@ function adjustHeaderSize(view: string) {
     header.innerText = isLanding ? "" : header.innerText;
 }
 
+
 /**
- * @brief Creates the structure for each view
+ * @brief Renders the specified view's content.
  * 
- * This function returns an object which describes the structure of each view
- * The body contents will eventually be replaced by each part of the returned object
+ * This function loads the main and header templates for the specified view into the application.
+ * It also sets up the dropdown and updates the header text for non-landing pages.
  * 
- * @param view The ID of the view to navigate to.
+ * @param view The ID of the view to render.
  */
 function renderView(view: string): void {
     // Loads main view
@@ -99,17 +101,6 @@ function renderView(view: string): void {
             headerText.innerHTML = view.replace("-page", "").split("-").map(view => view.charAt(0).toUpperCase() + view.slice(1)).join(" ");
         }
     }
-}
-
-function addNavEvents(): void {
-    document.addEventListener("click", function(e) {
-        const target = e.target as HTMLElement;
-        if (target.matches("a[data-target]")) {
-            e.preventDefault(); // prevents default <a> behavior
-            const view = target.getAttribute("data-target");
-            if (view) navigateTo(view);
-        }
-    })
 }
 
 /**
@@ -149,6 +140,8 @@ function addPageEvents(view: string): void {
  * @brief Adds animations for a specified view.
  * 
  * This function sets up animations. 
+ *
+ * @param view the ID of the view for which to add animations.
  */
 function addAnimations(view: string): void {
     switch (view) {
@@ -167,8 +160,6 @@ function addLandingEvents(): void {
     const modal = document.getElementById("login-modal");
     const enterButton = document.getElementById("enter-button");
     const backButton = document.getElementById("back-button");
-    const guestButton = document.getElementById("guest-button");
-    const loginButton = document.getElementById("login-button");
 
     if (modal && enterButton && backButton) {
         enterButton.addEventListener("click", () => {
@@ -187,11 +178,6 @@ function addLandingEvents(): void {
             }, 300);
         });
     }
-    if (guestButton)
-        guestButton.addEventListener("click", () => navigateTo("main-menu-page"));
-
-    if (loginButton)
-        loginButton.addEventListener("click", () => navigateTo("main-menu-page"));
 }
 
 /**
@@ -200,37 +186,10 @@ function addLandingEvents(): void {
 * This function sets up the navigation bar for the home view.
 */
 function addMainMenuEvents(): void {
-
-    const localPlayMenu = document.getElementById("local-play-button");
-    if (localPlayMenu) {
-        addMenuHelperText(localPlayMenu, "Play locally with friends!");
-        localPlayMenu.addEventListener("click", () => { navigateTo("local-play-page") });
-    }
-
-    const remotePlayMenu = document.getElementById("remote-play-button");
-    if (remotePlayMenu) {
-        addMenuHelperText(remotePlayMenu, "Play online on the ladder!");
-        remotePlayMenu.addEventListener("click", () => { navigateTo("remote-play-page") });
-    }
-
-    const tourneyMenu = document.getElementById("tournament-play-button");
-    if (tourneyMenu) {
-        addMenuHelperText(tourneyMenu, "Face other players in a tournament!");
-        tourneyMenu.addEventListener("click", () => { navigateTo("tournament-play-page") });
-    }
-
-    const friendsMenu = document.getElementById("rankings-button");
-    if (friendsMenu) {
-        friendsMenu.addEventListener("click", () => { navigateTo("rankings-page") });
-        addMenuHelperText(friendsMenu, "Check your stats!")
-    }
-
-    const rankingsMenu = document.getElementById("friends-button");
-    if (rankingsMenu) {
-        rankingsMenu.addEventListener("click", () => { navigateTo("friends-page") });
-        addMenuHelperText(rankingsMenu, "See who's online!");
-    }
-
+    // For each <a> inside #main-menu-buttons, apply Helper Text
+    document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function(anchor) {
+        showMenuHelperText(anchor);
+    });
 }
 
 /**
