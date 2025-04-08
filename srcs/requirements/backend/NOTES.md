@@ -49,6 +49,7 @@ backend/
 - When testing locally, an `.env` file is required with the DATABASE_URL key, in the project root directory `.`
 
 ## TODOs
-- Update API documentation
-- Test newly created routes (match and tournament related)
+- Update file structure
+- Test edge cases
+- Add match creation logic in tournaments
 - Add more tests
