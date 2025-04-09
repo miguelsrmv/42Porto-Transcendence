@@ -164,16 +164,11 @@ contract TournamentsStorage {
     function findLastIndexOfPlayer(
         uint8 _tournamentId,
         string memory _playerName
-    ) internal view returns (uint8) {
+    ) public view returns (uint8) {
         uint8 lastIndex = 0;
         uint8 tournamentLength = 0;
 
-        while (
-            tournamentLength < (MAX_PARTICIPANTS - 1) * 2 &&
-            !isEmptyString(
-                tournaments[_tournamentId].matchedParticipants[tournamentLength]
-            )
-        ) tournamentLength++;
+        tournamentLength = MAX_PARTICIPANTS * 2 - 1;
 
         for (uint8 i = 0; i < tournamentLength; i++) {
             if (
