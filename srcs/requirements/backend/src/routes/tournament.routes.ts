@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { getByIdSchema } from '../schemas/global.schema';
 import {
   createTournament,
+  deleteTournament,
   getAllTournaments,
   getPlayerTournaments,
   getTournamentById,
@@ -20,5 +21,6 @@ export async function tournamentRoutes(fastify: FastifyInstance) {
     { schema: createTournamentSchema, preValidation: validateGameSettings },
     createTournament,
   );
-  fastify.put('/:id', { schema: updateTournamentSchema }, updateTournament);
+  fastify.patch('/:id', { schema: updateTournamentSchema }, updateTournament);
+  fastify.delete('/:id', { schema: getByIdSchema }, deleteTournament);
 }

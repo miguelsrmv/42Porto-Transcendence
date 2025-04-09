@@ -133,3 +133,17 @@ export async function startTournament(
     handleError(error, reply);
   }
 }
+
+export async function deleteTournament(
+  request: FastifyRequest<{ Params: { id: string } }>,
+  reply: FastifyReply,
+) {
+  try {
+    const tournament = await prisma.tournament.delete({
+      where: { id: request.params.id },
+    });
+    reply.send(tournament);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
