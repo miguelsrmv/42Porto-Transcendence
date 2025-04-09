@@ -3,6 +3,27 @@ pragma solidity ^0.8.19;
 
 import {Test, console} from "forge-std/Test.sol";
 import {TournamentsStorage} from "../src/TournamentsStorage.sol";
+import {DeployTournamentsStorage} from "../script/DeployTournamentsStorage.s.sol";
+
+contract DeployTournamentsStorageTest is Test {
+    DeployTournamentsStorage deployScript;
+
+    function setUp() public {
+        deployScript = new DeployTournamentsStorage();
+    }
+
+    function testDeployment() public {
+        TournamentsStorage tournamentsStorage = deployScript.run();
+
+        assert(address(tournamentsStorage) != address(0));
+
+        assertEq(
+            tournamentsStorage.getTournaments().length,
+            0,
+            "Initial tournaments list should be empty"
+        );
+    }
+}
 
 contract TournamentsStorageTest is Test {
     TournamentsStorage tournamentsStorage;
@@ -10,6 +31,8 @@ contract TournamentsStorageTest is Test {
     function setUp() external {
         tournamentsStorage = new TournamentsStorage();
     }
+
+    function testDeployTournamentsStorageScript() public {}
 
     function testMaxParticipants() public view {
         assertEq(tournamentsStorage.MAX_PARTICIPANTS(), 4);
@@ -38,6 +61,8 @@ contract TournamentsStorageTest is Test {
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             assertEq(joinedParticipants[i], participants[i]);
         }
+        vm.expectRevert();
+        tournamentsStorage.joinTournament(0, "Eve");
     }
 
     function testAddWinner() public {
@@ -58,6 +83,13 @@ contract TournamentsStorageTest is Test {
             tournamentsStorage.getMatchedParticipants(0)[4],
             participants[alice]
         );
+        tournamentsStorage.addWinner(0, participants[alice]);
+        assertEq(
+            tournamentsStorage.getMatchedParticipants(0)[6],
+            participants[alice]
+        );
+        vm.expectRevert();
+        tournamentsStorage.addWinner(0, participants[alice]);
     }
 
     function testAddScore() public {
