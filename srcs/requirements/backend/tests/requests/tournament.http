@@ -23,7 +23,7 @@ content-type: application/json
 }
 
 ### Update a tournament
-PUT http://localhost:3000/tournaments/<id> HTTP/1.1
+PATCH http://localhost:3000/tournaments/<id> HTTP/1.1
 content-type: application/json
 
 {

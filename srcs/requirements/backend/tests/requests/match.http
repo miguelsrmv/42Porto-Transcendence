@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### Update a match
-PUT http://localhost:3000/matches/<id> HTTP/1.1
+PATCH http://localhost:3000/matches/<id> HTTP/1.1
 Content-Type: application/json
 {
 	"duration": 120,

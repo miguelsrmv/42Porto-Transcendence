@@ -9,5 +9,5 @@ export async function playerRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllPlayers);
   fastify.get('/:id/friends', { schema: getByIdSchema }, getAllFriends);
   fastify.get('/:id', { schema: getByIdSchema }, getPlayerById);
-  fastify.put('/:id', { schema: updatePlayerSchema }, updatePlayer);
+  fastify.patch('/:id', { schema: updatePlayerSchema }, updatePlayer);
 }

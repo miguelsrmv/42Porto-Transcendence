@@ -6,26 +6,26 @@
 | `GET`    | `/users`                  |                     |                               | Get all users                              |
 | `GET`    | `/users/:id`              |    `id` user id     |                               | Get a specific user                        |
 | `POST`   | `/users`                  |                     | username, email and password  | Create a new user                          |
-| `PUT`    | `/users/:id`              |    `id` user id     |        data to update         | Update data on a specific user             |
+| `PATCH`  | `/users/:id`              |    `id` user id     |        data to update         | Update data on a specific user             |
 | `DELETE` | `/users/:id`              |    `id` user id     |                               | Delete a user                              |
 | `POST`   | `/users/login`            |                     |      email and password       | Get JWT (if user is valid)                 |
 | `GET`    | `/players`                |                     |                               | Get all players                            |
 | `GET`    | `/players/:id`            |   `id` player id    |                               | Get a specific player                      |
-| `PUT`    | `/players/:id`            |   `id` player id    |        data to update         | Update data on a specific player           |
+| `PATCH`  | `/players/:id`            |   `id` player id    |        data to update         | Update data on a specific player           |
 | `GET`    | `/players/:id/friends`    |   `id` player id    |                               | Get all friends of that player             |
 | `POST`   | `/friends`                |                     |     playerId and friendId     | Create a friendship between two players    |
-| `PUT`    | `/friends/:id`            | `id` friendship id  |            status             | Update friendship status                   |
+| `PATCH`  | `/friends/:id`            | `id` friendship id  |            status             | Update friendship status                   |
 | `DELETE` | `/friends/:id`            | `id` friendship id  |                               | Delete a friendship                        |
 | `GET`    | `/matches`                |                     |                               | Get all matches                            |
 | `GET`    | `/matches/player/:id`     |   `id` player id    |                               | Get all matches from a specific player     |
 | `GET`    | `/matches/:id`            |    `id` match id    |                               | Get a specific match                       |
 | `POST`   | `/matches`                |                     |    player1Id and player2Id    | Create a match                             |
-| `PUT`    | `/matches/:id`            |    `id` match id    |        data to update         | Update data on a specific match            |
+| `PATCH`  | `/matches/:id`            |    `id` match id    |        data to update         | Update data on a specific match            |
 | `GET`    | `/tournaments`            |                     |                               | Get all tournaments                        |
 | `GET`    | `/tournaments/player/:id` |   `id` player id    |                               | Get all tournaments from a specific player |
 | `GET`    | `/tournaments/:id`        | `id` tournaments id |                               | Get a specific tournament                  |
 | `POST`   | `/tournaments`            |                     | maxParticipants and createdBy | Create a tournament                        |
-| `PUT`    | `/tournaments/:id`        | `id` tournaments id |        data to update         | Update data on a specific tournament       |
+| `PATCH`  | `/tournaments/:id`        | `id` tournaments id |        data to update         | Update data on a specific tournament       |
 
 ## Base
 
@@ -47,7 +47,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Update a user:** `PUT /users/:id`
+- **Update a user:** `PATCH /users/:id`
 
 ```json
 {
@@ -90,7 +90,7 @@ Authorization: Bearer <JWT>
 
 - **Get all players:** `GET /players`
 - **Get a specific player:** `GET /players/:id`
-- **Update a player:** `PUT /players/:id`
+- **Update a player:** `PATCH /players/:id`
 
 ```json
 {
@@ -112,7 +112,7 @@ Authorization: Bearer <JWT>
 ```
 
 - **Delete a friendship:** `DELETE /friends/:id`
-- **Update a friendship status:** `PUT /friends/:id`
+- **Update a friendship status:** `PATCH /friends/:id`
 
 ```json
 {
@@ -135,7 +135,7 @@ Authorization: Bearer <JWT>
 }
 ```
 
-- **Update a match:** `PUT /matches/:id`
+- **Update a match:** `PATCH /matches/:id`
 
 ```json
 {
@@ -162,17 +162,17 @@ Authorization: Bearer <JWT>
 }
 ```
 
-- **Update a tournament:** `PUT /tournaments/:id`
+- **Update a tournament:** `PATCH /tournaments/:id`
 
 ```json
 {
   "status": "ACTIVE", // or "PENDING", or "COMPLETED"
-	"currentRound": 2,
+  "currentRound": 2
 }
 ```
 
 ### Notes
 
 - **Protected routes** require the `Authorization: Bearer <JWT>` header.
-- **Ensure `Content-Type: application/json`** is included in `POST` and `PUT` requests.
+- **Ensure `Content-Type: application/json`** is included in `POST` and `PATCH` requests.
 - **Replace base API URL** (`backend:3000/api`) with `localhost:3000` if running locally.

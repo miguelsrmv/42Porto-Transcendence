@@ -15,7 +15,7 @@ content-type: application/json
 }
 
 ### Update a friendship status
-PUT http://localhost:3000/friends/<id> HTTP/1.1
+PATCH http://localhost:3000/friends/<id> HTTP/1.1
 content-type: application/json
 
 {

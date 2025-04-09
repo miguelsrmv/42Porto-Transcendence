@@ -19,7 +19,7 @@ content-type: application/json
 }
 
 ### Update user info (only username and/or email, for now)
-PUT http://localhost:3000/users/<id> HTTP/1.1
+PATCH http://localhost:3000/users/<id> HTTP/1.1
 content-type: application/json
 
 {
