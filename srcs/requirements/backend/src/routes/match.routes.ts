@@ -20,5 +20,5 @@ export async function matchRoutes(fastify: FastifyInstance) {
     { schema: createMatchSchema, preValidation: validateGameSettings },
     createMatch,
   );
-  fastify.put('/:id', { schema: updateMatchSchema }, updateMatch);
+  fastify.patch('/:id', { schema: updateMatchSchema }, updateMatch);
 }

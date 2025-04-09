@@ -15,7 +15,7 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllUsers);
   fastify.get('/:id', { schema: getByIdSchema }, getUserById);
   fastify.post('/', { schema: createUserSchema }, createUser);
-  fastify.put('/:id', { schema: updateUserSchema }, updateUser);
+  fastify.patch('/:id', { schema: updateUserSchema }, updateUser);
   fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
   fastify.post('/login', { schema: loginSchema }, login);
 }
