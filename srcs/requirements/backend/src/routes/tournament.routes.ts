@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { getByIdSchema } from '../schemas/global.schema';
 import {
+  addPlayerToTournament,
   createTournament,
   deleteTournament,
   getAllTournaments,
@@ -8,7 +9,11 @@ import {
   getTournamentById,
   updateTournament,
 } from '../controllers/tournament.controller';
-import { createTournamentSchema, updateTournamentSchema } from '../schemas/tournament.schema';
+import {
+  createTournamentSchema,
+  tournamentParticipantSchema,
+  updateTournamentSchema,
+} from '../schemas/tournament.schema';
 import { validateGameSettings } from '../schemas/settingsValidation';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
@@ -23,4 +28,5 @@ export async function tournamentRoutes(fastify: FastifyInstance) {
   );
   fastify.patch('/:id', { schema: updateTournamentSchema }, updateTournament);
   fastify.delete('/:id', { schema: getByIdSchema }, deleteTournament);
+  fastify.post('/:id/participants', { schema: tournamentParticipantSchema }, addPlayerToTournament);
 }
