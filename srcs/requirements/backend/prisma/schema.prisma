@@ -55,25 +55,40 @@ enum FriendshipStatus {
 }
 
 model Match {
-  id           String      @id @default(uuid())
-  mode         MatchMode   @default(CLASSIC)
-  duration     Int         @default(0)
-  player1Id    String
-  player1      Player      @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
-  player2Id    String
-  player2      Player      @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
-  player1Score Int         @default(0)
-  player2Score Int         @default(0)
-  winnerId     String?
-  winner       Player?     @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
-  tournamentId String?
-  tournament   Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  roundNumber  Int?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @default(now()) @updatedAt
-  settings     String
+  id               String      @id @default(uuid())
+  mode             MatchMode   @default(CLASSIC)
+  duration         Int         @default(0)
+  player1Id        String
+  player1          Player      @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
+  player2Id        String
+  player2          Player      @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
+  player1Score     Int         @default(0)
+  player2Score     Int         @default(0)
+  player1Character Character?
+  player2Character Character?
+  winnerId         String?
+  winner           Player?     @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
+  tournamentId     String?
+  tournament       Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  roundNumber      Int?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @default(now()) @updatedAt
+  settings         String
 
   @@unique([player1Id, player2Id, tournamentId])
+}
+
+enum Character {
+  NONE
+  MARIO
+  LINK
+  PIKACHU
+  SONIC
+  KIRBY
+  YOSHI
+  SAMUS
+  DK
+  MEWTWO
 }
 
 enum MatchMode {
@@ -117,6 +132,7 @@ model TournamentParticipant {
   player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
   playerId     String
   alias        String
+  character    Character?
 
   @@unique([tournamentId, playerId])
   @@unique([tournamentId, alias])
