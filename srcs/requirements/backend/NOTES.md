@@ -57,11 +57,20 @@ backend/
 
 - `npx tsx <script.ts>` to execute a TS script
 - `npx prisma migrate dev --name <migration_name>` to migrate changes to the database (it also generates a prisma client)
+- `npx prisma migrate reset` to reset the database
 - `npx prisma generate` to generate a new prisma client
+
+## Scripts
+- `npm run test` to run Vitest tests
+- `npm run populate` to populate the database
+- `npm run build` to compile ts files into js
+- `npm run dev` to launch the app locally (directly from ts file)
+- `npm run start` to launch the app locally (js)
 
 ## Notes
 
 - When testing locally, an `.env` file is required with the DATABASE_URL key, in the project root directory `.`
+- If running locally for the first time, first run `npm install` to install all the project's dependencies
 
 ## TODOs
 
