@@ -30,3 +30,16 @@ content-type: application/json
 	"status": "ACTIVE",
 	"currentRound": 2,
 }
+
+### Delete a tournament
+DELETE http://localhost:3000/tournaments/<id> HTTP/1.1
+
+### Add a player to a tournament
+POST http://localhost:3000/tournaments/d500c2b2-2c8f-4fa5-9ae1-4f7a4c31d903/participants HTTP/1.1
+content-type: application/json
+
+{
+	"playerId": "77d21a0f-3ca2-4c45-b39f-2a1ee5fc1e83",
+	"alias": "newAlias",
+	"character": "NONE"
+}

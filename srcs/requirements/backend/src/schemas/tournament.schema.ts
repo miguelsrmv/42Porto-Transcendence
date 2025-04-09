@@ -1,3 +1,4 @@
+import { Character } from '@prisma/client';
 import { getByIdSchema } from './global.schema';
 
 export const createTournamentSchema = {
@@ -24,6 +25,20 @@ export const updateTournamentSchema = {
         enum: ['PENDING', 'ACTIVE', 'COMPLETED'],
       },
       currentRound: { type: 'integer' },
+    },
+    additionalProperties: false,
+  },
+};
+
+export const tournamentParticipantSchema = {
+  params: getByIdSchema.params,
+  body: {
+    type: 'object',
+    required: ['playerId'],
+    properties: {
+      playerId: { type: 'string', format: 'uuid' },
+      alias: { type: 'string' },
+      character: { type: 'string', enum: Object.values(Character) },
     },
     additionalProperties: false,
   },
