@@ -79,4 +79,60 @@ contract TournamentsStorageTest is Test {
         assertEq(tournamentsStorage.getScores(0)[4], 5);
         assertEq(tournamentsStorage.getScores(0)[5], 6);
     }
+
+    function testIsTournamentFull() public {
+        tournamentsStorage.createTournament();
+        string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
+        for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
+            tournamentsStorage.joinTournament(0, participants[i]);
+            if (i != tournamentsStorage.MAX_PARTICIPANTS() - 1) {
+                assertFalse(tournamentsStorage.isTournamentFull(0));
+            }
+        }
+        assertTrue(tournamentsStorage.isTournamentFull(0));
+    }
+
+    function testFindLastIndexOfPlayer() public {
+        tournamentsStorage.createTournament();
+        string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
+        for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
+            tournamentsStorage.joinTournament(0, participants[i]);
+        }
+        uint8 alice = 0;
+        uint8 bob = 1;
+        uint8 charlie = 2;
+        uint8 dave = 3;
+
+        assertEq(
+            tournamentsStorage.findLastIndexOfPlayer(0, participants[alice]),
+            0
+        );
+        assertEq(
+            tournamentsStorage.findLastIndexOfPlayer(0, participants[bob]),
+            1
+        );
+        assertEq(
+            tournamentsStorage.findLastIndexOfPlayer(0, participants[charlie]),
+            2
+        );
+        assertEq(
+            tournamentsStorage.findLastIndexOfPlayer(0, participants[dave]),
+            3
+        );
+        tournamentsStorage.addWinner(0, participants[dave]);
+        assertEq(
+            tournamentsStorage.findLastIndexOfPlayer(0, participants[dave]),
+            5
+        );
+        tournamentsStorage.addWinner(0, participants[bob]);
+        assertEq(
+            tournamentsStorage.findLastIndexOfPlayer(0, participants[bob]),
+            4
+        );
+        tournamentsStorage.addWinner(0, participants[dave]);
+        assertEq(
+            tournamentsStorage.findLastIndexOfPlayer(0, participants[dave]),
+            6
+        );
+    }
 }
