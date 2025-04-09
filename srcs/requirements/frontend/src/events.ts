@@ -7,7 +7,7 @@
  * uses the browser's back and forward buttons.
  */
 
-import { navigateTo, getPreviousView } from "./navigation.js"
+import { navigateTo } from "./navigation.js"
 
 /**
  * @brief Sets up a listener for the popstate event.
@@ -28,25 +28,155 @@ export function setupHistoryListener(): void {
     });
 }
 
-export function addNavEvents(): void {
-    addSettingsMenu();
-    addBackArrow();
-}
+/**
+ * @brief Adds a navigation listener to the document.
+ * 
+ * This function sets up a global click event listener on the document to handle
+ * navigation. It intercepts clicks on anchor elements with a `data-target` attribute
+ * and navigates to the specified view without reloading the page.
+ */
+export function addNavigationListener(): void {
+    // Sets up global navigation function
+    document.addEventListener("click", function(e) {
+        const target = e.target as HTMLElement;
+        const anchor = target.closest("a[data-target]");
 
-function addSettingsMenu(): void {
-    const settingsButton = document.getElementById("nav-settings-button");
-    const settingsMenu = document.getElementById("settings-dropdown");
-
-    settingsButton?.addEventListener("click", () => {
-        settingsMenu?.classList.toggle("opacity-0");
-        settingsMenu?.classList.toggle("pointer-events-none");
+        if (anchor) {
+            e.preventDefault();
+            const view = anchor.getAttribute("data-target");
+            if (view) navigateTo(view);
+        }
     });
 }
 
-function addBackArrow(): void {
-    const backButton = document.getElementById("nav-back-button");
+/**
+ * @brief Toggles the visibility of a dropdown menu.
+ * 
+ * This function manages the visibility of a dropdown menu associated with a button.
+ * It toggles the dropdown's visibility when the button is clicked and hides the dropdown
+ * when clicking outside of it.
+ */
+// TODO: If guest login, don't show Profile option!! And change "Log out" to "Exit"
+export function toggleDropdown(): void {
+    const button = document.getElementById("nav-settings-button");
+    const dropdown = document.getElementById("settings-dropdown");
 
-    backButton?.addEventListener("click", () => {
-        navigateTo(getPreviousView(), false);
-    })
+    if (!button || !dropdown) return;
+
+    button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", (e: MouseEvent) => {
+        const target = e.target as Node;
+        if (!button.contains(target) && !dropdown.contains(target)) {
+            dropdown.classList.add("hidden");
+        }
+    });
+}
+
+export function createCharacterLoop(player_number: number = 1) {
+    const characters: string[] = [
+        'mario.png',
+        'yoshi.png',
+        'donkey_kong.png',
+        'pikachu.png',
+        'mewtwo.png',
+        'link.png',
+        'sonic.png',
+        'samus.png'
+    ];
+
+    const location: string = "./static/character_select/";
+
+    let currentCharacterIndex: number = 0;
+
+    const prevButton: HTMLButtonElement | null = document.getElementById(`prev-character-${player_number}`) as HTMLButtonElement;
+    const nextButton: HTMLButtonElement | null = document.getElementById(`next-character-${player_number}`) as HTMLButtonElement;
+    const characterDisplay: HTMLImageElement | null = document.getElementById(`character-img-${player_number}`) as HTMLImageElement;
+
+    function updateCharacterDisplay(): void {
+        if (characterDisplay)
+            characterDisplay.src = location + characters[currentCharacterIndex];
+    }
+
+    // Event listener for previous button
+    if (prevButton) {
+        prevButton.addEventListener('click', () => {
+            // Decrement the index and cycle back to the end if necessary
+            currentCharacterIndex = (currentCharacterIndex === 0) ? characters.length - 1 : currentCharacterIndex - 1;
+            updateCharacterDisplay();
+        });
+    }
+
+    // Event listener for next button
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            // Increment the index and cycle back to the start if necessary
+            currentCharacterIndex = (currentCharacterIndex === characters.length - 1) ? 0 : currentCharacterIndex + 1;
+            updateCharacterDisplay();
+        });
+    }
+
+    // Initialize the first character
+    updateCharacterDisplay();
+}
+
+export function createBackgroundLoop() {
+    const backgrounds: string[] = [
+        'Backyard.png',
+        'Beach.png',
+        'Cave.png',
+        'Checks.png',
+        'City.png',
+        'Desert.png',
+        'Forest.png',
+        'Machine.png',
+        'Nostalgic.png',
+        'Pikapika_Platinum.png',
+        'River.png',
+        'Savanna.png',
+        'Seafloor.png',
+        'Simple.png',
+        'Sky.png',
+        'Snow.png',
+        'Space.png',
+        'Torchic.png',
+        'Volcano.png'
+    ];
+
+    const location: string = "./static/backgrounds/";
+
+    let currentBackgroundIndex: number = 0;
+
+    const prevButton: HTMLButtonElement | null = document.getElementById('prev-background') as HTMLButtonElement;
+    const nextButton: HTMLButtonElement | null = document.getElementById('next-background') as HTMLButtonElement;
+    const backgroundDisplay: HTMLDivElement | null = document.getElementById('background-img') as HTMLDivElement;
+
+    function updateBackgroundDisplay(): void {
+        if (backgroundDisplay)
+            backgroundDisplay.style.backgroundImage = `url('${location}${backgrounds[currentBackgroundIndex]}`;
+    }
+
+    // Event listener for previous button
+    if (prevButton) {
+        prevButton.addEventListener('click', () => {
+            // Decrement the index and cycle back to the end if necessary
+            currentBackgroundIndex = (currentBackgroundIndex === 0) ? backgrounds.length - 1 : currentBackgroundIndex - 1;
+            updateBackgroundDisplay();
+        });
+    }
+
+    // Event listener for next button
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            // Increment the index and cycle back to the start if necessary
+            currentBackgroundIndex = (currentBackgroundIndex === backgrounds.length - 1) ? 0 : currentBackgroundIndex + 1;
+            updateBackgroundDisplay();
+        });
+    }
+
+    // Initialize the first character
+    updateBackgroundDisplay();
 }
