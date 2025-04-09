@@ -76,7 +76,7 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
-  /* Add this to your CSS */
+/* Add this to your CSS */
 @keyframes modalEnter {
   0% {
     opacity: 0;

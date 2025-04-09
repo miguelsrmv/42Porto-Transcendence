@@ -8,7 +8,7 @@
  */
 
 import { navigateTo } from "./navigation.js";
-import { setupHistoryListener } from "./events.js";
+import { setupHistoryListener, addNavigationListener } from "./events.js";
 
 
 /**
@@ -17,10 +17,13 @@ import { setupHistoryListener } from "./events.js";
  * Triggers the loading of the default page when the DOM content is fully loaded and parsed.
  */
 document.addEventListener("DOMContentLoaded", () => {
-    const initialView = "landing-template";
+    const initialView = "landing-page";
 
     // Setup history listener first
     setupHistoryListener();
+
+    // Setup global navigation listener
+    addNavigationListener();
 
     // Replace the initial state to ensure correct history behavior
     history.replaceState({ view: initialView }, "", `#${initialView}`);
