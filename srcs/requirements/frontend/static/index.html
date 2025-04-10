@@ -12,122 +12,326 @@
     <script type="module" src="../dist/app.js"></script>
 </head>
 
-<body id="body" class="flex flex-col h-screen overflow-hidden">
-    <nav id="navigation"> </nav>
+<body id="body"
+    class="h-screen w-screen flex flex-col bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')]">
+    <header id="header" class="w-full relative flex items-center justify-center"></header>
 
-    <main id="app" class="flex-1 overflow-hidden"></main>
+    <main id="app" class="h-full w-full"></main>
 
-    <footer id="footer" class="w-full text-center bg-black text-white">
+    <footer id="footer" class="w-full h-[3%] text-center bg-black text-white">
         <p>ft_transcendence by <a href="https://github.com/miguelsrmv">mde-sa--</a>, <a
                 href="https://github.com/damachad">damachad</a> & <a
                 href="https://github.com/TiagoMartins14">tiaferna</a> @
             <a href="https://www.42porto.com/pt/">42Porto</a>
         </p>
     </footer>
+</body>
 
-    <template id="nav-bar">
-        <div class="flex-row justify-center">
-            <button class="nav-button" id="home-nav" data-target="home-template">Home</button>
-            <button class="nav-button" id="local-nav" data-target="local-template">Local</button>
-            <button class="nav-button" id="multiplayer-nav" data-target="multiplayer-template">Multiplayer</button>
-            <button class="nav-button" id="tournament-nav" data-target="tournament-template">Tournament</button>
-            <button class="nav-button" id="rankings-nav" data-target="rankings-template">Rankings</button>
+<template id="landing-template">
+    <div id="title-screen" class="w-full h-full flex flex-col items-center text-center relative">
+        <img id="main-title" src="./static/images/supersmash_titlescreen.png"
+            class="mx-auto min-w-[800px] max-w-[1200px]">
+        <div id="sub-title"
+            class="text-6xl font-serpentine mx-auto tracking-wide absolute bottom-[+40vh] opacity-0 invisible ">
+            Transcendence
         </div>
-    </template>
+        <button id="enter-button" data-target="main-menu-template"
+            class="text-7xl font-serpentine absolute bottom-[+20vh] opacity-0 invisible">
+            Enter
+        </button>
+    </div>
+    <div id="login-modal"
+        class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50">
+        <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
+            <a href="#main-menu-page" data-target="main-menu-page" id="guest-button"
+                class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
+                <!-- Image that takes up entire card -->
+                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_female.png');">
+                </div>
 
-    <template id="landing-template">
-        <div
-            class="w-full h-full bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')] flex flex-col justify-center items-center">
-            <div id="title-screen" class="text-center relative">
-                <img id="main-title" src="./static/images/supersmash_titlescreen.png"
-                    class="mx-auto min-w-[800x] max-w-[1200px]">
-                <div id="sub-title"
-                    class="text-6xl font-serpentine absolute bottom-[+10vh] left-0 right-0 mx-auto tracking-wide opacity-0 invisible">
-                    Transcendence </div>
-                <button id="enter-button" data-target="home-template"
-                    class="text-7xl font-serpentine absolute bottom-[-10vh] left-1/2 transform -translate-x-1/2 opacity-0 invisible ">Enter</button>
-            </div>
+                <!-- Polygon color overlay -->
+                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
+
+                <!-- Full-menu colour overlay -->
+                <div
+                    class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                </div>
+
+                <!-- Text overlay -->
+                <div
+                    class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                    Guest
+                </div>
+            </a>
+            <a href="#main-menu-page" data-target="main-menu-page" id="login-button"
+                class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
+                <!-- Image that takes up entire card -->
+                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');">
+                </div>
+
+                <!-- Polygon color overlay -->
+                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+
+                <!-- Full-menu colour overlay -->
+                <div
+                    class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                </div>
+
+                <!-- Text overlay -->
+                <div
+                    class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                    Login
+                </div>
+            </a>
         </div>
-        <div id="login-modal"
-            class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50"> 
-            <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
-                <div id="guest-button"
-                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group">
-                    <div
-                        class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
-                        <!-- Image that takes up entire card -->
-                        <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                            style="background-image: url('/static/images/pokemon_trainer_female.png');">
-                        </div>
-
-                        <!-- Polygon color overlay -->
-                        <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
-
-                        <!-- Full-menu colour overlay -->
-                        <div
-                            class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
-                        </div>
-
-                        <!-- Text overlay -->
-                        <div
-                            class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                            Guest
-                        </div>
-                    </div>
-                </div>
-                <div id="login-button"
-                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group">
-                    <div
-                        class="w-full h-full overflow-hidden cursor-pointer transform transition duration-200 hover:scale-105">
-                        <!-- Image that takes up entire card -->
-                        <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                            style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                        </div>
-
-                        <!-- Polygon color overlay -->
-                        <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                        <!-- Full-menu colour overlay -->
-                        <div
-                            class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
-                        </div>
-
-                        <!-- Text overlay -->
-                        <div
-                            class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                            Login
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Back Button -->
-            <div class="flex justify-end items-center h-[10%]">
+        <!-- Back Button -->
+        <div class="flex justify-end items-center h-[10%]">
             <button id="back-button" class="h-full">
                 <img src="./static/icons/backarrow.png" alt="Back" class="h-[80%] w-auto hover:opacity-80">
             </button>
+        </div>
+    </div>
+</template>
+
+<template id="main-menu-template">
+    <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
+
+        <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex">
+
+            <a href="#local-play-page" id="local-play-button" data-target="local-play-page"
+                data-helper-message="Play locally with friends!"
+                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
+                <div id="bg-image-local-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
+                <div id="banner-local-play" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                </div>
+                <div id="overlay-local-play"
+                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
+                </div>
+                <div id="local-play-text"
+                    class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
+                    Local Play</div>
+            </a>
+
+            <a href="#remote-play-page" id="remote-play-button" data-target="remote-play-page"
+                data-helper-message="Play online!"
+                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
+                <div id="bg-image-remote-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
+                <div id="banner-remote-play" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                </div>
+                <div id="overlay-remote-play"
+                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
+                </div>
+                <div id="remote-play-text"
+                    class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
+                    Remote Play</div>
+            </a>
+
+            <a href="#tournament-play-page" id="tournament-play-button" data-target="tournament-play-page"
+                data-helper-message="Play in a tournament!"
+                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
+                <div id="bg-image-tournament-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
+                <div id="banner-tournament-play"
+                    class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+                <div id="overlay-tournament-play"
+                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
+                </div>
+                <div id="tournament-play-text"
+                    class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
+                    Tourney</div>
+            </a>
+
+            <div id="networking-section" class="flex flex-1 flex-col justify-center rounded overflow-hidden ">
+                <a href="#rankings-page" id="rankings-button" data-target="rankings-page"
+                    data-helper-message="Check the rankings!"
+                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
+                    <div id="bg-image-rankings" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                        style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
+                    <div id="banner-rankings"
+                        class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+                    <div id="overlay-rankings"
+                        class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
+                    </div>
+                    <div id="rankings-text"
+                        class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
+                        Rankings</div>
+                </a>
+                <a href="#friends-page" id="friends-button" data-target="friends-page"
+                    data-helper-message="See your friends!"
+                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
+                    <div id="bg-image-friends" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
+                        style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
+                    <div id="banner-friends" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                    </div>
+                    <div id="overlay-friends"
+                        class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
+                    </div>
+                    <div id="friends-text"
+                        class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
+                        Friends</div>
+                </a>
             </div>
         </div>
-    </template>
+        <div id="menu-helper-text"
+            class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine">
+        </div>
+    </div>
+</template>
 
-    <template id="home-template">
-        <div> I'm on home! </div>
-    </template>
+<template id="game-menu-template">
+    <div id="game-menu" class="flex w-[85%] h-[90%] mx-auto relative">
+        <div id="game-type-modal" class=" absolute inset-0 z-10 min-h-full bg-white rounded-lg p-6 pb-10 gap-6
+        shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50 flex flex-col justify-between">
+            <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
+                <button id="classic-pong-button"
+                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[500px] group transform transition duration-200 hover:scale-105">
+                    <!-- Image that takes up entire card -->
+                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                        style="background-image: url('/static/images/pokemon_trainer_female.png');">
+                    </div>
 
-    <template id="local-template">
-        <div> I'm on local! </div>
-    </template>
+                    <!-- Polygon color overlay -->
+                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
 
-    <template id="multiplayer-template">
-        <div> I'm on multiplayer! </div>
-    </template>
+                    <!-- Full-menu colour overlay -->
+                    <div
+                        class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    </div>
 
-    <template id="tournament-template">
-        <div> I'm on tournament! </div>
-    </template>
+                    <!-- Text overlay -->
+                    <div
+                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                        Classic Pong
+                    </div>
+                </button>
+                <button id="crazy-pong-button"
+                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[500px] group transform transition duration-200 hover:scale-105">
+                    <!-- Image that takes up entire card -->
+                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
+                        style="background-image: url('/static/images/pokemon_trainer_male.png');">
+                    </div>
 
-    <template id="rankings-template">
+                    <!-- Polygon color overlay -->
+                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
+
+                    <!-- Full-menu colour overlay -->
+                    <div
+                        class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    </div>
+
+                    <!-- Text overlay -->
+                    <div
+                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
+                        Crazy Pong
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div id="game-settings-menu" class="flex flex-col w-full hidden">
+            <div id="player-settings-title" class="text-center h-[10%] text-4xl underline">Player Settings</div>
+            <div id="player-settings" class="flex flex-row items-center h-[40%]">
+                <div id="player-1-settings" class="flex flex-col flex-1 h-full">
+                    <div id="player-1-name" class="flex items-center justify-center h-[15%] ">
+                        <label for="player-1-alias" class="sr-only"></label>
+                        <input id="player-1-alias" type="text" class="text-3xl font-bold items-center text-center"
+                            placeholder="Player 1" />
+                    </div>
+                    <div id="player-1-paddle-colour" class="flex items-center justify-center h-[15%]">
+                        <label for="player-1-paddle-colour-input" class="text-gray text-3xl font-bold mr-2">Paddle
+                            Colour</label>
+                        <input id="player-1-paddle-colour-input" type="color" value="#ff0000" />
+                    </div>
+                    <div id="player-1-character" class="flex items-center justify-center h-[70%] hidden">
+                        <button id="prev-character-1" class="text-5xl px-4"> &lt; </button>
+                        <div id="character-display-1" class="flex items-center justify-center h-full">
+                            <img id="character-img-1" src="./static/character_select/mario.png" alt="Character 1"
+                                class="w-full h-full object-contain" />
+                        </div>
+                        <button id="next-character-1" class="text-5xl px-4"> &gt; </button>
+                    </div>
+                </div>
+                <div id="player-2-settings" class="flex flex-col flex-1 h-full hidden">
+                    <div id="player-2-name" class="flex items-center justify-center h-[15%]">
+                        <label for="player-2-alias" class="sr-only"></label>
+                        <input id="player-2-alias" type="text" class="text-3xl font-bold items-center text-center"
+                            placeholder="Player 2" />
+                    </div>
+                    <div id="player-2-paddle-colour" class="flex items-center justify-center h-[15%]">
+                        <label for="player-2-paddle-colour-input" class="text-gray text-3xl font-bold mr-2">Paddle
+                            Colour</label>
+                        <input id="player-2-paddle-colour-input" type="color" value="#0000ff" />
+                    </div>
+                    <div id="player-2-character" class="flex items-center justify-center h-[70%] hidden">
+                        <button id="prev-character-2" class="text-5xl px-4"> &lt; </button>
+                        <div id="character-display-2" class="flex items-center justify-center h-full">
+                            <img id="character-img-2" src="./static/character_select/mario.png" alt="Character 2"
+                                class="w-full h-full object-contain" />
+                        </div>
+                        <button id="next-character-2" class="text-5xl px-4"> &gt; </button>
+                    </div>
+                </div>
+            </div>
+            <div id="board-settings-title" class="text-center h-[10%] text-4xl underline">Board Settings</div>
+            <div id="match-background" class="flex items-center justify-center h-[30%]">
+                <button id="prev-background" class="text-5xl px-4"> &lt; </button>
+                <div id="background-display" class="flex items-center justify-center h-[90%] w-[30%]">
+                    <!--<img id="background-img" src="./static/backgrounds/Backyard.png" alt="Character 2"
+                        class="w-full h-full object-contain" />-->
+                    <div id="background-img" class="w-full h-full bg-repeat-x"
+                        style="background-image: url('./static/backgrounds/Backyard.png');"></div>
+                </div>
+                <button id="next-background" class="text-5xl px-4"> &gt; </button>
+            </div>
+            <div id="play-button" class="flex items-end justify-center text-center h-[10%]">
+                <button class="rounded-full bg-black text-white h-[80%] w-[50%]">Play Game!</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+
+<template id="profile-template">
+    <div> I'm on profile!</div>
+</template>
+
+<template id="friends-template">
+    <div id="friends-menu" class="flex w-[85%] mx-auto">
+        <div> I'm on friends! </div>
+</template>
+
+<template id="rankings-template">
+    <div id="rankings-menu" class="flex w-[85%] mx-auto">
         <div> I'm on rankings! </div>
-    </template>
-</body>
+</template>
+
+<template id="header-template">
+    <div id="header-menu" class="w-[85%] flex justify-between items-center">
+        <!-- Left: Header Text -->
+        <div id="header-menu-text" class="font-serpentine text-5xl">
+        </div>
+
+        <!-- Right: Player Info -->
+        <div id="player-info" class="flex text-3xl items-center space-x-2 relative">
+            <span id="player-name" class="font-semibold">Username</span>
+
+            <button id="nav-settings-button" class="rounded-full overflow-hidden" style="width: 25px; height: 25px;">
+                <img src="./static/images/avatar_placeholder.png" class="w-full h-full object-cover">
+            </button>
+            <!-- TODO: Add function to dropdown buttons -->
+            <div id="settings-dropdown"
+                class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-black z-30 hidden">
+                <div class="py-2">
+                    <a href="#" data-target="profile-template" class="block px-4 py-2 text-sm">Profile</a>
+                    <a href="#" data-target="landing-page" class="block px-4 py-2 text-sm">Log Out</a>
+                </div>
+            </div>
+        </div>
+</template>
 
 </html>
