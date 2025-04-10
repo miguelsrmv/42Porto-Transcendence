@@ -1,4 +1,6 @@
-// TODO: enforce the schema with ajv (not allow extra properties)
+import { getByIdSchema } from './global.schema';
+
+// TODO: Add confirmPassword
 export const createUserSchema = {
   body: {
     type: 'object',
@@ -12,48 +14,16 @@ export const createUserSchema = {
   },
 };
 
-export const getUserByIdSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
-  },
-};
-
 export const updateUserSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
-  },
+  params: getByIdSchema.params,
   body: {
     type: 'object',
-    required: ['data'],
     properties: {
-      data: {
-        type: 'object',
-        properties: {
-          username: { type: 'string', minLength: 3 },
-          email: { type: 'string', format: 'email' },
-          password: { type: 'string', minLength: 6 },
-        },
-        additionalProperties: false,
-      },
+      username: { type: 'string', minLength: 3 },
+      email: { type: 'string', format: 'email' },
+      password: { type: 'string', minLength: 6 },
     },
-  },
-};
-
-export const deleteUserSchema = {
-  params: {
-    type: 'object',
-    required: ['id'],
-    properties: {
-      id: { type: 'string', format: 'uuid' },
-    },
+    additionalProperties: false,
   },
 };
 
@@ -65,5 +35,6 @@ export const loginSchema = {
       email: { type: 'string', format: 'email' },
       password: { type: 'string', minLength: 6 },
     },
+    additionalProperties: false,
   },
 };

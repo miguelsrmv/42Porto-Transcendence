@@ -3,35 +3,29 @@ import { prisma } from '../utils/prisma';
 import { verifyPassword } from '../utils/hash';
 import { handleError } from '../utils/errorHandler';
 
-interface IParams {
-  id: string;
-}
-
-interface UserCreate {
+type UserCreate = {
   username: string;
   email: string;
   password: string;
-}
+};
 
-interface UserLogin {
+type UserLogin = {
   email: string;
   password: string;
-}
+};
 
-interface UserUpdate {
-  data: { username?: string; email?: string };
+type UserUpdate = {
+  username?: string;
+  email?: string;
 }
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
     const users = await prisma.user.findMany({
       include: {
-        profile: true,
+        player: true,
       },
     });
-    if (users.length === 0) {
-      return reply.status(404).send({ message: 'No users found' });
-    }
     reply.send(users);
   } catch (error) {
     handleError(error, reply);
@@ -77,11 +71,8 @@ export async function updateUser(
   try {
     const user = await prisma.user.update({
       where: { id: request.params.id },
-      data: request.body.data,
+      data: request.body,
     });
-    if (!user) {
-      return reply.status(400).send({ message: 'Unable to update user data' });
-    }
     reply.send(user);
   } catch (error) {
     handleError(error, reply);

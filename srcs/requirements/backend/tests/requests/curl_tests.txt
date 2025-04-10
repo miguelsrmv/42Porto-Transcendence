@@ -8,7 +8,7 @@ curl http://localhost:3000/users/<id>
 curl http://localhost:3000/users/create --request POST -H "content-type: application/json" --data '{"username": "newUser3", "email": "newUser2@gmail.com", "password": "secure123441"}'
 
 ### Update user info (only username or email, for now)
-curl http://localhost:3000/users/<id> --request PUT -H "content-type: application/json" --data '{"data": {"username": "modified", "email": "modified@gmail.com"}}'
+curl http://localhost:3000/users/<id> --request PATCH -H "content-type: application/json" --data '{"data": {"username": "modified", "email": "modified@gmail.com"}}'
 
 ### Delete user from database
 curl --request DELETE http://localhost:3000/users/<id>

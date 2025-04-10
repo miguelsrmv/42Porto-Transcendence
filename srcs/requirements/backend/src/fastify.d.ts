@@ -1,15 +1,15 @@
 import '@fastify/jwt';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
-interface JwtUserPayload {
-  email: string;
-  username: string;
+declare global {
+  type IParams = {
+    id: string;
+  }
 }
 
-interface UserCreate {
-  username: string;
+type JwtUserPayload = {
   email: string;
-  password: string;
+  username: string;
 }
 
 declare module 'fastify' {
