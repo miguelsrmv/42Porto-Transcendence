@@ -225,14 +225,12 @@ function toggleLoginMenu(): void {
             // Handle errors (e.g., show error message to user)
         }
     });
+
+    const registerButton = document.getElementById("register-button");
+    if (registerButton)
+        registerButton.addEventListener("click", () => toggleRegisterMenu());
 }
 
-
-//
-// const registerButton = document.getElementById("register-button");
-// if (registerButton) {
-//     registerButton.addEventListener("click", () => toggleRegisterMenu());
-// }
 
 function toggleRegisterMenu(): void {
     const loginForm = document.getElementById("login-form");

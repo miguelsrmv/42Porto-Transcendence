@@ -209,12 +209,10 @@ function toggleLoginMenu() {
             }
         });
     });
+    const registerButton = document.getElementById("register-button");
+    if (registerButton)
+        registerButton.addEventListener("click", () => toggleRegisterMenu());
 }
-//
-// const registerButton = document.getElementById("register-button");
-// if (registerButton) {
-//     registerButton.addEventListener("click", () => toggleRegisterMenu());
-// }
 function toggleRegisterMenu() {
     const loginForm = document.getElementById("login-form");
     const registerForm = document.getElementById("register-form");
