@@ -1,45 +1,67 @@
 # Endpoints
 
-| Method     | Route             | URL parameters | Body                      | Description                     |
-|------------|-------------------|----------------|---------------------------|---------------------------------|
-|```GET```   |```/```            |                |   None                    |Base route for test              |
-|```GET```   |```/users```       |                |   None                    |Get all users                    |
-|```GET```   |```/users/:id```   |  ```id```      |   None                    |Get a specific user              |
-|```POST```  |```/users/create```|                | name, email and password  |Create a new user                |
-|```PUT```   |```/users/:id```   |  ```id```      |   Data to update          |Update data on a specific user   |
-|```DELETE```|```/users/:id```   |  ```id```      |   None                    |Delete a user                    |
-|```POST```  |```/users/login``` |                |   email and password      |Get JWT (if user is valid)       |
+| Method   | Route                     |   URL parameters    |             Body              | Description                                |
+| -------- | ------------------------- | :-----------------: | :---------------------------: | ------------------------------------------ |
+| `GET`    | `/`                       |                     |                               | Base route for test                        |
+| `GET`    | `/users`                  |                     |                               | Get all users                              |
+| `GET`    | `/users/:id`              |    `id` user id     |                               | Get a specific user                        |
+| `POST`   | `/users`                  |                     | username, email and password  | Create a new user                          |
+| `PATCH`  | `/users/:id`              |    `id` user id     |        data to update         | Update data on a specific user             |
+| `DELETE` | `/users/:id`              |    `id` user id     |                               | Delete a user                              |
+| `POST`   | `/users/login`            |                     |      email and password       | Get JWT (if user is valid)                 |
+| `GET`    | `/players`                |                     |                               | Get all players                            |
+| `GET`    | `/players/:id`            |   `id` player id    |                               | Get a specific player                      |
+| `PATCH`  | `/players/:id`            |   `id` player id    |        data to update         | Update data on a specific player           |
+| `GET`    | `/players/:id/friends`    |   `id` player id    |                               | Get all friends of that player             |
+| `POST`   | `/friends`                |                     |     playerId and friendId     | Create a friendship between two players    |
+| `PATCH`  | `/friends/:id`            | `id` friendship id  |            status             | Update friendship status                   |
+| `DELETE` | `/friends/:id`            | `id` friendship id  |                               | Delete a friendship                        |
+| `GET`    | `/matches`                |                     |                               | Get all matches                            |
+| `GET`    | `/matches/player/:id`     |   `id` player id    |                               | Get all matches from a specific player     |
+| `GET`    | `/matches/:id`            |    `id` match id    |                               | Get a specific match                       |
+| `POST`   | `/matches`                |                     |    player1Id and player2Id    | Create a match                             |
+| `PATCH`  | `/matches/:id`            |    `id` match id    |        data to update         | Update data on a specific match            |
+| `GET`    | `/tournaments`            |                     |                               | Get all tournaments                        |
+| `GET`    | `/tournaments/player/:id` |   `id` player id    |                               | Get all tournaments from a specific player |
+| `GET`    | `/tournaments/:id`        | `id` tournaments id |                               | Get a specific tournament                  |
+| `POST`   | `/tournaments`            |                     | maxParticipants and createdBy | Create a tournament                        |
+| `PATCH`  | `/tournaments/:id`        | `id` tournaments id |        data to update         | Update data on a specific tournament       |
+
 ## Base
+
 When making requests to the API through the Docker container, the base API endpoint is
-```http://backend:3000/api``` 'backend' being the name of the container running the API and '3000' being the chosen port for communication with it.   
-If running the app locally (e.g. ```npx tsx app.ts```), the endpoint is ```http://localhost:3000/```
+`http://backend:3000/api` 'backend' being the name of the container running the API and '3000' being the chosen port for communication with it.  
+If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://localhost:3000/`
 
 ## Users
-- To get all users in the database (GET), the endpoint is ```http://backend:3000/api/users```
-- To get data on a specific user by ID (GET), the endpoint is ```http://backend:3000/api/users/:id```
-- To create a new user (POST), the endpoint is ```http://backend:3000/api/users/create``` and the schema for the JSON data is 
+
+- **Get all users:** `GET /users`
+- **Get a specific user:** `GET /users/:id`
+- **Create a new user:** `POST /users`
+
 ```json
 {
-	"name": "new_user_name",
-	"email": "new_user@email.com",
-	"password": "password"
-} 
+  "username": "new_user_name",
+  "email": "new_user@email.com",
+  "password": "password"
+}
 ```
-- To update user data (PUT), the endpoint is ```http://backend:3000/api/users/:id``` and the schema for the JSON data is 
+
+- **Update a user:** `PATCH /users/:id`
+
 ```json
 {
-	"data": {
-		"name": "new_user_name", // optional
-		"email": "new_user@email.com",  // optional
-	}
-} 
+  "username": "new_user_name", // optional
+  "email": "new_user@email.com" // optional
+}
 ```
-- To delete a user from the database (DELETE), the endpoint is ```http://backend:3000/api/users/:id```   
-- To login user (get JWT) (POST), the endpoint is ```http://backend:3000/api/users/login``` and (if the login data is correct and the user exists in the database) will return a token that is required in the headers when making requests to protected routes.   
-Example request:
+
+- **Delete a user:** `DELETE /users/:id`
+- **User login (Get JWT):** `POST /users/login`
+
 ```http
 POST http://localhost:3000/users/login HTTP/1.1
-content-type: application/json
+Content-Type: application/json
 
 {
 	"email": "test@gmail.com",
@@ -47,21 +69,110 @@ content-type: application/json
 }
 
 ```
-The response will contain a json token (JWT) similar to the one bellow:
+
+**Response:** (if the login data is correct and the user exists in the database)
+
 ```json
 {
-	"token": "eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2VyTmFtZSiaWF0.JwQiR3SOzVbsc7QmR-oM_GaNIB6kXhC"
+  "token": "eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2VyTmFtZSiaWF0.JwQiR3SOzVbsc7QmR-oM_GaNIB6kXhC"
 }
-
 ```
-This token then needs to be used in subsequent requests to protected routes in the ```Authorization``` header, like so:
+
+**Usage in Authorization Header:**
 
 ```http
 GET http://localhost:3000/<protected_route> HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2VyTmFtZSiaWF0.JwQiR3SOzVbsc7QmR-oM_GaNIB6kXhC
+Authorization: Bearer <JWT>
 
 ```
-**Notes**: 
-- Don't forget to replace the base api endpoint if you are running it locally;
-- ```POST``` and ```PUT``` requests need the ```content-type: application/json``` header;
-- Protected routes need the ```Authorization: Bearer <JWT>``` header;
+
+## Players
+
+- **Get all players:** `GET /players`
+- **Get a specific player:** `GET /players/:id`
+- **Update a player:** `PATCH /players/:id`
+
+```json
+{
+  "name": "John Smith", // optional
+  "bio": "Hello everyone!" // optional
+}
+```
+
+## Friendships
+
+- **Get all friendships for a player:** `GET /players/:id/friends`
+- **Create a new friendship:** `POST /friends`
+
+```json
+{
+  "playerId": "<id>",
+  "friendId": "<id>"
+}
+```
+
+- **Delete a friendship:** `DELETE /friends/:id`
+- **Update a friendship status:** `PATCH /friends/:id`
+
+```json
+{
+  "status": "PENDING" // or "ACCEPTED", "BLOCKED"
+}
+```
+
+## Matches
+
+- **Get all matches:** `GET /matches`
+- **Get all matches from a specific player:** `GET /matches/player/:id`
+- **Get a specific match:** `GET /matches/:id`
+- **Create a new match:** `POST /matches`
+
+```json
+{
+  "player1Id": "<id>",
+  "player2Id": "<id>",
+  "settings": "{\"map\":\"map3\",\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
+}
+```
+
+- **Update a match:** `PATCH /matches/:id`
+
+```json
+{
+  "duration": 120, // in seconds
+  "winnerId": "<id>",
+  "player1Score": 3,
+  "player2Score": 2
+}
+```
+
+## Tournaments
+
+- **Get all tournaments:** `GET /tournaments`
+- **Get all tournaments from a specific player:** `GET /tournaments/player/:id`
+- **Get a specific tournament:** `GET /tournaments/:id`
+- **Create a new tournament:** `POST /tournaments`
+
+```json
+{
+  "maxParticipants": 4, // default is 8
+  "createdBy": "<id>",
+  "name": "Tournament1", // optional
+  "settings": "{\"map\":\"map3\",\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
+}
+```
+
+- **Update a tournament:** `PATCH /tournaments/:id`
+
+```json
+{
+  "status": "ACTIVE", // or "PENDING", or "COMPLETED"
+  "currentRound": 2
+}
+```
+
+### Notes
+
+- **Protected routes** require the `Authorization: Bearer <JWT>` header.
+- **Ensure `Content-Type: application/json`** is included in `POST` and `PATCH` requests.
+- **Replace base API URL** (`backend:3000/api`) with `localhost:3000` if running locally.
