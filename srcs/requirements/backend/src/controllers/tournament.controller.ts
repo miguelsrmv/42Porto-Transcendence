@@ -3,6 +3,10 @@ import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
 import { Character, TournamentStatus } from '@prisma/client';
 import { defaultGameSettings } from '../utils/defaults';
+import {
+  createTournamentParticipant,
+  createTournamentByPlayer,
+} from '../services/tournament.services';
 
 export type TournamentCreate = {
   name?: string;
@@ -16,7 +20,8 @@ type TournamentUpdate = {
   currentRound: number;
 };
 
-type TournamentPlayer = {
+export type TournamentPlayer = {
+  tournamentId?: string;
   playerId: string;
   alias: string;
   character: Character;
@@ -76,6 +81,7 @@ export async function getTournamentById(
   }
 }
 
+// Unused for business logic
 export async function createTournament(
   request: FastifyRequest<{ Body: TournamentCreate }>,
   reply: FastifyReply,
@@ -89,19 +95,22 @@ export async function createTournament(
     const tournament = await prisma.tournament.create({
       data: {
         name: name,
-        maxParticipants: maxParticipants,
+        maxParticipants: maxParticipants ?? 8,
         settings: JSON.stringify(finalSettings),
         createdBy: {
           connect: { id: createdBy },
         },
       },
     });
+
     reply.send(tournament);
   } catch (error) {
     handleError(error, reply);
   }
 }
 
+// Unused for business logic
+// TODO: create function updateTournamentMatches
 export async function updateTournament(
   request: FastifyRequest<{ Params: IParams; Body: TournamentUpdate }>,
   reply: FastifyReply,
@@ -154,43 +163,21 @@ export async function deleteTournament(
 }
 
 export async function addPlayerToTournament(
-  request: FastifyRequest<{ Params: IParams; Body: TournamentPlayer }>,
+  request: FastifyRequest<{ Body: TournamentPlayer }>,
   reply: FastifyReply,
 ) {
   try {
-    const { playerId, alias, character } = request.body;
-
-    const tournament = await prisma.tournament.findUniqueOrThrow({
-      where: { id: request.params.id },
-      include: { participants: true },
-    });
-    if (tournament.participants.length >= tournament.maxParticipants)
-      throw new Error('Tournament is full');
-
-    const registeredPlayer = await prisma.tournamentParticipant.findUnique({
-      where: {
-        tournamentId_playerId: {
-          tournamentId: request.params.id,
-          playerId: playerId,
-        },
-      },
-    });
-    if (registeredPlayer) throw new Error('Player is already registered in this tournament');
-
-    const participant = await prisma.tournamentParticipant.create({
-      data: {
-        playerId: playerId,
-        tournamentId: request.params.id,
-        alias: alias,
-        character: character,
-      },
-    });
+    if (!request.body.tournamentId) {
+      const newTournament = await createTournamentByPlayer(request.body.playerId);
+      request.body.tournamentId = newTournament.id;
+    }
+    const newParticipant = await createTournamentParticipant(request.body);
 
     const updatedTournament = await prisma.tournament.update({
-      where: { id: request.params.id },
+      where: { id: request.body.tournamentId },
       data: {
         participants: {
-          connect: { id: participant.id },
+          connect: { id: newParticipant.id },
         },
       },
       include: { participants: true },

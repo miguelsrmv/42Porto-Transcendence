@@ -28,5 +28,5 @@ export async function tournamentRoutes(fastify: FastifyInstance) {
   );
   fastify.patch('/:id', { schema: updateTournamentSchema }, updateTournament);
   fastify.delete('/:id', { schema: getByIdSchema }, deleteTournament);
-  fastify.post('/:id/participants', { schema: tournamentParticipantSchema }, addPlayerToTournament);
+  fastify.post('/participant', { schema: tournamentParticipantSchema }, addPlayerToTournament);
 }
