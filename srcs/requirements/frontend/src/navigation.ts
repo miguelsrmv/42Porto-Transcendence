@@ -159,9 +159,8 @@ function addAnimations(view: string): void {
 function addLandingEvents(): void {
     const modal = document.getElementById("login-modal");
     const enterButton = document.getElementById("enter-button");
-    const backButton = document.getElementById("back-button");
 
-    if (modal && enterButton && backButton) {
+    if (modal && enterButton) {
         enterButton.addEventListener("click", () => {
             modal.style.display = "block";
             // Force reflow to ensure animation plays
@@ -169,25 +168,44 @@ function addLandingEvents(): void {
             modal.classList.remove("exiting");
             modal.classList.add("entering");
         });
-
-        backButton.addEventListener("click", () => {
-            modal.classList.remove("entering");
-            modal.classList.add("exiting");
-            setTimeout(() => {
-                modal.style.display = "none";
-            }, 300);
-        });
     }
 
     const loginButton = document.getElementById("login-button");
     const guestButton = document.getElementById("guest-button");
     if (loginButton && guestButton) {
         loginButton.addEventListener("click", () => {
+            toggleLoginMenu();
             loginStatus = "login";
         }, { once: true });
         guestButton.addEventListener("click", () => {
             loginStatus = "guest";
         }, { once: true });
+    }
+}
+
+function toggleLoginMenu(): void {
+    const initialLoginButtons = document.getElementById("initial-login-buttons");
+    if (initialLoginButtons)
+        initialLoginButtons.classList.add("hidden");
+
+    const loginForm = document.getElementById("login-form");
+    if (loginForm)
+        loginForm.classList.toggle("hidden");
+
+    const registerButton = document.getElementById("register-button");
+    if (registerButton) {
+        registerButton.addEventListener("click", () => toggleRegisterMenu());
+    }
+
+}
+
+function toggleRegisterMenu(): void {
+    const loginForm = document.getElementById("login-form");
+    const registerForm = document.getElementById("register-form");
+
+    if (loginForm && registerForm) {
+        loginForm.classList.toggle("hidden");
+        registerForm.classList.toggle("hidden");
     }
 }
 
