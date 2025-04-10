@@ -3,7 +3,7 @@ import { Player } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
-const NUMBER_OF_USERS = 8;
+const NUMBER_OF_USERS = 16;
 
 async function seedUsers() {
   await prisma.user.deleteMany();

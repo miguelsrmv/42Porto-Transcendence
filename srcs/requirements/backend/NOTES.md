@@ -74,7 +74,7 @@ backend/
 
 ## TODOs
 
+- Update API docs
 - Test edge cases
 - Add match creation logic in tournaments
 - Add more tests
-- Update database with Characters enum for TournamentParticipant and Match

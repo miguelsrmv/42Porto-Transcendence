@@ -31,11 +31,11 @@ export const updateTournamentSchema = {
 };
 
 export const tournamentParticipantSchema = {
-  params: getByIdSchema.params,
   body: {
     type: 'object',
     required: ['playerId'],
     properties: {
+      tournamentId: { type: 'string', format: 'uuid' },
       playerId: { type: 'string', format: 'uuid' },
       alias: { type: 'string' },
       character: { type: 'string', enum: Object.values(Character) },
