@@ -192,12 +192,47 @@ function toggleLoginMenu(): void {
     if (loginForm)
         loginForm.classList.toggle("hidden");
 
-    const registerButton = document.getElementById("register-button");
-    if (registerButton) {
-        registerButton.addEventListener("click", () => toggleRegisterMenu());
-    }
 
+    document.getElementById("login-form")?.addEventListener("submit", async function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(this as HTMLFormElement);
+
+        const data: { [key: string]: string } = {};
+        formData.forEach((value, key) => {
+            data[key] = value.toString();
+        });
+
+        try {
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                // Handle non-200 response codes (e.g., 401 Unauthorized)
+                throw new Error(`HTTP error ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log("Login successful:", result);
+            // Handle success (e.g., redirect or store token)
+        } catch (error) {
+            console.error("Login failed:", error);
+            // Handle errors (e.g., show error message to user)
+        }
+    });
 }
+
+
+//
+// const registerButton = document.getElementById("register-button");
+// if (registerButton) {
+//     registerButton.addEventListener("click", () => toggleRegisterMenu());
+// }
 
 function toggleRegisterMenu(): void {
     const loginForm = document.getElementById("login-form");

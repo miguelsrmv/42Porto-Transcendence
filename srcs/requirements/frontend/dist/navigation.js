@@ -172,17 +172,49 @@ function addLandingEvents() {
     }
 }
 function toggleLoginMenu() {
+    var _a;
     const initialLoginButtons = document.getElementById("initial-login-buttons");
     if (initialLoginButtons)
         initialLoginButtons.classList.add("hidden");
     const loginForm = document.getElementById("login-form");
     if (loginForm)
         loginForm.classList.toggle("hidden");
-    const registerButton = document.getElementById("register-button");
-    if (registerButton) {
-        registerButton.addEventListener("click", () => toggleRegisterMenu());
-    }
+    (_a = document.getElementById("login-form")) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", function (event) {
+        return __awaiter(this, void 0, void 0, function* () {
+            event.preventDefault(); // Prevent default form submission
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value.toString();
+            });
+            try {
+                const response = yield fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                if (!response.ok) {
+                    // Handle non-200 response codes (e.g., 401 Unauthorized)
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+                const result = yield response.json();
+                console.log("Login successful:", result);
+                // Handle success (e.g., redirect or store token)
+            }
+            catch (error) {
+                console.error("Login failed:", error);
+                // Handle errors (e.g., show error message to user)
+            }
+        });
+    });
 }
+//
+// const registerButton = document.getElementById("register-button");
+// if (registerButton) {
+//     registerButton.addEventListener("click", () => toggleRegisterMenu());
+// }
 function toggleRegisterMenu() {
     const loginForm = document.getElementById("login-form");
     const registerForm = document.getElementById("register-form");
