@@ -5,12 +5,7 @@ module.exports = {
   ],
   theme: {
     extend: {},
-    },
   },
   plugins: [
-    require('tailwindcss-textshadow'),
-    require('@tailwindcss/forms'),
-    function({ addUtilities, theme }) {
-      const newUtilities = {}
-      Object.entries(theme('clipPath') || {}).forEach(([name, value]) => {
-        newUtilities
+    require('tailwindcss-textshadow')],
+};
