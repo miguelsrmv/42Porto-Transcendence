@@ -74,8 +74,7 @@ backend/
 
 ## TODOs
 
-- Create endpoint /player/:id/stats and /player/:id/points (stats {wins, losses, total}) classic vs custom
-- Update API docs
+- Separate stats per classic vs custom
 - Improve error messages and object sent to frontend
 
 - Test edge cases
