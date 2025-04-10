@@ -5,6 +5,11 @@ import { faker } from '@faker-js/faker';
 
 const NUMBER_OF_USERS = 16;
 
+// This is the test user
+const USERNAME = 'ana123';
+const EMAIL = 'ana123@example.com';
+const TEST_PASSWORD = '123456789';
+
 async function seedUsers() {
   await prisma.user.deleteMany();
   for (let index = 0; index < NUMBER_OF_USERS; index++) {
@@ -18,6 +23,13 @@ async function seedUsers() {
       },
     });
   }
+  await prisma.user.create({
+    data: {
+      username: USERNAME,
+      email: EMAIL,
+      hashedPassword: TEST_PASSWORD,
+    },
+  });
 }
 
 async function createFriends(players: Player[]) {
