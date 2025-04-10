@@ -1,5 +1,6 @@
 import { getByIdSchema } from './global.schema';
 
+// TODO: Add confirmPassword
 export const createUserSchema = {
   body: {
     type: 'object',
