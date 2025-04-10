@@ -19,8 +19,8 @@ contract DeployTournamentsStorageTest is Test {
 
         assertEq(
             tournamentsStorage.getTournaments().length,
-            0,
-            "Initial tournaments list should be empty"
+            1,
+            "Initial tournaments list should be 1"
         );
     }
 }
@@ -38,8 +38,7 @@ contract TournamentsStorageTest is Test {
         assertEq(tournamentsStorage.MAX_PARTICIPANTS(), 4);
     }
 
-    function testCreateTournament() public {
-        tournamentsStorage.createTournament();
+    function testCreateTournament() public view{
         TournamentsStorage.Tournament[] memory tournaments = tournamentsStorage
             .getTournaments();
         assertEq(tournaments.length, 1);
@@ -51,7 +50,6 @@ contract TournamentsStorageTest is Test {
     }
 
     function testSuccessfullyJoinedTournament() public {
-        tournamentsStorage.createTournament();
         string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             tournamentsStorage.joinTournament(0, participants[i]);
@@ -61,12 +59,11 @@ contract TournamentsStorageTest is Test {
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             assertEq(joinedParticipants[i], participants[i]);
         }
-        vm.expectRevert();
         tournamentsStorage.joinTournament(0, "Eve");
+        assertEq(tournamentsStorage.getParticipants(1)[0], "Eve");
     }
 
     function testAddWinner() public {
-        tournamentsStorage.createTournament();
         string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             tournamentsStorage.joinTournament(0, participants[i]);
@@ -93,7 +90,6 @@ contract TournamentsStorageTest is Test {
     }
 
     function testAddScore() public {
-        tournamentsStorage.createTournament();
         string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             tournamentsStorage.joinTournament(0, participants[i]);
@@ -113,7 +109,6 @@ contract TournamentsStorageTest is Test {
     }
 
     function testIsTournamentFull() public {
-        tournamentsStorage.createTournament();
         string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             tournamentsStorage.joinTournament(0, participants[i]);
@@ -125,7 +120,6 @@ contract TournamentsStorageTest is Test {
     }
 
     function testFindLastIndexOfPlayer() public {
-        tournamentsStorage.createTournament();
         string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             tournamentsStorage.joinTournament(0, participants[i]);
