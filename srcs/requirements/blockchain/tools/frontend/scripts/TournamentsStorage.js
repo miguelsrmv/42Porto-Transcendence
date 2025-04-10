@@ -459,7 +459,7 @@ async function createTournament() {
     const tx = await contract.createTournament();
     console.log("Transaction sent:", tx.hash);
     await tx.wait();
-    console.log("Tournament created!");
+    // console.log("Tournament created!");
 }
 
 // Join a tournament
@@ -477,7 +477,7 @@ async function joinTournament(tournamentId, participantName) {
         const tx = await contract.joinTournament(tournamentId, participantName);
         console.log("Joining tournament:", tx.hash);
         await tx.wait();
-        console.log(`Joined Tournament ${tournamentId} as ${participantName}!`);
+        // console.log(`Joined Tournament ${tournamentId} as ${participantName}!`);
     }
     else {
         await createTournament();
@@ -498,7 +498,7 @@ async function addWinner(tournamentId, winnerName) {
     const tx = await contract.addWinner(tournamentId, winnerName);
     console.log("Joining tournament:", tx.hash);
     await tx.wait();
-    console.log(`Added winner ${winnerName} to tournament: ${tournamentId}!`);
+    // console.log(`Added winner ${winnerName} to tournament: ${tournamentId}!`);
 }
 
 // Save scores for a match
