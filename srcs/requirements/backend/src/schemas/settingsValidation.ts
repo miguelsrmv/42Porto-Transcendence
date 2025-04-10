@@ -4,7 +4,6 @@ import { TournamentCreate } from '../controllers/tournament.controller';
 import { MatchCreate } from '../controllers/match.controller';
 
 export const GameSettingsSchema = z.object({
-  allowPowerUps: z.boolean(),
   map: z.string(),
   rounds: z.number().int().min(1),
   ballSpeed: z.number().min(0.1).max(2.0),

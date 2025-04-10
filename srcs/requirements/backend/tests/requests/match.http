@@ -18,7 +18,7 @@ Content-Type: application/json
 {
 	"player1Id": "<id>",
 	"player2Id": "<id>",
-	"settings": "{\"map\":\"default\",\"allowPowerUps\":false,\"ballSpeed\": 1,\"rounds\":5}"
+	"settings": "{\"map\":\"default\",\"ballSpeed\": 1,\"rounds\":5}"
 }
 
 ### Update a match

@@ -131,7 +131,6 @@ export async function startTournament(
       where: { id: request.params.id },
       data: {
         status: TournamentStatus.ACTIVE,
-        currentRound: 1,
       },
     });
     reply.send(tournament);

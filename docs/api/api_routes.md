@@ -131,7 +131,7 @@ Authorization: Bearer <JWT>
 {
   "player1Id": "<id>",
   "player2Id": "<id>",
-  "settings": "{\"map\":\"map3\",\"allowPowerUps\":true,\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
+  "settings": "{\"map\":\"map3\",\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
 }
 ```
 
@@ -155,10 +155,10 @@ Authorization: Bearer <JWT>
 
 ```json
 {
-  "maxParticipants": 4,
+  "maxParticipants": 4, // default is 8
   "createdBy": "<id>",
   "name": "Tournament1", // optional
-  "settings": "{\"map\":\"map3\",\"allowPowerUps\":true,\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
+  "settings": "{\"map\":\"map3\",\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
 }
 ```
 
