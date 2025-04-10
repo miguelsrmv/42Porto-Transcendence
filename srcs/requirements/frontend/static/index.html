@@ -42,7 +42,7 @@
     </div>
     <div id="login-modal"
         class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50">
-        <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
+        <div id="initial-login-buttons" class="flex-grow grid grid-cols-2 gap-6 h-full">
             <a href="#main-menu-page" data-target="main-menu-page" id="guest-button"
                 class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
                 <!-- Image that takes up entire card -->
@@ -64,7 +64,7 @@
                     Guest
                 </div>
             </a>
-            <a href="#main-menu-page" data-target="main-menu-page" id="login-button"
+            <button id="login-button"
                 class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
                 <!-- Image that takes up entire card -->
                 <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
@@ -84,14 +84,40 @@
                     class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
                     Login
                 </div>
-            </a>
-        </div>
-        <!-- Back Button -->
-        <div class="flex justify-end items-center h-[10%]">
-            <button id="back-button" class="h-full">
-                <img src="./static/icons/backarrow.png" alt="Back" class="h-[80%] w-auto hover:opacity-80">
             </button>
         </div>
+        <form id="login-form" class="flex-grow h-full hidden" action="#" method="post">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div> No account? Register <button id="register-button"> here! <button> </div>
+        </form>
+        <form id="register-form" class="flex-grow h-full hidden" action=# method="post">
+            <div class="register-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="register-group">
+                <label for="email">E-mail</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+
+            <div class="register-group">
+                <label for="password">Password</label>
+                <input type="text" id="password" name="password" required>
+            </div>
+            <div class="register-group">
+                <label for="repeat-password">Repeat Password</label>
+                <input type="repeat-password" id="repeat-password" name="repeatpassword" required>
+            </div>
+            <button type="submit" class="btn">Register</button>
+        </form>
     </div>
 </template>
 
