@@ -16,6 +16,11 @@ contract TournamentsStorage {
 
     Tournament[] public tournaments;
 
+    // CONSTRUCTOR **************************************************************
+    constructor() {
+        createTournament();
+    }
+
     // GETTER FUNCTIONS *********************************************************
     function getTournaments() public view returns (Tournament[] memory) {
         return tournaments;
@@ -80,6 +85,11 @@ contract TournamentsStorage {
         string memory _participantName
     ) public {
         uint8 tournamentLength = 0;
+
+        if (isTournamentFull(_tournamentId)) {
+            createTournament();
+            _tournamentId++;
+        }
 
         while (
             keccak256(
