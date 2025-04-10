@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../utils/prisma';
 import { handleError } from '../utils/errorHandler';
+import { getPlayerClassicStats, getPlayerCustomStats } from '../services/player.services';
 
 type PlayerUpdate = {
   name?: string;
@@ -60,17 +61,12 @@ export async function getPlayerStats(
     const playerMatches = await prisma.match.findMany({
       where: { OR: [{ player1Id: request.params.id }, { player2Id: request.params.id }] },
     });
-    const wonMatches = playerMatches.filter((match) => match.winnerId === request.params.id);
-    const lostMatches = playerMatches.length - wonMatches.length;
     const stats = {
-      matchesPlayed: playerMatches.length,
-      matchesWon: wonMatches.length,
-      matchesLost: lostMatches,
-      winRate: (wonMatches.length / playerMatches.length) * 100 || 0 + '%',
-      points: wonMatches.length * 3 + lostMatches, // Assuming 3 points for a win and 1 for a loss
+      classic: getPlayerClassicStats(playerMatches, request.params.id),
+      custom: getPlayerCustomStats(playerMatches, request.params.id),
     };
 
-    reply.send(stats);
+    reply.send({ stats });
   } catch (error) {
     handleError(error, reply);
   }
