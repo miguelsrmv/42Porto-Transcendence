@@ -10,7 +10,7 @@ async function seedUsers() {
       data: {
         username: username,
         email: email,
-        hashedPassword: '12356789',
+        hashedPassword: '123456789',
       },
     });
   }
