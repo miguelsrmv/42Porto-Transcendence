@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import {console} from "forge-std/Script.sol";
+
 contract TournamentsStorage {
     uint8 public constant MAX_PARTICIPANTS = 4;
 
@@ -105,6 +107,7 @@ contract TournamentsStorage {
         tournaments[_tournamentId].matchedParticipants[
             tournamentLength
         ] = _participantName;
+        console.log(_participantName, "joined tournament", _tournamentId);
     }
 
     function addWinner(uint8 _tournamentId, string memory _winnerName) public {
@@ -118,6 +121,7 @@ contract TournamentsStorage {
         tournaments[_tournamentId].matchedParticipants[
             winnerNextIndex
         ] = _winnerName;
+        console.log("Added winner", _winnerName, "to tournament", _tournamentId);
     }
 
     function saveScore(
@@ -143,6 +147,14 @@ contract TournamentsStorage {
         tournaments[_tournamentId].scores[
             updatedPlayerTwoIndex
         ] = _playerTwoScore;
+        console.log("Scores saved for Tournament");
+        console.logUint(_tournamentId);
+        console.log("Player One:");
+        console.log(_playerOneName);
+        console.logUint(_playerOneScore);
+        console.log("Player Two:");
+        console.log(_playerTwoName);
+        console.logUint(_playerTwoScore);
     }
 
     //HELPER FUNCTIONS **********************************************************
