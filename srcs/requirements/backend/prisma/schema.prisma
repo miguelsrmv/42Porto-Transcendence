@@ -113,7 +113,7 @@ model Tournament {
   createdBy       Player                  @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById     String
   settings        String
-  maxParticipants Int
+  maxParticipants Int                     @default(8)
   status          TournamentStatus        @default(PENDING)
   currentRound    Int                     @default(1)
   participants    TournamentParticipant[]
