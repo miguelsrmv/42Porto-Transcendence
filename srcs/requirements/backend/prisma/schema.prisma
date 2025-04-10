@@ -28,7 +28,7 @@ model Player {
   userId             String                  @unique
   friends            Friendship[]            @relation("PlayerToFriends")
   friendOf           Friendship[]            @relation("FriendsToPlayer")
-  matches            Match[]                 @relation("MatchPlayer1")
+  matches1           Match[]                 @relation("MatchPlayer1")
   matches2           Match[]                 @relation("MatchPlayer2")
   matchesWon         Match[]                 @relation("MatchWinner")
   tournamentsCreated Tournament[]
