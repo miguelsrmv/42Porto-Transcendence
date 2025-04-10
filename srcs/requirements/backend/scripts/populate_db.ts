@@ -1,5 +1,5 @@
 /* Script to interact with the database */
-import { Player } from '@prisma/client';
+import { MatchMode, Player } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
@@ -102,24 +102,29 @@ async function createTestUser(players: Player[]) {
       },
     });
   }
-  for (let i = 0; i < players.length; i += 2) {
-    const participants = players.slice(i, i + 2);
-    if (participants.length === 2) {
-      const match = await prisma.match.create({
+  for (let i = 0; i < players.length; i += 1) {
+    const match = await prisma.match.create({
+      data: {
+        settings: '',
+        player1Id: testUser.player!.id,
+        player2Id: players[i].id,
+      },
+    });
+    if (Math.random() < 0.5) {
+      await prisma.match.update({
+        where: { id: match.id },
         data: {
-          settings: '',
-          player1Id: testUser.player!.id,
-          player2Id: participants[1].id,
+          winnerId: testUser.player!.id,
         },
       });
-      if (Math.random() < 0.5) {
-        await prisma.match.update({
-          where: { id: match.id },
-          data: {
-            winnerId: testUser.player!.id,
-          },
-        });
-      }
+    }
+    if (Math.random() < 0.5) {
+      await prisma.match.update({
+        where: { id: match.id },
+        data: {
+          mode: MatchMode.CUSTOM,
+        },
+      });
     }
   }
 }
