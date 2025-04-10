@@ -86,16 +86,16 @@
                 </div>
             </button>
         </div>
-        <form id="login-form" class="flex-grow h-full hidden" action="#" method="post">
+        <form id="login-form" class="flex-grow h-full hidden" action="/api/users/login" method="post">
             <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" required>
             </div>
             <div class="input-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn">Login</button>
+            <button id="login-submit-button" type="submit" class="login-btn">Login</button>
             <div> No account? Register <button id="register-button"> here! <button> </div>
         </form>
         <form id="register-form" class="flex-grow h-full hidden" action=# method="post">
