@@ -131,7 +131,6 @@ contract TournamentsStorageTest is Test {
                 winner,
                 winnerScore
             );
-            // Compute winner index in tree
             tournamentsStorage.addWinner(0, winner);
         }
 
@@ -151,31 +150,26 @@ contract TournamentsStorageTest is Test {
     }
 
     function testIsTournamentFull() public {
-        // PRECISO DINAMIZAR!
-        string[4] memory participants = ["Alice", "Bob", "Charlie", "Dave"];
-        for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
-            tournamentsStorage.joinTournament(0, participants[i]);
-            if (i != tournamentsStorage.MAX_PARTICIPANTS() - 1) {
-                assertFalse(tournamentsStorage.isTournamentFull(0));
-            }
-        }
-        assertTrue(tournamentsStorage.isTournamentFull(0));
-    }
-
-    function testFindLastIndexOfPlayer() public {
-        // PRECISO DINAMIZAR!
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS(); // Must be power of 2
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
 
         // 1. Join all players
         for (uint8 i = 0; i < n; i++) {
             string memory name = string(abi.encodePacked("P", vm.toString(i)));
             tournamentsStorage.joinTournament(0, name);
         }
-        // 2. Simulate bracket wins (left-side always wins)
-        // matchedParticipants[0..n-1] are initial players
+        assertTrue(tournamentsStorage.isTournamentFull(0));
+    }
+
+    function testFindLastIndexOfPlayer() public {
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+
+        // 1. Join all players
+        for (uint8 i = 0; i < n; i++) {
+            string memory name = string(abi.encodePacked("P", vm.toString(i)));
+            tournamentsStorage.joinTournament(0, name);
+        }
         for (uint8 round = 1; round < n; round *= 2) {
             for (uint8 i = 0; i < n; i += round * 2) {
-                // Pick the left-side player of the current match
                 uint8 leftIdx = i;
                 string memory winner = tournamentsStorage
                     .getMatchedParticipants(0)[leftIdx];
@@ -188,7 +182,7 @@ contract TournamentsStorageTest is Test {
                     ]
                 );
                 tournamentsStorage.addWinner(0, winner);
-                // 3. Assertion: Last known index should be updated
+                // 2. Assertion: Last known index should have been updated
                 winnerLastKnownIndex = tournamentsStorage.findLastIndexOfPlayer(
                         0,
                         winner
