@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 import {console} from "forge-std/Script.sol";
 
 contract TournamentsStorage {
-    uint8 public constant MAX_PARTICIPANTS = 4;
+    uint8 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
     struct Tournament {
         uint256 id;
@@ -121,7 +121,12 @@ contract TournamentsStorage {
         tournaments[_tournamentId].matchedParticipants[
             winnerNextIndex
         ] = _winnerName;
-        console.log("Added winner", _winnerName, "to tournament", _tournamentId);
+        console.log(
+            "Added winner",
+            _winnerName,
+            "to tournament",
+            _tournamentId
+        );
     }
 
     function saveScore(
