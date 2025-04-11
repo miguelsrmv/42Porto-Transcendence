@@ -1,3 +1,7 @@
+[submodule "wiki"]
+	path = wiki
+	url = https://github.com/miguelsrmv/42Porto-Transcendence.wiki.git
+
 [submodule "srcs/requirements/blockchain/tools/TournamentsStorage/lib/forge-std"]
 	path = srcs/requirements/blockchain/tools/TournamentsStorage/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std

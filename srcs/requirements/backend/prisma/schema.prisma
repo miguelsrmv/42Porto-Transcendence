@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "./generated/prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  username       String   @unique
+  hashedPassword String
+  salt           String   @default("")
+  createdAt      DateTime @default(now())
+  player         Player?
+}
+
+// TODO: Manage user online status somewhere else
+model Player {
+  id                 String                  @id @default(uuid())
+  name               String?
+  bio                String?
+  avatarUrl          String?
+  user               User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String                  @unique
+  friends            Friendship[]            @relation("PlayerToFriends")
+  friendOf           Friendship[]            @relation("FriendsToPlayer")
+  matches            Match[]                 @relation("MatchPlayer1")
+  matches2           Match[]                 @relation("MatchPlayer2")
+  matchesWon         Match[]                 @relation("MatchWinner")
+  tournamentsCreated Tournament[]
+  leaderboard        Leaderboard[]
+  tournaments        TournamentParticipant[]
+}
+
+model Friendship {
+  id        String           @id @default(uuid())
+  player    Player           @relation("PlayerToFriends", fields: [playerId], references: [id], onDelete: Cascade)
+  playerId  String
+  friendOf  Player           @relation("FriendsToPlayer", fields: [friendId], references: [id], onDelete: Cascade)
+  friendId  String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now()) @updatedAt
+  status    FriendshipStatus @default(PENDING)
+
+  @@unique([playerId, friendId])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+model Match {
+  id               String      @id @default(uuid())
+  mode             MatchMode   @default(CLASSIC)
+  duration         Int         @default(0)
+  player1Id        String
+  player1          Player      @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
+  player2Id        String
+  player2          Player      @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
+  player1Score     Int         @default(0)
+  player2Score     Int         @default(0)
+  player1Character Character?
+  player2Character Character?
+  winnerId         String?
+  winner           Player?     @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
+  tournamentId     String?
+  tournament       Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  roundNumber      Int?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @default(now()) @updatedAt
+  settings         String
+
+  @@unique([player1Id, player2Id, tournamentId])
+}
+
+enum Character {
+  NONE
+  MARIO
+  LINK
+  PIKACHU
+  SONIC
+  KIRBY
+  YOSHI
+  SAMUS
+  DK
+  MEWTWO
+}
+
+enum MatchMode {
+  CLASSIC
+  CUSTOM
+}
+
+model Leaderboard {
+  id       String @id @default(uuid())
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId String
+  classic  Int    @default(0)
+  custom   Int    @default(0)
+}
+
+model Tournament {
+  id              String                  @id @default(uuid())
+  name            String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @default(now()) @updatedAt
+  matches         Match[]
+  createdBy       Player                  @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById     String
+  settings        String
+  maxParticipants Int                     @default(8)
+  status          TournamentStatus        @default(PENDING)
+  currentRound    Int                     @default(1)
+  participants    TournamentParticipant[]
+}
+
+enum TournamentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+}
+
+model TournamentParticipant {
+  id           String     @id @default(uuid())
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournamentId String
+  player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId     String
+  alias        String
+  character    Character?
+
+  @@unique([tournamentId, playerId])
+  @@unique([tournamentId, alias])
+}
