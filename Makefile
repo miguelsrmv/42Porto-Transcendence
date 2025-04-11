@@ -10,32 +10,35 @@
 #                                                                              #
 # **************************************************************************** #
 
-DOMAIN_NAME = padaria.42.pt
+DB_DATA = $(PWD)/data/backend_db
+BC_DATA = $(PWD)/data/blockchain
+COMPOSE = docker compose -f ./srcs/docker-compose.yml
 
 all: up
 
 up:
-	@sudo hostsed add 127.0.0.1 $(DOMAIN_NAME)
-	@docker compose -f ./srcs/docker-compose.yml up --build -d
+	@mkdir -p $(DB_DATA)
+	@mkdir -p $(BC_DATA)
+	@$(COMPOSE) up --build -d
 
 down:
-	@docker compose -f ./srcs/docker-compose.yml down
+	@$(COMPOSE) down
 
 build:
-	@docker compose -f ./srcs/docker-compose.yml build
+	@$(COMPOSE) build
 
 clean: down
 	@echo "** REMOVING IMAGES **"
 	@docker rmi -f $$(docker images -qa)
 	@echo "** REMOVING VOLUMES **"
 	@docker volume rm $$(docker volume ls -q)
-	@echo "** REMOVING DOMAIN NAME **"
-	@sudo hostsed rm 127.0.0.1 $(DOMAIN_NAME)
+	@echo "** DELETING VOLUMES' DATA **"
+	@sudo rm -rf $(DB_DATA) $(BC_DATA)
 
 re: clean up
 
 prune:
-	docker system prune -a
+	@docker system prune -a
 
 status:
 	@clear
@@ -48,4 +51,28 @@ status:
 	@docker network ls
 	@echo ""
 
-.PHONY: all up down build clean re phony prune
+frontend:
+	@$(COMPOSE) build frontend
+
+backend:
+	@$(COMPOSE) build backend
+
+bc:
+	@$(COMPOSE) build blockchain
+
+frontend_clean:
+	$(COMPOSE) rm -sf frontend
+	@docker rmi -f frontend || true
+
+backend_clean:
+	$(COMPOSE) rm -sf backend
+	@docker rmi -f backend || true
+
+bc_clean:
+	$(COMPOSE) rm -sf blockchain
+	@docker rmi -f blockchain || true
+
+test: 
+	@./docs/scripts/build_dockerfile_test.sh  #Tests build
+
+.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test 

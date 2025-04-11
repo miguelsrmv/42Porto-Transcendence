@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
-  server:
-    container_name: server
-    image: server
-    build: ./requirements/server
+  frontend:
+    container_name: frontend
+    image: frontend
+    build: ./requirements/frontend
     ports:
       - 443:443
     env_file:
@@ -12,35 +10,27 @@ services:
     restart: unless-stopped
     networks:
       - public-transcendence-network
+      - private-transcendence-network
     volumes:
-      - ./server:/app
+      - ./requirements/frontend:/app
+      - ./requirements/frontend/static:/var/www/ft_transcendence/static
+      - ./requirements/frontend/dist:/var/www/ft_transcendence/dist
 
   backend:
     container_name: backend
     image: backend
     build: ./requirements/backend
-    env_file:
-      - .env
-    restart: unless-stopped
-    networks:
-      - public-transcendence-network
-      - private-transcendence-network
-    volumes:
-      - ./backend:/app
-      - /app/nodule_modules # Prevents overwriting dependencies
-    command: npm run dev # To hot reload changes
-
-  database:
-    container_name: database
-    image: database
-    build: ./requirements/database
+    ports:
+      - 3000:3000
     env_file:
       - .env
     restart: unless-stopped
     networks:
       - private-transcendence-network
     volumes:
-      - database_data:/var/lib/sqlite
+      - ./requirements/backend:/app
+      - backend_db:/app/data
+      - node_modules:/app/node_modules # Prevents overwriting dependencies
 
   blockchain:
     container_name: blockchain
@@ -53,14 +43,13 @@ services:
       - private-transcendence-network
     volumes:
       - blockchain_data:/app/blockchain
-    command: npm run dev # To hot reload changes
 
 volumes:
-  database_data:
+  backend_db:
     driver: local
     driver_opts:
       type: none
-      device: ${DATA_PATH}/database
+      device: ${DATA_PATH}/backend_db
       o: bind
   blockchain_data:
     driver: local
@@ -68,6 +57,13 @@ volumes:
       type: none
       device: ${DATA_PATH}/blockchain
       o: bind
+  node_modules:
+  # server_volume:
+    #  driver: local
+    #driver_opts:
+    #  type: none
+    #  device: ./requirements/server/public/
+    #  o: bind
 
 networks:
   public-transcendence-network:
