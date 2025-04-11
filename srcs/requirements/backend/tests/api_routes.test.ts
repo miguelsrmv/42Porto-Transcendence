@@ -79,13 +79,22 @@ describe('GET /users', () => {
       ]),
     );
   });
-});
 
-test('GET /players should return 200', async () => {
-  const response = await app.inject({
-    method: 'GET',
-    url: '/players',
+  test('GET /players should return 200', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/players',
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: expect.any(String),
+          bio: expect.any(String),
+          avatarUrl: expect.any(String),
+        }),
+      ]),
+    );
   });
-
-  expect(response.statusCode).toBe(200);
 });

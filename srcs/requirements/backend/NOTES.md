@@ -74,7 +74,6 @@ backend/
 
 ## TODOs
 
-- Separate stats per classic vs custom
 - Improve error messages and object sent to frontend
 
 - Test edge cases

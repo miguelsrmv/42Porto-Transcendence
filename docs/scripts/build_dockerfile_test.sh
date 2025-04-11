@@ -62,32 +62,41 @@ if ! docker compose -f $DOCKER_COMPOSE_FILE ps | grep -q "0.0.0.0"; then
 fi
 echo "✅ Services are exposing expected ports."
 
-'
-# 7️⃣ Check Backend Health (if healthcheck exists)
- echo "🩺 Checking Backend service health..."
- backend_container=$(docker-compose -f $DOCKER_COMPOSE_FILE ps -q Backend)
- if docker inspect --format '{{json .State.Health.Status}}' "$backend_container" | grep -q "healthy"; then
-  echo "✅ Backend service is healthy."
- else
-  echo "❌ Backend service is unhealthy!"
-  exit 1
-fi
-
-# 8️⃣ Check Backend API
+# 7️⃣ Check Backend API
 echo "🌍 Testing backend API..."
-if curl -fs http://localhost:3000/health; then
+if curl -fs http://localhost:3000; then
   echo "✅ Backend API is responding."
 else
   echo "❌ Backend API is not responding!"
   exit 1
 fi
 
-# 9️⃣ Check Database Setup
+# 8️⃣ Check Database Setup
 echo "🗄️ Checking SQLite database setup..."
-if docker compose -f $DOCKER_COMPOSE_FILE exec Backend sqlite3 /app/database.db ".tables" | grep -q "users"; then
+if docker compose -f $DOCKER_COMPOSE_FILE exec backend sh -c "npx prisma db pull > /tmp/schema && grep -q 'model User' /tmp/schema"; then
   echo "✅ Database is initialized correctly."
 else
   echo "❌ Database tables are missing!"
+  exit 1
+fi
+
+# 9️⃣ Run Backend API tests
+echo "🗄️ Running API tests with Vitest..."
+if docker compose -f $DOCKER_COMPOSE_FILE exec backend npx vitest run; then
+  echo "✅ All Vitest tests passed."
+else
+  echo "❌ Some Vitest tests failed!"
+  exit 1
+fi
+
+'
+#  Check Backend Health (if healthcheck exists)
+ echo "🩺 Checking Backend service health..."
+ backend_container=$(docker-compose -f $DOCKER_COMPOSE_FILE ps -q backend)
+ if docker inspect --format '{{json .State.Health.Status}}' "$backend_container" | grep -q "healthy"; then
+  echo "✅ Backend service is healthy."
+ else
+  echo "❌ Backend service is unhealthy!"
   exit 1
 fi
 '
