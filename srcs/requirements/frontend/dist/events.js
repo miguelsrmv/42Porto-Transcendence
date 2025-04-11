@@ -14,15 +14,17 @@ import { navigateTo } from "./navigation.js";
  * When the user navigates through the browser history, this listener ensures that the
  * application navigates to the correct view stored in the history state.
  */
-export function setupHistoryListener() {
-    window.addEventListener("popstate", (event) => {
-        const state = event.state;
-        if (state === null || state === void 0 ? void 0 : state.view) {
-            // Navigate to the view stored in the state
-            navigateTo(state.view, false);
-        }
-    });
-}
+//
+// export function setupHistoryListener(): void {
+//     window.addEventListener("popstate", (event) => {
+//         const state = event.state;
+//
+//         if (state?.view) {
+//             // Navigate to the view stored in the state
+//             navigateTo(state.view, false);
+//         }
+//     });
+// }
 /**
  * @brief Adds a navigation listener to the document.
  *

@@ -17,16 +17,17 @@ import { navigateTo } from "./navigation.js"
  * application navigates to the correct view stored in the history state.
  */
 
-export function setupHistoryListener(): void {
-    window.addEventListener("popstate", (event) => {
-        const state = event.state;
-
-        if (state?.view) {
-            // Navigate to the view stored in the state
-            navigateTo(state.view, false);
-        }
-    });
-}
+//
+// export function setupHistoryListener(): void {
+//     window.addEventListener("popstate", (event) => {
+//         const state = event.state;
+//
+//         if (state?.view) {
+//             // Navigate to the view stored in the state
+//             navigateTo(state.view, false);
+//         }
+//     });
+// }
 
 /**
  * @brief Adds a navigation listener to the document.
