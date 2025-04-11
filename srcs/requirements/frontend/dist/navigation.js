@@ -6,18 +6,11 @@
  * views into the main application container. It listens for the DOMContentLoaded event
  * to load the default view and custom navigation events to switch views.
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 let currentView = "";
 let previousView = "";
 let loginStatus = "";
+// #TODO: Remove loginStatus and replace it by JWT token
+// #TODO: Refactor the navigation .ts into smaller files
 import { addLandingAnimations, showMenuHelperText } from "./animations.js";
 import { toggleDropdown, createCharacterLoop, createBackgroundLoop } from "./events.js";
 /**
@@ -172,42 +165,39 @@ function addLandingEvents() {
     }
 }
 function toggleLoginMenu() {
-    var _a;
     const initialLoginButtons = document.getElementById("initial-login-buttons");
     if (initialLoginButtons)
         initialLoginButtons.classList.add("hidden");
     const loginForm = document.getElementById("login-form");
     if (loginForm)
         loginForm.classList.toggle("hidden");
-    (_a = document.getElementById("login-form")) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", function (event) {
-        return __awaiter(this, void 0, void 0, function* () {
-            event.preventDefault(); // Prevent default form submission
-            const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value.toString();
-            });
-            try {
-                const response = yield fetch('/api/users/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-                if (!response.ok) {
-                    // Handle non-200 response codes (e.g., 401 Unauthorized)
-                    throw new Error(`HTTP error ${response.status}`);
-                }
-                const result = yield response.json();
-                console.log("Login successful:", result);
-                // Handle success (e.g., redirect or store token)
-            }
-            catch (error) {
-                console.error("Login failed:", error);
-                // Handle errors (e.g., show error message to user)
-            }
+    document.getElementById("login-form")?.addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent default form submission
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value.toString();
         });
+        try {
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                // Handle non-200 response codes (e.g., 401 Unauthorized)
+                throw new Error(`HTTP error ${response.status}`);
+            }
+            const result = await response.json();
+            console.log("Login successful:", result);
+            // Handle success (e.g., redirect or store token)
+        }
+        catch (error) {
+            console.error("Login failed:", error);
+            // Handle errors (e.g., show error message to user)
+        }
     });
     const registerButton = document.getElementById("register-button");
     if (registerButton)
@@ -221,20 +211,18 @@ function toggleRegisterMenu() {
         registerForm.classList.toggle("hidden");
     }
 }
-function getGameType() {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve) => {
-            const classicButton = document.getElementById("classic-pong-button");
-            const crazyButton = document.getElementById("crazy-pong-button");
-            if (classicButton && crazyButton) {
-                classicButton.addEventListener("click", () => {
-                    resolve("classic");
-                }, { once: true });
-                crazyButton.addEventListener("click", () => {
-                    resolve("crazy");
-                }, { once: true });
-            }
-        });
+async function getGameType() {
+    return new Promise((resolve) => {
+        const classicButton = document.getElementById("classic-pong-button");
+        const crazyButton = document.getElementById("crazy-pong-button");
+        if (classicButton && crazyButton) {
+            classicButton.addEventListener("click", () => {
+                resolve("classic");
+            }, { once: true });
+            crazyButton.addEventListener("click", () => {
+                resolve("crazy");
+            }, { once: true });
+        }
     });
 }
 /**
@@ -245,6 +233,7 @@ function getGameType() {
 function addMainMenuEvents() {
     // For each <a> inside #main-menu-buttons, apply Helper Text
     // NOTE: Faster than event delegation!!
+    // TODO: Create function that checks login status instead of storing it globally
     if (loginStatus === "login")
         document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
             showMenuHelperText(anchor);
@@ -284,53 +273,51 @@ function addMainMenuEvents() {
 *
 * This function sets up the pre-game page depending on the imported view
 */
-function addPlayEvents(view) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // Gets Classic or Crazy Pong
-        const gameType = yield getGameType();
-        // Gets number of players
-        const playerNumber = view === "local-play-page" ? 2 : 1;
-        // Closes model, shows up remaining website
-        const gameTypeModal = document.getElementById("game-type-modal");
-        const gameSettingsMenu = document.getElementById("game-settings-menu");
-        if (gameTypeModal && gameSettingsMenu) {
-            gameTypeModal.classList.toggle("hidden");
-            gameSettingsMenu.classList.toggle("hidden");
+async function addPlayEvents(view) {
+    // Gets Classic or Crazy Pong
+    const gameType = await getGameType();
+    // Gets number of players
+    const playerNumber = view === "local-play-page" ? 2 : 1;
+    // Closes model, shows up remaining website
+    const gameTypeModal = document.getElementById("game-type-modal");
+    const gameSettingsMenu = document.getElementById("game-settings-menu");
+    if (gameTypeModal && gameSettingsMenu) {
+        gameTypeModal.classList.toggle("hidden");
+        gameSettingsMenu.classList.toggle("hidden");
+    }
+    // If 2 players, toggles player-2-settings on
+    const player2section = document.getElementById("player-2-settings");
+    if (playerNumber === 2 && player2section)
+        player2section.classList.toggle("hidden");
+    // Creates background loop
+    createBackgroundLoop();
+    // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
+    if (gameType === "crazy") {
+        const player1name = document.getElementById("player-1-name");
+        const player1paddle = document.getElementById("player-1-paddle-colour");
+        const player1char = document.getElementById("player-1-character");
+        if (player1name && player1paddle && player1char) {
+            player1name.classList.remove("h-[15%]");
+            player1name.classList.add("h-[50%]");
+            player1paddle.classList.remove("h-[15%]");
+            player1paddle.classList.add("h-[50%]");
+            player1char.classList.toggle("hidden");
         }
-        // If 2 players, toggles player-2-settings on
-        const player2section = document.getElementById("player-2-settings");
-        if (playerNumber === 2 && player2section)
-            player2section.classList.toggle("hidden");
-        // Creates background loop
-        createBackgroundLoop();
-        // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
-        if (gameType === "crazy") {
-            const player1name = document.getElementById("player-1-name");
-            const player1paddle = document.getElementById("player-1-paddle-colour");
-            const player1char = document.getElementById("player-1-character");
-            if (player1name && player1paddle && player1char) {
-                player1name.classList.remove("h-[15%]");
-                player1name.classList.add("h-[50%]");
-                player1paddle.classList.remove("h-[15%]");
-                player1paddle.classList.add("h-[50%]");
-                player1char.classList.toggle("hidden");
-            }
-            const player2name = document.getElementById("player-2-name");
-            const player2paddle = document.getElementById("player-2-paddle-colour");
-            const player2char = document.getElementById("player-2-character");
-            if (player2name && player2paddle && player2char && playerNumber === 2) {
-                player2name.classList.remove("h-[15%]");
-                player2name.classList.add("h-[50%]");
-                player2paddle.classList.remove("h-[15%]");
-                player2paddle.classList.add("h-[50%]");
-                player2char.classList.toggle("hidden");
-            }
-            // Creates character loop (for both players, if needed)
-            createCharacterLoop();
-            if (playerNumber === 2)
-                createCharacterLoop(2);
+        const player2name = document.getElementById("player-2-name");
+        const player2paddle = document.getElementById("player-2-paddle-colour");
+        const player2char = document.getElementById("player-2-character");
+        if (player2name && player2paddle && player2char && playerNumber === 2) {
+            player2name.classList.remove("h-[15%]");
+            player2name.classList.add("h-[50%]");
+            player2paddle.classList.remove("h-[15%]");
+            player2paddle.classList.add("h-[50%]");
+            player2char.classList.toggle("hidden");
         }
-    });
+        // Creates character loop (for both players, if needed)
+        createCharacterLoop();
+        if (playerNumber === 2)
+            createCharacterLoop(2);
+    }
 }
 /**
 * @brief Adds event listeners for the rankings view.

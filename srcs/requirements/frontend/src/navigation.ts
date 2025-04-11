@@ -10,7 +10,8 @@
 let currentView = "";
 let previousView = "";
 let loginStatus = "";
-
+// #TODO: Remove loginStatus and replace it by JWT token
+// #TODO: Refactor the navigation .ts into smaller files
 
 import { addLandingAnimations, showMenuHelperText } from "./animations.js"
 import { toggleDropdown, createCharacterLoop, createBackgroundLoop } from "./events.js"
@@ -266,6 +267,7 @@ async function getGameType(): Promise<string> {
 function addMainMenuEvents(): void {
     // For each <a> inside #main-menu-buttons, apply Helper Text
     // NOTE: Faster than event delegation!!
+    // TODO: Create function that checks login status instead of storing it globally
     if (loginStatus === "login")
         document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function(anchor) {
             showMenuHelperText(anchor);
