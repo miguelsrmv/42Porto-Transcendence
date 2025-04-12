@@ -52,6 +52,27 @@ contract TournamentsStorage {
         return tournaments[_id].scores;
     }
 
+    function getTournamentsWonByPlayer(
+        string memory _playerName
+    ) public view returns (uint8) {
+        uint8 tournamentsWon = 0;
+        uint256 winnersIndex = (MAX_PARTICIPANTS - 1) * 2;
+
+        for (uint8 i = 0; i < tournaments.length; i++) {
+            if (
+                keccak256(
+                    abi.encodePacked(
+                        tournaments[i].matchedParticipants[winnersIndex]
+                    )
+                ) == keccak256(abi.encodePacked(_playerName))
+            ) {
+                tournamentsWon++;
+            }
+        }
+
+        return tournamentsWon;
+    }
+
     // ACTION FUNCTIONS *********************************************************
     function createTournament() public {
         string[MAX_PARTICIPANTS] memory emptyParticipants;
