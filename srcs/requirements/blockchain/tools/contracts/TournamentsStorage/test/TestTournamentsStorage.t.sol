@@ -237,4 +237,53 @@ contract TournamentsStorageTest is Test {
             );
         }
     }
+
+    function testGetNumberOfTournamentsParticipatedByPlayer() public {
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS(); // Must be power of 2
+
+        // Create 10 equal tournaments
+        for (uint8 i = 0; i < 10; i++) {
+            // 1. Join all players
+            for (uint8 j = 0; j < n; j++) {
+                string memory name = string(
+                    abi.encodePacked("P", vm.toString(j))
+                );
+                tournamentsStorage.joinTournament(i, name);
+            }
+
+            // 2. Simulate bracket wins (left-side always wins)
+            // matchedParticipants[0..n-1] are initial players
+            for (uint8 round = 1; round < n; round *= 2) {
+                for (uint8 j = 0; j < n; j += round * 2) {
+                    // Pick the left-side player of the current match
+                    uint8 leftIdx = j;
+                    string memory winner = tournamentsStorage
+                        .getMatchedParticipants(i)[leftIdx];
+
+                    // Compute winner index in tree
+                    tournamentsStorage.addWinner(i, winner);
+                }
+            }
+            tournamentsStorage.createTournament();
+        }
+        // 3. Assertion: Players from P0 to <MAX_PARTICIPANTS - 1> have participated in 10 tournaments
+        // and a fictitious player didn't participate in any
+        for (uint8 j = 1; j < n; j++) {
+            string memory playerName = string(
+                abi.encodePacked("P", vm.toString(j))
+            );
+            assertEq(
+                tournamentsStorage.getNumberOfTournamentsParticipatedByPlayer(
+                    playerName
+                ),
+                10
+            );
+            assertEq(
+                tournamentsStorage.getNumberOfTournamentsParticipatedByPlayer(
+                    "fictitiousPlayer"
+                ),
+                0
+            );
+        }
+    }
 }
