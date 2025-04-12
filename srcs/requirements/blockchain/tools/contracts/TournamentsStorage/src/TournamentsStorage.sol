@@ -52,10 +52,31 @@ contract TournamentsStorage {
         return tournaments[_id].scores;
     }
 
+    function getNumberOfTournamentsParticipatedByPlayer(
+        string memory _playerName
+    ) public view returns (uint256) {
+        uint256 tournamentsParticipated = 0;
+
+        for (uint8 i = 0; i < tournaments.length; i++) {
+            for (uint8 j = 0; j < MAX_PARTICIPANTS; j++) {
+                if (
+                    keccak256(
+                        abi.encodePacked(tournaments[i].matchedParticipants[j])
+                    ) == keccak256(abi.encodePacked(_playerName))
+                ) {
+                    tournamentsParticipated++;
+                    break;
+                }
+            }
+        }
+
+        return tournamentsParticipated;
+    }
+
     function getTournamentsWonByPlayer(
         string memory _playerName
-    ) public view returns (uint8) {
-        uint8 tournamentsWon = 0;
+    ) public view returns (uint256) {
+        uint256 tournamentsWon = 0;
         uint256 winnersIndex = (MAX_PARTICIPANTS - 1) * 2;
 
         for (uint8 i = 0; i < tournaments.length; i++) {
