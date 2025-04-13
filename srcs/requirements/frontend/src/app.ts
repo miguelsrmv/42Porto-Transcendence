@@ -10,8 +10,7 @@
 import { initializeRouter } from './core/router.js'
 
 export let loginStatus = "";
-// #TODO: Remove loginStatus and replace it by JWT token
-// #TODO: Refactor the navigation .ts into smaller files
+// #TODO: Remove loginStatus and replace it by checking JWT token
 
 export function setLoginStatus(status: string) {
     loginStatus = status;

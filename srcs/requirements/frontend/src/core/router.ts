@@ -53,7 +53,7 @@ function handleRouteChange(): void {
     currentView = viewName;
 
     // Attempt to load the HTML with loadView()
-    // TODO: Check if I should throw an error inside loadView? Should it be async?
+    // TODO: Check if I should throw an error inside loadView?
     try {
         loadView(viewName);
     } catch (error) {

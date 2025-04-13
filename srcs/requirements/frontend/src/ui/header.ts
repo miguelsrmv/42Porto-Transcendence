@@ -1,3 +1,12 @@
+/**
+ * @file header.ts
+ * @brief Manages the header UI component, adjusting its size and content based on the current view.
+ * 
+ * This module provides functionality to dynamically modify the header's appearance and content
+ * depending on the active view within the application. It ensures that the header is appropriately
+ * displayed or hidden and updates its content to reflect the current view.
+ */
+
 import { toggleDropdown } from "../ui/dropdown.js"
 
 /**

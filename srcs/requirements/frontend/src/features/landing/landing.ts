@@ -1,3 +1,8 @@
+/**
+ * @file landing.ts
+ * @brief Handles the setup of the landing page.
+ */
+
 import { toggleLoginMenu } from "../auth/loginModal.js"
 import { setLandingAnimations } from "../../ui/animations.js"
 import { setLoginStatus } from "../../app.js"

@@ -1,3 +1,16 @@
+/**
+ * @file gameSetup.ts
+ * @brief Handles the setup of game types, character selection, and background selection for the game.
+ */
+
+/**
+ * @brief Prompts the user to select a game type.
+ * 
+ * This function waits for the user to click on either the "classic" or "crazy" game type button
+ * and resolves the promise with the selected game type.
+ * 
+ * @return A promise that resolves to a string indicating the selected game type ("classic" or "crazy").
+ */
 export async function getGameType(): Promise<string> {
 	return new Promise((resolve) => {
 		const classicButton = document.getElementById("classic-pong-button");
@@ -14,6 +27,13 @@ export async function getGameType(): Promise<string> {
 	});
 }
 
+/**
+ * @brief Creates a character selection loop for a player.
+ * 
+ * This function allows a player to cycle through available characters using previous and next buttons.
+ * 
+ * @param player_number The player number for which the character loop is created. Defaults to 1.
+ */
 export function createCharacterLoop(player_number: number = 1) {
 	const characters: string[] = [
 		'mario.png',
@@ -61,6 +81,11 @@ export function createCharacterLoop(player_number: number = 1) {
 	updateCharacterDisplay();
 }
 
+/**
+ * @brief Creates a background selection loop.
+ * 
+ * This function allows the user to cycle through available backgrounds using previous and next buttons.
+ */
 export function createBackgroundLoop() {
 	const backgrounds: string[] = [
 		'Backyard.png',

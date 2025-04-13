@@ -1,4 +1,12 @@
 /**
+ * @file dropdown.ts
+ * @brief Provides functionality to toggle the visibility of a dropdown menu in the UI.
+ * 
+ * This module includes functions that manage the display of dropdown menus, enhancing
+ * user interaction by allowing elements to be shown or hidden based on user actions.
+ */
+
+/**
  * @brief Toggles the visibility of a dropdown menu.
  * 
  * This function manages the visibility of a dropdown menu associated with a button.
