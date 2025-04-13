@@ -24,7 +24,7 @@ RUN npm install
 RUN tsc
 
 # Build Tailwind CSS 
-RUN npx tailwindcss -i ./src/tailwind.css -o ./dist/output.css
+RUN npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles/tailwind.css
 
 # ----------------------------------
 # Final image: Only includes compiled javascript + nginx

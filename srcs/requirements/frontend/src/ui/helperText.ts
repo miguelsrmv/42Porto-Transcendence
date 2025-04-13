@@ -1,4 +1,13 @@
 /**
+ * @file helperText.ts
+ * @brief Provides functionality to display helper text for menu elements.
+ * 
+ * This module includes a function that adds interactivity to menu elements by displaying
+ * helper text when the user hovers over them. This enhances the user experience by providing
+ * additional context or instructions related to the menu options.
+ */
+
+/**
  * @brief Adds helper text to a menu element.
  * 
  * This function attaches mouseover and mouseout event listeners to a menu element.

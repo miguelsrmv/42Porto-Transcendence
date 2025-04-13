@@ -1,3 +1,8 @@
+/**
+ * @file remotePlay.ts
+ * @brief Handles the setup of the remote play page.
+ */
+
 import { getGameType, createBackgroundLoop, createCharacterLoop } from "../game/gameSetup.js"
 
 /**

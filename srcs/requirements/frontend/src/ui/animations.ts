@@ -1,3 +1,11 @@
+/**
+ * @file animations.ts
+ * @brief Provides functions to add animations to UI elements on the landing page.
+ * 
+ * This module includes functions that apply various animations to elements on the landing page,
+ * enhancing the user experience with visual effects.
+ */
+
 import { wait } from "../utils/helpers.js"
 
 /**

@@ -1,3 +1,14 @@
+/**
+ * @file loginModal.ts
+ * @brief Handles the display and functionality of the login and register modals.
+ */
+
+/**
+ * @brief Toggles the visibility of the login menu.
+ * 
+ * This function hides the initial login buttons and toggles the visibility of the login form.
+ * It also sets up an event listener for the login form submission to handle user login.
+ */
 export function toggleLoginMenu(): void {
 	const initialLoginButtons = document.getElementById("initial-login-buttons");
 	if (initialLoginButtons)
@@ -46,6 +57,11 @@ export function toggleLoginMenu(): void {
 		registerButton.addEventListener("click", () => toggleRegisterMenu());
 }
 
+/**
+ * @brief Toggles the visibility between the login and register forms.
+ * 
+ * This function switches the display between the login form and the register form.
+ */
 function toggleRegisterMenu(): void {
 	const loginForm = document.getElementById("login-form");
 	const registerForm = document.getElementById("register-form");

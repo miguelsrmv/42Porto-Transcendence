@@ -1,3 +1,8 @@
+/**
+ * @file localPlay.ts
+ * @brief Handles the setup of the local play page.
+ */
+
 import { getGameType, createBackgroundLoop, createCharacterLoop } from "../game/gameSetup.js"
 
 /**

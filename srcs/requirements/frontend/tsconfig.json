@@ -8,13 +8,6 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./src",
-    "paths": {
-      "@core/*": ["core/*"],
-      "@features/*": ["features/*"],
-      "@ui/*": ["ui/*"],
-      "@services/*": ["services/*"],
-      "@utils/*": ["utils/*"],
-    },
     "sourceMap": true,
     "lib": ["ES6", "DOM", "DOM.Iterable"],
     "forceConsistentCasingInFileNames": true,

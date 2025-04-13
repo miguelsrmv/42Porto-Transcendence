@@ -1,4 +1,12 @@
 /**
+ * @file helpers.ts
+ * @brief Utility functions for asynchronous operations and template management.
+ * 
+ * This module provides utility functions to facilitate asynchronous operations
+ * and manage template IDs based on different template hosts.
+ */
+
+/**
  * @brief Pauses execution for a specified number of seconds.
  * 
  * This function returns a promise that resolves after a given number of seconds,
@@ -11,6 +19,16 @@ export function wait(seconds: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
 
+/**
+ * @brief Retrieves the template ID based on the template host.
+ * 
+ * This function maps a given template host to its corresponding template ID.
+ * It returns the appropriate template ID for known template hosts or undefined
+ * if the template host is not recognized.
+ * 
+ * @param templateHost The name of the template host.
+ * @return The corresponding template ID or undefined if not found.
+ */
 export function getTemplateId(templateHost: string): string | undefined {
     switch (templateHost) {
         case "header":

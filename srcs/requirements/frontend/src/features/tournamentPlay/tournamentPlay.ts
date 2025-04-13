@@ -1,3 +1,8 @@
+/**
+ * @file tournamentPlay.ts
+ * @brief Handles the setup of the tournamnet play page.
+ */
+
 import { getGameType, createBackgroundLoop, createCharacterLoop } from "../game/gameSetup.js"
 
 /**
