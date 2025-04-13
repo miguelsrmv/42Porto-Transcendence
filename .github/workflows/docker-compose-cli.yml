@@ -17,7 +17,7 @@ jobs:
     - name: 🧪 Install Foundry
       uses: foundry-rs/foundry-toolchain@v1
       with:
-        version: nightly
+        version: stable
 
     - name: 🧪 Run Solidity Tests with Forge
       working-directory: srcs/requirements/blockchain/tools/contracts/TournamentsStorage
