@@ -11,6 +11,7 @@ RUN npm install -g typescript tailwindcss @tailwindcss/cli
 WORKDIR /app
 
 # Copy TypeScript and Tailwind files, and their configs
+RUN mkdir -p src
 COPY ./src ./src
 COPY ./tsconfig.json ./
 COPY ./tailwind.config.js ./
@@ -20,11 +21,11 @@ COPY ./package-lock.json ./
 # Installs dependencies
 RUN npm install
 
-# Compile TypeScript files to JavaScript
-RUN tsc
+# Compile TypeScript files 
+RUN npm run build-ts
 
-# Build Tailwind CSS 
-RUN npx tailwindcss -i ./src/tailwind.css -o ./dist/output.css
+# Compile Tailwind files
+RUN npm run build-tailwind
 
 # ----------------------------------
 # Final image: Only includes compiled javascript + nginx
@@ -32,6 +33,9 @@ RUN npx tailwindcss -i ./src/tailwind.css -o ./dist/output.css
 FROM nginx:latest
 
 COPY --from=builder /app /var/www/ft_transcendence
+#TODO: Once project is finalized, change to only copy from /app/dist?
+#NOTE: AS LONG AS WE'RE ON HOT RELOADING, THE FIRST CONTAINER IS "WRONG" BECAUSE "dist/" WILL BE OVERWRITTEN BY OUR EMPTY DIST
+#FIX: Run "npm run build" or both --watch commands while on dev environment
 
 COPY ./nginx/nginx_template.conf /etc/nginx/conf.d/nginx_template.conf
 
