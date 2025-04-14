@@ -7,27 +7,20 @@
  * to load the default view and custom navigation events to switch views.
  */
 
-import { navigateTo } from "./navigation.js";
-import { setupHistoryListener, addNavigationListener } from "./events.js";
+import { initializeRouter } from './core/router.js'
 
+export let loginStatus = "";
+// #TODO: Remove loginStatus and replace it by checking JWT token
+
+export function setLoginStatus(status: string) {
+    loginStatus = status;
+}
 
 /**
  * @brief Event listener for DOMContentLoaded.
  * 
- * Triggers the loading of the default page when the DOM content is fully loaded and parsed.
+ * Initializes routing when the DOM content is fully loaded and parsed.
  */
 document.addEventListener("DOMContentLoaded", () => {
-    const initialView = "landing-page";
-
-    // Setup history listener first
-    setupHistoryListener();
-
-    // Setup global navigation listener
-    addNavigationListener();
-
-    // Replace the initial state to ensure correct history behavior
-    history.replaceState({ view: initialView }, "", `#${initialView}`);
-
-    // Navigate to the initial view
-    navigateTo(initialView);
+    initializeRouter();
 });
