@@ -9,6 +9,7 @@ contract DeployTournamentsStorage is Script {
         vm.startBroadcast();
         TournamentsStorage tournamentsStorage = new TournamentsStorage();
         console.log("Created a new TournamentsStorage contract!");
+        console.logAddress(address(tournamentsStorage));
         vm.stopBroadcast();
         return tournamentsStorage;
     }
