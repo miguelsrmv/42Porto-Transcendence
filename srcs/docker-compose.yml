@@ -38,11 +38,13 @@ services:
     build: ./requirements/blockchain
     env_file:
       - .env
-    restart: unless-stopped
+    restart: "no"
     networks:
       - private-transcendence-network
     volumes:
-      - blockchain_data:/app/blockchain
+      - ./requirements/blockchain:/app
+      - ./requirements/blockchain/conf/output:/output
+
 
 volumes:
   backend_db:
