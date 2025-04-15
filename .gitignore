@@ -2,6 +2,10 @@ data
 node_modules
 dev.db
 
+
 #TODO: put .js and .js.map files. Not here yet because of live reloading
 .js
 .js.map
+
+/secrets
+

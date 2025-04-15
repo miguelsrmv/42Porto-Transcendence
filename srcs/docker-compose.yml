@@ -39,11 +39,14 @@ services:
     build: ./requirements/blockchain
     env_file:
       - .env
-    restart: unless-stopped
+    restart: "no"
     networks:
       - private-transcendence-network
     volumes:
-      - blockchain_data:/app/blockchain
+      - ./requirements/blockchain:/app
+      - ./requirements/blockchain/conf/output:/output
+    # secrets:
+    #   - tournament_key
 
 volumes:
   backend_db:
@@ -52,14 +55,8 @@ volumes:
       type: none
       device: ${DATA_PATH}/backend_db
       o: bind
-  blockchain_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${DATA_PATH}/blockchain
-      o: bind
   node_modules:
-  # server_volume:
+    # server_volume:
     #  driver: local
     #driver_opts:
     #  type: none
@@ -73,3 +70,7 @@ networks:
   private-transcendence-network:
     name: private-transcendence-network
     driver: bridge
+
+# secrets:
+#   tournament_key:
+#     file: ../secrets/tournament_key
