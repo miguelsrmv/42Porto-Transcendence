@@ -1,4 +1,4 @@
-import '@fastify/jwt';
+import { JWT } from '@fastify/jwt';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 declare global {
