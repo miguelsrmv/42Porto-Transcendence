@@ -3,10 +3,16 @@ PRIVATE_KEY=$(cat /run/secrets/tournament_key)
 
 chown foundry:foundry /output
 
+# Uncomment the following command to deploy the contract on Avalanche Fuji Testnet
+# forge script script/DeployTournamentsStorage.s.sol:DeployTournamentsStorage \
+#     --chain 43113 \
+#     --rpc-url https://api.avax-test.network/ext/bc/C/rpc \
+#     --private-key $PRIVATE_KEY \
+#     --broadcast --verify -vvv \
+# | tee /output/deploy.log
+
+# Uncomment the following command to deploy the contract on Anvil (Foundry)
 forge script script/DeployTournamentsStorage.s.sol:DeployTournamentsStorage \
-    --chain 43113 \
-    --rpc-url https://api.avax-test.network/ext/bc/C/rpc \
-    --private-key $PRIVATE_KEY \
     --broadcast --verify -vvv \
 | tee /output/deploy.log
 
