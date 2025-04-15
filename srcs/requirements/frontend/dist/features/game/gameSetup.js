@@ -2,6 +2,15 @@
  * @file gameSetup.ts
  * @brief Handles the setup of game types, character selection, and background selection for the game.
  */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 /**
  * @brief Prompts the user to select a game type.
  *
@@ -10,18 +19,20 @@
  *
  * @return A promise that resolves to a string indicating the selected game type ("classic" or "crazy").
  */
-export async function getGameType() {
-    return new Promise((resolve) => {
-        const classicButton = document.getElementById("classic-pong-button");
-        const crazyButton = document.getElementById("crazy-pong-button");
-        if (classicButton && crazyButton) {
-            classicButton.addEventListener("click", () => {
-                resolve("classic");
-            }, { once: true });
-            crazyButton.addEventListener("click", () => {
-                resolve("crazy");
-            }, { once: true });
-        }
+export function getGameType() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => {
+            const classicButton = document.getElementById("classic-pong-button");
+            const crazyButton = document.getElementById("crazy-pong-button");
+            if (classicButton && crazyButton) {
+                classicButton.addEventListener("click", () => {
+                    resolve("classic");
+                }, { once: true });
+                crazyButton.addEventListener("click", () => {
+                    resolve("crazy");
+                }, { once: true });
+            }
+        });
     });
 }
 /**

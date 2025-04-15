@@ -1,1 +1,1 @@
-{"version":3,"file":"friends.js","sourceRoot":"","sources":["../../../src/features/friends/friends.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH;;;;EAIE;AACF,MAAM,CAAC,KAAK,UAAU,cAAc,KAAoB,CAAC"}
+{"version":3,"file":"friends.js","sourceRoot":"","sources":["../../../src/features/friends/friends.ts"],"names":[],"mappings":"AAAA;;;GAGG;;;;;;;;;;AAEH;;;;EAIE;AACF,MAAM,UAAgB,cAAc;0DAAoB,CAAC;CAAA"}
