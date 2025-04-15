@@ -30,25 +30,16 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
 	}
 }
 
-export async function userIsLoggedIn(): Promise<Boolean> {
+export async function userIsLoggedIn(): Promise<boolean> {
 	try {
-		const response = await fetch('/api/users/getLoginStatus', {
+		const response = await fetch('/api/users/checkLoginStatus', {
 			method: 'GET',
-			headers: {
-				'headers': 'include',
-			}
+			credentials: 'include', // ensures HttpOnly cookie is sent
 		});
-		if (!response.ok) {
-			// Handle non-200 response codes (e.g., 401 Unauthorized)
-			throw new Error(`HTTP error ${response.status}`);
-		}
-
-		return false;
+		return response.ok; // true if status is in 200–299 range
 
 	} catch (error) {
 		console.error("Login check failed:", error);
+		return false;
 	}
-
-	return true;
 }
-
