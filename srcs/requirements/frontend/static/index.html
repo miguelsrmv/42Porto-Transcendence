@@ -84,37 +84,70 @@
                 </div>
             </button>
         </div>
-        <form id="login-form" class="flex-grow h-full hidden" action="/api/users/login" method="post">
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="text" id="email" name="email" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button id="login-submit-button" type="submit" class="login-btn">Login</button>
-            <div> No account? Register <button id="register-button"> here! <button> </div>
-        </form>
-        <form id="register-form" class="flex-grow h-full hidden" action=# method="post">
-            <div class="register-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="register-group">
-                <label for="email">E-mail</label>
-                <input type="text" id="email" name="email" required>
+        <form id="login-form"
+            class="flex flex-col justify-center items-center h-full w-full max-w-md mx-auto p-8 bg-white shadow-xl rounded-xl hidden"
+            action="/api/users/login" method="post">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Login</h2>
+
+            <div class="w-full mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="text" id="email" name="email" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
             </div>
 
-            <div class="register-group">
-                <label for="password">Password</label>
-                <input type="text" id="password" name="password" required>
+            <div class="w-full mb-6">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input type="password" id="password" name="password" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
             </div>
-            <div class="register-group">
-                <label for="repeat-password">Repeat Password</label>
-                <input type="repeat-password" id="repeat-password" name="repeatpassword" required>
+
+            <button id="login-submit-button" type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all">
+                Login
+            </button>
+
+            <div class="mt-6 text-sm text-gray-600">
+                No account?
+                <button id="register-button" type="button" class="text-blue-600 hover:underline ml-1">
+                    Register here!
+                </button>
             </div>
-            <button type="submit" class="btn">Register</button>
+        </form>
+
+        <form id="register-form" action="#" method="post"
+            class="flex flex-col justify-center items-center h-full w-full max-w-md mx-auto p-8 bg-white shadow-xl rounded-xl hidden">
+
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Register</h2>
+
+            <div class="w-full mb-4">
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <input type="text" id="username" name="username" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            </div>
+
+            <div class="w-full mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                <input type="text" id="email" name="email" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            </div>
+
+            <div class="w-full mb-4">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input type="password" id="password" name="password" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            </div>
+
+            <div class="w-full mb-6">
+                <label for="repeat-password" class="block text-sm font-medium text-gray-700 mb-1">Repeat
+                    Password</label>
+                <input type="password" id="repeat-password" name="repeatPassword" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            </div>
+
+            <button type="submit"
+                class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-all">
+                Register
+            </button>
         </form>
     </div>
 </template>

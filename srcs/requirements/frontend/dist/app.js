@@ -7,11 +7,6 @@
  * to load the default view and custom navigation events to switch views.
  */
 import { initializeRouter } from './core/router.js';
-export let loginStatus = "";
-// #TODO: Remove loginStatus and replace it by checking JWT token
-export function setLoginStatus(status) {
-    loginStatus = status;
-}
 /**
  * @brief Event listener for DOMContentLoaded.
  *
