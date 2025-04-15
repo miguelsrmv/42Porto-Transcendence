@@ -9,13 +9,6 @@
 
 import { initializeRouter } from './core/router.js'
 
-export let loginStatus = "";
-// #TODO: Remove loginStatus and replace it by checking JWT token
-
-export function setLoginStatus(status: string) {
-    loginStatus = status;
-}
-
 /**
  * @brief Event listener for DOMContentLoaded.
  * 
