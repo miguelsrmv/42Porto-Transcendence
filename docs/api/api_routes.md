@@ -1,34 +1,36 @@
 # Endpoints
 
-| Method   | Route                      |   URL parameters    |             Body              | Description                                |
-| -------- | -------------------------- | :-----------------: | :---------------------------: | ------------------------------------------ |
-| `GET`    | `/`                        |                     |                               | Base route for test                        |
-| `GET`    | `/users`                   |                     |                               | Get all users                              |
-| `GET`    | `/users/:id`               |    `id` user id     |                               | Get a specific user                        |
-| `POST`   | `/users`                   |                     | username, email and password  | Create a new user                          |
-| `PATCH`  | `/users/:id`               |    `id` user id     |        data to update         | Update data on a specific user             |
-| `DELETE` | `/users/:id`               |    `id` user id     |                               | Delete a user                              |
-| `POST`   | `/users/login`             |                     |      email and password       | Get JWT (if user is valid)                 |
-| `GET`    | `/players`                 |                     |                               | Get all players                            |
-| `GET`    | `/players/:id`             |   `id` player id    |                               | Get a specific player                      |
-| `PATCH`  | `/players/:id`             |   `id` player id    |        data to update         | Update data on a specific player           |
-| `GET`    | `/players/:id/friends`     |   `id` player id    |                               | Get all friends of that player             |
-| `GET`    | `/players/:id/stats`       |   `id` player id    |                               | Get match stats of that player             |
-| `POST`   | `/friends`                 |                     |     playerId and friendId     | Create a friendship between two players    |
-| `PATCH`  | `/friends/:id`             | `id` friendship id  |            status             | Update friendship status                   |
-| `DELETE` | `/friends/:id`             | `id` friendship id  |                               | Delete a friendship                        |
-| `GET`    | `/matches`                 |                     |                               | Get all matches                            |
-| `GET`    | `/matches/player/:id`      |   `id` player id    |                               | Get all matches from a specific player     |
-| `GET`    | `/matches/:id`             |    `id` match id    |                               | Get a specific match                       |
-| `POST`   | `/matches`                 |                     |    player1Id and player2Id    | Create a match                             |
-| `PATCH`  | `/matches/:id`             |    `id` match id    |        data to update         | Update data on a specific match            |
-| `GET`    | `/tournaments`             |                     |                               | Get all tournaments                        |
-| `GET`    | `/tournaments/player/:id`  |   `id` player id    |                               | Get all tournaments from a specific player |
-| `GET`    | `/tournaments/:id`         | `id` tournaments id |                               | Get a specific tournament                  |
-| `POST`   | `/tournaments`             |                     | maxParticipants and createdBy | Create a tournament                        |
-| `PATCH`  | `/tournaments/:id`         | `id` tournaments id |        data to update         | Update data on a specific tournament       |
-| `DELETE` | `/tournaments/:id`         | `id` tournaments id |                               | Delete a tournament                        |
-| `POST`   | `/tournaments/participant` |                     | playerId, alias and character | Create a tournamentParticipant entry       |
+| Method   | Route                      |   URL parameters    |                     Body                     | Description                                |
+| -------- | -------------------------- | :-----------------: | :------------------------------------------: | ------------------------------------------ |
+| `GET`    | `/`                        |                     |                                              | Base route for test                        |
+| `GET`    | `/users`                   |                     |                                              | Get all users                              |
+| `GET`    | `/users/:id`               |    `id` user id     |                                              | Get a specific user                        |
+| `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                          |
+| `PATCH`  | `/users/:id`               |    `id` user id     |                data to update                | Update data on a specific user             |
+| `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                              |
+| `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)                 |
+| `DELETE` | `/users/logout`            |                     |                                              | Logout user                                |
+| `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in                 |
+| `GET`    | `/players`                 |                     |                                              | Get all players                            |
+| `GET`    | `/players/:id`             |   `id` player id    |                                              | Get a specific player                      |
+| `PATCH`  | `/players/:id`             |   `id` player id    |                data to update                | Update data on a specific player           |
+| `GET`    | `/players/:id/friends`     |   `id` player id    |                                              | Get all friends of that player             |
+| `GET`    | `/players/:id/stats`       |   `id` player id    |                                              | Get match stats of that player             |
+| `POST`   | `/friends`                 |                     |            playerId and friendId             | Create a friendship between two players    |
+| `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                   |
+| `DELETE` | `/friends/:id`             | `id` friendship id  |                                              | Delete a friendship                        |
+| `GET`    | `/matches`                 |                     |                                              | Get all matches                            |
+| `GET`    | `/matches/player/:id`      |   `id` player id    |                                              | Get all matches from a specific player     |
+| `GET`    | `/matches/:id`             |    `id` match id    |                                              | Get a specific match                       |
+| `POST`   | `/matches`                 |                     |           player1Id and player2Id            | Create a match                             |
+| `PATCH`  | `/matches/:id`             |    `id` match id    |                data to update                | Update data on a specific match            |
+| `GET`    | `/tournaments`             |                     |                                              | Get all tournaments                        |
+| `GET`    | `/tournaments/player/:id`  |   `id` player id    |                                              | Get all tournaments from a specific player |
+| `GET`    | `/tournaments/:id`         | `id` tournaments id |                                              | Get a specific tournament                  |
+| `POST`   | `/tournaments`             |                     |        maxParticipants and createdBy         | Create a tournament                        |
+| `PATCH`  | `/tournaments/:id`         | `id` tournaments id |                data to update                | Update data on a specific tournament       |
+| `DELETE` | `/tournaments/:id`         | `id` tournaments id |                                              | Delete a tournament                        |
+| `POST`   | `/tournaments/participant` |                     |        playerId, alias and character         | Create a tournamentParticipant entry       |
 
 ## Base
 
@@ -38,7 +40,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ## Users
 
-- **Get all users:** `GET /users`
+- **Get all users (Protected):** `GET /users`
 - **Get a specific user:** `GET /users/:id`
 - **Create a new user:** `POST /users`
 
@@ -46,7 +48,8 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 {
   "username": "new_user_name",
   "email": "new_user@email.com",
-  "password": "password"
+  "password": "password",
+  "repeatPassword": "password"
 }
 ```
 
@@ -81,13 +84,10 @@ Content-Type: application/json
 }
 ```
 
-**Usage in Authorization Header:**
+**Note:** The token will be saved in a Cookie `access_token`. Requests to protected routes require this cookie to be set with a valid token.
 
-```http
-GET http://localhost:3000/<protected_route> HTTP/1.1
-Authorization: Bearer <JWT>
-
-```
+- **Check if user is logged in:** `GET /users/checkLoginStatus`
+- **Logout a user:** `DELETE /users/logout`
 
 ## Players
 
@@ -181,15 +181,15 @@ Authorization: Bearer <JWT>
 
 ```json
 {
-  "tournamentId": "<id>",  // optional, if not present, a new tournament is created
-	"playerId": "<id>",
-	"alias": "newAlias",
-	"character": "NONE"  // MARIO, LINK, PIKACHU, SONIC, KIRBY, YOSHI, SAMUS, DK, MEWTWO
+  "tournamentId": "<id>", // optional, if not present, a new tournament is created
+  "playerId": "<id>",
+  "alias": "newAlias",
+  "character": "NONE" // MARIO, LINK, PIKACHU, SONIC, KIRBY, YOSHI, SAMUS, DK, MEWTWO
 }
 ```
 
 ### Notes
 
-- **Protected routes** require the `Authorization: Bearer <JWT>` header.
+- **Protected routes** require the `access_token` cookie to be set.
 - **Ensure `Content-Type: application/json`** is included in `POST` and `PATCH` requests.
 - **Replace base API URL** (`backend:3000/api`) with `localhost:3000` if running locally.

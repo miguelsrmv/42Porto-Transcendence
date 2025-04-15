@@ -15,7 +15,8 @@ content-type: application/json
 {
 	"username": "newUser3",
 	"email": "newUser2@gmail.com",
-	"password": "secure123441"
+	"password": "secure123441",
+	"repeatPassword": "secure123441"
 }
 
 ### Update user info (only username and/or email, for now)
@@ -35,6 +36,9 @@ POST http://localhost:3000/users/login HTTP/1.1
 content-type: application/json
 
 {
-	"email": "test@gmail.com",
-	"password": "secure123"
+	"email": "newUser2@gmail.com",
+	"password": "secure123441"
 }
+
+### Check Login status
+GET http://localhost:3000/users/checkLoginStatus HTTP/1.1
