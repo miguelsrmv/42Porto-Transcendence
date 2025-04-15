@@ -3,6 +3,8 @@
  * @brief Handles the display and functionality of the login and register modals.
  */
 
+import { getToken, setToken } from "./token.js"
+
 /**
  * @brief Toggles the visibility of the login menu.
  * 
@@ -44,7 +46,8 @@ export function toggleLoginMenu(): void {
 			}
 
 			const result = await response.json();
-			console.log("Login successful:", result);
+			setToken(result.token);
+			window.location.hash = "main-menu-page";
 			// Handle success (e.g., redirect or store token)
 		} catch (error) {
 			console.error("Login failed:", error);
@@ -55,6 +58,7 @@ export function toggleLoginMenu(): void {
 	const registerButton = document.getElementById("register-button");
 	if (registerButton)
 		registerButton.addEventListener("click", () => toggleRegisterMenu());
+	//#TODO: Register behaviour
 }
 
 /**
@@ -70,4 +74,40 @@ function toggleRegisterMenu(): void {
 		loginForm.classList.toggle("hidden");
 		registerForm.classList.toggle("hidden");
 	}
+
+	document.getElementById("register-form")?.addEventListener("submit", async function(event) {
+		event.preventDefault();
+
+		const formData = new FormData(this as HTMLFormElement);
+
+		const data: { [key: string]: string } = {};
+		formData.forEach((value, key) => {
+			data[key] = value.toString();
+		});
+
+		console.log("Sent register data: ", data);
+
+		try {
+			const response = await fetch('api/users', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (!response.ok) {
+				// Handle non-200 response codes (e.g., 401 Unauthorized)
+				throw new Error(`HTTP error ${response.status}`);
+			}
+
+			const result = await response.json();
+			setToken(result.token);
+			window.location.hash = "main-menu-page";
+			// Handle success (e.g., redirect or store token)
+		} catch (error) {
+			console.error("Register failed:", error);
+			// Handle errors (e.g., show error message to user)
+		}
+	});
 }
