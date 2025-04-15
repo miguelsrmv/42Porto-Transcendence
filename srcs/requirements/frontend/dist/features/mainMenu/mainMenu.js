@@ -2,19 +2,20 @@
  * @file mainMenu.ts
  * @brief Handles the setup of the main menu page.
  */
-import { loginStatus } from "../../app.js";
 import { showMenuHelperText } from "../../ui/helperText.js";
+import { getToken } from "../auth/token.js";
 /**
 * @brief Initializes view for main menu
 *
 * This function sets up the main menu, depending on if the user has logged in or not
 */
 export function initializeView() {
-    if (loginStatus === "login")
+    console.log("Here's the token! ", getToken());
+    if (getToken())
         document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
             showMenuHelperText(anchor);
         });
-    else if (loginStatus === "guest") {
+    else {
         const availableButton = document.getElementById("local-play-button");
         if (availableButton)
             showMenuHelperText(availableButton);

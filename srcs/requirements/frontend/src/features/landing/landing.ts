@@ -5,7 +5,6 @@
 
 import { toggleLoginMenu } from "../auth/loginModal.js"
 import { setLandingAnimations } from "../../ui/animations.js"
-import { setLoginStatus } from "../../app.js"
 
 /**
  * @brief Adds event listeners for the landing view.
@@ -31,10 +30,8 @@ export function initializeView(): void {
 	if (loginButton && guestButton) {
 		loginButton.addEventListener("click", () => {
 			toggleLoginMenu();
-			setLoginStatus("login");
 		}, { once: true });
 		guestButton.addEventListener("click", () => {
-			setLoginStatus("guest");
 		}, { once: true });
 	}
 
