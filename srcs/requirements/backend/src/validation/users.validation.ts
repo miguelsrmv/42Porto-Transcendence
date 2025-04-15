@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UserCreate } from '../controllers/user.controller';
 
-export function userCreateValidation(
+export async function userCreateValidation(
   request: FastifyRequest<{ Body: UserCreate }>,
   reply: FastifyReply,
 ) {
