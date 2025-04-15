@@ -13,7 +13,7 @@ export function toggleLoginMenu() {
         loginForm.classList.toggle("hidden");
         if (!loginFormListenerAttached) {
             if (loginForm instanceof HTMLFormElement) {
-                loginForm.addEventListener("submit", function (event) {
+                loginForm.addEventListener("submit", function(event) {
                     attemptLogin.call(this, event);
                 });
                 loginFormListenerAttached = true;
@@ -34,7 +34,7 @@ function toggleRegisterMenu() {
         loginForm.classList.toggle("hidden");
         registerForm.classList.toggle("hidden");
     }
-    document.getElementById("register-form")?.addEventListener("submit", async function (event) {
+    document.getElementById("register-form")?.addEventListener("submit", async function(event) {
         event.preventDefault();
         const formData = new FormData(this);
         const data = {};

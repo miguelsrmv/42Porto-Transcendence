@@ -85,7 +85,7 @@ function toggleRegisterMenu(): void {
 			data[key] = value.toString();
 		});
 
-		console.log("Sent register data: ", data);
+		console.log("Sent register body: ", JSON.stringify(data));
 
 		try {
 			const response = await fetch('api/users', {
