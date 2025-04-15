@@ -7,6 +7,8 @@
  * to perform these operations.
  */
 
+import { loginErrorMessages } from "../../constants/errorMessages.js"
+
 /**
  * @brief Attempts to log in a user.
  * 
@@ -30,9 +32,15 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
 		});
 
 		if (!response.ok) {
-			// TODO: Show error message on Login Modal?? Or perhaps do it on the modal function itself?
-			// Handle non-200 response codes (e.g., 401 Unauthorized)
-			throw new Error(`HTTP error ${response.status}`);
+			//TODO: Remove before delivering project!?
+			console.error(`HTTP error" ${response.status}`);
+			console.log("Response:", response);
+			const errorLoginMessage = document.getElementById("error-login-message");
+			if (errorLoginMessage) {
+				errorLoginMessage.classList.toggle("hidden");
+				const errorMessage = await response.json();
+				errorLoginMessage.innerText = loginErrorMessages[errorMessage.message];
+			}
 		}
 
 		window.location.hash = "main-menu-page";
