@@ -64,10 +64,11 @@ echo "✅ Services are exposing expected ports."
 
 # 7️⃣ Check Backend API
 echo "🌍 Testing backend API..."
+sleep(5)
 if curl -fs http://localhost:3000; then
   echo "✅ Backend API is responding."
 else
-  echo "❌ Backend API is not responding!"
+  echo "$? ❌ Backend API is not responding!"
   exit 1
 fi
 
