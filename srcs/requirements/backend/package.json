@@ -3,23 +3,21 @@
   "version": "1.0.0",
   "description": "Fastify API with Prisma as the ORM and SQlite as the database",
   "main": "dist/app.js",
-  "engines": {
-    "npm": ">=11.0.0 <12.0.0",
-    "node": ">=23.0.0 <24.0.0"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "populate": "npx tsx scripts/populate_db.ts",
-    "start": "node dist/server.js",
+    "start": "nodemon dist/src/server.js",
     "dev": "npx tsx src/server.ts",
+    "dev-build": "tsc --watch",
     "test": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^9.0.4",
-    "@prisma/client": "^6.6.0",
+    "@prisma/client": "^6.5.0",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1",
@@ -32,8 +30,9 @@
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "nodemon": "^3.1.9",
     "prettier": "^3.5.3",
-    "prisma": "^6.6.0",
+    "prisma": "^6.5.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1",
