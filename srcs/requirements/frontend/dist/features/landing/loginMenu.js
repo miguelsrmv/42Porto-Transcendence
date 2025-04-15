@@ -28,8 +28,8 @@ export function toggleLoginMenu() {
  * This function switches the display between the login form and the register form.
  */
 function toggleRegisterMenu() {
-    document.getElementById("login-form")?.classList.add("hidden");
-    document.getElementById("register-form")?.classList.add("hidden");
+    document.getElementById("login-form")?.classList.toggle("hidden");
+    document.getElementById("register-form")?.classList.toggle("hidden");
     document.getElementById("register-form")?.addEventListener("submit", async function (event) {
         event.preventDefault();
         const formData = new FormData(this);
@@ -51,8 +51,8 @@ function toggleRegisterMenu() {
                 throw new Error(`HTTP error ${response.status}`);
             }
             // If registry was successful, back to login form
-            document.getElementById("login-form")?.classList.add("hidden");
-            document.getElementById("register-form")?.classList.add("hidden");
+            document.getElementById("login-form")?.classList.toggle("hidden");
+            document.getElementById("register-form")?.classList.toggle("hidden");
             // Handle success (e.g., redirect or store token)
         }
         catch (error) {
