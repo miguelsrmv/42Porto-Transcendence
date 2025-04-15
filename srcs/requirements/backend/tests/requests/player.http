@@ -16,3 +16,6 @@ content-type: application/json
 	"name": "modified",
 	"bio": "I am the greatest!"
 }
+
+### Get player stats
+GET http://localhost:3000/players/<id>/stats HTTP/1.1

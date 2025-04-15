@@ -1,9 +1,14 @@
 /* Script to interact with the database */
-import { Player } from '@prisma/client';
+import { MatchMode, Player } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
 const NUMBER_OF_USERS = 16;
+
+// This is the test user
+const USERNAME = 'ana123';
+const EMAIL = 'ana123@example.com';
+const TEST_PASSWORD = '123456789';
 
 async function seedUsers() {
   await prisma.user.deleteMany();
@@ -38,7 +43,7 @@ async function createTournaments(players: Player[]) {
   for (let i = 0; i < players.length; i += tournamentSize) {
     const participants = players.slice(i, i + tournamentSize);
     if (participants.length === tournamentSize) {
-      await prisma.tournament.create({
+      const tournament = await prisma.tournament.create({
         data: {
           name: `Tournament ${Math.floor(i / tournamentSize) + 1}`,
           maxParticipants: tournamentSize,
@@ -48,6 +53,15 @@ async function createTournaments(players: Player[]) {
           },
         },
       });
+      for (let j = 0; j < tournamentSize; j += 1) {
+        await prisma.tournamentParticipant.create({
+          data: {
+            alias: faker.internet.username(),
+            tournamentId: tournament.id,
+            playerId: players[j].id,
+          },
+        });
+      }
     }
   }
 }
@@ -68,6 +82,53 @@ async function createMatches(players: Player[]) {
   }
 }
 
+async function createTestUser(players: Player[]) {
+  const testUser = await prisma.user.create({
+    data: {
+      username: USERNAME,
+      email: EMAIL,
+      hashedPassword: TEST_PASSWORD,
+    },
+    include: {
+      player: true,
+    },
+  });
+  for (let index = 0; index < players.length / 2; index++) {
+    const friendId = players[(index + 1) % players.length].id;
+    await prisma.friendship.create({
+      data: {
+        playerId: testUser.player!.id,
+        friendId: friendId,
+      },
+    });
+  }
+  for (let i = 0; i < players.length; i += 1) {
+    const match = await prisma.match.create({
+      data: {
+        settings: '',
+        player1Id: testUser.player!.id,
+        player2Id: players[i].id,
+      },
+    });
+    if (Math.random() < 0.5) {
+      await prisma.match.update({
+        where: { id: match.id },
+        data: {
+          winnerId: testUser.player!.id,
+        },
+      });
+    }
+    if (Math.random() < 0.5) {
+      await prisma.match.update({
+        where: { id: match.id },
+        data: {
+          mode: MatchMode.CUSTOM,
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   try {
     await seedUsers();
@@ -75,6 +136,7 @@ async function main() {
     await createFriends(players);
     await createTournaments(players);
     await createMatches(players);
+    await createTestUser(players);
     if (await prisma.user.findMany({ include: { player: true } }))
       console.log('Database populated successfully.');
   } catch (e) {

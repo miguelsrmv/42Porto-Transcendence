@@ -3,10 +3,11 @@ import { prisma } from '../utils/prisma';
 import { verifyPassword } from '../utils/hash';
 import { handleError } from '../utils/errorHandler';
 
-type UserCreate = {
+export type UserCreate = {
   username: string;
   email: string;
   password: string;
+  repeatPassword: string;
 };
 
 type UserLogin = {
@@ -17,7 +18,7 @@ type UserLogin = {
 type UserUpdate = {
   username?: string;
   email?: string;
-}
+};
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -117,8 +118,24 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
       },
     });
 
+    reply.setCookie('access_token', token, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      maxAge: 2 * 60 * 60, // Valid for 2h
+    });
     reply.send({ token });
   } catch (error) {
     handleError(error, reply);
   }
+}
+
+export async function checkLoginStatus(request: FastifyRequest, reply: FastifyReply) {
+  const token = request.cookies.access_token;
+  if (token) reply.send('User is logged in');
+}
+
+export async function logout(request: FastifyRequest, reply: FastifyReply) {
+  reply.clearCookie('access_token');
+  reply.send({ message: 'Logout successful!' });
 }

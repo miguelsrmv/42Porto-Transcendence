@@ -1,4 +1,5 @@
 import fastify from 'fastify';
+import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import { userRoutes } from './routes/user.routes';
 import jwtPlugin from './middlewares/auth';
 import dotenv from 'dotenv';
@@ -18,6 +19,11 @@ const app = fastify({
     },
   },
 });
+
+app.register(cookie, {
+  secret: process.env.COOKIE_SECRET,
+  hook: 'onRequest',
+} as FastifyCookieOptions);
 
 app.register(jwtPlugin);
 

@@ -9,6 +9,7 @@ export const createUserSchema = {
       email: { type: 'string', format: 'email' },
       username: { type: 'string', minLength: 3 },
       password: { type: 'string', minLength: 6 },
+      repeatPassword: { type: 'string', minLength: 6 },
     },
     additionalProperties: false,
   },
