@@ -128,3 +128,8 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
     handleError(error, reply);
   }
 }
+
+export async function checkLoginStatus(request: FastifyRequest, reply: FastifyReply) {
+  const token = request.cookies.access_token;
+  if (token) reply.send('User is logged in');
+}
