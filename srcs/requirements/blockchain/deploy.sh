@@ -1,5 +1,6 @@
 #!/bin/sh
-PRIVATE_KEY=$(cat /run/secrets/tournament_key)
+# Uncomment the following line to deploy the contract on Avalanche Fuji Testnet
+#PRIVATE_KEY=$(cat /run/secrets/tournament_key)
 
 chown foundry:foundry /output
 
