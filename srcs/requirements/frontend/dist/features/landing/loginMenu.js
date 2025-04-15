@@ -13,7 +13,7 @@ export function toggleLoginMenu() {
         loginForm.classList.toggle("hidden");
         if (!loginFormListenerAttached) {
             if (loginForm instanceof HTMLFormElement) {
-                loginForm.addEventListener("submit", function(event) {
+                loginForm.addEventListener("submit", function (event) {
                     attemptLogin.call(this, event);
                 });
                 loginFormListenerAttached = true;
@@ -28,19 +28,16 @@ export function toggleLoginMenu() {
  * This function switches the display between the login form and the register form.
  */
 function toggleRegisterMenu() {
-    const loginForm = document.getElementById("login-form");
-    const registerForm = document.getElementById("register-form");
-    if (loginForm && registerForm) {
-        loginForm.classList.toggle("hidden");
-        registerForm.classList.toggle("hidden");
-    }
-    document.getElementById("register-form")?.addEventListener("submit", async function(event) {
+    document.getElementById("login-form")?.classList.add("hidden");
+    document.getElementById("register-form")?.classList.add("hidden");
+    document.getElementById("register-form")?.addEventListener("submit", async function (event) {
         event.preventDefault();
         const formData = new FormData(this);
         const data = {};
         formData.forEach((value, key) => {
             data[key] = value.toString();
         });
+        console.log("Here's the sent body: ", JSON.stringify(data));
         try {
             const response = await fetch('api/users', {
                 method: 'POST',
@@ -54,11 +51,8 @@ function toggleRegisterMenu() {
                 throw new Error(`HTTP error ${response.status}`);
             }
             // If registry was successful, back to login form
-            if (loginForm && registerForm) {
-                loginForm.classList.toggle("hidden");
-                registerForm.classList.toggle("hidden");
-            }
-            window.location.hash = "main-menu-page";
+            document.getElementById("login-form")?.classList.add("hidden");
+            document.getElementById("register-form")?.classList.add("hidden");
             // Handle success (e.g., redirect or store token)
         }
         catch (error) {
