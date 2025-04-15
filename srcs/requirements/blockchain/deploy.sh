@@ -1,12 +1,12 @@
 #!/bin/sh
+PRIVATE_KEY=$(cat /run/secrets/tournament_key)
 
 chown foundry:foundry /output
 
 forge script script/DeployTournamentsStorage.s.sol:DeployTournamentsStorage \
     --chain 43113 \
-    --rpc-url $AVALANCHE_FUJI_TESTNET_RPC_URL \
-    --account tournamentKey \
-    --sender 0x425Dc61294C00b7822EC3dbf6d77819a858cfBf5 \
+    --rpc-url https://api.avax-test.network/ext/bc/C/rpc \
+    --private-key $PRIVATE_KEY \
     --broadcast --verify -vvvv \
 | tee /output/deploy.log
 
