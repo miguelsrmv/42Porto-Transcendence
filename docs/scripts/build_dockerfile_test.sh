@@ -75,7 +75,7 @@ fi
 
 # 8️⃣ Check Backend API
 echo "🌍 Testing backend API..."
-if curl -fs http://localhost:3000/health; then
+if curl -fs http://localhost:3000/; then
   echo "✅ Backend API is responding."
 else
   echo "❌ Backend API is not responding!"
