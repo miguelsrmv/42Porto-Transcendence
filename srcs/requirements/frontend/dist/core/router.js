@@ -87,7 +87,6 @@ const handleLinkClick = (event) => {
  * @brief Handles the popstate event for browser navigation (back/forward).
  */
 const handlePopState = () => {
-    console.log("Popstate event triggered");
     // When user clicks back/forward, handle the route change
     // The URL hash has already been updated by the browser
     handleRouteChange();
