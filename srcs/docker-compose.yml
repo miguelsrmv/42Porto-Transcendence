@@ -54,12 +54,6 @@ volumes:
       type: none
       device: ${DATA_PATH}/backend_db
       o: bind
-  blockchain_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${DATA_PATH}/blockchain
-      o: bind
   node_modules:
     # server_volume:
     #  driver: local
