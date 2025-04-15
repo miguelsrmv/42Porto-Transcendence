@@ -1,4 +1,4 @@
-import { setToken, attemptLogin } from "../auth/auth.service.js"
+import { attemptLogin } from "../auth/auth.service.js"
 
 let loginFormListenerAttached = false;
 
@@ -51,6 +51,8 @@ function toggleRegisterMenu(): void {
 		formData.forEach((value, key) => {
 			data[key] = value.toString();
 		});
+
+		console.log("Here's the sent body: ", JSON.stringify(data));
 
 		try {
 			const response = await fetch('api/users', {
