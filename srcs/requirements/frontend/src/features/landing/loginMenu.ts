@@ -66,15 +66,15 @@ function toggleRegisterMenu(): void {
 				});
 				registerFormListenerAttached = true;
 			}
-		}
 
-		document.getElementById("back-register-button")?.addEventListener("click", () => {
-			registerForm.classList.add("hidden")
-			const loginForm = document.getElementById("login-form");
-			if (loginForm) {
-				loginForm.classList.toggle("hidden");
-			}
-		});
+			document.getElementById("back-register-button")?.addEventListener("click", () => {
+				registerForm.classList.toggle("hidden")
+				const loginForm = document.getElementById("login-form");
+				if (loginForm) {
+					loginForm.classList.toggle("hidden");
+				}
+			});
+		}
 	}
 }
 
