@@ -44,7 +44,8 @@ services:
     volumes:
       - ./requirements/blockchain:/app
       - ./requirements/blockchain/conf/output:/output
-
+    secrets:
+      - tournament_key
 
 volumes:
   backend_db:
@@ -60,7 +61,7 @@ volumes:
       device: ${DATA_PATH}/blockchain
       o: bind
   node_modules:
-  # server_volume:
+    # server_volume:
     #  driver: local
     #driver_opts:
     #  type: none
@@ -74,3 +75,7 @@ networks:
   private-transcendence-network:
     name: private-transcendence-network
     driver: bridge
+
+secrets:
+  tournament_key:
+    file: ../secrets/tournament_key
