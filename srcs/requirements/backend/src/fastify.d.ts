@@ -24,5 +24,12 @@ declare module 'fastify' {
   interface FastifyRequest {
     jwtVerify: () => Promise<void>;
     user: JwtUserPayload;
+    jwt: JWT;
+  }
+}
+
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    user: JwtUserPayload
   }
 }
