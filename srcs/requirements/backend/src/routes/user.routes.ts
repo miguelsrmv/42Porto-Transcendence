@@ -22,5 +22,5 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
   fastify.post('/login', { schema: loginSchema }, login);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
-  fastify.delete('logout', { onRequest: [fastify.jwtAuth] }, logout);
+  fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
 }
