@@ -3,10 +3,11 @@ import { prisma } from '../utils/prisma';
 import { verifyPassword } from '../utils/hash';
 import { handleError } from '../utils/errorHandler';
 
-type UserCreate = {
+export type UserCreate = {
   username: string;
   email: string;
   password: string;
+  repeatPassword: string;
 };
 
 type UserLogin = {
