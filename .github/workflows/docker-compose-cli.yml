@@ -47,6 +47,7 @@ jobs:
     - name: 📜 Show Docker Logs (if failure)
       if: failure()
       run: |
+        cd srcs
         docker compose logs
 
     - name: 🛑 Stop and Clean Up
