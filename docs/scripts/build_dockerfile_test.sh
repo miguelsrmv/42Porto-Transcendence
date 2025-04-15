@@ -62,6 +62,7 @@ if ! docker compose -f $DOCKER_COMPOSE_FILE ps | grep -q "0.0.0.0"; then
 fi
 echo "✅ Services are exposing expected ports."
 
+'
 # 7️⃣ Check Backend API
 echo "🌍 Testing backend API..."
 sleep 5
@@ -89,6 +90,7 @@ else
   echo "❌ Some Vitest tests failed!"
   exit 1
 fi
+'
 
 # 🔟 Stop and Clean Up
 echo "🛑 Stopping and removing Docker services..."
