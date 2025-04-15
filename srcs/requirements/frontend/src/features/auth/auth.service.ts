@@ -7,7 +7,7 @@
  * to perform these operations.
  */
 
-import { loginErrorMessages } from "../../constants/errorMessages.js"
+import { loginErrorMessages, registerErrorMessages } from "../../constants/errorMessages.js"
 
 /**
  * @brief Attempts to log in a user.
@@ -35,11 +35,12 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
 			//TODO: Remove before delivering project!?
 			console.error(`HTTP error" ${response.status}`);
 			console.log("Response:", response);
-			const errorLoginMessage = document.getElementById("error-login-message");
-			if (errorLoginMessage) {
-				errorLoginMessage.classList.toggle("hidden");
+			const errorLoginMessageContainer = document.getElementById("error-login-message");
+			if (errorLoginMessageContainer) {
+				errorLoginMessageContainer.classList.remove("hidden");
 				const errorMessage = await response.json();
-				errorLoginMessage.innerText = loginErrorMessages[errorMessage.message];
+				errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+				return;
 			}
 		}
 
@@ -72,23 +73,27 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
 			},
 			body: JSON.stringify(data),
 		});
-
 		if (!response.ok) {
-			// TODO: Show error message on register modal?
-			// Handle non-200 response codes (e.g., 401 Unauthorized)
-			throw new Error(`HTTP error ${response.status}`);
+			//TODO: Remove before delivering project!?
+			console.error(`HTTP error" ${response.status}`);
+			console.log("Response:", response);
+			const errorRegisterMessageContainer = document.getElementById("error-register-message");
+			if (errorRegisterMessageContainer) {
+				errorRegisterMessageContainer.classList.remove("hidden");
+				const errorMessage = await response.json();
+				errorRegisterMessageContainer.innerText = registerErrorMessages[errorMessage.message];
+				return;
+			}
 		}
 
 		// If registry was successful, back to login form
 		document.getElementById("login-form")?.classList.toggle("hidden");
 		document.getElementById("register-form")?.classList.toggle("hidden");
 
-		// Handle success (e.g., redirect or store token)
 	} catch (error) {
 		console.error("Register failed:", error);
 		// Handle errors (e.g., show error message to user)
 	}
-
 }
 
 /**
