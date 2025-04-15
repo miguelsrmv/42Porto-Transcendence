@@ -7,7 +7,7 @@ forge script script/DeployTournamentsStorage.s.sol:DeployTournamentsStorage \
     --chain 43113 \
     --rpc-url https://api.avax-test.network/ext/bc/C/rpc \
     --private-key $PRIVATE_KEY \
-    --broadcast --verify -vvvv \
+    --broadcast --verify -vvv \
 | tee /output/deploy.log
 
 grep '0: contract TournamentsStorage' /output/deploy.log | awk '{print $4}' > /output/blockchain_address.txt
