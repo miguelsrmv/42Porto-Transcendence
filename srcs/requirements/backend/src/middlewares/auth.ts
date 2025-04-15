@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
-import jwt, { FastifyJWT, FastifyJwtVerifyOptions } from '@fastify/jwt';
+import jwt from '@fastify/jwt';
 
 async function jwtAuth(fastify: FastifyInstance) {
   if (!process.env.JWT_SIGN_SECRET) {
@@ -8,18 +8,20 @@ async function jwtAuth(fastify: FastifyInstance) {
   }
   fastify.register(jwt, {
     secret: process.env.JWT_SIGN_SECRET as string,
+    cookie: {
+      cookieName: 'access_token',
+      signed: false,
+    },
   });
 
   fastify.decorate(
     'jwtAuth',
     async function (request: FastifyRequest, reply: FastifyReply): Promise<void> {
       try {
-        const token = request.cookies.access_token as any;
-        console.log('Access token:', request.cookies.access_token);
+        const token = request.cookies.access_token;
         if (!token) return reply.status(401).send({ message: 'Authentication required' });
-        await request.jwtVerify(token);
+        await request.jwtVerify();
       } catch (err) {
-        console.log(err);
         reply.send(err);
       }
     },
