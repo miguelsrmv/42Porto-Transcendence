@@ -1,6 +1,7 @@
-import { attemptLogin } from "../auth/auth.service.js"
+import { attemptLogin, attemptRegister } from "../auth/auth.service.js"
 
 let loginFormListenerAttached = false;
+let registerFormListenerAttached = false;
 
 /**
  * @brief Toggles the visibility of the login menu.
@@ -32,46 +33,25 @@ export function toggleLoginMenu(): void {
  * @brief Toggles the visibility between the login and register forms.
  * 
  * This function switches the display between the login form and the register form.
+ * It also sets up an event listener for the register form submission to handle user registration.
  */
 function toggleRegisterMenu(): void {
 	document.getElementById("login-form")?.classList.toggle("hidden");
-	document.getElementById("register-form")?.classList.toggle("hidden");
 
-	document.getElementById("register-form")?.addEventListener("submit", async function(event) {
-		event.preventDefault();
+	const registerForm = document.getElementById("register-form");
 
-		const formData = new FormData(this as HTMLFormElement);
+	if (registerForm) {
 
-		const data: { [key: string]: string } = {};
-		formData.forEach((value, key) => {
-			data[key] = value.toString();
-		});
+		registerForm.classList.toggle("hidden");
 
-		console.log("Here's the sent body: ", JSON.stringify(data));
-
-		try {
-			const response = await fetch('api/users', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
-			});
-
-			if (!response.ok) {
-				// Handle non-200 response codes (e.g., 401 Unauthorized)
-				throw new Error(`HTTP error ${response.status}`);
+		if (!registerFormListenerAttached) {
+			if (registerForm instanceof HTMLFormElement) {
+				registerForm.addEventListener("submit", function(event) {
+					attemptRegister.call(this, event);
+				});
+				registerFormListenerAttached = true;
 			}
-
-			// If registry was successful, back to login form
-			document.getElementById("login-form")?.classList.toggle("hidden");
-			document.getElementById("register-form")?.classList.toggle("hidden");
-
-			// Handle success (e.g., redirect or store token)
-		} catch (error) {
-			console.error("Register failed:", error);
-			// Handle errors (e.g., show error message to user)
 		}
-	});
+	}
 }
 
