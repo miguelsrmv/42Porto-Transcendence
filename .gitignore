@@ -9,3 +9,6 @@ dev.db
 
 /secrets
 
+*.log
+blockchain_address.txt
+**/output/
