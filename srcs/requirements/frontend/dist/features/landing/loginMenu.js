@@ -56,6 +56,13 @@ function toggleRegisterMenu() {
                 registerFormListenerAttached = true;
             }
         }
+        document.getElementById("back-register-button")?.addEventListener("click", () => {
+            registerForm.classList.add("hidden");
+            const loginForm = document.getElementById("login-form");
+            if (loginForm) {
+                loginForm.classList.toggle("hidden");
+            }
+        });
     }
 }
 //# sourceMappingURL=loginMenu.js.map
