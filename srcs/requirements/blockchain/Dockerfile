@@ -2,9 +2,9 @@ FROM ghcr.io/foundry-rs/foundry:stable
 
 WORKDIR /home/foundry/blockchain
 
-COPY ./srcs/requirements/blockchain/tools/contracts/ .
-COPY ./srcs/requirements/blockchain/conf/keystores/tournamentKey /home/foundry/.foundry/keystores/tournamentKey
-COPY ./srcs/requirements/blockchain/deploy.sh .
+COPY ./tools/contracts/ .
+COPY ./conf/keystores/tournamentKey /home/foundry/.foundry/keystores/tournamentKey
+COPY ./deploy.sh .
 
 USER root
 RUN chmod +x deploy.sh
