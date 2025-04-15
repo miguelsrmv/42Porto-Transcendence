@@ -1,5 +1,13 @@
 import { attemptLogin, attemptRegister } from "../auth/auth.service.js"
 
+/**
+ * @file loginMenu.ts
+ * @brief Manages the visibility and event handling for login and registration forms.
+ * 
+ * This module provides functions to toggle the visibility of login and registration forms
+ * and attach event listeners for form submissions to handle user authentication processes.
+ */
+
 let loginFormListenerAttached = false;
 let registerFormListenerAttached = false;
 
@@ -8,6 +16,10 @@ let registerFormListenerAttached = false;
  * 
  * This function hides the initial login buttons and toggles the visibility of the login form.
  * It also sets up an event listener for the login form submission to handle user login.
+ * 
+ * @details The function ensures that the login form listener is attached only once to prevent
+ * multiple submissions. It also manages the transition from the initial login buttons to the
+ * login form.
  */
 export function toggleLoginMenu(): void {
 	document.getElementById("initial-login-buttons")?.classList.add("hidden");
@@ -34,6 +46,9 @@ export function toggleLoginMenu(): void {
  * 
  * This function switches the display between the login form and the register form.
  * It also sets up an event listener for the register form submission to handle user registration.
+ * 
+ * @details The function ensures that the register form listener is attached only once to prevent
+ * multiple submissions. It manages the transition between the login and register forms.
  */
 function toggleRegisterMenu(): void {
 	document.getElementById("login-form")?.classList.toggle("hidden");

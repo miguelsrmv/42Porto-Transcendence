@@ -1,3 +1,20 @@
+/**
+ * @file auth.service.ts
+ * @brief Provides authentication services including login, registration, and session checking.
+ * 
+ * This module contains functions to handle user authentication processes such as login,
+ * registration, and checking if a user is logged in. It interacts with the backend API
+ * to perform these operations.
+ */
+
+/**
+ * @brief Attempts to log in a user.
+ * 
+ * This function handles the login form submission, sending the form data to the server
+ * to authenticate the user. On success, it redirects the user to the main menu page.
+ * 
+ * @param event The form submission event.
+ */
 export async function attemptLogin(this: HTMLFormElement, event: Event) {
 	event.preventDefault(); // Prevent default form submission
 
@@ -13,6 +30,7 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
 		});
 
 		if (!response.ok) {
+			// TODO: Show error message on Login Modal?? Or perhaps do it on the modal function itself?
 			// Handle non-200 response codes (e.g., 401 Unauthorized)
 			throw new Error(`HTTP error ${response.status}`);
 		}
@@ -25,9 +43,16 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
 	}
 }
 
+/**
+ * @brief Attempts to register a new user.
+ * 
+ * This function handles the registration form submission, sending the form data to the server
+ * to create a new user account. On success, it toggles back to the login form.
+ * 
+ * @param event The form submission event.
+ */
 export async function attemptRegister(this: HTMLFormElement, event: Event) {
 	event.preventDefault();
-
 
 	const data = formToJSON(this);
 
@@ -41,6 +66,7 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
 		});
 
 		if (!response.ok) {
+			// TODO: Show error message on register modal?
 			// Handle non-200 response codes (e.g., 401 Unauthorized)
 			throw new Error(`HTTP error ${response.status}`);
 		}
@@ -57,6 +83,14 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
 
 }
 
+/**
+ * @brief Checks if the user is logged in.
+ * 
+ * This function sends a request to the server to verify if the user is currently logged in.
+ * It returns true if the user is logged in, otherwise false.
+ * 
+ * @return A promise that resolves to a boolean indicating the login status.
+ */
 export async function userIsLoggedIn(): Promise<boolean> {
 	try {
 		const response = await fetch('/api/users/checkLoginStatus', {
@@ -71,6 +105,15 @@ export async function userIsLoggedIn(): Promise<boolean> {
 	}
 }
 
+/**
+ * @brief Converts form data to a JSON object.
+ * 
+ * This utility function takes a form element and converts its data into a JSON object
+ * where each form field is a key-value pair.
+ * 
+ * @param form The HTML form element to convert.
+ * @return An object representing the form data as key-value pairs.
+ */
 function formToJSON(form: HTMLFormElement): { [key: string]: string } {
 	const data: { [key: string]: string } = {};
 	new FormData(form).forEach((value, key) => {
