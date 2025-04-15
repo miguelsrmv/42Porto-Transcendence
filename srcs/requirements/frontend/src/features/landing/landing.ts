@@ -3,7 +3,7 @@
  * @brief Handles the setup of the landing page.
  */
 
-import { toggleLoginMenu } from "../auth/loginModal.js"
+import { toggleLoginMenu } from "./loginMenu.js"
 import { setLandingAnimations } from "../../ui/animations.js"
 
 /**

@@ -3,15 +3,14 @@
  * @brief Handles the setup of the main menu page.
  */
 import { showMenuHelperText } from "../../ui/helperText.js";
-import { getToken } from "../auth/token.js";
+import { userIsLoggedIn } from "../auth/auth.service.js";
 /**
 * @brief Initializes view for main menu
 *
 * This function sets up the main menu, depending on if the user has logged in or not
 */
-export function initializeView() {
-    console.log("Here's the token! ", getToken());
-    if (getToken())
+export async function initializeView() {
+    if (await userIsLoggedIn())
         document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
             showMenuHelperText(anchor);
         });
