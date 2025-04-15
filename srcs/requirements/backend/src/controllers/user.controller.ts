@@ -133,3 +133,8 @@ export async function checkLoginStatus(request: FastifyRequest, reply: FastifyRe
   const token = request.cookies.access_token;
   if (token) reply.send('User is logged in');
 }
+
+export async function logout(request: FastifyRequest, reply: FastifyReply) {
+  reply.clearCookie('access_token');
+  reply.send({ message: 'Logout successful!' });
+}

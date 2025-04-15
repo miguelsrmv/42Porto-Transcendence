@@ -9,6 +9,7 @@
 | `PATCH`  | `/users/:id`               |    `id` user id     |                data to update                | Update data on a specific user             |
 | `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                              |
 | `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)                 |
+| `DELETE` | `/users/logout`            |                     |                                              | Logout user                                |
 | `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in                 |
 | `GET`    | `/players`                 |                     |                                              | Get all players                            |
 | `GET`    | `/players/:id`             |   `id` player id    |                                              | Get a specific player                      |
@@ -86,6 +87,7 @@ Content-Type: application/json
 **Note:** The token will be saved in a Cookie `access_token`. Requests to protected routes require this cookie to be set with a valid token.
 
 - **Check if user is logged in:** `GET /users/checkLoginStatus`
+- **Logout a user:** `DELETE /users/logout`
 
 ## Players
 
