@@ -122,7 +122,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
       path: '/',
       httpOnly: true,
       secure: true,
-      maxAge: 60 * 30, // Valid for 30 min
+      maxAge: 2 * 60 * 60, // Valid for 2h
     });
     reply.send({ token });
   } catch (error) {
