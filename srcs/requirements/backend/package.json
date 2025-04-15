@@ -9,7 +9,8 @@
     "start": "nodemon dist/src/server.js",
     "dev": "npx tsx src/server.ts",
     "dev-build": "tsc --watch",
-    "test": "vitest"
+    "test": "vitest",
+    "test-db": "npx tsx scripts/test_db.ts"
   },
   "keywords": [],
   "author": "",
