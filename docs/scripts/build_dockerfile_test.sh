@@ -88,23 +88,3 @@ else
   echo "❌ Some Vitest tests failed!"
   exit 1
 fi
-
-'
-#  Check Backend Health (if healthcheck exists)
- echo "🩺 Checking Backend service health..."
- backend_container=$(docker-compose -f $DOCKER_COMPOSE_FILE ps -q backend)
- if docker inspect --format '{{json .State.Health.Status}}' "$backend_container" | grep -q "healthy"; then
-  echo "✅ Backend service is healthy."
- else
-  echo "❌ Backend service is unhealthy!"
-  exit 1
-fi
-'
-
-# 🔟 Stop and Clean Up
-echo "🛑 Stopping and removing Docker services..."
-docker compose -f $DOCKER_COMPOSE_FILE down
-echo "✅ Cleanup complete."
-
-echo "🎉 All tests passed successfully!"
-exit 0

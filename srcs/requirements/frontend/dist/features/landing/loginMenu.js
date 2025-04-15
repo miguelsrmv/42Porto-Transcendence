@@ -19,7 +19,8 @@ let registerFormListenerAttached = false;
  * login form.
  */
 export function toggleLoginMenu() {
-    document.getElementById("initial-login-buttons")?.classList.add("hidden");
+    var _a, _b;
+    (_a = document.getElementById("initial-login-buttons")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
     const loginForm = document.getElementById("login-form");
     if (loginForm) {
         loginForm.classList.toggle("hidden");
@@ -32,7 +33,7 @@ export function toggleLoginMenu() {
             }
         }
     }
-    document.getElementById("register-button")?.addEventListener("click", () => toggleRegisterMenu());
+    (_b = document.getElementById("register-button")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => toggleRegisterMenu());
 }
 /**
  * @brief Toggles the visibility between the login and register forms.
@@ -44,7 +45,8 @@ export function toggleLoginMenu() {
  * multiple submissions. It manages the transition between the login and register forms.
  */
 function toggleRegisterMenu() {
-    document.getElementById("login-form")?.classList.toggle("hidden");
+    var _a, _b;
+    (_a = document.getElementById("login-form")) === null || _a === void 0 ? void 0 : _a.classList.toggle("hidden");
     const registerForm = document.getElementById("register-form");
     if (registerForm) {
         registerForm.classList.toggle("hidden");
@@ -55,7 +57,7 @@ function toggleRegisterMenu() {
                 });
                 registerFormListenerAttached = true;
             }
-            document.getElementById("back-register-button")?.addEventListener("click", () => {
+            (_b = document.getElementById("back-register-button")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
                 registerForm.classList.toggle("hidden");
                 const loginForm = document.getElementById("login-form");
                 if (loginForm) {
