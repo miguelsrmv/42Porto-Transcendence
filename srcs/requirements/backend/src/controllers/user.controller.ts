@@ -17,7 +17,7 @@ type UserLogin = {
 type UserUpdate = {
   username?: string;
   email?: string;
-}
+};
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -117,6 +117,11 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
       },
     });
 
+    reply.setCookie('access_token', token, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+    });
     reply.send({ token });
   } catch (error) {
     handleError(error, reply);

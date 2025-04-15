@@ -1,6 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import { updatePlayerSchema } from '../schemas/player.schema';
-import { getAllPlayers, getPlayerById, updatePlayer } from '../controllers/player.controller';
+import {
+  getAllPlayers,
+  getPlayerById,
+  getPlayerStats,
+  updatePlayer,
+} from '../controllers/player.controller';
 import { getByIdSchema } from '../schemas/global.schema';
 import { getAllFriends } from '../controllers/friendship.controller';
 
@@ -10,4 +15,5 @@ export async function playerRoutes(fastify: FastifyInstance) {
   fastify.get('/:id/friends', { schema: getByIdSchema }, getAllFriends);
   fastify.get('/:id', { schema: getByIdSchema }, getPlayerById);
   fastify.patch('/:id', { schema: updatePlayerSchema }, updatePlayer);
+  fastify.get('/:id/stats', { schema: getByIdSchema }, getPlayerStats);
 }

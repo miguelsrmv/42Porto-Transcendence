@@ -74,7 +74,8 @@ backend/
 
 ## TODOs
 
-- Update API docs
+- Improve error messages and object sent to frontend
+
 - Test edge cases
 - Add match creation logic in tournaments
 - Add more tests
