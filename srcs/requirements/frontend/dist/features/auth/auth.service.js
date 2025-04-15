@@ -1,13 +1,3 @@
-let token = null;
-export function setToken(newToken) {
-    token = newToken;
-}
-export function getToken() {
-    return token;
-}
-export function clearToken() {
-    token = null;
-}
 export async function attemptLogin(event) {
     event.preventDefault(); // Prevent default form submission
     const formData = new FormData(this);
@@ -27,8 +17,6 @@ export async function attemptLogin(event) {
             // Handle non-200 response codes (e.g., 401 Unauthorized)
             throw new Error(`HTTP error ${response.status}`);
         }
-        const result = await response.json();
-        setToken(result.token);
         window.location.hash = "main-menu-page";
         // Handle success (e.g., redirect or store token)
     }
@@ -36,5 +24,24 @@ export async function attemptLogin(event) {
         console.error("Login failed:", error);
         // Handle errors (e.g., show error message to user)
     }
+}
+export async function userIsLoggedIn() {
+    try {
+        const response = await fetch('/api/users/getLoginStatus', {
+            method: 'GET',
+            headers: {
+                'headers': 'include',
+            }
+        });
+        if (!response.ok) {
+            // Handle non-200 response codes (e.g., 401 Unauthorized)
+            throw new Error(`HTTP error ${response.status}`);
+        }
+        return false;
+    }
+    catch (error) {
+        console.error("Login check failed:", error);
+    }
+    return true;
 }
 //# sourceMappingURL=auth.service.js.map
