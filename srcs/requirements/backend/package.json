@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "populate": "npx tsx scripts/populate_db.ts",
-    "start": "nodemon dist/src/server.js",
+    "start": "node dist/src/server.js",
+    "start-dev": "npx nodemon --signal SIGTERM dist/src/server.js",
     "dev": "npx tsx src/server.ts",
     "dev-build": "tsc --watch",
     "test": "vitest",
