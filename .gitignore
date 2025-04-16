@@ -12,3 +12,4 @@ dev.db
 *.log
 blockchain_address.txt
 **/output/
+settings.json
