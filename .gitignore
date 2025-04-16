@@ -3,7 +3,7 @@ node_modules
 dev.db
 
 
-srcs/requirements/frontend/dist/
+#srcs/requirements/frontend/dist/
 
 /secrets
 blockchain_address.txt

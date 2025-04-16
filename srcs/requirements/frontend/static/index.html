@@ -26,145 +26,215 @@
 </body>
 
 <template id="landing-template">
-    <div id="title-screen" class="w-full h-full flex flex-col items-center text-center relative">
-        <img id="main-title" src="./static/images/supersmash_titlescreen.png"
-            class="mx-auto min-w-[800px] max-w-[1200px]">
-        <div id="sub-title"
-            class="text-6xl font-serpentine mx-auto tracking-wide absolute bottom-[+40vh] opacity-0 invisible ">
-            Transcendence
-        </div>
-        <button id="enter-button" data-target="main-menu-template"
-            class="text-7xl font-serpentine absolute bottom-[+20vh] opacity-0 invisible">
-            Enter
-        </button>
-    </div>
-    <div id="login-modal"
-        class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50">
-        <div id="initial-login-buttons" class="flex-grow grid grid-cols-2 gap-6 h-full">
-            <a href="#main-menu-page" data-target="main-menu-page" id="guest-button"
-                class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
-                <!-- Image that takes up entire card -->
-                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_female.png');">
-                </div>
+    <div class="relative w-full h-full overflow-hidden">
 
-                <!-- Polygon color overlay -->
-                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
+        <div id="title-screen" class="w-full h-full flex flex-col items-center justify-center text-center relative">
+            <img id="main-title" src="./static/images/supersmash_titlescreen.png"
+                class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto" alt="Game Title Screen">
+            <div id="sub-title"
+                class="text-4xl md:text-5xl lg:text-6xl font-serpentine mx-auto tracking-wide absolute bottom-[25vh] md:bottom-[30vh] left-0 right-0 opacity-0 invisible transition-opacity duration-700 ease-in-out">
+                Transcendence
+            </div>
 
-                <!-- Full-menu colour overlay -->
-                <div
-                    class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
-                </div>
-
-                <!-- Text overlay -->
-                <div
-                    class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                    Guest
-                </div>
-            </a>
-            <button id="login-button"
-                class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[750px] group transform transition duration-200 hover:scale-105">
-                <!-- Image that takes up entire card -->
-                <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                </div>
-
-                <!-- Polygon color overlay -->
-                <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                <!-- Full-menu colour overlay -->
-                <div
-                    class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
-                </div>
-
-                <!-- Text overlay -->
-                <div
-                    class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                    Login
-                </div>
+            <button id="enter-button" data-target="main-menu-template"
+                class="text-5xl md:text-6xl lg:text-7xl font-serpentine absolute bottom-[10vh] md:bottom-[15vh] left-0 right-0 opacity-0 invisible transition-all duration-500 ease-in-out hover:text-gray-700 hover:scale-105 active:scale-100">
+                Enter
             </button>
         </div>
-        <form id="login-form"
-            class="flex flex-col justify-center items-center h-full w-full max-w-md mx-auto p-8 bg-white shadow-xl rounded-xl hidden"
-            action="/api/users/login" method="post">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Login</h2>
+        <div id="login-modal"
+            class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden">
+            <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
+                <form id="login-form" class="flex flex-col p-6 sm:p-8 space-y-6" action="/api/users/login"
+                    method="post">
+                    <h2 class="text-2xl font-bold text-center text-gray-800">Welcome!</h2>
 
-            <div class="w-full mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="text" id="email" name="email" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <div class="space-y-1"> <label for="login-email"
+                            class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="login-email" name="email" required autocomplete="email"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="login-password" name="password" required
+                            autocomplete="current-password"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
+                    </div>
+
+                    <div id="error-login-message" role="alert" aria-live="polite"
+                        class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300">
+                    </div>
+
+                    <button id="login-submit-button" type="submit"
+                        class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold">
+                        Login
+                    </button>
+
+                    <div class="text-sm text-center text-gray-600">
+                        No account?
+                        <button id="show-register-button" type="button"
+                            class="font-medium text-blue-600 hover:text-red-500 focus:outline-none focus:underline">
+                            Register here!
+                        </button>
+                    </div>
+
+                    <a href="#main-menu-page" id="guest-button"
+                        class="block text-center w-full bg-gray-100 text-gray-700 py-2.5 px-4 mt-2 rounded-md border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out font-semibold">
+                        Play as Guest
+                    </a>
+                </form>
+
+                <form id="register-form" action="#" method="post" class="flex flex-col p-6 sm:p-8 space-y-4 hidden">
+                    <h2 class="text-2xl font-bold text-center text-gray-800">Create Account</h2>
+
+                    <div class="space-y-1">
+                        <label for="register-username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="register-username" name="username" required autocomplete="username"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="register-email" class="block text-sm font-medium text-gray-700">E-mail</label>
+                        <input type="email" id="register-email" name="email" required autocomplete="email"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="register-password" name="password" required
+                            autocomplete="new-password"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="repeat-password" class="block text-sm font-medium text-gray-700">Repeat
+                            Password</label>
+                        <input type="password" id="repeat-password" name="repeatPassword" required
+                            autocomplete="new-password"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
+                    </div>
+
+                    <div id="error-register-message" role="alert" aria-live="polite"
+                        class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-green-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out font-semibold">
+                        Register
+                    </button>
+
+                    <div class="text-sm text-center text-gray-600 pt-2"> Already have an account?
+                        <button id="show-login-button" type="button"
+                            class="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline">
+                            Login here!
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="w-full mb-6">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" id="password" name="password" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            </div>
-
-            <div id="error-login-message"
-                class="hidden w-full text-sm text-red-600 bg-red-100 p-3 mb-4 rounded-lg border border-red-300">
-            </div>
-
-            <button id="login-submit-button" type="submit"
-                class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all">
-                Login
-            </button>
-
-            <div class="mt-6 text-sm text-gray-600">
-                No account?
-                <button id="register-button" type="button" class="text-blue-600 hover:underline ml-1">
-                    Register here!
-                </button>
-            </div>
-        </form>
-
-        <form id="register-form" action="#" method="post"
-            class="flex flex-col justify-center items-center h-full w-full max-w-md mx-auto p-8 bg-white shadow-xl rounded-xl hidden">
-
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Register</h2>
-
-            <div class="w-full mb-4">
-                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                <input type="text" id="username" name="username" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            </div>
-
-            <div class="w-full mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                <input type="text" id="email" name="email" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            </div>
-
-            <div class="w-full mb-4">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input type="password" id="password" name="password" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            </div>
-
-            <div class="w-full mb-6">
-                <label for="repeat-password" class="block text-sm font-medium text-gray-700 mb-1">Repeat
-                    Password</label>
-                <input type="password" id="repeat-password" name="repeatPassword" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            </div>
-
-            <div id="error-register-message"
-                class="hidden w-full text-sm text-red-600 bg-red-100 p-3 mb-4 rounded-lg border border-red-300">
-            </div>
-
-            <button type="submit"
-                class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-all">
-                Register
-            </button>
-
-            <button id="back-register-button" type="button"
-                class="w-full bg-red-600 text-white py-2 px-4 mt-6 rounded-lg hover:bg-green-700 transition-all">
-                Back
-            </button>
-        </form>
+        </div>
     </div>
 </template>
 
+
+<!-- <template id="landing-template"> -->
+<!--     <div id="title-screen" class="w-full h-full flex flex-col items-center text-center relative"> -->
+<!--         <img id="main-title" src="./static/images/supersmash_titlescreen.png" -->
+<!--             class="mx-auto min-w-[800px] max-w-[1200px]"> -->
+<!--         <div id="sub-title" -->
+<!--             class="text-6xl font-serpentine mx-auto tracking-wide absolute bottom-[+40vh] opacity-0 invisible "> -->
+<!--             Transcendence -->
+<!--         </div> -->
+<!--         <button id="enter-button" data-target="main-menu-template" -->
+<!--             class="text-7xl font-serpentine absolute bottom-[+20vh] opacity-0 invisible"> -->
+<!--             Enter -->
+<!--         </button> -->
+<!--     </div> -->
+<!--     <div id="login-modal" -->
+<!--         class="login-modal min-w-[800px] w-2/3 max-w-[900px] min-h-[85vh] bg-black/80 rounded-lg p-6 pb-10 gap-6 shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50"> -->
+<!--         <form id="login-form" -->
+<!--             class="flex flex-col justify-center items-center h-full w-full max-w-md mx-auto p-8 bg-white shadow-xl rounded-xl" -->
+<!--             action="/api/users/login" method="post"> -->
+<!--             <h2 class="text-2xl font-bold mb-6 text-gray-800">Welcome!</h2> -->
+<!---->
+<!--             <div class="w-full mb-4"> -->
+<!--                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label> -->
+<!--                 <input type="text" id="email" name="email" required -->
+<!--                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" /> -->
+<!--             </div> -->
+<!---->
+<!--             <div class="w-full mb-6"> -->
+<!--                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label> -->
+<!--                 <input type="password" id="password" name="password" required -->
+<!--                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" /> -->
+<!--             </div> -->
+<!---->
+<!--             <div id="error-login-message" -->
+<!--                 class="hidden w-full text-sm text-red-600 bg-red-100 p-3 mb-4 rounded-lg border border-red-300"> -->
+<!--             </div> -->
+<!---->
+<!--             <button id="login-submit-button" type="submit" -->
+<!--                 class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all"> -->
+<!--                 Login -->
+<!--             </button> -->
+<!---->
+<!--             <div class="mt-6 text-sm text-gray-600"> -->
+<!--                 No account? -->
+<!--                 <button id="register-button" type="button" class="text-blue-600 hover:underline ml-1"> -->
+<!--                     Register here! -->
+<!--                 </button> -->
+<!--             </div> -->
+<!---->
+<!--             <a href="#main-menu-page" id="guest-button" -->
+<!--                 class="text-center w-full bg-blue-600 text-white py-2 px-4 mt-6 rounded-lg hover:bg-green-700 transition-all"> -->
+<!--                 Play as Guest -->
+<!--             </a> -->
+<!---->
+<!--         </form> -->
+<!---->
+<!--         <form id="register-form" action="#" method="post" -->
+<!--             class="flex flex-col justify-center items-center h-full w-full max-w-md mx-auto p-8 bg-white shadow-xl rounded-xl hidden"> -->
+<!---->
+<!--             <h2 class="text-2xl font-bold mb-6 text-gray-800">Register</h2> -->
+<!---->
+<!--             <div class="w-full mb-4"> -->
+<!--                 <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label> -->
+<!--                 <input type="text" id="username" name="username" required -->
+<!--                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" /> -->
+<!--             </div> -->
+<!---->
+<!--             <div class="w-full mb-4"> -->
+<!--                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label> -->
+<!--                 <input type="text" id="email" name="email" required -->
+<!--                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" /> -->
+<!--             </div> -->
+<!---->
+<!--             <div class="w-full mb-4"> -->
+<!--                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label> -->
+<!--                 <input type="password" id="password" name="password" required -->
+<!--                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" /> -->
+<!--             </div> -->
+<!---->
+<!--             <div class="w-full mb-6"> -->
+<!--                 <label for="repeat-password" class="block text-sm font-medium text-gray-700 mb-1">Repeat -->
+<!--                     Password</label> -->
+<!--                 <input type="password" id="repeat-password" name="repeatPassword" required -->
+<!--                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" /> -->
+<!--             </div> -->
+<!---->
+<!--             <div id="error-register-message" -->
+<!--                 class="hidden w-full text-sm text-red-600 bg-red-100 p-3 mb-4 rounded-lg border border-red-300"> -->
+<!--             </div> -->
+<!---->
+<!--             <button type="submit" -->
+<!--                 class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-all"> -->
+<!--                 Register -->
+<!--             </button> -->
+<!---->
+<!--         </form> -->
+<!---->
+<!--     </div> -->
+<!-- </template> -->
+<!---->
 <template id="main-menu-template">
     <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
 
