@@ -1,12 +1,14 @@
 import fastify from 'fastify';
 import cookie, { FastifyCookieOptions } from '@fastify/cookie';
-import { userRoutes } from './routes/user.routes';
-import jwtPlugin from './middlewares/auth';
+import { userRoutes } from './api/routes/user.routes';
+import jwtPlugin from './api/middlewares/auth';
 import dotenv from 'dotenv';
-import { playerRoutes } from './routes/player.routes';
-import { friendRoutes } from './routes/friendship.routes';
-import { matchRoutes } from './routes/match.routes';
-import { tournamentRoutes } from './routes/tournament.routes';
+import { playerRoutes } from './api/routes/player.routes';
+import { friendRoutes } from './api/routes/friendship.routes';
+import { matchRoutes } from './api/routes/match.routes';
+import { tournamentRoutes } from './api/routes/tournament.routes';
+import { WSRoutes } from './ws/websocket.routes';
+import FastifyWebSocket from '@fastify/websocket';
 
 dotenv.config();
 
@@ -19,6 +21,9 @@ const app = fastify({
     },
   },
 });
+
+app.register(FastifyWebSocket);
+app.register(WSRoutes);
 
 app.register(cookie, {
   secret: process.env.COOKIE_SECRET,

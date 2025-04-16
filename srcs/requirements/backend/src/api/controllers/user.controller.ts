@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { prisma } from '../utils/prisma';
-import { verifyPassword } from '../utils/hash';
-import { handleError } from '../utils/errorHandler';
+import { prisma } from '../../utils/prisma';
+import { verifyPassword } from '../../utils/hash';
+import { handleError } from '../../utils/errorHandler';
 
 export type UserCreate = {
   username: string;
