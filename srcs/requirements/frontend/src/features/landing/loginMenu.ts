@@ -99,10 +99,10 @@ function toggleLoginMenu(): void {
 	if (loginForm) {
 		// Only attach the listener once
 		if (!loginFormListenerAttached) {
-			const loginButton = document.getElementById("login-button") as HTMLFormElement;
+			const loginButton = document.getElementById("login-submit-button");
 			if (loginButton) {
 				loginButton.addEventListener("click", function(event) {
-					attemptLogin.call(this, event);
+					attemptLogin.call(loginForm as HTMLFormElement, event);
 				});
 				loginFormListenerAttached = true;
 			}
@@ -149,10 +149,10 @@ function toggleRegisterMenu(): void {
 	registerForm.classList.toggle("hidden");
 
 	if (!registerFormListenerAttached) {
-		const registerButton = document.getElementById("register-button") as HTMLFormElement;
+		const registerButton = document.getElementById("register-submit-button");
 		if (registerButton) {
 			registerButton.addEventListener("click", function(event) {
-				attemptRegister.call(this, event);
+				attemptRegister.call(registerForm as HTMLFormElement, event);
 			});
 			registerFormListenerAttached = true;
 		}
