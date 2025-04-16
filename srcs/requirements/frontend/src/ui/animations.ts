@@ -21,18 +21,34 @@ import { wait } from "../utils/helpers.js"
  * 
  * @return A promise that resolves when the animations have been added.
  */
+
 export async function setLandingAnimations(): Promise<void> {
    const subTitle = document.getElementById("sub-title");
    const enterButton = document.getElementById("enter-button");
 
-   await wait(1);
+   // Ensure elements exist before trying to animate
+   if (!subTitle || !enterButton) {
+      console.warn("Subtitle or Enter button not found for animations.");
+      return;
+   }
 
-   subTitle?.classList.remove("opacity-0", "invisible")
-   subTitle?.classList.add("fade-in");
+   try {
+      // Animate Subtitle
+      await wait(1); // Short delay before first animation
+      subTitle.classList.remove("opacity-0", "invisible");
+      // The transition is handled by Tailwind classes in the HTML:
+      // e.g., class="... transition-opacity duration-700 ease-in-out"
 
-   await wait(1);
+      // Animate Enter Button
+      await wait(1); // Stagger the second animation
+      enterButton.classList.remove("opacity-0", "invisible");
+      // Add bounce effect after it becomes visible
+      enterButton.classList.add("animate-bounce"); // Tailwind's bounce animation
 
-   enterButton?.classList.remove("opacity-0", "invisible")
-   enterButton?.classList.add("fade-in");
-   enterButton?.classList.add("animate-bounce");
+   } catch (error) {
+      console.error("Error during landing animations:", error);
+      // Ensure elements are visible even if animations fail
+      subTitle?.classList.remove("opacity-0", "invisible");
+      enterButton?.classList.remove("opacity-0", "invisible");
+   }
 }
