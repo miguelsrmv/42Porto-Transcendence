@@ -27,7 +27,7 @@ export function adjustHeader(view: string) {
    if (!headerTemplate)
       throw new Error("Could not find the header template with id 'header-template'.");
 
-   const isLandingPage = view === "landing-page" || "error-page";
+   const isLandingPage: boolean = (view === "landing-page" || view === "error-page");
 
    // Clean previous header heights
    header.classList.remove("h-[0%]", "h-[20%]");
