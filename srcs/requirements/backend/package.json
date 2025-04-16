@@ -19,6 +19,7 @@
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^9.0.4",
+    "@fastify/websocket": "^11.0.2",
     "@prisma/client": "^6.5.0",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.1",
@@ -29,6 +30,7 @@
     "@eslint/js": "^9.22.0",
     "@faker-js/faker": "^9.5.1",
     "@types/node": "^22.13.9",
+    "@types/ws": "^8.18.1",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
