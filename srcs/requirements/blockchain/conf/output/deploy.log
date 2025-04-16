@@ -1,0 +1,12 @@
+No files changed, compilation skipped
+Script ran successfully.
+Gas used: 3078973
+
+== Return ==
+0: contract TournamentsStorage 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496
+
+== Logs ==
+  Created a new TournamentsStorage contract!
+  0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496
+
+If you wish to simulate on-chain transactions pass a RPC URL.
