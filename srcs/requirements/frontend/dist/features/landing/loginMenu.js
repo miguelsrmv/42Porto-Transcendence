@@ -85,10 +85,10 @@ function toggleLoginMenu() {
     if (loginForm) {
         // Only attach the listener once
         if (!loginFormListenerAttached) {
-            const loginButton = document.getElementById("login-button");
+            const loginButton = document.getElementById("login-submit-button");
             if (loginButton) {
                 loginButton.addEventListener("click", function (event) {
-                    attemptLogin.call(this, event);
+                    attemptLogin.call(loginForm, event);
                 });
                 loginFormListenerAttached = true;
             }
@@ -132,10 +132,10 @@ function toggleRegisterMenu() {
     }
     registerForm.classList.toggle("hidden");
     if (!registerFormListenerAttached) {
-        const registerButton = document.getElementById("register-button");
+        const registerButton = document.getElementById("register-submit-button");
         if (registerButton) {
             registerButton.addEventListener("click", function (event) {
-                attemptRegister.call(this, event);
+                attemptRegister.call(registerForm, event);
             });
             registerFormListenerAttached = true;
         }
