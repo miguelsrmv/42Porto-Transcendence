@@ -35,13 +35,13 @@ export function initializeView(): void {
 	}
 
 	const loginButton = document.getElementById("login-button");
-	const guestButton = document.getElementById("guest-button");
-	if (loginButton && guestButton) {
+	//const guestButton = document.getElementById("guest-button");
+	if (loginButton) { //&& guestButton) {
 		loginButton.addEventListener("click", () => {
 			toggleLoginMenu();
 		}, { once: true });
-		guestButton.addEventListener("click", () => {
-		}, { once: true });
+		// guestButton.addEventListener("click", () => {
+		// }, { once: true });
 	}
 
 	setLandingAnimations();
