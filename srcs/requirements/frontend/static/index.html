@@ -136,6 +136,7 @@
 </template>
 
 <template id="main-menu-template">
+    <!-- TODO: Replace 80% and 85% by 4/5? Don't forget to edit functions! -->
     <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
 
         <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex">
@@ -223,118 +224,149 @@
 </template>
 
 <template id="game-menu-template">
-    <div id="game-menu" class="flex w-[85%] h-[90%] mx-auto relative">
-        <div id="game-type-modal" class=" absolute inset-0 z-10 min-h-full bg-white rounded-lg p-6 pb-10 gap-6
-        shadow-[0_0_15px_5px_rgba(255,255,255,0.1)] border border-gray-700/50 flex flex-col justify-between">
-            <div class="flex-grow grid grid-cols-2 gap-6 h-[90%]">
-                <button id="classic-pong-button"
-                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[500px] group transform transition duration-200 hover:scale-105">
-                    <!-- Image that takes up entire card -->
-                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_female.png');">
+    <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center">
+        <div id="game-menu-inner" class="bg-white rounded-lg shadow-lg w-4/5 h-[95%] flex flex-col overflow-auto">
+            <div id="game-type-selection" class="flex-grow p-8 flex flex-col">
+                <h2 class="text-3xl font-bold text-center mb-8">Select Your Game</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                    <button id="classic-pong-button" class="game-type-button group">
+                        <div
+                            class="relative aspect-[5/4] overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                            <img src="/static/images/pokemon_trainer_female.png" alt="Classic Pong"
+                                class="w-full h-full object-cover">
+                            <div
+                                class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4">
+                                <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                                    Classic Pong
+                                </h3>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
+                            </div>
+                        </div>
+                    </button>
+                    <button id="crazy-pong-button" class="game-type-button group">
+                        <div
+                            class="relative aspect-[5/4] overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                            <img src="/static/images/pokemon_trainer_male.png" alt="Crazy Pong"
+                                class="w-full h-full object-cover">
+                            <div
+                                class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4">
+                                <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                                    Crazy Pong
+                                </h3>
+                            </div>
+                            <div
+                                class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <div id="game-settings-menu" class="flex-grow p-8 flex flex-col hidden">
+                    <h2 id="game-settings-title" class="text-3xl font-bold text-center mb-6">Game Settings</h2>
+
+                    <div id="settings-columns" class="flex flex-row gap-6 h-full">
+                        <div id="player-1-settings"
+                            class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 items-center">
+                            <h3 class="text-xl font-semibold text-center mb-4">Player 1</h3>
+                            <div class="flex flex-col items-center justify-center flex-grow">
+                                <div id="player-1-name" class="mb-4 w-3/4">
+                                    <label for="player-1-alias"
+                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias:</label>
+                                    <input id="player-1-alias" type="text"
+                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
+                                        placeholder="Player 1">
+                                </div>
+                                <div id="player-1-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
+                                    <label for="player-1-paddle-colour-input"
+                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
+                                        Colour:</label>
+                                    <input id="player-1-paddle-colour-input" type="color" value="#ff0000"
+                                        class="rounded-md w-1/2">
+                                </div>
+                            </div>
+                            <div id="player-1-character" class="mt-4 flex flex-col items-center">
+                                <h5 class="text-lg font-semibold mb-2 text-center">Character:</h5>
+                                <div class="flex items-center">
+                                    <button id="prev-character-1" class="nav-button">&lt;</button>
+                                    <div id="character-display-1"
+                                        class="w-32 h-32 flex items-center justify-center mx-2">
+                                        <img id="character-img-1" src="./static/character_select/mario.png"
+                                            alt="Character 1" class="max-w-full max-h-full object-contain">
+                                    </div>
+                                    <button id="next-character-1" class="nav-button">&gt;</button>
+                                </div>
+                                <div id="character-move-1" class="mt-2 text-center">FILLER TEXT</div>
+                            </div>
+                        </div>
+
+                        <div id="player-2-settings"
+                            class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 items-center hidden">
+                            <h3 class="text-xl font-semibold text-center mb-4">Player 2</h3>
+                            <div class="flex flex-col items-center justify-center flex-grow">
+                                <div id="player-2-name" class="mb-4 w-3/4">
+                                    <label for="player-2-alias"
+                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias:</label>
+                                    <input id="player-2-alias" type="text"
+                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
+                                        placeholder="Player 2">
+                                </div>
+                                <div id="player-2-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
+                                    <label for="player-2-paddle-colour-input"
+                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
+                                        Colour:</label>
+                                    <input id="player-2-paddle-colour-input" type="color" value="#0000ff"
+                                        class="rounded-md w-1/2">
+                                </div>
+                            </div>
+                            <div id="player-2-character" class="mt-4 flex flex-col items-center">
+                                <h5 class="text-lg font-semibold mb-2 text-center">Character:</h5>
+                                <div class="flex items-center">
+                                    <button id="prev-character-2" class="nav-button">&lt;</button>
+                                    <div id="character-display-2"
+                                        class="w-32 h-32 flex items-center justify-center mx-2">
+                                        <img id="character-img-2" src="./static/character_select/mario.png"
+                                            alt="Character 2" class="max-w-full max-h-full object-contain">
+                                    </div>
+                                    <button id="next-character-2" class="nav-button">&gt;</button>
+                                </div>
+                                <div id="character-move-2" class="mt-2 text-center">FILLER TEXT</div>
+                            </div>
+                        </div>
+
+                        <div id="board-settings-content"
+                            class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 items-center">
+                            <h3 class="text-xl font-semibold text-center mb-4">Board Background</h3>
+                            <div class="flex flex-col items-center justify-center flex-grow">
+                                <div id="match-background" class="flex flex-col items-center justify-center mb-4">
+                                    <label for="background-img"
+                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Background:</label>
+                                    <div id="background-display"
+                                        class="w-3/4 h-48 rounded-md shadow-md overflow-hidden flex items-center justify-center">
+                                        <div id="background-img" class="w-full h-full bg-repeat-x bg-center bg-contain"
+                                            style="background-image: url('./static/backgrounds/Backyard.png');">
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center mt-2">
+                                        <button id="prev-background" class="nav-button">&lt; Previous</button>
+                                        <button id="next-background" class="nav-button ml-2">Next &gt;</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Polygon color overlay -->
-                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-blue-700 angled-top z-20"></div>
-
-                    <!-- Full-menu colour overlay -->
-                    <div
-                        class="absolute bottom-0 left-0 w-full h-full bg-blue-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
+                    <div class="mt-8 flex justify-end">
+                        <button id="play-button"
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline">
+                            Play Game!
+                        </button>
                     </div>
-
-                    <!-- Text overlay -->
-                    <div
-                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                        Classic Pong
-                    </div>
-                </button>
-                <button id="crazy-pong-button"
-                    class="w-full h-full flex justify-center cursor-pointer rounded overflow-hidden min-h-[500px] group transform transition duration-200 hover:scale-105">
-                    <!-- Image that takes up entire card -->
-                    <div class="menu-image absolute left-0 w-full h-full bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_male.png');">
-                    </div>
-
-                    <!-- Polygon color overlay -->
-                    <div class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-
-                    <!-- Full-menu colour overlay -->
-                    <div
-                        class="absolute bottom-0 left-0 w-full h-full bg-red-700 opacity-50 z-25 group-hover:opacity-0 transition-opacity duration-200">
-                    </div>
-
-                    <!-- Text overlay -->
-                    <div
-                        class="absolute bottom-2 left-6 font-bold uppercase z-30 text-white font-serpentine text-7xl text-outline px-2 py-1">
-                        Crazy Pong
-                    </div>
-                </button>
+                </div>
             </div>
         </div>
-
-        <div id="game-settings-menu" class="flex flex-col w-full hidden">
-            <div id="player-settings-title" class="text-center h-[10%] text-4xl underline">Player Settings</div>
-            <div id="player-settings" class="flex flex-row items-center h-[40%]">
-                <div id="player-1-settings" class="flex flex-col flex-1 h-full">
-                    <div id="player-1-name" class="flex items-center justify-center h-[15%] ">
-                        <label for="player-1-alias" class="sr-only"></label>
-                        <input id="player-1-alias" type="text" class="text-3xl font-bold items-center text-center"
-                            placeholder="Player 1" />
-                    </div>
-                    <div id="player-1-paddle-colour" class="flex items-center justify-center h-[15%]">
-                        <label for="player-1-paddle-colour-input" class="text-gray text-3xl font-bold mr-2">Paddle
-                            Colour</label>
-                        <input id="player-1-paddle-colour-input" type="color" value="#ff0000" />
-                    </div>
-                    <div id="player-1-character" class="flex items-center justify-center h-[70%] hidden">
-                        <button id="prev-character-1" class="text-5xl px-4"> &lt; </button>
-                        <div id="character-display-1" class="flex items-center justify-center h-full">
-                            <img id="character-img-1" src="./static/character_select/mario.png" alt="Character 1"
-                                class="w-full h-full object-contain" />
-                        </div>
-                        <button id="next-character-1" class="text-5xl px-4"> &gt; </button>
-                    </div>
-                </div>
-                <div id="player-2-settings" class="flex flex-col flex-1 h-full hidden">
-                    <div id="player-2-name" class="flex items-center justify-center h-[15%]">
-                        <label for="player-2-alias" class="sr-only"></label>
-                        <input id="player-2-alias" type="text" class="text-3xl font-bold items-center text-center"
-                            placeholder="Player 2" />
-                    </div>
-                    <div id="player-2-paddle-colour" class="flex items-center justify-center h-[15%]">
-                        <label for="player-2-paddle-colour-input" class="text-gray text-3xl font-bold mr-2">Paddle
-                            Colour</label>
-                        <input id="player-2-paddle-colour-input" type="color" value="#0000ff" />
-                    </div>
-                    <div id="player-2-character" class="flex items-center justify-center h-[70%] hidden">
-                        <button id="prev-character-2" class="text-5xl px-4"> &lt; </button>
-                        <div id="character-display-2" class="flex items-center justify-center h-full">
-                            <img id="character-img-2" src="./static/character_select/mario.png" alt="Character 2"
-                                class="w-full h-full object-contain" />
-                        </div>
-                        <button id="next-character-2" class="text-5xl px-4"> &gt; </button>
-                    </div>
-                </div>
-            </div>
-            <div id="board-settings-title" class="text-center h-[10%] text-4xl underline">Board Settings</div>
-            <div id="match-background" class="flex items-center justify-center h-[30%]">
-                <button id="prev-background" class="text-5xl px-4"> &lt; </button>
-                <div id="background-display" class="flex items-center justify-center h-[90%] w-[30%]">
-                    <!--<img id="background-img" src="./static/backgrounds/Backyard.png" alt="Character 2"
-                        class="w-full h-full object-contain" />-->
-                    <div id="background-img" class="w-full h-full bg-repeat-x"
-                        style="background-image: url('./static/backgrounds/Backyard.png');"></div>
-                </div>
-                <button id="next-background" class="text-5xl px-4"> &gt; </button>
-            </div>
-            <div id="play-button" class="flex items-end justify-center text-center h-[10%]">
-                <button class="rounded-full bg-black text-white h-[80%] w-[50%]">Play Game!</button>
-            </div>
-        </div>
-    </div>
 </template>
-
-
 
 <template id="profile-template">
     <div> I'm on profile!</div>
