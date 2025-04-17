@@ -3,6 +3,30 @@
  * @brief Handles the setup of game types, character selection, and background selection for the game.
  */
 
+type gameSettingKey =
+	'playType'
+	| 'gameType'
+	| 'player1Alias'
+	| 'player1PaddleColour'
+	| 'player1Character'
+	| 'player2Alias'
+	| 'player2PaddleColour'
+	| 'player2Character'
+	| 'background'
+	| 'gameType'
+
+export let gameSettings: Record<gameSettingKey, string | null> = {
+	playType: null,
+	gameType: null,
+	player1Alias: null,
+	player1PaddleColour: null,
+	player1Character: null,
+	player2Alias: null,
+	player2PaddleColour: null,
+	player2Character: null,
+	background: null,
+};
+
 /**
  * @brief Prompts the user to select a game type.
  * 
@@ -117,7 +141,7 @@ export function createBackgroundLoop() {
 
 	const prevButton: HTMLButtonElement | null = document.getElementById('prev-background') as HTMLButtonElement;
 	const nextButton: HTMLButtonElement | null = document.getElementById('next-background') as HTMLButtonElement;
-	const backgroundDisplay: HTMLDivElement | null = document.getElementById('background-img') as HTMLDivElement;
+	const backgroundDisplay: HTMLImageElement | null = document.getElementById('background-img') as HTMLImageElement;
 
 	function updateBackgroundDisplay(): void {
 		if (backgroundDisplay)
@@ -144,4 +168,70 @@ export function createBackgroundLoop() {
 
 	// Initialize the first character
 	updateBackgroundDisplay();
+}
+
+export function setGameSettings(gameType: string, playType: string) {
+	gameSettings.gameType = gameType;
+	gameSettings.playType = playType;
+
+	const player1InputAlias = document.getElementById("player-1-alias") as HTMLInputElement;
+	if (player1InputAlias) {
+		console.log(player1InputAlias.value);
+		gameSettings.player1Alias = player1InputAlias.value;
+	}
+	else
+		console.warn("Player 1 alias input form not found");
+
+	const player1PaddleColour = document.getElementById("player-1-paddle-colour-input") as HTMLInputElement;
+	if (player1PaddleColour) {
+		console.log(player1PaddleColour.value);
+		gameSettings.player1PaddleColour = player1PaddleColour.value;
+	}
+	else
+		console.warn("Player 1 paddle colour input form not found");
+
+	const background = document.getElementById("background-img") as HTMLImageElement;
+	if (background) {
+		gameSettings.background = background.src;
+	}
+	else {
+		console.warn("Background image not found");
+	}
+
+	// TODO: I don't want to get an image, I want to get the character!!
+	// Create a type that routes Character -> Picture -> Attack and have it as a custom HTML field??
+	if (gameSettings.gameType === "crazy") {
+		const player1Character = document.getElementById("character-img-1") as HTMLImageElement;
+		if (player1Character)
+			gameSettings.player1Character = player1Character.src;
+		else {
+			console.warn("Player 1 character not found");
+		}
+	}
+
+	if (gameSettings.playType === "local") {
+		const player2InputAlias = document.getElementById("player-2-alias") as HTMLInputElement;
+		if (player2InputAlias)
+			gameSettings.player2Alias = player2InputAlias.value;
+		else
+			console.warn("Player 2 alias input form not found");
+
+		const player2PaddleColour = document.getElementById("player-2-paddle-colour-input") as HTMLInputElement;
+		if (player2PaddleColour)
+			gameSettings.player2PaddleColour = player2PaddleColour.value;
+		else
+			console.warn("Player 2 paddle colour input form not found");
+
+		// TODO: I don't want to get an image, I want to get the character!!
+		// Create a type that routes Character -> Picture -> Attack and have it as a custom HTML field??
+		if (gameSettings.gameType === "crazy") {
+			const player2Character = document.getElementById("character-img-2") as HTMLImageElement;
+			if (player2Character)
+				gameSettings.player2Character = player2Character.src;
+		}
+	}
+}
+
+export function getGameSettings() {
+	return gameSettings;
 }
