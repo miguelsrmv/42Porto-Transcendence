@@ -1,1 +1,1 @@
-export function initializeGame(): void { }
+export function initializeGame(): void {}

@@ -1,5 +1,5 @@
-import { initializeGame } from "./gameApp/game.js";
-import { getGameSettings } from "./gameSetup.js";
+import { initializeGame } from './gameApp/game.js';
+import { getGameSettings } from './gameSetup.js';
 /**
  * @file gamePage.ts
  * @brief Initializes the game page view.

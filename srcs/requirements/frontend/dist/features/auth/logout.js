@@ -19,7 +19,7 @@ export async function logoutUser() {
         });
     }
     catch (error) {
-        console.error("Logout failed: ", error);
+        console.error('Logout failed: ', error);
     }
 }
 //# sourceMappingURL=logout.js.map

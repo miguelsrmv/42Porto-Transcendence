@@ -2,8 +2,8 @@
  * @file viewLoader.ts
  * @brief Provides functionality to load and display different views in the application.
  */
-import { getTemplateId } from "../utils/helpers.js";
-import { adjustHeader } from "../ui/header.js";
+import { getTemplateId } from '../utils/helpers.js';
+import { adjustHeader } from '../ui/header.js';
 /**
  * @brief Loads a specified view into the application.
  *
@@ -16,7 +16,7 @@ import { adjustHeader } from "../ui/header.js";
  */
 export function loadView(viewName) {
     const templateId = getTemplateId(viewName);
-    const templateHost = document.getElementById("app");
+    const templateHost = document.getElementById('app');
     const templateBlock = document.getElementById(templateId);
     if (!templateHost)
         throw new Error("Could not find the template host element with ID 'app'.");

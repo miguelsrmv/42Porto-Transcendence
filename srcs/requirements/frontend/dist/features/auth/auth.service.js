@@ -6,7 +6,7 @@
  * registration, and checking if a user is logged in. It interacts with the backend API
  * to perform these operations.
  */
-import { loginErrorMessages, registerErrorMessages } from "../../constants/errorMessages.js";
+import { loginErrorMessages, registerErrorMessages } from '../../constants/errorMessages.js';
 /**
  * @brief Attempts to log in a user.
  *
@@ -29,20 +29,20 @@ export async function attemptLogin(event) {
         if (!response.ok) {
             //TODO: Remove before delivering project!?
             console.error(`HTTP error" ${response.status}`);
-            console.log("Response:", response);
-            const errorLoginMessageContainer = document.getElementById("error-login-message");
+            console.log('Response:', response);
+            const errorLoginMessageContainer = document.getElementById('error-login-message');
             if (errorLoginMessageContainer) {
-                errorLoginMessageContainer.classList.remove("hidden");
+                errorLoginMessageContainer.classList.remove('hidden');
                 const errorMessage = await response.json();
                 errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
                 return;
             }
         }
-        window.location.hash = "main-menu-page";
+        window.location.hash = 'main-menu-page';
         // Handle success (e.g., redirect or store token)
     }
     catch (error) {
-        console.error("Login failed:", error);
+        console.error('Login failed:', error);
         // Handle errors (e.g., show error message to user)
     }
 }
@@ -68,21 +68,21 @@ export async function attemptRegister(event) {
         if (!response.ok) {
             //TODO: Remove before delivering project!?
             console.error(`HTTP error" ${response.status}`);
-            console.log("Response:", response);
-            const errorRegisterMessageContainer = document.getElementById("error-register-message");
+            console.log('Response:', response);
+            const errorRegisterMessageContainer = document.getElementById('error-register-message');
             if (errorRegisterMessageContainer) {
-                errorRegisterMessageContainer.classList.remove("hidden");
+                errorRegisterMessageContainer.classList.remove('hidden');
                 const errorMessage = await response.json();
                 errorRegisterMessageContainer.innerText = registerErrorMessages[errorMessage.message];
                 return;
             }
         }
         // If registry was successful, back to login form
-        document.getElementById("login-form")?.classList.toggle("hidden");
-        document.getElementById("register-form")?.classList.toggle("hidden");
+        document.getElementById('login-form')?.classList.toggle('hidden');
+        document.getElementById('register-form')?.classList.toggle('hidden');
     }
     catch (error) {
-        console.error("Register failed:", error);
+        console.error('Register failed:', error);
         // Handle errors (e.g., show error message to user)
     }
 }
@@ -103,7 +103,7 @@ export async function userIsLoggedIn() {
         return response.ok; // true if status is in 200–299 range
     }
     catch (error) {
-        console.error("Login check failed:", error);
+        console.error('Login check failed:', error);
         return false;
     }
 }
