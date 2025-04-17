@@ -43,8 +43,12 @@ export function getTemplateId(templateHost) {
             return "profile-template";
         case "friends-page":
             return "friends-template";
-        case "rankings-template":
+        case "rankings-page":
             return "rankings-template";
+        case "error-page":
+            return "error-template";
+        case "game-page":
+            return "game-template";
     }
 }
 //# sourceMappingURL=helpers.js.map

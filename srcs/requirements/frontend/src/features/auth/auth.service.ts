@@ -43,7 +43,6 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
 				return;
 			}
 		}
-
 		window.location.hash = "main-menu-page";
 		// Handle success (e.g., redirect or store token)
 	} catch (error) {

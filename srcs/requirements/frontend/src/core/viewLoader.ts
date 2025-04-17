@@ -33,3 +33,4 @@ export function loadView(viewName: string) {
     // Adjusts Header
     adjustHeader(viewName);
 }
+
