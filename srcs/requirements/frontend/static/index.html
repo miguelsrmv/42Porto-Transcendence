@@ -139,7 +139,7 @@
     <!-- TODO: Replace 80% and 85% by 4/5? Don't forget to edit functions! -->
     <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
 
-        <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex">
+        <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex mt-4">
 
             <a href="#local-play-page" id="local-play-button" data-target="local-play-page"
                 data-helper-message="Play locally with friends!"
@@ -394,116 +394,12 @@
                 </div>
 
                 <div class="mt-4 flex justify-center">
-                    <button id="play-button"
+                    <a href="#game-page" id="play-button"
                         class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider">
                         Play Game!
-                    </button>
+                    </a>
                 </div>
             </div>
-            <!--
-            <div id="game-settings-menu" class="flex-grow p-8 flex flex-col hidden">
-                <h2 id="game-settings-title" class="text-3xl font-bold font-serpentine text-center mb-6">Game Settings
-                </h2>
-
-                <div id="settings-columns" class="flex flex-row gap-6 h-full">
-                    <div id="player-1-settings"
-                        class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 border-4 items-center">
-                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-4">Player 1</h3>
-                        <div class="flex flex-col items-center justify-center flex-grow">
-                            <div id="player-1-name" class="mb-4 w-3/4">
-                                <label for="player-1-alias"
-                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias</label>
-                                <input id="player-1-alias" type="text"
-                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
-                                    placeholder="Player 1">
-                            </div>
-                            <div id="player-1-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
-                                <label for="player-1-paddle-colour-input"
-                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
-                                    Colour</label>
-                                <input id="player-1-paddle-colour-input" type="color" value="#ff0000"
-                                    class="rounded-md w-1/2">
-                            </div>
-                            <div id="player-1-character" class="mt-4 flex flex-col items-center hidden">
-                                <div class="block text-gray-700 text-sm font-bold mb-2 text-center">Character</div>
-                                <div class="flex items-center gap-6">
-                                    <button id="prev-character-1" class="nav-button">&lt Previous</button>
-                                    <div id="character-display-1"
-                                        class="w-48 h-48 rounded-lg shadow-lg p-2 flex items-center justify-center mx-2">
-                                        <img id="character-img-1" src="./static/character_select/mario.png"
-                                            alt="Character 1" class="max-w-full max-h-full object-contain">
-                                    </div>
-                                    <button id="next-character-1" class="nav-button">&gt Next</button>
-                                </div>
-                                <div id="character-move-1" class="mt-4 text-center text-small">FILLER TEXT</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="player-2-settings"
-                        class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 border-4 items-center">
-                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-4">Player 2</h3>
-                        <div class="flex flex-col items-center justify-center flex-grow">
-                            <div id="player-2-name" class="mb-4 w-3/4">
-                                <label for="player-2-alias"
-                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias</label>
-                                <input id="player-2-alias" type="text"
-                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
-                                    placeholder="Player 1">
-                            </div>
-                            <div id="player-2-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
-                                <label for="player-2-paddle-colour-input"
-                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
-                                    Colour</label>
-                                <input id="player-2-paddle-colour-input" type="color" value="#0000ff"
-                                    class="rounded-md w-1/2">
-                            </div>
-                            <div id="player-2-character" class="mt-4 flex flex-col items-center hidden">
-                                <div class="block text-gray-700 text-sm font-bold mb-2 text-center">Character</div>
-                                <div class="flex items-center gap-6">
-                                    <button id="prev-character-1" class="nav-button">&lt Previous</button>
-                                    <div id="character-display-2"
-                                        class="w-48 h-48 rounded-lg shadow-lg p-2 flex items-center justify-center mx-2">
-                                        <img id="character-img-2" src="./static/character_select/mario.png"
-                                            alt="Character 2" class="max-w-full max-h-full object-contain">
-                                    </div>
-                                    <button id="next-character-2" class="nav-button">&gt Next</button>
-                                </div>
-                                <div id="character-move-2" class="mt-4 text-center text-small">FILLER TEXT</div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div id="board-settings-content"
-                        class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 border-4 items-center">
-                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-4">Board Background</h3>
-                        <div class="flex flex-col items-center justify-center flex-grow">
-                            <div id="match-background" class="flex flex-col items-center justify-center mb-4">
-                                <label for="background-img"
-                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Background:</label>
-                                <div id="background-display"
-                                    class="w-3/4 h-48 rounded-md shadow-md overflow-hidden flex items-center justify-center">
-                                    <div id="background-img" class="w-full h-full bg-repeat-x bg-center bg-contain"
-                                        style="background-image: url('./static/backgrounds/Backyard.png');">
-                                    </div>
-                                </div>
-                                <div class="flex items-center mt-2">
-                                    <button id="prev-background" class="nav-button">&lt; Previous</button>
-                                    <button id="next-background" class="nav-button ml-2">Next &gt;</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-8 flex justify-end">
-                    <button id="play-button"
-                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline">
-                        Play Game!
-                    </button>
-                </div>
-            </div>
--->
         </div>
     </div>
 </template>
@@ -522,10 +418,20 @@
         <div> I'm on rankings! </div>
 </template>
 
+<template id="game-template">
+    <canvas id="game-canvas" class="flex w-[85%] mx-auto">
+    </canvas>
+</template>
+
 <template id="header-template">
-    <div id="header-menu" class="w-[85%] flex justify-between items-center">
+    <div id="header-menu" class="w-[85%] flex flex-row justify-between items-center">
         <!-- Left: Header Text -->
-        <div id="header-menu-text" class="font-serpentine text-5xl">
+        <div id="navigation-info">
+            <div id="header-back-button"
+                class=" bg-gray-700 text-white px-4 py-2 rounded-md flex items-center justify-center font-semibold hover:bg-gray-600 transition-colors duration-150 whitespace-nowrap'hidden">
+                Back</div>
+            <div id="header-menu-text" class="font-serpentine text-5xl">
+            </div>
         </div>
 
         <!-- Right: Player Info -->

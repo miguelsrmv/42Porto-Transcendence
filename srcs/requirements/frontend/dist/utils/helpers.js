@@ -47,6 +47,8 @@ export function getTemplateId(templateHost) {
             return "rankings-template";
         case "error-page":
             return "error-template";
+        case "game-page":
+            return "game-template";
     }
 }
 //# sourceMappingURL=helpers.js.map

@@ -49,5 +49,7 @@ export function getTemplateId(templateHost: string): string | undefined {
             return "rankings-template";
         case "error-page":
             return "error-template";
+        case "game-page":
+            return "game-template";
     }
 }
