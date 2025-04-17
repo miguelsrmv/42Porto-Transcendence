@@ -52,21 +52,3 @@ export async function setLandingAnimations(): Promise<void> {
       enterButton?.classList.remove("opacity-0", "invisible");
    }
 }
-
-export function makeVisible(el: HTMLElement) {
-   el.classList.remove("opacity-0", "invisible");
-   el.classList.add("opacity-100", "visible");
-}
-
-export function makeInvisible(el: HTMLElement) {
-   el.classList.remove("opacity-100", "visible");
-   el.classList.add("opacity-0", "invisible");
-}
-
-export function fadeInElement(el: HTMLElement) {
-   el.classList.add("transition-opacity", "duration-300", "ease-in-out");
-   void el.offsetWidth;
-   makeVisible(el);
-   setTimeout(() => el.classList.remove("transition-opacity", "duration-300", "ease-in-out"), 300);
-}
-

@@ -69,6 +69,7 @@ export function createCharacterLoop(player_number = 1) {
     }
     // Initialize the first character
     updateCharacterDisplay();
+    // TODO: Update the Character sub text!!
 }
 /**
  * @brief Creates a background selection loop.

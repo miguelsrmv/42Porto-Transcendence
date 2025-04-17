@@ -1,10 +1,20 @@
 import { attemptLogin, attemptRegister } from "../auth/auth.service.js";
+/**
+ * @file loginMenu.ts
+ * @brief Manages the login and registration modals.
+ *
+ * This module handles the display and interaction logic for the login and registration
+ * modals, including event listener management and form toggling.
+ */
 // Track whether event listeners have been attached
 let loginFormListenerAttached = false;
 let registerFormListenerAttached = false;
 let modalClickListenerAttached = false;
 /**
- * Shows the login modal with smooth transitions
+ * @brief Shows the login modal with smooth transitions.
+ *
+ * This function makes the login modal visible and sets up the necessary event listeners
+ * for handling user interactions with the modal.
  */
 export function triggerLoginModal() {
     const loginModal = document.getElementById("login-modal");
@@ -31,8 +41,12 @@ export function triggerLoginModal() {
     toggleLoginMenu();
 }
 /**
- * Handles clicks outside the modal to close it
- * Extracted as a named function so it can be properly removed
+ * @brief Handles clicks outside the modal to close it.
+ *
+ * This function checks if a click event occurred outside the modal content
+ * and closes the modal if so.
+ *
+ * @param event The mouse event triggered by the click.
  */
 function handleModalOutsideClick(event) {
     // No need for another console warn (already done on triggerLoginModal)
@@ -45,7 +59,10 @@ function handleModalOutsideClick(event) {
     }
 }
 /**
- * Closes the login modal with a smooth exit transition
+ * @brief Closes the login modal with a smooth exit transition.
+ *
+ * This function initiates the exit transition for the login modal and sets up
+ * an event listener to hide the modal once the transition is complete.
  */
 function closeLoginModal() {
     // No need for another console warn (already done on triggerLoginModal)
@@ -61,8 +78,12 @@ function closeLoginModal() {
     loginModal.addEventListener('transitionend', handleModalTransitionEnd);
 }
 /**
- * Handles the end of modal transitions
- * Extracted as a named function so it can be properly removed
+ * @brief Handles the end of modal transitions.
+ *
+ * This function is called when the modal's transition ends and is responsible
+ * for hiding the modal and cleaning up event listeners.
+ *
+ * @param event The transition event triggered by the end of the transition.
  */
 function handleModalTransitionEnd(event) {
     const loginModal = document.getElementById("login-modal");
@@ -76,9 +97,10 @@ function handleModalTransitionEnd(event) {
     }
 }
 /**
- * Toggles the visibility of the login menu.
+ * @brief Toggles the visibility of the login menu.
  *
- * This function handles the login form visibility and sets up event listeners.
+ * This function manages the visibility of the login form and sets up the necessary
+ * event listeners for form submission and navigation to the registration form.
  */
 function toggleLoginMenu() {
     const loginForm = document.getElementById("login-form");
@@ -109,7 +131,10 @@ function toggleLoginMenu() {
     }
 }
 /**
- * Handles register button clicks
+ * @brief Handles register button clicks.
+ *
+ * This function toggles the visibility of the login form and switches to the
+ * registration form when the register button is clicked.
  */
 function handleRegisterButtonClick() {
     const loginForm = document.getElementById("login-form");
@@ -119,7 +144,7 @@ function handleRegisterButtonClick() {
     toggleRegisterMenu();
 }
 /**
- * Toggles the visibility between the login and register forms.
+ * @brief Toggles the visibility between the login and register forms.
  *
  * This function switches the display between the login form and the register form
  * and sets up event listeners for the register form.
@@ -152,7 +177,10 @@ function toggleRegisterMenu() {
     }
 }
 /**
- * Handles back button clicks on the register form
+ * @brief Handles back button clicks on the register form.
+ *
+ * This function toggles the visibility of the register form and switches back
+ * to the login form when the back button is clicked.
  */
 function handleBackRegisterClick() {
     const registerForm = document.getElementById("register-form");
