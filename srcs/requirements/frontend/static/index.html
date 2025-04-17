@@ -144,16 +144,16 @@
             <a href="#local-play-page" id="local-play-button" data-target="local-play-page"
                 data-helper-message="Play locally with friends!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div
-                    class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                <div id="local-play-button-container"
+                    class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
                     <img src="/static/images/localplay.jpg" alt="Local Play" class="w-full h-full object-cover">
-                    <div
+                    <div id="local-play-button-container-text"
                         class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4">
                         <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
                             Local Play
                         </h3>
                     </div>
-                    <div
+                    <div id="local-play-button-overlay"
                         class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
                     </div>
                 </div>
@@ -162,16 +162,16 @@
             <a href="#remote-play-page" id="remote-play-button" data-target="remote-play-page"
                 data-helper-message="Play online!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div
-                    class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                <div id="remote-play-button-container"
+                    class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
                     <img src="/static/images/remoteplay.jpg" alt="Remote Play" class="w-full h-full object-cover">
-                    <div
+                    <div id="remote-play-button-container-text"
                         class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-yellow-700 to-transparent h-1/2 flex items-end justify-start p-4">
                         <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
                             Remote Play
                         </h3>
                     </div>
-                    <div
+                    <div id="remote-play-button-overlay"
                         class="absolute inset-0 bg-yellow-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
                     </div>
                 </div>
@@ -180,16 +180,16 @@
             <a href="#tournament-play-page" id="tournament-play-button" data-target="tournament-play-page"
                 data-helper-message="Play in a tournament!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div
-                    class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                <div id="tournament-play-button-container"
+                    class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
                     <img src="/static/images/tournament.jpg" alt="Tournament Play" class="w-full h-full object-cover">
-                    <div
+                    <div id="tournament-play-button-container-text"
                         class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4">
                         <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
                             Tournament Play
                         </h3>
                     </div>
-                    <div
+                    <div id="tournament-play-button-overlay"
                         class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
                     </div>
                 </div>
@@ -199,16 +199,16 @@
                 <a href="#rankings-page" id="rankings-button" data-target="rankings-page"
                     data-helper-message="Check the rankings!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
-                    <div
-                        class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                    <div id="rankings-button-container"
+                        class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
                         <img src="/static/images/rankings.jpg" alt="Rankings" class="w-full h-full object-cover">
-                        <div
+                        <div id="rankings-button-container-text"
                             class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-700 to-transparent h-1/2 flex items-end justify-start p-4">
                             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
                                 Rankings
                             </h3>
                         </div>
-                        <div
+                        <div id="rankings-button-overlay"
                             class="absolute inset-0 bg-green-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
                         </div>
                     </div>
@@ -216,16 +216,16 @@
                 <a href="#friends-page" id="friends-button" data-target="friends-page"
                     data-helper-message="See your friends!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
-                    <div
-                        class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                    <div id="friends-button-container"
+                        class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
                         <img src="/static/images/friends.jpg" alt="Friends" class="w-full h-full object-cover">
-                        <div
+                        <div id="friends-button-container-text"
                             class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-purple-700 to-transparent h-1/2 flex items-end justify-start p-4">
                             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
                                 Friends
                             </h3>
                         </div>
-                        <div
+                        <div id="friends-button-overlay"
                             class="absolute inset-0 bg-purple-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
                         </div>
                     </div>
@@ -246,7 +246,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
                     <button id="classic-pong-button" class="game-type-button group">
                         <div
-                            class="relative aspect-[5/4] overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                            class="relative aspect-[5/4] overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
                             <img src="/static/images/pokemon_trainer_female.png" alt="Classic Pong"
                                 class="w-full h-full object-cover">
                             <div
@@ -262,7 +262,7 @@
                     </button>
                     <button id="crazy-pong-button" class="game-type-button group">
                         <div
-                            class="relative aspect-[5/4] overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                            class="relative aspect-[5/4] overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
                             <img src="/static/images/pokemon_trainer_male.png" alt="Crazy Pong"
                                 class="w-full h-full object-cover">
                             <div
@@ -426,18 +426,21 @@
 <template id="header-template">
     <div id="header-menu" class="w-[85%] flex flex-row justify-between items-center">
         <!-- Left: Header Text -->
-        <div id="navigation-info">
+        <div id="navigation-info" class="flex items-center justify-center text-center gap-4">
             <div id="header-back-button"
-                class=" bg-gray-700 text-white px-4 py-2 rounded-md flex items-center justify-center font-semibold hover:bg-gray-600 transition-colors duration-150 whitespace-nowrap'hidden">
-                Back</div>
-            <div id="header-menu-text" class="font-serpentine text-5xl">
+                class="relative bg-gray-700 text-white px-6 rounded-md font-serpentine text-4xl hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex border-l-4 border-gray-300 shadow-lg hover:shadow-gray-300/20 hover:translate-x-1 group h-16 hidden">
+                <span class="group-hover:-translate-x-1 transition-transform duration-300 my-auto">&#8617;</span>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-gray-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
+                </div>
+            </div>
+            <div id="header-menu-text"
+                class="font-serpentine text-5xl flex justify-center items-center text-center mt-2">
             </div>
         </div>
-
         <!-- Right: Player Info -->
         <div id="player-info" class="flex text-3xl items-center space-x-2 relative">
             <span id="player-name" class="font-semibold">Username</span>
-
             <button id="nav-settings-button" class="rounded-full overflow-hidden" style="width: 25px; height: 25px;">
                 <img src="./static/images/avatar_placeholder.png" class="w-full h-full object-cover">
             </button>
@@ -450,6 +453,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </template>
 
 <template id="error-template">

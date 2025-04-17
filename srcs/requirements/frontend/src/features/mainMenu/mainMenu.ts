@@ -23,30 +23,33 @@ export async function initializeView() {
 			showMenuHelperText(availableButton);
 		}
 
-		const disableButton = (buttonId: string, bannerId: string, overlayId: string) => {
+		const disableButton = (buttonId: string, buttonContainerId: string, buttonContainerTextId: string, buttonContainerOverlayId: string) => {
 			const button = document.getElementById(buttonId);
-			const banner = document.getElementById(bannerId);
-			const overlay = document.getElementById(overlayId);
+			const buttonContainer = document.getElementById(buttonContainerId);
+			const buttonContainerText = document.getElementById(buttonContainerTextId);
+			const buttonContainerOverlay = document.getElementById(buttonContainerOverlayId);
 
 			if (button) {
-				button.classList.remove("hover:scale-105", "transition", "duration-200");
+				button.classList.remove("transform", "transition", "duration-200", "hover:scale-105");
 				button.removeAttribute("href");
 				button.removeAttribute("data-target");
+				button.classList.add("disabled-button");
 			}
-			if (banner) {
-				banner.classList.remove("bg-red-700");
-				banner.classList.add("bg-gray-700");
+			if (buttonContainer) {
+				buttonContainer.classList.remove("transition-transform", "duration-200", "group-hover:scale-105");
 			}
-			if (overlay) {
-				overlay.classList.remove("bg-red-700", "group-hover:opacity-0", "transition-opacity", "duration-200");
-				overlay.classList.add("bg-gray-700");
+			if (buttonContainerText) {
+				buttonContainerText.classList.remove("from-blue-700", "from-yellow-700", "from-green-700", "from-purple-700", "bg-gradient-to-t", "to-transparent");
 			}
-			if (button) button.classList.add("disabled-button");
+			if (buttonContainerOverlay) {
+				buttonContainerOverlay.classList.remove("bg-blue-700", "bg-yellow-700", "bg-green-700", "bg-purple-700", "transition-opacity", "duration-200", "group-hover:opacity-0");
+				buttonContainerOverlay.classList.add("bg-gray-700", "opacity-75");
+			}
 		};
 
-		disableButton("remote-play-button", "banner-remote-play", "overlay-remote-play");
-		disableButton("tournament-play-button", "banner-tournament-play", "overlay-tournament-play");
-		disableButton("rankings-button", "banner-rankings", "overlay-rankings");
-		disableButton("friends-button", "banner-friends", "overlay-friends");
+		disableButton("remote-play-button", "remote-play-button-container", "remote-play-button-container-text", "remote-play-button-overlay");
+		disableButton("tournament-play-button", "tournament-play-button-container", "tournament-play-button-container-text", "tournament-play-button-overlay");
+		disableButton("rankings-button", "rankings-button-container", "rankings-button-container-text", "rankings-button-overlay");
+		disableButton("friends-button", "friends-button-container", "friends-button-container-text", "friends-button-overlay");
 	}
 }
