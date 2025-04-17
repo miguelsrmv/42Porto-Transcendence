@@ -16,8 +16,9 @@ export async function initializeView() {
         });
     else {
         const availableButton = document.getElementById("local-play-button");
-        if (availableButton)
+        if (availableButton) {
             showMenuHelperText(availableButton);
+        }
         const disableButton = (buttonId, bannerId, overlayId) => {
             const button = document.getElementById(buttonId);
             const banner = document.getElementById(bannerId);

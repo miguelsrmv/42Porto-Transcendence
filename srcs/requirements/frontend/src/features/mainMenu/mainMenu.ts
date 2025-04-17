@@ -12,14 +12,16 @@ import { userIsLoggedIn } from "../auth/auth.service.js"
 * This function sets up the main menu, depending on if the user has logged in or not
 */
 export async function initializeView() {
+
 	if (await userIsLoggedIn())
 		document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function(anchor) {
 			showMenuHelperText(anchor);
 		});
 	else {
 		const availableButton = document.getElementById("local-play-button");
-		if (availableButton)
+		if (availableButton) {
 			showMenuHelperText(availableButton);
+		}
 
 		const disableButton = (buttonId: string, bannerId: string, overlayId: string) => {
 			const button = document.getElementById(buttonId);

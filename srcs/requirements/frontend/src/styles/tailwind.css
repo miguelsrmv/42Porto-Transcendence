@@ -26,11 +26,11 @@
   font-family: 'serpentine', sans-serif;
 }
 
-/* Custom styles using @apply */
-.nav-button {
-  @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
-}
-
+/* /* Custom styles using @apply */ */
+/* .nav-button { */
+/*   @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 */
+/* } */
+/**/
 /* Animations */
 #enter-button.fade-in {
   opacity: 1;
@@ -49,6 +49,17 @@
     transform: fade(0.8);
     pointer-events: none;
 }
+
+.page-fade-in {
+  opacity: 1;
+  transition: opacity 300ms ease-out;
+}
+
+.page-fade-out {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
 
 /* Keyframes (Keep as they are) */
 @keyframes modalEnter {

@@ -51,4 +51,3 @@ export function getTemplateId(templateHost: string): string | undefined {
             return "error-template";
     }
 }
-
