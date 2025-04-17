@@ -5,15 +5,6 @@
  * This module includes functions that manage the display of dropdown menus, enhancing
  * user interaction by allowing elements to be shown or hidden based on user actions.
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { logoutUser } from "../features/auth/logout.js";
 /**
  * @brief Toggles the visibility of a dropdown menu.
@@ -40,11 +31,11 @@ export function toggleDropdown() {
     });
     const logoutButton = document.getElementById("logout-button");
     if (logoutButton) {
-        logoutButton.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
-            yield logoutUser();
+        logoutButton.addEventListener("click", async () => {
+            await logoutUser();
             window.location.hash = "#";
             // TODO: Put this function on auth.service.ts ?
-        }));
+        });
     }
     ;
 }

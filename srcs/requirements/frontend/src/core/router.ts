@@ -4,6 +4,7 @@
  */
 
 import { loadView } from "./viewLoader.js";
+import * as errorPageModule from "../features/error/error.js";
 import * as landingPageModule from "../features/landing/landing.js";
 import * as mainMenuModule from "../features/mainMenu/mainMenu.js";
 import * as localPlayModule from "../features/localPlay/localPlay.js";
@@ -11,6 +12,7 @@ import * as remotePlayModule from "../features/remotePlay/remotePlay.js";
 import * as tournamentPlayModule from "../features/tournamentPlay/tournamentPlay.js";
 import * as friendModule from "../features/friends/friends.js";
 import * as rankingsModule from "../features/rankings/rankings.js";
+import * as gameModule from "../features/game/gamePage.js"
 
 type FeatureModule = {
     initializeView: () => void;
@@ -24,17 +26,10 @@ const routes: { [key: string]: FeatureModule } = {
     "tournament-play-page": tournamentPlayModule as FeatureModule,
     "friends-page": friendModule as FeatureModule,
     "rankings-page": rankingsModule as FeatureModule,
+    "game-page": gameModule as FeatureModule,
 }
 
 let currentView = "";
-
-/**
- * @brief Resets the current view to the landing page.
- */
-function resetView() {
-    currentView = "";
-    loadView("landing-page");
-}
 
 /**
  * @brief Handles changes in the route based on the URL hash.
@@ -53,12 +48,12 @@ function handleRouteChange(): void {
     currentView = viewName;
 
     // Attempt to load the HTML with loadView()
-    // TODO: Check if I should throw an error inside loadView?
     try {
         loadView(viewName);
     } catch (error) {
         console.error(`Error loading page "${viewName}":`, error);
-        resetView();
+        loadView("error-page");
+        errorPageModule.initializeView(404);
         return;
     }
 
@@ -75,8 +70,7 @@ function handleRouteChange(): void {
         }
     } else {
         // Handle unknown routes - redirect to landing page or a 404 view
-        console.warn(`No route defined for ${viewName}. Redirecting to landing page.`);
-        navigate('landing-page', true);
+        console.error(`No route defined for ${viewName}.`);
     }
 }
 

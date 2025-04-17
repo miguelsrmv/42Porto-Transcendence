@@ -5,15 +5,6 @@
  * This module includes functions that apply various animations to elements on the landing page,
  * enhancing the user experience with visual effects.
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { wait } from "../utils/helpers.js";
 /**
  * @brief Adds animations to the landing page elements.
@@ -28,17 +19,31 @@ import { wait } from "../utils/helpers.js";
  *
  * @return A promise that resolves when the animations have been added.
  */
-export function setLandingAnimations() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const subTitle = document.getElementById("sub-title");
-        const enterButton = document.getElementById("enter-button");
-        yield wait(1);
-        subTitle === null || subTitle === void 0 ? void 0 : subTitle.classList.remove("opacity-0", "invisible");
-        subTitle === null || subTitle === void 0 ? void 0 : subTitle.classList.add("fade-in");
-        yield wait(1);
-        enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.remove("opacity-0", "invisible");
-        enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.add("fade-in");
-        enterButton === null || enterButton === void 0 ? void 0 : enterButton.classList.add("animate-bounce");
-    });
+export async function setLandingAnimations() {
+    const subTitle = document.getElementById("sub-title");
+    const enterButton = document.getElementById("enter-button");
+    // Ensure elements exist before trying to animate
+    if (!subTitle || !enterButton) {
+        console.warn("Subtitle or Enter button not found for animations.");
+        return;
+    }
+    try {
+        // Animate Subtitle
+        await wait(1); // Short delay before first animation
+        subTitle.classList.remove("opacity-0", "invisible");
+        // The transition is handled by Tailwind classes in the HTML:
+        // e.g., class="... transition-opacity duration-700 ease-in-out"
+        // Animate Enter Button
+        await wait(1); // Stagger the second animation
+        enterButton.classList.remove("opacity-0", "invisible");
+        // Add bounce effect after it becomes visible
+        enterButton.classList.add("animate-bounce"); // Tailwind's bounce animation
+    }
+    catch (error) {
+        console.error("Error during landing animations:", error);
+        // Ensure elements are visible even if animations fail
+        subTitle?.classList.remove("opacity-0", "invisible");
+        enterButton?.classList.remove("opacity-0", "invisible");
+    }
 }
 //# sourceMappingURL=animations.js.map

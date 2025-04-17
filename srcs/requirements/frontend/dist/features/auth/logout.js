@@ -1,23 +1,25 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-export function logoutUser() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield fetch('/api/users/logout', {
-                method: 'DELETE',
-                credentials: 'include',
-            });
-        }
-        catch (error) {
-            console.error("Logout failed: ", error);
-        }
-    });
+/**
+ * @file logout.ts
+ * @brief Handles user logout functionality.
+ *
+ * This module provides a function to log out the user by sending a request to the server
+ * to terminate the user's session.
+ */
+/**
+ * @brief Logs out the current user.
+ *
+ * This function sends a DELETE request to the server to log out the user. It handles any
+ * errors that occur during the logout process by logging them to the console.
+ */
+export async function logoutUser() {
+    try {
+        await fetch('/api/users/logout', {
+            method: 'DELETE',
+            credentials: 'include',
+        });
+    }
+    catch (error) {
+        console.error("Logout failed: ", error);
+    }
 }
 //# sourceMappingURL=logout.js.map
