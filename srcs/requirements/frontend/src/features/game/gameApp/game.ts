@@ -120,6 +120,7 @@ function updateGameArea(): void {
   }
 }
 
+/* // Unused but might be useful in the future
 function paintBackground(context : CanvasRenderingContext2D): void {
 
   const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
@@ -131,3 +132,4 @@ function paintBackground(context : CanvasRenderingContext2D): void {
     context?.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height); // Draw image to fill canvas
   };
 }
+*/
