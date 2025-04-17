@@ -17,14 +17,14 @@
  * @param message The helper text message to display when the menu is hovered over.
  */
 export function showMenuHelperText(anchor) {
-    const menuHelperText = document.getElementById("menu-helper-text");
+    const menuHelperText = document.getElementById('menu-helper-text');
     if (menuHelperText) {
-        const message = anchor.getAttribute("data-helper-message") || "Default helper text";
-        anchor.addEventListener("mouseover", () => {
+        const message = anchor.getAttribute('data-helper-message') || 'Default helper text';
+        anchor.addEventListener('mouseover', () => {
             menuHelperText.innerHTML = message;
         });
-        anchor.addEventListener("mouseout", () => {
-            menuHelperText.innerHTML = "";
+        anchor.addEventListener('mouseout', () => {
+            menuHelperText.innerHTML = '';
         });
     }
 }

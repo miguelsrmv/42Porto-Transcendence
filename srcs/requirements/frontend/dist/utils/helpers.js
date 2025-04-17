@@ -15,7 +15,7 @@
  * @return A promise that resolves after the specified delay.
  */
 export function wait(seconds) {
-    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 /**
  * @brief Retrieves the template ID based on the template host.
@@ -29,26 +29,26 @@ export function wait(seconds) {
  */
 export function getTemplateId(templateHost) {
     switch (templateHost) {
-        case "header":
-            return "header-template";
-        case "landing-page":
-            return "landing-template";
-        case "main-menu-page":
-            return "main-menu-template";
-        case "local-play-page":
-        case "remote-play-page":
-        case "tournament-play-page":
-            return "game-menu-template";
-        case "profile-page":
-            return "profile-template";
-        case "friends-page":
-            return "friends-template";
-        case "rankings-page":
-            return "rankings-template";
-        case "error-page":
-            return "error-template";
-        case "game-page":
-            return "game-template";
+        case 'header':
+            return 'header-template';
+        case 'landing-page':
+            return 'landing-template';
+        case 'main-menu-page':
+            return 'main-menu-template';
+        case 'local-play-page':
+        case 'remote-play-page':
+        case 'tournament-play-page':
+            return 'game-menu-template';
+        case 'profile-page':
+            return 'profile-template';
+        case 'friends-page':
+            return 'friends-template';
+        case 'rankings-page':
+            return 'rankings-template';
+        case 'error-page':
+            return 'error-template';
+        case 'game-page':
+            return 'game-template';
     }
 }
 //# sourceMappingURL=helpers.js.map

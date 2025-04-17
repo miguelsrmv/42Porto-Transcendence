@@ -1,4 +1,4 @@
-import { attemptLogin, attemptRegister } from "../auth/auth.service.js";
+import { attemptLogin, attemptRegister } from '../auth/auth.service.js';
 /**
  * @file loginMenu.ts
  * @brief Manages the login and registration modals.
@@ -17,26 +17,26 @@ let modalClickListenerAttached = false;
  * for handling user interactions with the modal.
  */
 export function triggerLoginModal() {
-    const loginModal = document.getElementById("login-modal");
+    const loginModal = document.getElementById('login-modal');
     // Show loginModal if not logged in (or if login check failed)
     if (loginModal) {
         // Clean up any existing event listener before adding a new one
         if (modalClickListenerAttached) {
             loginModal.removeEventListener('click', handleModalOutsideClick);
         }
-        // 1. Make loginModal visible 
-        loginModal.classList.remove("hidden");
+        // 1. Make loginModal visible
+        loginModal.classList.remove('hidden');
         // 2. Force browser reflow to register the element is now displayed
         void loginModal.offsetWidth;
         // 3. Add entrance transition
-        loginModal.classList.remove("exiting");
-        loginModal.classList.add("entering");
+        loginModal.classList.remove('exiting');
+        loginModal.classList.add('entering');
         // 4. Set up one click handler for outside clicks
         loginModal.addEventListener('click', handleModalOutsideClick);
         modalClickListenerAttached = true;
     }
     else {
-        console.warn("#login-modal not found.");
+        console.warn('#login-modal not found.');
     }
     toggleLoginMenu();
 }
@@ -50,7 +50,7 @@ export function triggerLoginModal() {
  */
 function handleModalOutsideClick(event) {
     // No need for another console warn (already done on triggerLoginModal)
-    const loginModal = document.getElementById("login-modal");
+    const loginModal = document.getElementById('login-modal');
     if (!loginModal)
         return;
     // Check if the click is outside the form (on the loginModal background)
@@ -66,12 +66,12 @@ function handleModalOutsideClick(event) {
  */
 function closeLoginModal() {
     // No need for another console warn (already done on triggerLoginModal)
-    const loginModal = document.getElementById("login-modal");
+    const loginModal = document.getElementById('login-modal');
     if (!loginModal)
         return;
     // Trigger the exit transition
-    loginModal.classList.add("exiting");
-    loginModal.classList.remove("entering");
+    loginModal.classList.add('exiting');
+    loginModal.classList.remove('entering');
     // Remove the existing transition listener if any
     loginModal.removeEventListener('transitionend', handleModalTransitionEnd);
     // Wait for transition to end, then hide the loginModal
@@ -86,10 +86,10 @@ function closeLoginModal() {
  * @param event The transition event triggered by the end of the transition.
  */
 function handleModalTransitionEnd(event) {
-    const loginModal = document.getElementById("login-modal");
+    const loginModal = document.getElementById('login-modal');
     if (!loginModal)
         return;
-    if (loginModal.classList.contains("exiting")) {
+    if (loginModal.classList.contains('exiting')) {
         // Remove the 'exiting' class and hide the loginModal
         loginModal.classList.add('hidden');
         // Remove the event listener to prevent memory leaks
@@ -103,31 +103,31 @@ function handleModalTransitionEnd(event) {
  * event listeners for form submission and navigation to the registration form.
  */
 function toggleLoginMenu() {
-    const loginForm = document.getElementById("login-form");
+    const loginForm = document.getElementById('login-form');
     if (loginForm) {
         // Only attach the listener once
         if (!loginFormListenerAttached) {
-            const loginButton = document.getElementById("login-submit-button");
+            const loginButton = document.getElementById('login-submit-button');
             if (loginButton) {
-                loginButton.addEventListener("click", function (event) {
+                loginButton.addEventListener('click', function (event) {
                     attemptLogin.call(loginForm, event);
                 });
                 loginFormListenerAttached = true;
             }
         }
-        const showRegisterButton = document.getElementById("show-register-button");
+        const showRegisterButton = document.getElementById('show-register-button');
         if (showRegisterButton) {
             // Remove existing listener to prevent duplicates
-            showRegisterButton.removeEventListener("click", handleRegisterButtonClick);
+            showRegisterButton.removeEventListener('click', handleRegisterButtonClick);
             // Add the click listener
-            showRegisterButton.addEventListener("click", handleRegisterButtonClick);
+            showRegisterButton.addEventListener('click', handleRegisterButtonClick);
         }
         else {
-            console.warn("#show-register-button not found.");
+            console.warn('#show-register-button not found.');
         }
     }
     else {
-        console.warn("#login-form not found.");
+        console.warn('#login-form not found.');
     }
 }
 /**
@@ -137,9 +137,9 @@ function toggleLoginMenu() {
  * registration form when the register button is clicked.
  */
 function handleRegisterButtonClick() {
-    const loginForm = document.getElementById("login-form");
+    const loginForm = document.getElementById('login-form');
     if (loginForm) {
-        loginForm.classList.toggle("hidden");
+        loginForm.classList.toggle('hidden');
     }
     toggleRegisterMenu();
 }
@@ -150,29 +150,29 @@ function handleRegisterButtonClick() {
  * and sets up event listeners for the register form.
  */
 function toggleRegisterMenu() {
-    const registerForm = document.getElementById("register-form");
+    const registerForm = document.getElementById('register-form');
     if (!registerForm) {
-        console.warn("#register-form not found.");
+        console.warn('#register-form not found.');
         return;
     }
-    registerForm.classList.toggle("hidden");
+    registerForm.classList.toggle('hidden');
     if (!registerFormListenerAttached) {
-        const registerButton = document.getElementById("register-submit-button");
+        const registerButton = document.getElementById('register-submit-button');
         if (registerButton) {
-            registerButton.addEventListener("click", function (event) {
+            registerButton.addEventListener('click', function (event) {
                 attemptRegister.call(registerForm, event);
             });
             registerFormListenerAttached = true;
         }
-        const showLoginButton = document.getElementById("show-login-button");
+        const showLoginButton = document.getElementById('show-login-button');
         if (showLoginButton) {
             // Remove existing listener to prevent duplicates
-            showLoginButton.removeEventListener("click", handleBackRegisterClick);
+            showLoginButton.removeEventListener('click', handleBackRegisterClick);
             // Add the click listener
-            showLoginButton.addEventListener("click", handleBackRegisterClick);
+            showLoginButton.addEventListener('click', handleBackRegisterClick);
         }
         else {
-            console.warn("#show-login-button not found.");
+            console.warn('#show-login-button not found.');
         }
     }
 }
@@ -183,16 +183,16 @@ function toggleRegisterMenu() {
  * to the login form when the back button is clicked.
  */
 function handleBackRegisterClick() {
-    const registerForm = document.getElementById("register-form");
+    const registerForm = document.getElementById('register-form');
     if (registerForm) {
-        registerForm.classList.toggle("hidden");
+        registerForm.classList.toggle('hidden');
     }
-    const loginForm = document.getElementById("login-form");
+    const loginForm = document.getElementById('login-form');
     if (loginForm) {
-        loginForm.classList.toggle("hidden");
+        loginForm.classList.toggle('hidden');
     }
     else {
-        console.warn("#login-form not found.");
+        console.warn('#login-form not found.');
     }
 }
 //# sourceMappingURL=loginMenu.js.map

@@ -12,7 +12,7 @@ import { initializeRouter } from './core/router.js';
  *
  * Initializes routing when the DOM content is fully loaded and parsed.
  */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
     initializeRouter();
 });
 //# sourceMappingURL=app.js.map
