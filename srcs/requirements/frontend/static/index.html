@@ -376,31 +376,32 @@
                                     class="block text-gray-300 text-sm font-bold mb-3 text-center">Background:</label>
                                 <div id="background-display"
                                     class="w-4/5 h-56 rounded-lg shadow-xl overflow-hidden flex items-center justify-center border-2 border-purple-400">
-                                    <div id="background-img" class="w-full h-full bg-repeat-x bg-center bg-contain"
-                                        style="background-image: url('./static/backgrounds/Backyard.png');">
-                                    </div>
+                                    <img id="background-img" src="./static/backgrounds/Backyard.png"
+                                        class="w-full h-full" alt="Background Image">
                                 </div>
-                                <div class="flex items-center mt-4 gap-4">
-                                    <button id="prev-background"
-                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">&lt;
-                                        Previous</button>
-                                    <button id="next-background"
-                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">Next
-                                        &gt;</button>
-                                </div>
+                            </div>
+                            <div class="flex items-center mt-4 gap-4">
+                                <button id="prev-background"
+                                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">&lt;
+                                    Previous</button>
+                                <button id="next-background"
+                                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">Next
+                                    &gt;</button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="mt-4 flex justify-center">
-                    <a href="#game-page" id="play-button"
-                        class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider">
-                        Play Game!
-                    </a>
-                </div>
+            <div class="mt-4 flex justify-center">
+                <button id="play-button" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700
+                        text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg
+                        transition-all duration-300 transform hover:scale-105 uppercase tracking-wider">
+                    Play Game!
+                </button>
             </div>
         </div>
+    </div>
     </div>
 </template>
 

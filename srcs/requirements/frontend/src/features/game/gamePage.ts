@@ -1,4 +1,5 @@
 import { initializeGame } from "./gameApp/game.js"
+import { getGameSettings } from "./gameSetup.js"
 
 /**
  * @file gamePage.ts
@@ -15,6 +16,8 @@ import { initializeGame } from "./gameApp/game.js"
  * It is responsible for preparing the game page for user interaction.
  */
 export function initializeView(): void {
+	const gameSettings = getGameSettings();
+	console.log(gameSettings);
 	initializeGame();
 }
 

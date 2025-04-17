@@ -3,7 +3,7 @@
  * @brief Handles the setup of the local play page.
  */
 
-import { getGameType, createBackgroundLoop, createCharacterLoop } from "../game/gameSetup.js"
+import { getGameType, createBackgroundLoop, createCharacterLoop, setGameSettings } from "../game/gameSetup.js"
 
 /**
 * @brief Initializes view for local play
@@ -57,4 +57,15 @@ export async function initializeView(): Promise<void> {
 		createCharacterLoop();
 		createCharacterLoop(2);
 	}
+
+	const playButton = document.getElementById("play-button");
+	if (playButton) {
+		playButton.addEventListener("click", () => {
+			setGameSettings(gameType, "local");
+			window.location.hash = "game-page";
+		});
+	}
+	else
+		console.warn("Play Button not found");
 }
+
