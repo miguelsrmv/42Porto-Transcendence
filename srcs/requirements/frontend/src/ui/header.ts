@@ -59,7 +59,9 @@ export function adjustHeader(view: string) {
          if (!headerBackButton)
             throw new Error("Could not find the header template with id 'header-back-button'.");
          headerBackButton.classList.remove("hidden");
-         headerBackButton.onclick = () => window.history.back();
+         headerBackButton.onclick = () => {
+            window.history.back();
+         };
       }
    }
 }
