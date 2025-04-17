@@ -1,6 +1,8 @@
 export class Ball {
 	x: number;
 	y: number;
+	previousX: number;
+	previousY: number;
 	radius: number;
 	speedX: number;
 	speedY: number;
@@ -8,6 +10,8 @@ export class Ball {
 	constructor(x: number, y: number, radius: number, speed: number) {
 		this.x = x;
 		this.y = y;
+		this.previousX = x;
+		this.previousY = y;
 		this.radius = radius;
 		this.speedX = speed;
 		this.speedY = speed;
@@ -22,6 +26,8 @@ export class Ball {
 	}
 
 	move(): void {
+		this.previousX = this.x;
+		this.previousY = this.y;
 		this.x += this.speedX;
 		this.y += this.speedY;
 	}

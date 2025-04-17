@@ -9,20 +9,51 @@ export function checkWallCollision(ball, gameArea) {
         ball.bounceVertical();
     }
 }
-export function checkPaddleCollision(ball, leftPaddle, rightPaddle) {
-    // Left paddle collision
-    if (ball.x - ball.radius <= leftPaddle.x + leftPaddle.width &&
-        ball.y >= leftPaddle.y - ball.radius &&
-        ball.y <= leftPaddle.y + leftPaddle.height + ball.radius) {
-        ball.bounceHorizontal();
-        ball.speedX *= 1.1;
+function crossedPaddleHorizontally(ball, paddle) {
+    const goingLeft = ball.speedX < 0;
+    const goingRight = ball.speedX > 0;
+    if (goingLeft) {
+        return (ball.previousX - ball.radius > paddle.x + paddle.width &&
+            ball.x - ball.radius <= paddle.x + paddle.width);
     }
-    // Right paddle collision
-    if (ball.x + ball.radius >= rightPaddle.x &&
-        ball.y >= rightPaddle.y - ball.radius &&
-        ball.y <= rightPaddle.y + rightPaddle.height + ball.radius) {
+    else if (goingRight) {
+        return (ball.previousX + ball.radius < paddle.x &&
+            ball.x + ball.radius >= paddle.x);
+    }
+    return false;
+}
+// Check if ball is within paddle y range
+function isWithinPaddleHeight(ball, paddle) {
+    return (ball.y + ball.radius >= paddle.y &&
+        ball.y - ball.radius <= paddle.y + paddle.height);
+}
+// Limits ball speed to maxSpeed
+function capMaxSpeed(ball, maxSpeed) {
+    if (Math.abs(ball.speedX) > maxSpeed)
+        ball.speedX = Math.sign(ball.speedX) * maxSpeed;
+    if (Math.abs(ball.speedY) > maxSpeed)
+        ball.speedY = Math.sign(ball.speedY) * maxSpeed;
+}
+export function checkPaddleCollision(ball, leftPaddle, rightPaddle) {
+    if (
+    // Left paddle collision
+    crossedPaddleHorizontally(ball, leftPaddle) &&
+        isWithinPaddleHeight(ball, leftPaddle)) {
+        // Adjustment to prevent sticking to paddle
+        ball.x = leftPaddle.x + leftPaddle.width + ball.radius;
         ball.bounceHorizontal();
         ball.speedX *= 1.1;
+        capMaxSpeed(ball, 20);
+    }
+    if (
+    // Right paddle collision
+    crossedPaddleHorizontally(ball, rightPaddle) &&
+        isWithinPaddleHeight(ball, rightPaddle)) {
+        // Adjustment to prevent sticking to paddle
+        ball.x = rightPaddle.x - ball.radius;
+        ball.bounceHorizontal();
+        ball.speedX *= 1.1;
+        capMaxSpeed(ball, 20);
     }
 }
 export function checkGoal(ball, gameArea) {
