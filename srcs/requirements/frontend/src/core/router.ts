@@ -12,7 +12,7 @@ import * as remotePlayModule from "../features/remotePlay/remotePlay.js";
 import * as tournamentPlayModule from "../features/tournamentPlay/tournamentPlay.js";
 import * as friendModule from "../features/friends/friends.js";
 import * as rankingsModule from "../features/rankings/rankings.js";
-import * as gameModule from "../features/game/localGame.js"
+import * as gameModule from "../features/game/gamePage.js"
 
 type FeatureModule = {
     initializeView: () => void;

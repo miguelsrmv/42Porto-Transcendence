@@ -1,3 +1,4 @@
+import { initializeGame } from "./gameApp/game.js";
 /**
  * @brief Adds event listeners for the game page.
  *
@@ -5,5 +6,6 @@
  * TODO: Edit this Doxygen comment
  */
 export function initializeView() {
+    initializeGame();
 }
-//# sourceMappingURL=localGame.js.map
+//# sourceMappingURL=gamePage.js.map
