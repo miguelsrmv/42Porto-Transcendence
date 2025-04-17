@@ -1,10 +1,18 @@
 import { initializeGame } from "./gameApp/game.js"
 
 /**
- * @brief Adds event listeners for the game page.
+ * @file gamePage.ts
+ * @brief Initializes the game page view.
  * 
- * This function sets up the event listener for the landing button, which navigates to the home view upon click.
- * TODO: Edit this Doxygen comment
+ * This module is responsible for setting up the game page by initializing the game
+ * and preparing any necessary event listeners or UI components.
+ */
+
+/**
+ * @brief Initializes the view for the game page.
+ * 
+ * This function calls the `initializeGame` function to set up the game environment.
+ * It is responsible for preparing the game page for user interaction.
  */
 export function initializeView(): void {
 	initializeGame();

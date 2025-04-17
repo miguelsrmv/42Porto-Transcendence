@@ -79,6 +79,8 @@ export function createCharacterLoop(player_number: number = 1) {
 
 	// Initialize the first character
 	updateCharacterDisplay();
+
+	// TODO: Update the Character sub text!!
 }
 
 /**
