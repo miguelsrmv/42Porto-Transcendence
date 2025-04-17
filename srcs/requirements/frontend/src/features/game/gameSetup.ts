@@ -15,7 +15,7 @@ type gameSettingKey =
 	| 'background'
 	| 'gameType'
 
-export let gameSettings: Record<gameSettingKey, string | null> = {
+export const gameSettings: Record<gameSettingKey, string | null> = {
 	playType: null,
 	gameType: null,
 	player1Alias: null,
