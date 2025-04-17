@@ -1,3 +1,4 @@
+import { SPEED } from "./game.js";
 export function checkWallCollision(ball, gameArea) {
     if (!gameArea.canvas) {
         console.error("Error getting canvas element!");
@@ -45,7 +46,7 @@ function resetBall(ball, gameArea) {
     }
     ball.x = gameArea.canvas.width / 2;
     ball.y = gameArea.canvas.height / 2;
-    ball.speedX = 2 * (Math.random() > 0.5 ? 1 : -1);
-    ball.speedY = 2 * (Math.random() > 0.5 ? 1 : -1);
+    ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
+    ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }
 //# sourceMappingURL=collisions.js.map
