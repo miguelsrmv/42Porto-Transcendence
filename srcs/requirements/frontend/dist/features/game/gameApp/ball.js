@@ -14,7 +14,7 @@ export class Ball {
     draw(ctx) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "black";
         ctx.fill();
         ctx.closePath();
     }
