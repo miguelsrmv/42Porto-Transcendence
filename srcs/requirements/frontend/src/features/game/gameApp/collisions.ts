@@ -1,3 +1,4 @@
+import { SPEED } from "./game.js";
 import { GameArea } from "./types.js";
 
 interface Ball {
@@ -77,6 +78,6 @@ function resetBall(ball: Ball, gameArea: GameArea): void {
   }
   ball.x = gameArea.canvas.width / 2;
   ball.y = gameArea.canvas.height / 2;
-  ball.speedX = 2 * (Math.random() > 0.5 ? 1 : -1);
-  ball.speedY = 2 * (Math.random() > 0.5 ? 1 : -1);
+  ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }

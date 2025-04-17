@@ -2,8 +2,7 @@ import { Paddle } from "./paddle.js";
 import { Ball } from "./ball.js";
 import { setupInput, handleInput } from "./input.js";
 import { checkWallCollision, checkPaddleCollision, checkGoal, } from "./collisions.js";
-//TODO: Check if SPEED is hardcoded somewhere else
-export const SPEED = 15;
+export const SPEED = 7;
 export const CANVAS_HEIGHT = 720;
 const CANVAS_WIDTH = 1200;
 const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
