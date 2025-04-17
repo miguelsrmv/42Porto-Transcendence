@@ -14,7 +14,7 @@
     class="h-screen w-screen flex flex-col bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')]">
     <header id="header" class="w-full relative flex items-center justify-center"></header>
 
-    <main id="app" class="h-full w-full"></main>
+    <main id="app" class="h-full w-full overflow-hidden"></main>
 
     <footer id="footer" class="w-full h-[3%] text-center bg-black text-white">
         <p>ft_transcendence by <a href="https://github.com/miguelsrmv">mde-sa--</a>, <a
@@ -144,76 +144,91 @@
             <a href="#local-play-page" id="local-play-button" data-target="local-play-page"
                 data-helper-message="Play locally with friends!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div id="bg-image-local-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                <div id="banner-local-play" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                <div
+                    class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                    <img src="/static/images/localplay.jpg" alt="Local Play" class="w-full h-full object-cover">
+                    <div
+                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4">
+                        <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                            Local Play
+                        </h3>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
+                    </div>
                 </div>
-                <div id="overlay-local-play"
-                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
-                </div>
-                <div id="local-play-text"
-                    class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                    Local Play</div>
             </a>
 
             <a href="#remote-play-page" id="remote-play-button" data-target="remote-play-page"
                 data-helper-message="Play online!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div id="bg-image-remote-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                <div id="banner-remote-play" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                <div
+                    class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                    <img src="/static/images/remoteplay.jpg" alt="Remote Play" class="w-full h-full object-cover">
+                    <div
+                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-yellow-700 to-transparent h-1/2 flex items-end justify-start p-4">
+                        <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                            Remote Play
+                        </h3>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-yellow-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
+                    </div>
                 </div>
-                <div id="overlay-remote-play"
-                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
-                </div>
-                <div id="remote-play-text"
-                    class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                    Remote Play</div>
             </a>
 
             <a href="#tournament-play-page" id="tournament-play-button" data-target="tournament-play-page"
                 data-helper-message="Play in a tournament!"
                 class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div id="bg-image-tournament-play" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                <div id="banner-tournament-play"
-                    class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                <div id="overlay-tournament-play"
-                    class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
+                <div
+                    class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                    <img src="/static/images/tournament.jpg" alt="Tournament Play" class="w-full h-full object-cover">
+                    <div
+                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4">
+                        <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                            Tournament Play
+                        </h3>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
+                    </div>
                 </div>
-                <div id="tournament-play-text"
-                    class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                    Tourney</div>
             </a>
 
             <div id="networking-section" class="flex flex-1 flex-col justify-center rounded overflow-hidden ">
                 <a href="#rankings-page" id="rankings-button" data-target="rankings-page"
                     data-helper-message="Check the rankings!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
-                    <div id="bg-image-rankings" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                    <div id="banner-rankings"
-                        class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20"></div>
-                    <div id="overlay-rankings"
-                        class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
+                    <div
+                        class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                        <img src="/static/images/rankings.jpg" alt="Rankings" class="w-full h-full object-cover">
+                        <div
+                            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-700 to-transparent h-1/2 flex items-end justify-start p-4">
+                            <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                                Rankings
+                            </h3>
+                        </div>
+                        <div
+                            class="absolute inset-0 bg-green-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
+                        </div>
                     </div>
-                    <div id="rankings-text"
-                        class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                        Rankings</div>
                 </a>
                 <a href="#friends-page" id="friends-button" data-target="friends-page"
                     data-helper-message="See your friends!"
                     class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
-                    <div id="bg-image-friends" class="menu-image absolute inset-0 bg-cover bg-center bg-no-repeat"
-                        style="background-image: url('/static/images/pokemon_trainer_male.png');"></div>
-                    <div id="banner-friends" class="absolute bottom-0 left-0 w-full h-[20%] bg-red-700 angled-top z-20">
+                    <div
+                        class="relative h-full overflow-hidden rounded transition-trasnform duration-200 group-hover:scale-105">
+                        <img src="/static/images/friends.jpg" alt="Friends" class="w-full h-full object-cover">
+                        <div
+                            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-purple-700 to-transparent h-1/2 flex items-end justify-start p-4">
+                            <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                                Friends
+                            </h3>
+                        </div>
+                        <div
+                            class="absolute inset-0 bg-purple-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
+                        </div>
                     </div>
-                    <div id="overlay-friends"
-                        class="absolute inset-0 bg-red-700 opacity-50 z-10 group-hover:opacity-0 transition-opacity duration-200">
-                    </div>
-                    <div id="friends-text"
-                        class="absolute bottom-0 left-3 font-bold uppercase z-30 text-white font-serpentine text-5xl text-outline px-2 py-1">
-                        Friends</div>
                 </a>
             </div>
         </div>
@@ -224,10 +239,10 @@
 </template>
 
 <template id="game-menu-template">
-    <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center">
-        <div id="game-menu-inner" class="bg-white rounded-lg shadow-lg w-4/5 h-[95%] flex flex-col overflow-auto">
+    <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center -mt-6">
+        <div id="game-menu-inner" class="bg-white rounded-lg shadow-lg w-[85%] h-[95%] flex flex-col overflow-auto">
             <div id="game-type-selection" class="flex-grow p-8 flex flex-col">
-                <h2 class="text-3xl font-bold text-center mb-8">Select Your Game</h2>
+                <h2 class="text-4xl font-bold font-serpentine text-center mb-8">Select Your Game</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
                     <button id="classic-pong-button" class="game-type-button group">
                         <div
@@ -262,110 +277,235 @@
                         </div>
                     </button>
                 </div>
+            </div>
 
-                <div id="game-settings-menu" class="flex-grow p-8 flex flex-col hidden">
-                    <h2 id="game-settings-title" class="text-3xl font-bold text-center mb-6">Game Settings</h2>
+            <div id="game-settings-menu" class="flex-grow p-4 flex flex-col hidden">
+                <h2 id="game-settings-title" class="text-4xl font-bold font-serpentine text-center mb-4 drop-shadow-lg">
+                    Game Settings
+                </h2>
 
-                    <div id="settings-columns" class="flex flex-row gap-6 h-full">
-                        <div id="player-1-settings"
-                            class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 items-center">
-                            <h3 class="text-xl font-semibold text-center mb-4">Player 1</h3>
-                            <div class="flex flex-col items-center justify-center flex-grow">
-                                <div id="player-1-name" class="mb-4 w-3/4">
-                                    <label for="player-1-alias"
-                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias:</label>
-                                    <input id="player-1-alias" type="text"
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
-                                        placeholder="Player 1">
-                                </div>
-                                <div id="player-1-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
-                                    <label for="player-1-paddle-colour-input"
-                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
-                                        Colour:</label>
-                                    <input id="player-1-paddle-colour-input" type="color" value="#ff0000"
-                                        class="rounded-md w-1/2">
-                                </div>
+                <div id="settings-columns" class="flex flex-row gap-6 h-full">
+                    <!-- Player 1 Settings -->
+                    <div id="player-1-settings"
+                        class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-red-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
+                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-red-400">Player 1</h3>
+                        <div class="flex flex-col items-center justify-center flex-grow w-full">
+                            <div id="player-1-name" class="mb-6 w-3/4">
+                                <label for="player-1-alias"
+                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Alias</label>
+                                <input id="player-1-alias" type="text"
+                                    class="shadow appearance-none border-b-2 border-red-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-red-300 focus:shadow-outline text-center transition-all duration-300"
+                                    placeholder="Player 1">
                             </div>
-                            <div id="player-1-character" class="mt-4 flex flex-col items-center">
-                                <h5 class="text-lg font-semibold mb-2 text-center">Character:</h5>
-                                <div class="flex items-center">
-                                    <button id="prev-character-1" class="nav-button">&lt;</button>
+                            <div id="player-1-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
+                                <label for="player-1-paddle-colour-input"
+                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Paddle
+                                    Colour</label>
+                                <input id="player-1-paddle-colour-input" type="color" value="#ff0000"
+                                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white">
+                            </div>
+                            <div id="player-1-character" class="mt-6 flex flex-col items-center hidden">
+                                <div class="block text-gray-300 text-sm font-bold mb-3 text-center">Character</div>
+                                <div class="flex items-center gap-6">
+                                    <button id="prev-character-1"
+                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">&lt;
+                                        Previous</button>
                                     <div id="character-display-1"
-                                        class="w-32 h-32 flex items-center justify-center mx-2">
+                                        class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-red-400">
                                         <img id="character-img-1" src="./static/character_select/mario.png"
                                             alt="Character 1" class="max-w-full max-h-full object-contain">
                                     </div>
-                                    <button id="next-character-1" class="nav-button">&gt;</button>
+                                    <button id="next-character-1"
+                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">Next
+                                        &gt;</button>
                                 </div>
-                                <div id="character-move-1" class="mt-2 text-center">FILLER TEXT</div>
+                                <div id="character-move-1" class="mt-4 text-center text-gray-300">Special Move: Fireball
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div id="player-2-settings"
-                            class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 items-center hidden">
-                            <h3 class="text-xl font-semibold text-center mb-4">Player 2</h3>
-                            <div class="flex flex-col items-center justify-center flex-grow">
-                                <div id="player-2-name" class="mb-4 w-3/4">
-                                    <label for="player-2-alias"
-                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias:</label>
-                                    <input id="player-2-alias" type="text"
-                                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
-                                        placeholder="Player 2">
-                                </div>
-                                <div id="player-2-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
-                                    <label for="player-2-paddle-colour-input"
-                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
-                                        Colour:</label>
-                                    <input id="player-2-paddle-colour-input" type="color" value="#0000ff"
-                                        class="rounded-md w-1/2">
-                                </div>
+                    <!-- Player 2 Settings -->
+                    <div id="player-2-settings"
+                        class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-blue-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
+                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-blue-400">Player 2</h3>
+                        <div class="flex flex-col items-center justify-center flex-grow w-full">
+                            <div id="player-2-name" class="mb-6 w-3/4">
+                                <label for="player-2-alias"
+                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Alias</label>
+                                <input id="player-2-alias" type="text"
+                                    class="shadow appearance-none border-b-2 border-blue-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-blue-300 focus:shadow-outline text-center transition-all duration-300"
+                                    placeholder="Player 2">
                             </div>
-                            <div id="player-2-character" class="mt-4 flex flex-col items-center">
-                                <h5 class="text-lg font-semibold mb-2 text-center">Character:</h5>
-                                <div class="flex items-center">
-                                    <button id="prev-character-2" class="nav-button">&lt;</button>
+                            <div id="player-2-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
+                                <label for="player-2-paddle-colour-input"
+                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Paddle
+                                    Colour</label>
+                                <input id="player-2-paddle-colour-input" type="color" value="#0000ff"
+                                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white">
+                            </div>
+                            <div id="player-2-character" class="mt-6 flex flex-col items-center hidden">
+                                <div class="block text-gray-300 text-sm font-bold mb-3 text-center">Character</div>
+                                <div class="flex items-center gap-6">
+                                    <button id="prev-character-2"
+                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">&lt;
+                                        Previous</button>
                                     <div id="character-display-2"
-                                        class="w-32 h-32 flex items-center justify-center mx-2">
+                                        class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-blue-400">
                                         <img id="character-img-2" src="./static/character_select/mario.png"
                                             alt="Character 2" class="max-w-full max-h-full object-contain">
                                     </div>
-                                    <button id="next-character-2" class="nav-button">&gt;</button>
+                                    <button id="next-character-2"
+                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">Next
+                                        &gt;</button>
                                 </div>
-                                <div id="character-move-2" class="mt-2 text-center">FILLER TEXT</div>
-                            </div>
-                        </div>
-
-                        <div id="board-settings-content"
-                            class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 items-center">
-                            <h3 class="text-xl font-semibold text-center mb-4">Board Background</h3>
-                            <div class="flex flex-col items-center justify-center flex-grow">
-                                <div id="match-background" class="flex flex-col items-center justify-center mb-4">
-                                    <label for="background-img"
-                                        class="block text-gray-700 text-sm font-bold mb-2 text-center">Background:</label>
-                                    <div id="background-display"
-                                        class="w-3/4 h-48 rounded-md shadow-md overflow-hidden flex items-center justify-center">
-                                        <div id="background-img" class="w-full h-full bg-repeat-x bg-center bg-contain"
-                                            style="background-image: url('./static/backgrounds/Backyard.png');">
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center mt-2">
-                                        <button id="prev-background" class="nav-button">&lt; Previous</button>
-                                        <button id="next-background" class="nav-button ml-2">Next &gt;</button>
-                                    </div>
+                                <div id="character-move-2" class="mt-4 text-center text-gray-300">Special Move: Fireball
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-8 flex justify-end">
-                        <button id="play-button"
-                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline">
-                            Play Game!
-                        </button>
+                    <!-- Board Settings -->
+                    <div id="board-settings-content"
+                        class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
+                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-purple-400">Board
+                            Background</h3>
+                        <div class="flex flex-col items-center justify-center flex-grow w-full">
+                            <div id="match-background" class="flex flex-col items-center justify-center mb-4 w-full">
+                                <label for="background-img"
+                                    class="block text-gray-300 text-sm font-bold mb-3 text-center">Background:</label>
+                                <div id="background-display"
+                                    class="w-4/5 h-56 rounded-lg shadow-xl overflow-hidden flex items-center justify-center border-2 border-purple-400">
+                                    <div id="background-img" class="w-full h-full bg-repeat-x bg-center bg-contain"
+                                        style="background-image: url('./static/backgrounds/Backyard.png');">
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-4 gap-4">
+                                    <button id="prev-background"
+                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">&lt;
+                                        Previous</button>
+                                    <button id="next-background"
+                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">Next
+                                        &gt;</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <div class="mt-4 flex justify-center">
+                    <button id="play-button"
+                        class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider">
+                        Play Game!
+                    </button>
+                </div>
             </div>
+            <!--
+            <div id="game-settings-menu" class="flex-grow p-8 flex flex-col hidden">
+                <h2 id="game-settings-title" class="text-3xl font-bold font-serpentine text-center mb-6">Game Settings
+                </h2>
+
+                <div id="settings-columns" class="flex flex-row gap-6 h-full">
+                    <div id="player-1-settings"
+                        class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 border-4 items-center">
+                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-4">Player 1</h3>
+                        <div class="flex flex-col items-center justify-center flex-grow">
+                            <div id="player-1-name" class="mb-4 w-3/4">
+                                <label for="player-1-alias"
+                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias</label>
+                                <input id="player-1-alias" type="text"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
+                                    placeholder="Player 1">
+                            </div>
+                            <div id="player-1-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
+                                <label for="player-1-paddle-colour-input"
+                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
+                                    Colour</label>
+                                <input id="player-1-paddle-colour-input" type="color" value="#ff0000"
+                                    class="rounded-md w-1/2">
+                            </div>
+                            <div id="player-1-character" class="mt-4 flex flex-col items-center hidden">
+                                <div class="block text-gray-700 text-sm font-bold mb-2 text-center">Character</div>
+                                <div class="flex items-center gap-6">
+                                    <button id="prev-character-1" class="nav-button">&lt Previous</button>
+                                    <div id="character-display-1"
+                                        class="w-48 h-48 rounded-lg shadow-lg p-2 flex items-center justify-center mx-2">
+                                        <img id="character-img-1" src="./static/character_select/mario.png"
+                                            alt="Character 1" class="max-w-full max-h-full object-contain">
+                                    </div>
+                                    <button id="next-character-1" class="nav-button">&gt Next</button>
+                                </div>
+                                <div id="character-move-1" class="mt-4 text-center text-small">FILLER TEXT</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="player-2-settings"
+                        class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 border-4 items-center">
+                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-4">Player 2</h3>
+                        <div class="flex flex-col items-center justify-center flex-grow">
+                            <div id="player-2-name" class="mb-4 w-3/4">
+                                <label for="player-2-alias"
+                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Alias</label>
+                                <input id="player-2-alias" type="text"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
+                                    placeholder="Player 1">
+                            </div>
+                            <div id="player-2-paddle-colour" class="mb-4 w-3/4 flex flex-col items-center">
+                                <label for="player-2-paddle-colour-input"
+                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Paddle
+                                    Colour</label>
+                                <input id="player-2-paddle-colour-input" type="color" value="#0000ff"
+                                    class="rounded-md w-1/2">
+                            </div>
+                            <div id="player-2-character" class="mt-4 flex flex-col items-center hidden">
+                                <div class="block text-gray-700 text-sm font-bold mb-2 text-center">Character</div>
+                                <div class="flex items-center gap-6">
+                                    <button id="prev-character-1" class="nav-button">&lt Previous</button>
+                                    <div id="character-display-2"
+                                        class="w-48 h-48 rounded-lg shadow-lg p-2 flex items-center justify-center mx-2">
+                                        <img id="character-img-2" src="./static/character_select/mario.png"
+                                            alt="Character 2" class="max-w-full max-h-full object-contain">
+                                    </div>
+                                    <button id="next-character-2" class="nav-button">&gt Next</button>
+                                </div>
+                                <div id="character-move-2" class="mt-4 text-center text-small">FILLER TEXT</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="board-settings-content"
+                        class="flex flex-col flex-1 p-4 rounded-md border border-gray-300 border-4 items-center">
+                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-4">Board Background</h3>
+                        <div class="flex flex-col items-center justify-center flex-grow">
+                            <div id="match-background" class="flex flex-col items-center justify-center mb-4">
+                                <label for="background-img"
+                                    class="block text-gray-700 text-sm font-bold mb-2 text-center">Background:</label>
+                                <div id="background-display"
+                                    class="w-3/4 h-48 rounded-md shadow-md overflow-hidden flex items-center justify-center">
+                                    <div id="background-img" class="w-full h-full bg-repeat-x bg-center bg-contain"
+                                        style="background-image: url('./static/backgrounds/Backyard.png');">
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-2">
+                                    <button id="prev-background" class="nav-button">&lt; Previous</button>
+                                    <button id="next-background" class="nav-button ml-2">Next &gt;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button id="play-button"
+                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline">
+                        Play Game!
+                    </button>
+                </div>
+            </div>
+-->
         </div>
+    </div>
 </template>
 
 <template id="profile-template">
