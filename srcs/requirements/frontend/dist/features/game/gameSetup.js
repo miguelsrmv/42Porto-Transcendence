@@ -2,7 +2,7 @@
  * @file gameSetup.ts
  * @brief Handles the setup of game types, character selection, and background selection for the game.
  */
-export let gameSettings = {
+export const gameSettings = {
     playType: null,
     gameType: null,
     player1Alias: null,

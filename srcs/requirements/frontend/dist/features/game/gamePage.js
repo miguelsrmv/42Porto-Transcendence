@@ -16,6 +16,7 @@ import { getGameSettings } from "./gameSetup.js";
 export function initializeView() {
     const gameSettings = getGameSettings();
     console.log(gameSettings);
+    // TODO: Add gameSettings as argument here
     initializeGame();
 }
 //# sourceMappingURL=gamePage.js.map
