@@ -6,29 +6,16 @@
  * characters, and backgrounds. It also manages user interactions for these selections.
  */
 
-type gameSettingKey =
-  | 'playType'
-  | 'gameType'
-  | 'player1Alias'
-  | 'player1PaddleColour'
-  | 'player1Character'
-  | 'player2Alias'
-  | 'player2PaddleColour'
-  | 'player2Character'
-  | 'background'
-  | 'gameType';
+import type { gameType, playType, gameSettings } from './gameSettings/gameSettings.types.js';
+import { getCharacterList } from './characterData/characterData.js';
+import { getBackgroundList } from './backgroundData/backgroundData.js';
 
-export const gameSettings: Record<gameSettingKey, string | null> = {
-  playType: null,
-  gameType: null,
-  player1Alias: null,
-  player1PaddleColour: null,
-  player1Character: null,
-  player2Alias: null,
-  player2PaddleColour: null,
-  player2Character: null,
-  background: null,
-};
+const settings: Partial<gameSettings> = {};
+let currentCharacterIndex1: number = 0;
+let currentCharacterIndex2: number = 0;
+let backgroundIndex: number = 0;
+const characterList = getCharacterList();
+const backgroundList = getBackgroundList();
 
 /**
  * @brief Prompts the user to select a game type.
@@ -38,7 +25,7 @@ export const gameSettings: Record<gameSettingKey, string | null> = {
  *
  * @return A promise that resolves to a string indicating the selected game type ("classic" or "crazy").
  */
-export async function getGameType(): Promise<string> {
+export async function getGameType(): Promise<gameType> {
   return new Promise((resolve) => {
     const classicButton = document.getElementById('classic-pong-button');
     const crazyButton = document.getElementById('crazy-pong-button');
@@ -47,14 +34,14 @@ export async function getGameType(): Promise<string> {
       classicButton.addEventListener(
         'click',
         () => {
-          resolve('classic');
+          resolve('Classic Pong');
         },
         { once: true },
       );
       crazyButton.addEventListener(
         'click',
         () => {
-          resolve('crazy');
+          resolve('Crazy Pong');
         },
         { once: true },
       );
@@ -71,21 +58,6 @@ export async function getGameType(): Promise<string> {
  * @param player_number The player number for which the character loop is created. Defaults to 1.
  */
 export function createCharacterLoop(player_number: number = 1) {
-  const characters: string[] = [
-    'mario.png',
-    'yoshi.png',
-    'donkey_kong.png',
-    'pikachu.png',
-    'mewtwo.png',
-    'link.png',
-    'sonic.png',
-    'samus.png',
-  ];
-
-  const location: string = './static/character_select/';
-
-  let currentCharacterIndex: number = 0;
-
   const prevButton: HTMLButtonElement | null = document.getElementById(
     `prev-character-${player_number}`,
   ) as HTMLButtonElement;
@@ -96,8 +68,31 @@ export function createCharacterLoop(player_number: number = 1) {
     `character-img-${player_number}`,
   ) as HTMLImageElement;
 
+  let currentCharacterIndex = 0;
+
+  // Updates character display picture, index and help text
+  function updateCharacter(): void {
+    updateCharacterIndex();
+    updateCharacterDisplay();
+    updateCharacterHelpText();
+  }
+
+  // Updates the characterIndex of player 1 or 2, depending on player_number
+  function updateCharacterIndex(): void {
+    if (player_number === 1) currentCharacterIndex1 = currentCharacterIndex;
+    else if (player_number === 2) currentCharacterIndex2 = currentCharacterIndex;
+  }
+
+  // Updates the character's display
   function updateCharacterDisplay(): void {
-    if (characterDisplay) characterDisplay.src = location + characters[currentCharacterIndex];
+    if (characterDisplay) {
+      characterDisplay.src = characterList[currentCharacterIndex].characterSelectPicturePath;
+    }
+  }
+
+  // Updates the character's helper text
+  function updateCharacterHelpText(): void {
+    return; //TODO:Do this function!
   }
 
   // Event listener for previous button
@@ -105,8 +100,8 @@ export function createCharacterLoop(player_number: number = 1) {
     prevButton.addEventListener('click', () => {
       // Decrement the index and cycle back to the end if necessary
       currentCharacterIndex =
-        currentCharacterIndex === 0 ? characters.length - 1 : currentCharacterIndex - 1;
-      updateCharacterDisplay();
+        currentCharacterIndex === 0 ? characterList.length - 1 : currentCharacterIndex - 1;
+      updateCharacter();
     });
   }
 
@@ -115,15 +110,13 @@ export function createCharacterLoop(player_number: number = 1) {
     nextButton.addEventListener('click', () => {
       // Increment the index and cycle back to the start if necessary
       currentCharacterIndex =
-        currentCharacterIndex === characters.length - 1 ? 0 : currentCharacterIndex + 1;
-      updateCharacterDisplay();
+        currentCharacterIndex === characterList.length - 1 ? 0 : currentCharacterIndex + 1;
+      updateCharacter();
     });
   }
 
   // Initialize the first character
-  updateCharacterDisplay();
-
-  // TODO: Update the Character sub text!!
+  updateCharacter();
 }
 
 /**
@@ -133,32 +126,6 @@ export function createCharacterLoop(player_number: number = 1) {
  * It updates the background display based on user interaction.
  */
 export function createBackgroundLoop() {
-  const backgrounds: string[] = [
-    'Backyard.png',
-    'Beach.png',
-    'Cave.png',
-    'Checks.png',
-    'City.png',
-    'Desert.png',
-    'Forest.png',
-    'Machine.png',
-    'Nostalgic.png',
-    'Pikapika_Platinum.png',
-    'River.png',
-    'Savanna.png',
-    'Seafloor.png',
-    'Simple.png',
-    'Sky.png',
-    'Snow.png',
-    'Space.png',
-    'Torchic.png',
-    'Volcano.png',
-  ];
-
-  const location: string = './static/backgrounds/';
-
-  let currentBackgroundIndex: number = 0;
-
   const prevButton: HTMLButtonElement | null = document.getElementById(
     'prev-background',
   ) as HTMLButtonElement;
@@ -170,16 +137,14 @@ export function createBackgroundLoop() {
   ) as HTMLImageElement;
 
   function updateBackgroundDisplay(): void {
-    if (backgroundDisplay)
-      backgroundDisplay.style.backgroundImage = `url('${location}${backgrounds[currentBackgroundIndex]}`;
+    if (backgroundDisplay) backgroundDisplay.src = backgroundList[backgroundIndex].imagePath;
   }
 
   // Event listener for previous button
   if (prevButton) {
     prevButton.addEventListener('click', () => {
       // Decrement the index and cycle back to the end if necessary
-      currentBackgroundIndex =
-        currentBackgroundIndex === 0 ? backgrounds.length - 1 : currentBackgroundIndex - 1;
+      backgroundIndex = backgroundIndex === 0 ? backgroundList.length - 1 : backgroundIndex - 1;
       updateBackgroundDisplay();
     });
   }
@@ -188,8 +153,7 @@ export function createBackgroundLoop() {
   if (nextButton) {
     nextButton.addEventListener('click', () => {
       // Increment the index and cycle back to the start if necessary
-      currentBackgroundIndex =
-        currentBackgroundIndex === backgrounds.length - 1 ? 0 : currentBackgroundIndex + 1;
+      backgroundIndex = backgroundIndex === backgroundList.length - 1 ? 0 : backgroundIndex + 1;
       updateBackgroundDisplay();
     });
   }
@@ -207,14 +171,14 @@ export function createBackgroundLoop() {
  * @param gameType The type of game selected by the user.
  * @param playType The play type selected by the user.
  */
-export function setGameSettings(gameType: string, playType: string) {
-  gameSettings.gameType = gameType;
-  gameSettings.playType = playType;
+export function setGameSettings(gameType: gameType, playType: playType) {
+  settings.gameType = gameType;
+  settings.playType = playType;
 
   const player1InputAlias = document.getElementById('player-1-alias') as HTMLInputElement;
   if (player1InputAlias) {
     console.log(player1InputAlias.value);
-    gameSettings.player1Alias = player1InputAlias.value;
+    settings.alias1 = player1InputAlias.value;
   } else console.warn('Player 1 alias input form not found');
 
   const player1PaddleColour = document.getElementById(
@@ -222,44 +186,30 @@ export function setGameSettings(gameType: string, playType: string) {
   ) as HTMLInputElement;
   if (player1PaddleColour) {
     console.log(player1PaddleColour.value);
-    gameSettings.player1PaddleColour = player1PaddleColour.value;
+    settings.paddleColour1 = player1PaddleColour.value;
   } else console.warn('Player 1 paddle colour input form not found');
 
-  const background = document.getElementById('background-img') as HTMLImageElement;
-  if (background) {
-    gameSettings.background = background.src;
-  } else {
-    console.warn('Background image not found');
+  if (settings.gameType === 'Crazy Pong') {
+    settings.character1 = characterList[currentCharacterIndex1];
   }
 
-  // TODO: I don't want to get an image, I want to get the character!!
-  // Create a type that routes Character -> Picture -> Attack and have it as a custom HTML field??
-  if (gameSettings.gameType === 'crazy') {
-    const player1Character = document.getElementById('character-img-1') as HTMLImageElement;
-    if (player1Character) gameSettings.player1Character = player1Character.src;
-    else {
-      console.warn('Player 1 character not found');
-    }
-  }
-
-  if (gameSettings.playType === 'local') {
+  if (settings.playType === 'Local Play') {
     const player2InputAlias = document.getElementById('player-2-alias') as HTMLInputElement;
-    if (player2InputAlias) gameSettings.player2Alias = player2InputAlias.value;
+    if (player2InputAlias) settings.alias2 = player2InputAlias.value;
     else console.warn('Player 2 alias input form not found');
 
     const player2PaddleColour = document.getElementById(
       'player-2-paddle-colour-input',
     ) as HTMLInputElement;
-    if (player2PaddleColour) gameSettings.player2PaddleColour = player2PaddleColour.value;
+    if (player2PaddleColour) settings.paddleColour2 = player2PaddleColour.value;
     else console.warn('Player 2 paddle colour input form not found');
 
-    // TODO: I don't want to get an image, I want to get the character!!
-    // Create a type that routes Character -> Picture -> Attack and have it as a custom HTML field??
-    if (gameSettings.gameType === 'crazy') {
-      const player2Character = document.getElementById('character-img-2') as HTMLImageElement;
-      if (player2Character) gameSettings.player2Character = player2Character.src;
+    if (settings.gameType === 'Crazy Pong') {
+      settings.character2 = characterList[currentCharacterIndex2];
     }
   }
+
+  settings.background = backgroundList[backgroundIndex];
 }
 
 /**
@@ -270,6 +220,6 @@ export function setGameSettings(gameType: string, playType: string) {
  *
  * @return The current game settings object.
  */
-export function getGameSettings() {
-  return gameSettings;
+export function getGameSettings(): gameSettings {
+  return settings as gameSettings;
 }

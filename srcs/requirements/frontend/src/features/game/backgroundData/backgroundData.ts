@@ -1,4 +1,4 @@
-import { backgroundData } from './backgroundData.types.js';
+import { background } from './backgroundData.types.js';
 
 /**
  * @file backgroundData.ts
@@ -22,7 +22,7 @@ const backgroundPicturePath = '../../../../static/backgrounds/';
  * This constant array contains objects representing each background, including its name
  * and the path to its image file.
  */
-const backgroundList: backgroundData[] = [
+const backgroundList: background[] = [
   {
     name: 'Backyard',
     imagePath: `${backgroundPicturePath}Backyard.png`,
@@ -106,6 +106,6 @@ const backgroundList: backgroundData[] = [
  *
  * @return An array of backgroundData objects, each containing the name and image path of a background.
  */
-export function getBackgroundList(): backgroundData[] {
+export function getBackgroundList(): background[] {
   return backgroundList;
 }

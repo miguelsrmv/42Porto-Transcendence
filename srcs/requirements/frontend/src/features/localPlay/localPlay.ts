@@ -3,6 +3,8 @@
  * @brief Handles the setup of the local play page.
  */
 
+import type { gameType } from '../game/gameSettings/gameSettings.types.js';
+
 import {
   getGameType,
   createBackgroundLoop,
@@ -17,7 +19,7 @@ import {
  */
 export async function initializeView(): Promise<void> {
   // Gets Classic or Crazy Pong
-  const gameType = await getGameType();
+  const gameType: gameType = await getGameType();
 
   // Creates background loop
   createBackgroundLoop();
@@ -38,7 +40,7 @@ export async function initializeView(): Promise<void> {
   else console.warn('Player 2 Settings not found.');
 
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
-  if (gameType === 'crazy') {
+  if (gameType === 'Crazy Pong') {
     // Unhides character selection
     const characterSelect1 = document.getElementById('player-1-character');
     if (characterSelect1) characterSelect1.classList.remove('hidden');
@@ -56,7 +58,7 @@ export async function initializeView(): Promise<void> {
   const playButton = document.getElementById('play-button');
   if (playButton) {
     playButton.addEventListener('click', () => {
-      setGameSettings(gameType, 'local');
+      setGameSettings(gameType, 'Local Play');
       window.location.hash = 'game-page';
     });
   } else console.warn('Play Button not found');

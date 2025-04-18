@@ -12,7 +12,7 @@
  * This interface defines the structure for background data objects, including the background's name
  * and the path to its image file.
  */
-export interface backgroundData {
+export interface background {
   name: string;
   imagePath: string;
 }

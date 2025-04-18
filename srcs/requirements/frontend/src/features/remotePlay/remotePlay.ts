@@ -26,7 +26,7 @@ export async function initializeView(): Promise<void> {
   createBackgroundLoop();
 
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
-  if (gameType === 'crazy') {
+  if (gameType === 'Crazy Pong') {
     const player1name = document.getElementById('player-1-name');
     const player1paddle = document.getElementById('player-1-paddle-colour');
     const player1char = document.getElementById('player-1-character');
