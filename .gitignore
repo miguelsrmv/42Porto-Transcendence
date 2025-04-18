@@ -2,8 +2,7 @@ data
 node_modules
 dev.db
 
-*.js
-*.js.map
+srcs/requirements/frontend/dist/
 
 /secrets
 blockchain_address.txt
