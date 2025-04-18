@@ -19,5 +19,5 @@ export function initializeView(): void {
   const gameSettings = getGameSettings();
   console.log(gameSettings);
   // TODO: Add gameSettings as argument here
-  initializeGame();
+  initializeGame(gameSettings);
 }
