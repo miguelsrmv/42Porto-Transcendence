@@ -17,13 +17,14 @@ let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
 
+// TODO: Call stop() when leaving the page, etc.
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
   interval: undefined,
 
   start() {
-    this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
+    this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 
     if (!this.canvas) {
       console.error('No game-canvas present');
@@ -36,13 +37,6 @@ const myGameArea: GameArea = {
     if (!this.context) {
       console.error('No canvas context available');
       return;
-    }
-
-    const pongPage = document.getElementById('game-container');
-    if (pongPage && this.canvas) {
-      pongPage.insertBefore(this.canvas, pongPage.firstChild);
-    } else {
-      console.error('Pong page not found or canvas is null!');
     }
 
     this.interval = window.setInterval(updateGameArea, 20);
@@ -61,18 +55,11 @@ const myGameArea: GameArea = {
   },
 };
 
-export function initializeGame(gameSettings: Record<gameSettingKey, string | null>): void {
-  const pongPage = document.getElementById('game-container') as HTMLElement | null;
-
-  if (!pongPage) {
-    console.error('Cannot start the game: game-container is missing.');
-    return;
-  }
+function setPaddles(gameSettings: Record<gameSettingKey, string | null>) {
   if (!gameSettings.player1PaddleColour || !gameSettings.player2PaddleColour) {
     console.error('Paddle color missing.');
     return;
   }
-  updateBackground(gameSettings.background);
   leftPaddle = new Paddle(
     PADDLE_WID,
     PADDLE_LEN,
@@ -87,8 +74,17 @@ export function initializeGame(gameSettings: Record<gameSettingKey, string | nul
     CANVAS_WIDTH - 20,
     PADDLE_START_Y_POS,
   );
-  ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
+}
 
+export function initializeGame(gameSettings: Record<gameSettingKey, string | null>): void {
+  const pongPage = document.getElementById('game-container') as HTMLElement | null;
+  if (!pongPage) {
+    console.error('Cannot start the game: game-container is missing.');
+    return;
+  }
+  updateBackground(gameSettings.background);
+  setPaddles(gameSettings);
+  ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
   setupInput();
   myGameArea.start();
 }
@@ -119,8 +115,8 @@ function updateGameArea(): void {
 
 function updateBackground(background: string | null) {
   if (!background) return;
-  const backgroundimg = document.getElementById('game-background') as HTMLImageElement;
-  backgroundimg.src = background;
+  const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
+  backgroundImg.src = background;
 }
 
 /* // Unused but might be useful in the future
