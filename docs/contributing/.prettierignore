@@ -4,7 +4,13 @@ dist
 # Dependencies
 node_modules
 
-# Generated files (if any you don't want touched)
+# Generated files 
+deploy.log
+blockchain_address.txt
+/secrets
+
+# Env files
+.env
 
 # Submodule assets 
 srcs/requirements/frontend/static/super_smash_assets/
