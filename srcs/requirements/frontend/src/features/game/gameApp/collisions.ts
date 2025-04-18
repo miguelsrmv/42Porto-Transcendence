@@ -1,5 +1,5 @@
-import { SPEED } from "./game.js";
-import { GameArea } from "./types.js";
+import { SPEED } from './game.js';
+import { GameArea } from './types.js';
 
 interface Ball {
   x: number;
@@ -20,19 +20,33 @@ interface Paddle {
   height: number;
 }
 
+// Checks if ball reached horizontal canvas limits
 export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
   if (!gameArea.canvas) {
-    console.error("Error getting canvas element!");
+    console.error('Error getting canvas element!');
     return;
   }
-  if (
-    ball.y - ball.radius <= 0 ||
-    ball.y + ball.radius >= gameArea.canvas.height
-  ) {
+  if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
     ball.bounceVertical();
   }
 }
 
+// Checks if ball reached vertical canvas limits
+export function checkGoal(ball: Ball, gameArea: GameArea): void {
+  if (!gameArea.canvas) {
+    console.error('Error getting canvas element!');
+    return;
+  }
+  if (ball.x - ball.radius <= 0) {
+    console.log('Goal for Player 2!');
+    resetBall(ball, gameArea);
+  } else if (ball.x + ball.radius >= gameArea.canvas.width) {
+    console.log('Goal for Player 1!');
+    resetBall(ball, gameArea);
+  }
+}
+
+// Checks if ball went over paddle x coordinate
 function crossedPaddleHorizontally(ball: Ball, paddle: Paddle): boolean {
   const goingLeft = ball.speedX < 0;
   const goingRight = ball.speedX > 0;
@@ -43,10 +57,7 @@ function crossedPaddleHorizontally(ball: Ball, paddle: Paddle): boolean {
       ball.x - ball.radius <= paddle.x + paddle.width
     );
   } else if (goingRight) {
-    return (
-      ball.previousX + ball.radius < paddle.x &&
-      ball.x + ball.radius >= paddle.x
-    );
+    return ball.previousX + ball.radius < paddle.x && ball.x + ball.radius >= paddle.x;
   }
 
   return false;
@@ -54,25 +65,17 @@ function crossedPaddleHorizontally(ball: Ball, paddle: Paddle): boolean {
 
 // Check if ball is within paddle y range
 function isWithinPaddleHeight(ball: Ball, paddle: Paddle): boolean {
-  return (
-    ball.y + ball.radius >= paddle.y &&
-    ball.y - ball.radius <= paddle.y + paddle.height
-  );
+  return ball.y + ball.radius >= paddle.y && ball.y - ball.radius <= paddle.y + paddle.height;
 }
 
 // Limits ball speed to maxSpeed
 function capMaxSpeed(ball: Ball, maxSpeed: number): void {
-  if (Math.abs(ball.speedX) > maxSpeed)
-    ball.speedX = Math.sign(ball.speedX) * maxSpeed;
-  if (Math.abs(ball.speedY) > maxSpeed)
-    ball.speedY = Math.sign(ball.speedY) * maxSpeed;
+  if (Math.abs(ball.speedX) > maxSpeed) ball.speedX = Math.sign(ball.speedX) * maxSpeed;
+  if (Math.abs(ball.speedY) > maxSpeed) ball.speedY = Math.sign(ball.speedY) * maxSpeed;
 }
 
-export function checkPaddleCollision(
-  ball: Ball,
-  leftPaddle: Paddle,
-  rightPaddle: Paddle
-): void {
+// Checks if ball collided with either paddle
+export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle: Paddle): void {
   if (
     // Left paddle collision
     crossedPaddleHorizontally(ball, leftPaddle) &&
@@ -98,23 +101,10 @@ export function checkPaddleCollision(
   }
 }
 
-export function checkGoal(ball: Ball, gameArea: GameArea): void {
-  if (!gameArea.canvas) {
-    console.error("Error getting canvas element!");
-    return;
-  }
-  if (ball.x - ball.radius <= 0) {
-    console.log("Goal for Player 2!");
-    resetBall(ball, gameArea);
-  } else if (ball.x + ball.radius >= gameArea.canvas.width) {
-    console.log("Goal for Player 1!");
-    resetBall(ball, gameArea);
-  }
-}
-
+// Returns ball to center of canvas and starts round at random direction
 function resetBall(ball: Ball, gameArea: GameArea): void {
   if (!gameArea.canvas) {
-    console.error("Error getting canvas element!");
+    console.error('Error getting canvas element!');
     return;
   }
   ball.x = gameArea.canvas.width / 2;
