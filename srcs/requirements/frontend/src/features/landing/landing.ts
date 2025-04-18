@@ -7,7 +7,7 @@ import { triggerLoginModal } from './loginMenu.js';
 import { setLandingAnimations } from '../../ui/animations.js';
 import { userIsLoggedIn } from '../auth/auth.service.js';
 
-let loginCheckDone: boolean = false;
+//let loginCheckDone: boolean = false;
 
 /**
  * @brief Adds event listeners for the landing view.
@@ -21,12 +21,17 @@ export function initializeView(): void {
   if (enterButton) {
     enterButton.addEventListener('click', async () => {
       try {
+        let isLoggedIn = await userIsLoggedIn();
+        /**
+         * NOTE: Commented this block out because it'd cause a bug if you went backwards after logging in (it'd trigger the modal)
+         *
         let isLoggedIn;
         // Checks if user is logged in or not
         if (!loginCheckDone) {
           isLoggedIn = await userIsLoggedIn();
           loginCheckDone = true;
         }
+        */
         // Navigate directly to main menu if logged in
         if (isLoggedIn) {
           window.location.hash = 'main-menu-page';
