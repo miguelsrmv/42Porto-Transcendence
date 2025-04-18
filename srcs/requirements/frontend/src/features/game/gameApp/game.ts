@@ -72,6 +72,7 @@ export function initializeGame(gameSettings: Record<gameSettingKey, string | nul
     console.error('Paddle color missing.');
     return;
   }
+  updateBackground(gameSettings.background);
   leftPaddle = new Paddle(
     PADDLE_WID,
     PADDLE_LEN,
@@ -114,6 +115,12 @@ function updateGameArea(): void {
     rightPaddle.draw(myGameArea.context);
     ball.draw(myGameArea.context);
   }
+}
+
+function updateBackground(background: string | null) {
+  if (!background) return;
+  const backgroundimg = document.getElementById('game-background') as HTMLImageElement;
+  backgroundimg.src = background;
 }
 
 /* // Unused but might be useful in the future
