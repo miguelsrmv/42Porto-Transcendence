@@ -6,7 +6,7 @@
  * and image paths. It also provides functions to retrieve character data.
  */
 
-import { characterData } from './characterData.types.js';
+import { character } from './characterData.types.js';
 
 /**
  * @brief Path to the character selection images.
@@ -24,7 +24,7 @@ const characterAvatarPicturePath = characterSelectPicturePath;
  *
  * Each object contains the character's name, attack, image paths, and a help message.
  */
-const characterList: characterData[] = [
+const characterList: character[] = [
   {
     name: 'Mario',
     attack: 'Super Shroom',
@@ -88,6 +88,6 @@ const characterList: characterData[] = [
  *
  * @return The list of all character data.
  */
-export function getAllCharacterData(): characterData[] {
+export function getCharacterList(): character[] {
   return characterList;
 }

@@ -25,7 +25,7 @@ type attackIdentifier =
  * This interface defines the structure for character data objects, including the character's name,
  * attack type, paths to selection and avatar images, and a help message for character selection.
  */
-export interface characterData {
+export interface character {
   name: string;
   attack: attackIdentifier;
   characterSelectPicturePath: string;
