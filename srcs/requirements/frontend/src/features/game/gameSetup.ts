@@ -10,11 +10,34 @@ import type { gameType, playType, gameSettings } from './gameSettings/gameSettin
 import { getCharacterList } from './characterData/characterData.js';
 import { getBackgroundList } from './backgroundData/backgroundData.js';
 
+/**
+ * @brief Partial settings object to store game configurations.
+ */
 const settings: Partial<gameSettings> = {};
+
+/**
+ * @brief Index for the current character selection for player 1.
+ */
 let currentCharacterIndex1: number = 0;
+
+/**
+ * @brief Index for the current character selection for player 2.
+ */
 let currentCharacterIndex2: number = 0;
+
+/**
+ * @brief Index for the current background selection.
+ */
 let backgroundIndex: number = 0;
+
+/**
+ * @brief List of available characters for selection.
+ */
 const characterList = getCharacterList();
+
+/**
+ * @brief List of available backgrounds for selection.
+ */
 const backgroundList = getBackgroundList();
 
 /**
