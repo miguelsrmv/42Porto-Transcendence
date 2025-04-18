@@ -6,7 +6,7 @@
  * characters, and backgrounds. It also manages user interactions for these selections.
  */
 
-type gameSettingKey =
+export type gameSettingKey =
   | 'playType'
   | 'gameType'
   | 'player1Alias'
