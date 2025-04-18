@@ -420,8 +420,10 @@
 </template>
 
 <template id="game-template">
-    <canvas id="game-canvas" class="flex w-[85%] mx-auto">
-    </canvas>
+    <div id="game-container" class="h-[85%] w-[85%] flex justify-center mx-auto relative">
+        <img src=./static/backgrounds/Backyard.png id="game-background" class="h-[740px] w-[1240px] z-0 absolute inset-0 m-auto"></img>
+        <canvas id="game-canvas" class="h-[720px] w-[1200px] absolute inset-0 m-auto z-5"></canvas>
+    </div>
 </template>
 
 <template id="header-template">
