@@ -1,0 +1,12 @@
+<<<<<<< HEAD
+=======
+/**
+ * @file characterData.ts
+ * @brief Provides character data and related functions for the game.
+ * 
+ * This module defines the character data used in the game, including their names, attacks,
+ * and image paths. It also provides functions to retrieve character data.
+ */
+
+>>>>>>> Snippet
+
