@@ -79,8 +79,13 @@ export function createCharacterLoop(player_number: number = 1) {
 
   // Updates the characterIndex of player 1 or 2, depending on player_number
   function updateCharacterIndex(): void {
-    if (player_number === 1) currentCharacterIndex1 = currentCharacterIndex;
-    else if (player_number === 2) currentCharacterIndex2 = currentCharacterIndex;
+    if (player_number === 1) {
+      currentCharacterIndex1 = currentCharacterIndex;
+      settings.character1 = characterList[currentCharacterIndex];
+    } else if (player_number === 2) {
+      currentCharacterIndex2 = currentCharacterIndex;
+      settings.character2 = characterList[currentCharacterIndex];
+    }
   }
 
   // Updates the character's display
