@@ -30,48 +30,13 @@ export type gameType = 'Classic Pong' | 'Crazy Pong';
  * optional player aliases, paddle colors, optional characters, and background.
  */
 export interface gameSettings {
-  /**
-   * @brief The mode of play.
-   */
   playType: playType;
-
-  /**
-   * @brief The variant of the game.
-   */
   gameType: gameType;
-
-  /**
-   * @brief Optional alias for player 1.
-   */
   alias1?: string;
-
-  /**
-   * @brief Optional alias for player 2.
-   */
   alias2?: string;
-
-  /**
-   * @brief Color of player 1's paddle.
-   */
   paddleColour1: string;
-
-  /**
-   * @brief Optional color of player 2's paddle.
-   */
   paddleColour2?: string;
-
-  /**
-   * @brief Optional character for player 1.
-   */
   character1?: character;
-
-  /**
-   * @brief Optional character for player 2.
-   */
   character2?: character;
-
-  /**
-   * @brief The background setting for the game.
-   */
   background: background;
 }
