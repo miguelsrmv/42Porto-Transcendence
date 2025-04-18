@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-export function initializeGame(): void {}
-=======
-import { Paddle } from "./paddle.js";
-import { Ball } from "./ball.js";
-import { setupInput, handleInput } from "./input.js";
-import {
-  checkWallCollision,
-  checkPaddleCollision,
-  checkGoal,
-} from "./collisions.js";
-import { GameArea } from "./types.js";
+import { Paddle } from './paddle.js';
+import { Ball } from './ball.js';
+import { setupInput, handleInput } from './input.js';
+import { checkWallCollision, checkPaddleCollision, checkGoal } from './collisions.js';
+import { GameArea } from './types.js';
 
 export const SPEED = 7;
 export const CANVAS_HEIGHT = 720;
@@ -29,28 +22,26 @@ const myGameArea: GameArea = {
   interval: undefined,
 
   start() {
-    this.canvas = document.getElementById(
-      "game-canvas"
-    ) as HTMLCanvasElement | null;
+    this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
 
     if (!this.canvas) {
-      console.error("No game-canvas present");
+      console.error('No game-canvas present');
       return;
     }
 
     this.canvas.width = CANVAS_WIDTH;
     this.canvas.height = CANVAS_HEIGHT;
-    this.context = this.canvas.getContext("2d");
+    this.context = this.canvas.getContext('2d');
     if (!this.context) {
-      console.error("No canvas context available");
+      console.error('No canvas context available');
       return;
     }
 
-    const pongPage = document.getElementById("game-container");
+    const pongPage = document.getElementById('game-container');
     if (pongPage && this.canvas) {
       pongPage.insertBefore(this.canvas, pongPage.firstChild);
     } else {
-      console.error("Pong page not found or canvas is null!");
+      console.error('Pong page not found or canvas is null!');
     }
 
     this.interval = window.setInterval(updateGameArea, 20);
@@ -70,28 +61,14 @@ const myGameArea: GameArea = {
 };
 
 export function initializeGame(): void {
-  const pongPage = document.getElementById(
-    "game-container"
-  ) as HTMLElement | null;
+  const pongPage = document.getElementById('game-container') as HTMLElement | null;
 
   if (!pongPage) {
-    console.error("Cannot start the game: game-container is missing.");
+    console.error('Cannot start the game: game-container is missing.');
     return;
   }
-  rightPaddle = new Paddle(
-    PADDLE_WID,
-    PADDLE_LEN,
-    "black",
-    CANVAS_WIDTH - 20,
-    PADDLE_START_Y_POS
-  );
-  leftPaddle = new Paddle(
-    PADDLE_WID,
-    PADDLE_LEN,
-    "black",
-    PADDLE_WID,
-    PADDLE_START_Y_POS
-  );
+  rightPaddle = new Paddle(PADDLE_WID, PADDLE_LEN, 'black', CANVAS_WIDTH - 20, PADDLE_START_Y_POS);
+  leftPaddle = new Paddle(PADDLE_WID, PADDLE_LEN, 'black', PADDLE_WID, PADDLE_START_Y_POS);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
 
   setupInput();
@@ -108,13 +85,12 @@ function updateGameArea(): void {
   ball.move();
 
   if (!myGameArea.canvas) {
-    console.error("Error getting canvas element!");
+    console.error('Error getting canvas element!');
     return;
   }
   checkWallCollision(ball, myGameArea);
   checkPaddleCollision(ball, leftPaddle, rightPaddle);
   checkGoal(ball, myGameArea);
-
 
   if (myGameArea.context) {
     leftPaddle.draw(myGameArea.context);
@@ -136,4 +112,3 @@ function paintBackground(context : CanvasRenderingContext2D): void {
   };
 }
 */
->>>>>>> Local-Game
