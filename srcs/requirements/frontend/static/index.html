@@ -1,472 +1,742 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ft_transcendence</title>
-    <link rel="icon" href="./static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./dist/styles/tailwind.css">
+    <link rel="icon" href="./static/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./dist/styles/tailwind.css" />
     <script type="module" src="../dist/app.js"></script>
-</head>
+  </head>
 
-<body id="body"
-    class="h-screen w-screen flex flex-col bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')]">
+  <body
+    id="body"
+    class="h-screen w-screen flex flex-col bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')]"
+  >
     <header id="header" class="w-full relative flex items-center justify-center"></header>
 
     <main id="app" class="h-full w-full overflow-hidden"></main>
 
     <footer id="footer" class="w-full h-[3%] text-center bg-black text-white">
-        <p>ft_transcendence by <a href="https://github.com/miguelsrmv">mde-sa--</a>, <a
-                href="https://github.com/damachad">damachad</a> & <a
-                href="https://github.com/TiagoMartins14">tiaferna</a> @
-            <a href="https://www.42porto.com/pt/">42Porto</a>
-        </p>
+      <p>
+        ft_transcendence by <a href="https://github.com/miguelsrmv">mde-sa--</a>,
+        <a href="https://github.com/damachad">damachad</a> &
+        <a href="https://github.com/TiagoMartins14">tiaferna</a> @
+        <a href="https://www.42porto.com/pt/">42Porto</a>
+      </p>
     </footer>
-</body>
+  </body>
 
-<template id="landing-template">
+  <template id="landing-template">
     <div class="relative w-full h-full overflow-hidden">
+      <div
+        id="title-screen"
+        class="w-full h-full flex flex-col items-center justify-center text-center relative"
+      >
+        <img
+          id="main-title"
+          src="./static/images/supersmash_titlescreen.png"
+          class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto"
+          alt="Game Title Screen"
+        />
+        <div
+          id="sub-title"
+          class="text-4xl md:text-5xl lg:text-6xl font-serpentine mx-auto tracking-wide absolute bottom-[25vh] md:bottom-[30vh] left-0 right-0 opacity-0 invisible transition-opacity duration-700 ease-in-out"
+        >
+          Transcendence
+        </div>
 
-        <div id="title-screen" class="w-full h-full flex flex-col items-center justify-center text-center relative">
-            <img id="main-title" src="./static/images/supersmash_titlescreen.png"
-                class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto" alt="Game Title Screen">
-            <div id="sub-title"
-                class="text-4xl md:text-5xl lg:text-6xl font-serpentine mx-auto tracking-wide absolute bottom-[25vh] md:bottom-[30vh] left-0 right-0 opacity-0 invisible transition-opacity duration-700 ease-in-out">
-                Transcendence
+        <button
+          id="enter-button"
+          data-target="main-menu-template"
+          class="text-5xl md:text-6xl lg:text-7xl font-serpentine absolute bottom-[10vh] md:bottom-[15vh] left-0 right-0 opacity-0 invisible transition-all duration-500 ease-in-out hover:text-gray-700 hover:scale-105 active:scale-100"
+        >
+          Enter
+        </button>
+      </div>
+      <div
+        id="login-modal"
+        class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
+      >
+        <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
+          <form
+            id="login-form"
+            class="flex flex-col p-6 sm:p-8 space-y-6"
+            action="/api/users/login"
+            method="post"
+          >
+            <h2 class="text-2xl font-bold text-center text-gray-800">Welcome!</h2>
+
+            <div class="space-y-1">
+              <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                required
+                autocomplete="email"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
             </div>
 
-            <button id="enter-button" data-target="main-menu-template"
-                class="text-5xl md:text-6xl lg:text-7xl font-serpentine absolute bottom-[10vh] md:bottom-[15vh] left-0 right-0 opacity-0 invisible transition-all duration-500 ease-in-out hover:text-gray-700 hover:scale-105 active:scale-100">
-                Enter
+            <div class="space-y-1">
+              <label for="login-password" class="block text-sm font-medium text-gray-700"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                required
+                autocomplete="current-password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+
+            <div
+              id="error-login-message"
+              role="alert"
+              aria-live="polite"
+              class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300"
+            ></div>
+
+            <button
+              id="login-submit-button"
+              type="submit"
+              class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold"
+            >
+              Login
             </button>
-        </div>
-        <div id="login-modal"
-            class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden">
-            <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
-                <form id="login-form" class="flex flex-col p-6 sm:p-8 space-y-6" action="/api/users/login"
-                    method="post">
-                    <h2 class="text-2xl font-bold text-center text-gray-800">Welcome!</h2>
 
-                    <div class="space-y-1"> <label for="login-email"
-                            class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="login-email" name="email" required autocomplete="email"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <input type="password" id="login-password" name="password" required
-                            autocomplete="current-password"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
-                    </div>
-
-                    <div id="error-login-message" role="alert" aria-live="polite"
-                        class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300">
-                    </div>
-
-                    <button id="login-submit-button" type="submit"
-                        class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold">
-                        Login
-                    </button>
-
-                    <div class="text-sm text-center text-gray-600">
-                        No account?
-                        <button id="show-register-button" type="button"
-                            class="font-medium text-blue-600 hover:text-red-500 focus:outline-none focus:underline">
-                            Register here!
-                        </button>
-                    </div>
-
-                    <a href="#main-menu-page" id="guest-button"
-                        class="block text-center w-full bg-gray-100 text-gray-700 py-2.5 px-4 mt-2 rounded-md border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out font-semibold">
-                        Play as Guest
-                    </a>
-                </form>
-
-                <form id="register-form" action="#" method="post" class="flex flex-col p-6 sm:p-8 space-y-4 hidden">
-                    <h2 class="text-2xl font-bold text-center text-gray-800">Create Account</h2>
-
-                    <div class="space-y-1">
-                        <label for="register-username" class="block text-sm font-medium text-gray-700">Username</label>
-                        <input type="text" id="register-username" name="username" required autocomplete="username"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label for="register-email" class="block text-sm font-medium text-gray-700">E-mail</label>
-                        <input type="email" id="register-email" name="email" required autocomplete="email"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <input type="password" id="register-password" name="password" required
-                            autocomplete="new-password"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label for="repeat-password" class="block text-sm font-medium text-gray-700">Repeat
-                            Password</label>
-                        <input type="password" id="repeat-password" name="repeatPassword" required
-                            autocomplete="new-password"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
-                    </div>
-
-                    <div id="error-register-message" role="alert" aria-live="polite"
-                        class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300">
-                    </div>
-
-                    <button id="register-submit-button" type="submit"
-                        class="w-full bg-green-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out font-semibold">
-                        Register
-                    </button>
-
-                    <div class="text-sm text-center text-gray-600 pt-2"> Already have an account?
-                        <button id="show-login-button" type="button"
-                            class="font-medium text-green-600 hover:text-green-500 focus:outline-none focus:underline">
-                            Login here!
-                        </button>
-                    </div>
-                </form>
+            <div class="text-sm text-center text-gray-600">
+              No account?
+              <button
+                id="show-register-button"
+                type="button"
+                class="font-medium text-blue-600 hover:text-red-500 focus:outline-none focus:underline"
+              >
+                Register here!
+              </button>
             </div>
-        </div>
-    </div>
-</template>
 
-<template id="main-menu-template">
+            <a
+              href="#main-menu-page"
+              id="guest-button"
+              class="block text-center w-full bg-gray-100 text-gray-700 py-2.5 px-4 mt-2 rounded-md border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out font-semibold"
+            >
+              Play as Guest
+            </a>
+          </form>
+
+          <form
+            id="register-form"
+            action="#"
+            method="post"
+            class="flex flex-col p-6 sm:p-8 space-y-4 hidden"
+          >
+            <h2 class="text-2xl font-bold text-center text-gray-800">Create Account</h2>
+
+            <div class="space-y-1">
+              <label for="register-username" class="block text-sm font-medium text-gray-700"
+                >Username</label
+              >
+              <input
+                type="text"
+                id="register-username"
+                name="username"
+                required
+                autocomplete="username"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label for="register-email" class="block text-sm font-medium text-gray-700"
+                >E-mail</label
+              >
+              <input
+                type="email"
+                id="register-email"
+                name="email"
+                required
+                autocomplete="email"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label for="register-password" class="block text-sm font-medium text-gray-700"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="register-password"
+                name="password"
+                required
+                autocomplete="new-password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label for="repeat-password" class="block text-sm font-medium text-gray-700"
+                >Repeat Password</label
+              >
+              <input
+                type="password"
+                id="repeat-password"
+                name="repeatPassword"
+                required
+                autocomplete="new-password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+
+            <div
+              id="error-register-message"
+              role="alert"
+              aria-live="polite"
+              class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300"
+            ></div>
+
+            <button
+              id="register-submit-button"
+              type="submit"
+              class="w-full bg-green-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out font-semibold"
+            >
+              Register
+            </button>
+
+            <div class="text-sm text-center text-gray-600 pt-2">
+              Already have an account?
+              <button
+                id="show-login-button"
+                type="button"
+                class="font-medium text-green-600 hover:text-green-500 focus:outline-none focus:underline"
+              >
+                Login here!
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="main-menu-template">
     <!-- TODO: Replace 80% and 85% by 4/5? Don't forget to edit functions! -->
     <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
-
-        <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex mt-4">
-
-            <a href="#local-play-page" id="local-play-button" data-target="local-play-page"
-                data-helper-message="Play locally with friends!"
-                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div id="local-play-button-container"
-                    class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
-                    <img src="/static/images/localplay.jpg" alt="Local Play" class="w-full h-full object-cover">
-                    <div id="local-play-button-container-text"
-                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4">
-                        <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-                            Local Play
-                        </h3>
-                    </div>
-                    <div id="local-play-button-overlay"
-                        class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
-                    </div>
-                </div>
-            </a>
-
-            <a href="#remote-play-page" id="remote-play-button" data-target="remote-play-page"
-                data-helper-message="Play online!"
-                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div id="remote-play-button-container"
-                    class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
-                    <img src="/static/images/remoteplay.jpg" alt="Remote Play" class="w-full h-full object-cover">
-                    <div id="remote-play-button-container-text"
-                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-yellow-700 to-transparent h-1/2 flex items-end justify-start p-4">
-                        <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-                            Remote Play
-                        </h3>
-                    </div>
-                    <div id="remote-play-button-overlay"
-                        class="absolute inset-0 bg-yellow-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
-                    </div>
-                </div>
-            </a>
-
-            <a href="#tournament-play-page" id="tournament-play-button" data-target="tournament-play-page"
-                data-helper-message="Play in a tournament!"
-                class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105">
-                <div id="tournament-play-button-container"
-                    class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
-                    <img src="/static/images/tournament.jpg" alt="Tournament Play" class="w-full h-full object-cover">
-                    <div id="tournament-play-button-container-text"
-                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4">
-                        <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-                            Tournament Play
-                        </h3>
-                    </div>
-                    <div id="tournament-play-button-overlay"
-                        class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
-                    </div>
-                </div>
-            </a>
-
-            <div id="networking-section" class="flex flex-1 flex-col justify-center rounded overflow-hidden ">
-                <a href="#rankings-page" id="rankings-button" data-target="rankings-page"
-                    data-helper-message="Check the rankings!"
-                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded">
-                    <div id="rankings-button-container"
-                        class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
-                        <img src="/static/images/rankings.jpg" alt="Rankings" class="w-full h-full object-cover">
-                        <div id="rankings-button-container-text"
-                            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-700 to-transparent h-1/2 flex items-end justify-start p-4">
-                            <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-                                Rankings
-                            </h3>
-                        </div>
-                        <div id="rankings-button-overlay"
-                            class="absolute inset-0 bg-green-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
-                        </div>
-                    </div>
-                </a>
-                <a href="#friends-page" id="friends-button" data-target="friends-page"
-                    data-helper-message="See your friends!"
-                    class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded">
-                    <div id="friends-button-container"
-                        class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
-                        <img src="/static/images/friends.jpg" alt="Friends" class="w-full h-full object-cover">
-                        <div id="friends-button-container-text"
-                            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-purple-700 to-transparent h-1/2 flex items-end justify-start p-4">
-                            <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-                                Friends
-                            </h3>
-                        </div>
-                        <div id="friends-button-overlay"
-                            class="absolute inset-0 bg-purple-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
-                        </div>
-                    </div>
-                </a>
+      <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex mt-4">
+        <a
+          href="#local-play-page"
+          id="local-play-button"
+          data-target="local-play-page"
+          data-helper-message="Play locally with friends!"
+          class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105"
+        >
+          <div
+            id="local-play-button-container"
+            class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105"
+          >
+            <img
+              src="/static/images/localplay.jpg"
+              alt="Local Play"
+              class="w-full h-full object-cover"
+            />
+            <div
+              id="local-play-button-container-text"
+              class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4"
+            >
+              <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                Local Play
+              </h3>
             </div>
-        </div>
-        <div id="menu-helper-text"
-            class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine">
-        </div>
-    </div>
-</template>
+            <div
+              id="local-play-button-overlay"
+              class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+            ></div>
+          </div>
+        </a>
 
-<template id="game-menu-template">
+        <a
+          href="#remote-play-page"
+          id="remote-play-button"
+          data-target="remote-play-page"
+          data-helper-message="Play online!"
+          class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105"
+        >
+          <div
+            id="remote-play-button-container"
+            class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105"
+          >
+            <img
+              src="/static/images/remoteplay.jpg"
+              alt="Remote Play"
+              class="w-full h-full object-cover"
+            />
+            <div
+              id="remote-play-button-container-text"
+              class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-yellow-700 to-transparent h-1/2 flex items-end justify-start p-4"
+            >
+              <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                Remote Play
+              </h3>
+            </div>
+            <div
+              id="remote-play-button-overlay"
+              class="absolute inset-0 bg-yellow-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+            ></div>
+          </div>
+        </a>
+
+        <a
+          href="#tournament-play-page"
+          id="tournament-play-button"
+          data-target="tournament-play-page"
+          data-helper-message="Play in a tournament!"
+          class="relative flex-1 cursor-pointer rounded overflow-hidden group transform transition duration-200 hover:scale-105"
+        >
+          <div
+            id="tournament-play-button-container"
+            class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105"
+          >
+            <img
+              src="/static/images/tournament.jpg"
+              alt="Tournament Play"
+              class="w-full h-full object-cover"
+            />
+            <div
+              id="tournament-play-button-container-text"
+              class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4"
+            >
+              <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                Tournament Play
+              </h3>
+            </div>
+            <div
+              id="tournament-play-button-overlay"
+              class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+            ></div>
+          </div>
+        </a>
+
+        <div
+          id="networking-section"
+          class="flex flex-1 flex-col justify-center rounded overflow-hidden"
+        >
+          <a
+            href="#rankings-page"
+            id="rankings-button"
+            data-target="rankings-page"
+            data-helper-message="Check the rankings!"
+            class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded"
+          >
+            <div
+              id="rankings-button-container"
+              class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105"
+            >
+              <img
+                src="/static/images/rankings.jpg"
+                alt="Rankings"
+                class="w-full h-full object-cover"
+              />
+              <div
+                id="rankings-button-container-text"
+                class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-700 to-transparent h-1/2 flex items-end justify-start p-4"
+              >
+                <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                  Rankings
+                </h3>
+              </div>
+              <div
+                id="rankings-button-overlay"
+                class="absolute inset-0 bg-green-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+              ></div>
+            </div>
+          </a>
+          <a
+            href="#friends-page"
+            id="friends-button"
+            data-target="friends-page"
+            data-helper-message="See your friends!"
+            class="flex-1 relative group transform transition duration-200 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded"
+          >
+            <div
+              id="friends-button-container"
+              class="relative h-full overflow-hidden rounded transition-transform duration-200 group-hover:scale-105"
+            >
+              <img
+                src="/static/images/friends.jpg"
+                alt="Friends"
+                class="w-full h-full object-cover"
+              />
+              <div
+                id="friends-button-container-text"
+                class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-purple-700 to-transparent h-1/2 flex items-end justify-start p-4"
+              >
+                <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                  Friends
+                </h3>
+              </div>
+              <div
+                id="friends-button-overlay"
+                class="absolute inset-0 bg-purple-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+              ></div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div
+        id="menu-helper-text"
+        class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine"
+      ></div>
+    </div>
+  </template>
+
+  <template id="game-menu-template">
     <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center -mt-6">
-        <div id="game-menu-inner" class="bg-white rounded-lg shadow-lg w-[85%] h-[95%] flex flex-col overflow-auto">
-            <div id="game-type-selection" class="flex-grow p-8 flex flex-col">
-                <h2 class="text-4xl font-bold font-serpentine text-center mb-8">Select Your Game</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-                    <button id="classic-pong-button" class="game-type-button group">
-                        <div
-                            class="relative aspect-[5/4] overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
-                            <img src="/static/images/pokemon_trainer_female.png" alt="Classic Pong"
-                                class="w-full h-full object-cover">
-                            <div
-                                class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4">
-                                <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-                                    Classic Pong
-                                </h3>
-                            </div>
-                            <div
-                                class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
-                            </div>
-                        </div>
-                    </button>
-                    <button id="crazy-pong-button" class="game-type-button group">
-                        <div
-                            class="relative aspect-[5/4] overflow-hidden rounded transition-transform duration-200 group-hover:scale-105">
-                            <img src="/static/images/pokemon_trainer_male.png" alt="Crazy Pong"
-                                class="w-full h-full object-cover">
-                            <div
-                                class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4">
-                                <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-                                    Crazy Pong
-                                </h3>
-                            </div>
-                            <div
-                                class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0">
-                            </div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <div id="game-settings-menu" class="flex-grow p-4 flex flex-col hidden">
-                <h2 id="game-settings-title" class="text-4xl font-bold font-serpentine text-center mb-4 drop-shadow-lg">
-                    Game Settings
-                </h2>
-
-                <div id="settings-columns" class="flex flex-row gap-6 h-full">
-                    <!-- Player 1 Settings -->
-                    <div id="player-1-settings"
-                        class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-red-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
-                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-red-400">Player 1</h3>
-                        <div class="flex flex-col items-center justify-center flex-grow w-full">
-                            <div id="player-1-name" class="mb-6 w-3/4">
-                                <label for="player-1-alias"
-                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Alias</label>
-                                <input id="player-1-alias" type="text"
-                                    class="shadow appearance-none border-b-2 border-red-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-red-300 focus:shadow-outline text-center transition-all duration-300"
-                                    placeholder="Player 1">
-                            </div>
-                            <div id="player-1-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
-                                <label for="player-1-paddle-colour-input"
-                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Paddle
-                                    Colour</label>
-                                <input id="player-1-paddle-colour-input" type="color" value="#ff0000"
-                                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white">
-                            </div>
-                            <div id="player-1-character" class="mt-6 flex flex-col items-center hidden">
-                                <div class="block text-gray-300 text-sm font-bold mb-3 text-center">Character</div>
-                                <div class="flex items-center gap-6">
-                                    <button id="prev-character-1"
-                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">&lt;
-                                        Previous</button>
-                                    <div id="character-display-1"
-                                        class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-red-400">
-                                        <img id="character-img-1" src="./static/character_select/mario.png"
-                                            alt="Character 1" class="max-w-full max-h-full object-contain">
-                                    </div>
-                                    <button id="next-character-1"
-                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">Next
-                                        &gt;</button>
-                                </div>
-                                <div id="character-move-1" class="mt-4 text-center text-gray-300">Special Move: Fireball
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Player 2 Settings -->
-                    <div id="player-2-settings"
-                        class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-blue-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
-                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-blue-400">Player 2</h3>
-                        <div class="flex flex-col items-center justify-center flex-grow w-full">
-                            <div id="player-2-name" class="mb-6 w-3/4">
-                                <label for="player-2-alias"
-                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Alias</label>
-                                <input id="player-2-alias" type="text"
-                                    class="shadow appearance-none border-b-2 border-blue-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-blue-300 focus:shadow-outline text-center transition-all duration-300"
-                                    placeholder="Player 2">
-                            </div>
-                            <div id="player-2-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
-                                <label for="player-2-paddle-colour-input"
-                                    class="block text-gray-300 text-sm font-bold mb-2 text-center">Paddle
-                                    Colour</label>
-                                <input id="player-2-paddle-colour-input" type="color" value="#0000ff"
-                                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white">
-                            </div>
-                            <div id="player-2-character" class="mt-6 flex flex-col items-center hidden">
-                                <div class="block text-gray-300 text-sm font-bold mb-3 text-center">Character</div>
-                                <div class="flex items-center gap-6">
-                                    <button id="prev-character-2"
-                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">&lt;
-                                        Previous</button>
-                                    <div id="character-display-2"
-                                        class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-blue-400">
-                                        <img id="character-img-2" src="./static/character_select/mario.png"
-                                            alt="Character 2" class="max-w-full max-h-full object-contain">
-                                    </div>
-                                    <button id="next-character-2"
-                                        class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300">Next
-                                        &gt;</button>
-                                </div>
-                                <div id="character-move-2" class="mt-4 text-center text-gray-300">Special Move: Fireball
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Board Settings -->
-                    <div id="board-settings-content"
-                        class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
-                        <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-purple-400">Board
-                            Background</h3>
-                        <div class="flex flex-col items-center justify-center flex-grow w-full">
-                            <div id="match-background" class="flex flex-col items-center justify-center mb-4 w-full">
-                                <label for="background-img"
-                                    class="block text-gray-300 text-sm font-bold mb-3 text-center">Background:</label>
-                                <div id="background-display"
-                                    class="w-4/5 h-56 rounded-lg shadow-xl overflow-hidden flex items-center justify-center border-2 border-purple-400">
-                                    <img id="background-img" src="./static/backgrounds/Backyard.png"
-                                        class="w-full h-full" alt="Background Image">
-                                </div>
-                            </div>
-                            <div class="flex items-center mt-4 gap-4">
-                                <button id="prev-background"
-                                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">&lt;
-                                    Previous</button>
-                                <button id="next-background"
-                                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300">Next
-                                    &gt;</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-4 flex justify-center">
-                <button id="play-button" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700
-                        text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg
-                        transition-all duration-300 transform hover:scale-105 uppercase tracking-wider">
-                    Play Game!
-                </button>
-            </div>
-        </div>
-    </div>
-    </div>
-</template>
-
-<template id="profile-template">
-    <div> I'm on profile!</div>
-</template>
-
-<template id="friends-template">
-    <div id="friends-menu" class="flex w-[85%] mx-auto">
-        <div> I'm on friends! </div>
-</template>
-
-<template id="rankings-template">
-    <div id="rankings-menu" class="flex w-[85%] mx-auto">
-        <div> I'm on rankings! </div>
-</template>
-
-<template id="game-template">
-    <div id="game-container" class="h-[85%] w-[85%] flex justify-center mx-auto relative">
-        <img src=./static/backgrounds/Backyard.png id="game-background" class="h-[740px] w-[1240px] z-0 absolute inset-0 m-auto"></img>
-        <canvas id="game-canvas" class="h-[720px] w-[1200px] absolute inset-0 m-auto z-5"></canvas>
-    </div>
-</template>
-
-<template id="header-template">
-    <div id="header-menu" class="w-[85%] flex flex-row justify-between items-center">
-        <!-- Left: Header Text -->
-        <div id="navigation-info" class="flex items-center justify-center text-center gap-4">
-            <div id="header-back-button"
-                class="relative bg-gray-700 text-white px-6 rounded-md font-serpentine text-4xl hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex border-l-4 border-gray-300 shadow-lg hover:shadow-gray-300/20 hover:translate-x-1 group h-16 hidden">
-                <span class="group-hover:-translate-x-1 transition-transform duration-300 my-auto">&#8617;</span>
+      <div
+        id="game-menu-inner"
+        class="bg-white rounded-lg shadow-lg w-[85%] h-[95%] flex flex-col overflow-auto"
+      >
+        <div id="game-type-selection" class="flex-grow p-8 flex flex-col">
+          <h2 class="text-4xl font-bold font-serpentine text-center mb-8">Select Your Game</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+            <button id="classic-pong-button" class="game-type-button group">
+              <div
+                class="relative aspect-[5/4] overflow-hidden rounded transition-transform duration-200 group-hover:scale-105"
+              >
+                <img
+                  src="/static/images/pokemon_trainer_female.png"
+                  alt="Classic Pong"
+                  class="w-full h-full object-cover"
+                />
                 <div
-                    class="absolute inset-0 bg-gradient-to-r from-gray-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
+                  class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4"
+                >
+                  <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                    Classic Pong
+                  </h3>
                 </div>
-            </div>
-            <div id="header-menu-text"
-                class="font-serpentine text-5xl flex justify-center items-center text-center mt-2">
-            </div>
-        </div>
-        <!-- Right: Player Info -->
-        <div id="player-info" class="flex text-3xl items-center space-x-2 relative">
-            <span id="player-name" class="font-semibold">Username</span>
-            <button id="nav-settings-button" class="rounded-full overflow-hidden" style="width: 25px; height: 25px;">
-                <img src="./static/images/avatar_placeholder.png" class="w-full h-full object-cover">
+                <div
+                  class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+                ></div>
+              </div>
             </button>
-            <!-- TODO: Add function to dropdown buttons -->
-            <div id="settings-dropdown"
-                class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-black z-30 hidden">
-                <div class="py-2">
-                    <a href="#" data-target="profile-template" class="block px-4 py-2 text-sm">Profile</a>
-                    <button id="logout-button" class="block px-4 py-2 text-sm">Log Out</button>
+            <button id="crazy-pong-button" class="game-type-button group">
+              <div
+                class="relative aspect-[5/4] overflow-hidden rounded transition-transform duration-200 group-hover:scale-105"
+              >
+                <img
+                  src="/static/images/pokemon_trainer_male.png"
+                  alt="Crazy Pong"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4"
+                >
+                  <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+                    Crazy Pong
+                  </h3>
                 </div>
+                <div
+                  class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+                ></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div id="game-settings-menu" class="flex-grow p-4 flex flex-col hidden">
+          <h2
+            id="game-settings-title"
+            class="text-4xl font-bold font-serpentine text-center mb-4 drop-shadow-lg"
+          >
+            Game Settings
+          </h2>
+
+          <div id="settings-columns" class="flex flex-row gap-6 h-full">
+            <!-- Player 1 Settings -->
+            <div
+              id="player-1-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-red-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-red-400">
+                Player 1
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-1-name" class="mb-6 w-3/4">
+                  <label
+                    for="player-1-alias"
+                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-1-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-red-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-red-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 1"
+                  />
+                </div>
+                <div id="player-1-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
+                  <label
+                    for="player-1-paddle-colour-input"
+                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-1-paddle-colour-input"
+                    type="color"
+                    value="#ff0000"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-1-character" class="mt-6 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-sm font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div class="flex items-center gap-6">
+                    <button
+                      id="prev-character-1"
+                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-1"
+                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-red-400"
+                    >
+                      <img
+                        id="character-img-1"
+                        src="./static/character_select/mario.png"
+                        alt="Character 1"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-1"
+                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-move-1" class="mt-4 text-center text-gray-300">
+                    Special Move: Fireball
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
-</template>
 
-<template id="error-template">
+            <!-- Player 2 Settings -->
+            <div
+              id="player-2-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-blue-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-blue-400">
+                Player 2
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-2-name" class="mb-6 w-3/4">
+                  <label
+                    for="player-2-alias"
+                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-2-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-blue-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-blue-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 2"
+                  />
+                </div>
+                <div id="player-2-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
+                  <label
+                    for="player-2-paddle-colour-input"
+                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-2-paddle-colour-input"
+                    type="color"
+                    value="#0000ff"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-2-character" class="mt-6 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-sm font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div class="flex items-center gap-6">
+                    <button
+                      id="prev-character-2"
+                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-2"
+                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-blue-400"
+                    >
+                      <img
+                        id="character-img-2"
+                        src="./static/character_select/mario.png"
+                        alt="Character 2"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-2"
+                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-move-2" class="mt-4 text-center text-gray-300">
+                    Special Move: Fireball
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Board Settings -->
+            <div
+              id="board-settings-content"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-purple-400">
+                Board Background
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div
+                  id="match-background"
+                  class="flex flex-col items-center justify-center mb-4 w-full"
+                >
+                  <label
+                    for="background-img"
+                    class="block text-gray-300 text-sm font-bold mb-3 text-center"
+                    >Background:</label
+                  >
+                  <div
+                    id="background-display"
+                    class="w-4/5 h-56 rounded-lg shadow-xl overflow-hidden flex items-center justify-center border-2 border-purple-400"
+                  >
+                    <img
+                      id="background-img"
+                      src="./static/backgrounds/Backyard.png"
+                      class="w-full h-full"
+                      alt="Background Image"
+                    />
+                  </div>
+                </div>
+                <div class="flex items-center mt-4 gap-4">
+                  <button
+                    id="prev-background"
+                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
+                  >
+                    &lt; Previous
+                  </button>
+                  <button
+                    id="next-background"
+                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
+                  >
+                    Next &gt;
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex justify-center">
+          <button
+            id="play-button"
+            class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+          >
+            Play Game!
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="profile-template">
+    <div>I'm on profile!</div>
+  </template>
+
+  <template id="friends-template">
+    <div id="friends-menu" class="flex w-[85%] mx-auto">
+      <div>I'm on friends!</div>
+    </div>
+  </template>
+
+  <template id="rankings-template">
+    <div id="rankings-menu" class="flex w-[85%] mx-auto">
+      <div>I'm on rankings!</div>
+    </div>
+  </template>
+
+  <template id="game-template">
+    <div id="game-container" class="h-[85%] w-[85%] flex justify-center mx-auto relative">
+      <img
+        src="./static/backgrounds/Backyard.png"
+        id="game-background"
+        class="h-[740px] w-[1240px] z-0 absolute inset-0 m-auto"
+      />
+      <canvas id="game-canvas" class="h-[720px] w-[1200px] absolute inset-0 m-auto z-5"></canvas>
+    </div>
+  </template>
+
+  <template id="header-template">
+    <div id="header-menu" class="w-[85%] flex flex-row justify-between items-center">
+      <!-- Left: Header Text -->
+      <div id="navigation-info" class="flex items-center justify-center text-center gap-4">
+        <div
+          id="header-back-button"
+          class="relative bg-gray-700 text-white px-6 rounded-md font-serpentine text-4xl hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex border-l-4 border-gray-300 shadow-lg hover:shadow-gray-300/20 hover:translate-x-1 group h-16 hidden"
+        >
+          <span class="group-hover:-translate-x-1 transition-transform duration-300 my-auto"
+            >&#8617;</span
+          >
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-gray-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
+          ></div>
+        </div>
+        <div
+          id="header-menu-text"
+          class="font-serpentine text-5xl flex justify-center items-center text-center mt-2"
+        ></div>
+      </div>
+      <!-- Right: Player Info -->
+      <div id="player-info" class="flex text-3xl items-center space-x-2 relative">
+        <span id="player-name" class="font-semibold">Username</span>
+        <button
+          id="nav-settings-button"
+          class="rounded-full overflow-hidden"
+          style="width: 25px; height: 25px"
+        >
+          <img src="./static/images/avatar_placeholder.png" class="w-full h-full object-cover" />
+        </button>
+        <!-- TODO: Add function to dropdown buttons -->
+        <div
+          id="settings-dropdown"
+          class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-black z-30 hidden"
+        >
+          <div class="py-2">
+            <a href="#" data-target="profile-template" class="block px-4 py-2 text-sm">Profile</a>
+            <button id="logout-button" class="block px-4 py-2 text-sm">Log Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="error-template">
     <div id="error-container" class="justify-center text-center">
-        <div id="error-title" class="text-6xl underline font-bold">Oops! An error Occurred</div>
-        <div id="error-message" class="text-5xl mt-10 pt-20 mb-10 pb-20"></div>
-        <div class="error-actions">
-            <button class="btn btn-primary" onclick="window.location.href = '/'">Go Home</button>
-        </div>
+      <div id="error-title" class="text-6xl underline font-bold">Oops! An error Occurred</div>
+      <div id="error-message" class="text-5xl mt-10 pt-20 mb-10 pb-20"></div>
+      <div class="error-actions">
+        <button class="btn btn-primary" onclick="window.location.href='/'">Go Home</button>
+      </div>
     </div>
-</template>
-
+  </template>
 </html>
