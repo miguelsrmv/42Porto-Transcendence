@@ -2,8 +2,9 @@ import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import { checkWallCollision, checkPaddleCollision, checkGoal } from './collisions.js';
-import { GameArea } from './types.js';
-import { gameSettingKey } from '../gameSetup.js';
+import type { GameArea } from './types.js';
+import type { gameSettings, playType, gameType } from '../gameSettings/gameSettings.types.js';
+import type { background } from '../backgroundData/backgroundData.types.js';
 
 export const SPEED = 7;
 export const CANVAS_HEIGHT = 720;
@@ -55,28 +56,28 @@ const myGameArea: GameArea = {
   },
 };
 
-function setPaddles(gameSettings: Record<gameSettingKey, string | null>) {
-  if (!gameSettings.player1PaddleColour || !gameSettings.player2PaddleColour) {
+function setPaddles(gameSettings: gameSettings) {
+  if (!gameSettings.paddleColour1 || !gameSettings.paddleColour2) {
     console.error('Paddle color missing.');
     return;
   }
   leftPaddle = new Paddle(
     PADDLE_WID,
     PADDLE_LEN,
-    gameSettings.player1PaddleColour,
+    gameSettings.paddleColour1,
     PADDLE_WID,
     PADDLE_START_Y_POS,
   );
   rightPaddle = new Paddle(
     PADDLE_WID,
     PADDLE_LEN,
-    gameSettings.player2PaddleColour,
+    gameSettings.paddleColour2,
     CANVAS_WIDTH - 20,
     PADDLE_START_Y_POS,
   );
 }
 
-export function initializeGame(gameSettings: Record<gameSettingKey, string | null>): void {
+export function initializeGame(gameSettings: gameSettings): void {
   const pongPage = document.getElementById('game-container') as HTMLElement | null;
   if (!pongPage) {
     console.error('Cannot start the game: game-container is missing.');
@@ -113,10 +114,10 @@ function updateGameArea(): void {
   }
 }
 
-function updateBackground(background: string | null) {
+function updateBackground(background: background | null) {
   if (!background) return;
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
-  backgroundImg.src = background;
+  backgroundImg.src = background.imagePath;
 }
 
 /* // Unused but might be useful in the future
