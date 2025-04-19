@@ -9,11 +9,11 @@
     <script type="module" src="../dist/app.js"></script>
   </head>
 
-  <body
-    id="body"
-    class="h-screen w-screen flex flex-col bg-cover bg-center bg-[url('/static/images/homescreen_background.jpg')]"
-  >
-    <header id="header" class="w-full relative flex items-center justify-center"></header>
+  <body id="body" class="h-screen w-screen flex flex-col bg-gray-800">
+    <header
+      id="header"
+      class="w-full relative flex items-center justify-center text-white"
+    ></header>
 
     <main id="app" class="h-full w-full overflow-hidden"></main>
 
@@ -223,28 +223,6 @@
     </div>
   </template>
 
-  <!-- <button id="classic-pong-button" class="game-type-button group"> -->
-  <!--   <div -->
-  <!--     class="relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-blue-500" -->
-  <!--   > -->
-  <!--     <img -->
-  <!--       src="/static/images/pokemon_trainer_female.png" -->
-  <!--       alt="Classic Pong" -->
-  <!--       class="w-full h-full object-cover" -->
-  <!--     /> -->
-  <!--     <div -->
-  <!--       class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-900 to-transparent h-1/2 flex items-end justify-start p-4" -->
-  <!--     > -->
-  <!--       <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1"> -->
-  <!--         Classic Pong -->
-  <!--       </h3> -->
-  <!--     </div> -->
-  <!--     <div -->
-  <!--       class="absolute inset-0 bg-gray-900 opacity-40 transition-opacity duration-300 group-hover:opacity-10" -->
-  <!--     ></div> -->
-  <!--   </div> -->
-  <!-- </button> -->
-
   <template id="main-menu-template">
     <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
       <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex mt-6">
@@ -253,7 +231,7 @@
           id="local-play-button"
           data-target="local-play-page"
           data-helper-message="Play locally with friends!"
-          class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 shadow-xl rounded overflow-hidden"
+          class="relative flex-1 cursor-pointer border-2 border-red-500 transition-transform duration-300 hover:scale-105 rounded overflow-hidden"
         >
           <img
             src="/static/images/localplay.jpg"
@@ -279,7 +257,7 @@
           id="remote-play-button"
           data-target="remote-play-page"
           data-helper-message="Play online!"
-          class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 shadow-xl rounded overflow-hidden"
+          class="relative flex-1 cursor-pointer border-2 border-yellow-500 transition-transform duration-300 hover:scale-105 rounded overflow-hidden"
         >
           <img
             src="/static/images/remoteplay.jpg"
@@ -305,7 +283,7 @@
           id="tournament-play-button"
           data-target="tournament-play-page"
           data-helper-message="Play in a tournament!"
-          class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 shadow-xl rounded overflow-hidden"
+          class="relative flex-1 cursor-pointer border-2 border-blue-500 transition-transform duration-300 hover:scale-105 rounded overflow-hidden"
         >
           <img
             src="/static/images/tournamentplay.jpg"
@@ -332,7 +310,7 @@
             id="rankings-button"
             data-target="rankings-page"
             data-helper-message="Check the rankings!"
-            class="flex-1 relative group transition-transform duration-300 hover:scale-105 cursor-pointer mb-2 overflow-hidden rounded shadow-xl"
+            class="relative flex-1 cursor-pointer border-2 border-green-500 transition-transform duration-300 hover:scale-105 rounded overflow-hidden mb-2"
           >
             <img
               src="/static/images/rankings.jpg"
@@ -357,7 +335,7 @@
             id="friends-button"
             data-target="friends-page"
             data-helper-message="See your friends!"
-            class="flex-1 relative group transition-transform duration-300 hover:scale-105 cursor-pointer mt-2 overflow-hidden rounded shadow-xl"
+            class="relative flex-1 cursor-pointer border-2 border-purple-500 transition-transform duration-300 hover:scale-105 rounded overflow-hidden mt-2"
           >
             <img
               src="/static/images/friends.jpg"
@@ -381,17 +359,14 @@
       </div>
       <div
         id="menu-helper-text"
-        class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine"
+        class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine text-white"
       ></div>
     </div>
   </template>
 
   <template id="game-menu-template">
-    <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center -mt-6">
-      <div
-        id="game-menu-inner"
-        class="bg-gray-800 rounded-lg shadow-xl w-[85%] h-[95%] flex flex-col overflow-auto border-l-4 border-purple-500 transform transition-all duration-300 hover:shadow-purple-500/30"
-      >
+    <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center">
+      <div id="game-menu-inner" class="w-[85%] h-[95%] flex flex-col overflow-auto">
         <!-- Game Type Selection -->
         <div id="game-type-selection" class="flex-grow p-8 flex flex-col">
           <h2 class="text-4xl font-bold font-serpentine text-center mb-8 text-white">
@@ -447,19 +422,12 @@
         </div>
 
         <!-- Game Settings Menu -->
-        <div id="game-settings-menu" class="flex-grow p-4 flex flex-col hidden">
-          <h2
-            id="game-settings-title"
-            class="text-4xl font-bold font-serpentine text-center mb-4 text-white drop-shadow-lg"
-          >
-            Game Settings
-          </h2>
-
-          <div id="settings-columns" class="flex flex-row gap-6 h-full">
+        <div id="game-settings-menu" class="flex-grow flex flex-col hidden">
+          <div id="settings-columns" class="flex flex-row gap-6 h-full overflow-hidden">
             <!-- Player 1 Settings -->
             <div
               id="player-1-settings"
-              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-red-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-red-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-red-500/30 hover:-translate-y-1"
             >
               <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-red-400">
                 Player 1
@@ -531,7 +499,7 @@
             <!-- Player 2 Settings -->
             <div
               id="player-2-settings"
-              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-blue-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-blue-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1"
             >
               <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-blue-400">
                 Player 2
@@ -603,7 +571,7 @@
             <!-- Board Settings -->
             <div
               id="board-settings-content"
-              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-1"
             >
               <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-purple-400">
                 Board Background
@@ -650,7 +618,7 @@
         </div>
 
         <!-- Play Button -->
-        <div class="flex pb-4 justify-center">
+        <div class="flex justify-center mt-4">
           <button
             id="play-button"
             class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider hidden"
@@ -995,7 +963,7 @@
         <!-- Left Panel: User Stats -->
         <div class="flex flex-col w-1/3 h-full">
           <div
-            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-green-500 p-6 h-full transform transition-all duration-300 hover:shadow-green-500/30 hover:-translate-y-1"
+            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-green-500 p-6 h-full transform transition-all duration-300 hover:shadow-green-500/30 hover:-translate-y-1 overflow-auto"
           >
             <h2 class="text-3xl font-serpentine text-center mb-8 text-white">My Stats</h2>
 
@@ -1035,7 +1003,7 @@
               </div>
             </div>
 
-            <div class="bg-gray-700 rounded-lg p-6 shadow-md">
+            <div class="bg-gray-700 rounded-lg p-6 shadow-md overflow-hidden">
               <h3 class="text-xl font-serpentine text-white mb-4">Recent Matches</h3>
               <div id="recent-matches" class="space-y-3">
                 <!-- Recent match items will be populated here -->
@@ -1333,7 +1301,7 @@
       <div id="navigation-info" class="flex items-center justify-center text-center gap-4">
         <div
           id="header-back-button"
-          class="relative bg-gray-700 text-white px-6 rounded-md font-serpentine text-4xl hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex border-l-4 border-gray-300 shadow-lg hover:shadow-gray-300/20 hover:translate-x-1 group h-16 hidden"
+          class="relative bg-gray-800 text-white px-6 rounded-md font-serpentine text-4xl transition-all duration-300 whitespace-nowrap flex border-l-4 border-gray-300 hover:shadow-gray-300/20 hover:translate-x-1 group h-16 hidden"
         >
           <span class="group-hover:-translate-x-1 transition-transform duration-300 my-auto"
             >&#8617;</span
