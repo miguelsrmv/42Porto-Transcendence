@@ -5,6 +5,7 @@
 
 import { getTemplateId } from '../utils/helpers.js';
 import { adjustHeader } from '../ui/header.js';
+import { adjustFooter } from '../ui/footer.js';
 
 /**
  * @brief Loads a specified view into the application.
@@ -31,4 +32,7 @@ export function loadView(viewName: string) {
 
   // Adjusts Header
   adjustHeader(viewName);
+
+  // Adjusts Footer
+  adjustFooter(viewName);
 }
