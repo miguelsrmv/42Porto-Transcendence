@@ -9,6 +9,17 @@
 import type { gameType, playType, gameSettings } from './gameSettings/gameSettings.types.js';
 import { getCharacterList } from './characterData/characterData.js';
 import { getBackgroundList } from './backgroundData/backgroundData.js';
+export type gameSettingKey =
+  | 'playType'
+  | 'gameType'
+  | 'player1Alias'
+  | 'player1PaddleColour'
+  | 'player1Character'
+  | 'player2Alias'
+  | 'player2PaddleColour'
+  | 'player2Character'
+  | 'background'
+  | 'gameType';
 
 /**
  * @brief Partial settings object to store game configurations.
