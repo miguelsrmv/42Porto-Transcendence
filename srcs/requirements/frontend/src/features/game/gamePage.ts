@@ -17,6 +17,7 @@ import { getGameSettings } from './gameSetup.js';
  */
 export function initializeView(): void {
   const gameSettings = getGameSettings();
-  console.log(gameSettings);
+  // TODO: Add logic if Remote game
+  // TODO: Add logic if Tournament game
   initializeGame(gameSettings);
 }
