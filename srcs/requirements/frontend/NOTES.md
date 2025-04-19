@@ -11,6 +11,8 @@ frontend/
 │   └── nginx_template.conf         # Nginx configuration template file
 ── src                              # Source code directory (pre-compilation)
 │   ├── app.ts                      # Main application entry point
+│   ├── constants
+│   │   └── errorMessages.ts        # HTTP Error Codes
 │   ├── core                        # Core application logic
 │   │   ├── router.ts
 │   │   └── viewLoader.ts
@@ -18,9 +20,16 @@ frontend/
 │   │   ├── auth                    # Authentication feature
 │   │   │   ├── auth.service.ts
 │   │   │   └── loginModal.ts
+│   │   ├── error                   # Error page
+│   │   │   └── error.ts
 │   │   ├── friends                 # Friends page
 │   │   │   └── friends.ts
 │   │   ├── game                    # Game feature
+│   │   │   ├── backgroundData
+│   │   │   ├── characterData
+│   │   │   ├── gameApp
+│   │   │   ├── gameSettings
+│   │   │   ├── gamePage.ts
 │   │   │   └── gameSetup.ts
 │   │   ├── landing                 # Landing page
 │   │   │   └── landing.ts
@@ -50,6 +59,7 @@ frontend/
 │   │   ├── custom
 │   │   └── default
 │   ├── backgrounds                 # Background images for the application/game
+│   ├── character_portrait          # Images for character in-game HUD
 │   ├── character_select            # Images for character selection screen
 │   ├── favicon.ico                 # Application icon for browser tabs
 │   ├── fonts                       # Font files used in the application
