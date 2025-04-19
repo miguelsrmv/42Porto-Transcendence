@@ -28,16 +28,13 @@ export async function adjustHeader(view: string) {
   const isLandingOrErrorPage: boolean = view === 'landing-page' || view === 'error-page';
   const isMainPage: boolean = view === 'main-menu-page';
 
-  // Clean previous header heights
-  header.classList.remove('h-[0%]', 'h-[20%]');
-
   if (isLandingOrErrorPage) {
     // Makes header invisible
-    header.classList.add('h-[0%]');
+    header.classList.add('hidden');
     header.innerText = '';
   } else {
     // Makes header visible
-    header.classList.add('h-[20%]');
+    header.classList.remove('hidden');
 
     // Adds content from header template
     header.replaceChildren(headerTemplate.content.cloneNode(true));
