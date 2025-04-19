@@ -468,7 +468,7 @@
                 <div id="player-1-name" class="mb-6 w-3/4">
                   <label
                     for="player-1-alias"
-                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
                     >Alias</label
                   >
                   <input
@@ -478,10 +478,10 @@
                     placeholder="Player 1"
                   />
                 </div>
-                <div id="player-1-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-1-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
                   <label
                     for="player-1-paddle-colour-input"
-                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
                     >Paddle Colour</label
                   >
                   <input
@@ -492,7 +492,7 @@
                   />
                 </div>
                 <div id="player-1-character" class="mt-6 flex flex-col items-center hidden">
-                  <div class="block text-gray-300 text-sm font-bold mb-3 text-center">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div class="flex items-center gap-6">
@@ -520,8 +520,9 @@
                       Next &gt;
                     </button>
                   </div>
-                  <div id="character-move-1" class="mt-4 text-center text-gray-300">
-                    Special Move: Fireball
+                  <div id="character-helper-text-1" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-1"></div>
+                    <div id="character-move-help-1" class="italic"></div>
                   </div>
                 </div>
               </div>
@@ -539,7 +540,7 @@
                 <div id="player-2-name" class="mb-6 w-3/4">
                   <label
                     for="player-2-alias"
-                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
                     >Alias</label
                   >
                   <input
@@ -549,10 +550,10 @@
                     placeholder="Player 2"
                   />
                 </div>
-                <div id="player-2-paddle-colour" class="mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-2-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
                   <label
                     for="player-2-paddle-colour-input"
-                    class="block text-gray-300 text-sm font-bold mb-2 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
                     >Paddle Colour</label
                   >
                   <input
@@ -563,7 +564,7 @@
                   />
                 </div>
                 <div id="player-2-character" class="mt-6 flex flex-col items-center hidden">
-                  <div class="block text-gray-300 text-sm font-bold mb-3 text-center">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div class="flex items-center gap-6">
@@ -591,8 +592,9 @@
                       Next &gt;
                     </button>
                   </div>
-                  <div id="character-move-2" class="mt-4 text-center text-gray-300">
-                    Special Move: Fireball
+                  <div id="character-helper-text-2" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-2"></div>
+                    <div id="character-move-help-2" class="italic"></div>
                   </div>
                 </div>
               </div>
@@ -613,8 +615,8 @@
                 >
                   <label
                     for="background-img"
-                    class="block text-gray-300 text-sm font-bold mb-3 text-center"
-                    >Background:</label
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
+                    >Background</label
                   >
                   <div
                     id="background-display"
