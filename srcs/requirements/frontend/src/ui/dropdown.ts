@@ -39,7 +39,6 @@ export function toggleDropdown(): void {
     logoutButton.addEventListener('click', async () => {
       await logoutUser();
       window.location.hash = '#';
-      // TODO: Put this function on auth.service.ts ?
     });
   }
 }
