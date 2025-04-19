@@ -57,7 +57,7 @@ export async function adjustHeader(view: string) {
 
     const headerUserName = header.querySelector('#player-name') as HTMLElement;
     if (headerUserName) {
-      headerUserName.innerText = 'Username2';
+      headerUserName.innerText = 'FAZ_A_API_DAVID';
       // TODO: Change this when API is created
       // try {
       //   const userNameResponse = await fetch('/api/users/XXXXXXXXXXXXX', {
