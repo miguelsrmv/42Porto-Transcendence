@@ -63,11 +63,13 @@ export async function getGameType(): Promise<gameType> {
   return new Promise((resolve) => {
     const classicButton = document.getElementById('classic-pong-button');
     const crazyButton = document.getElementById('crazy-pong-button');
+    const playButton = document.getElementById('play-button');
 
-    if (classicButton && crazyButton) {
+    if (classicButton && crazyButton && playButton) {
       classicButton.addEventListener(
         'click',
         () => {
+          playButton.classList.remove('hidden');
           resolve('Classic Pong');
         },
         { once: true },
@@ -75,6 +77,7 @@ export async function getGameType(): Promise<gameType> {
       crazyButton.addEventListener(
         'click',
         () => {
+          playButton.classList.remove('hidden');
           resolve('Crazy Pong');
         },
         { once: true },

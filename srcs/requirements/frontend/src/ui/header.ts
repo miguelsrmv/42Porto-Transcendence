@@ -16,7 +16,7 @@ import { toggleDropdown } from '../ui/dropdown.js';
  *
  *  @param view The ID of the current view.
  */
-export function adjustHeader(view: string) {
+export async function adjustHeader(view: string) {
   const header = document.getElementById('header');
   const headerTemplate = document.getElementById('header-template') as HTMLTemplateElement;
 
@@ -53,6 +53,22 @@ export function adjustHeader(view: string) {
         .split('-')
         .map((view) => view.charAt(0).toUpperCase() + view.slice(1))
         .join(' ');
+    }
+
+    const headerUserName = header.querySelector('#player-name') as HTMLElement;
+    if (headerUserName) {
+      headerUserName.innerText = 'Username2';
+      // TODO: Change this when API is created
+      // try {
+      //   const userNameResponse = await fetch('/api/users/XXXXXXXXXXXXX', {
+      //     method: 'GET',
+      //     credentials: 'include',
+      //   });
+      //   const userName = await userNameResponse.json();
+      //   headerUserName.innerText = userName;
+      // } catch (error) {
+      //   console.error('Acquiring username failed: ', error);
+      // }
     }
 
     // Shows back button if not on main page
