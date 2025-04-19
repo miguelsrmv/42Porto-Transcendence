@@ -101,6 +101,12 @@ export function createCharacterLoop(player_number: number = 1) {
   const characterDisplay: HTMLImageElement | null = document.getElementById(
     `character-img-${player_number}`,
   ) as HTMLImageElement;
+  const characterMoveName: HTMLDivElement | null = document.getElementById(
+    `character-move-name-${player_number}`,
+  ) as HTMLDivElement;
+  const characterMoveHelp: HTMLDivElement | null = document.getElementById(
+    `character-move-help-${player_number}`,
+  ) as HTMLDivElement;
 
   let currentCharacterIndex = 0;
 
@@ -131,7 +137,10 @@ export function createCharacterLoop(player_number: number = 1) {
 
   // Updates the character's helper text
   function updateCharacterHelpText(): void {
-    return; //TODO:Do this function!
+    if (characterMoveName && characterMoveHelp) {
+      characterMoveName.innerText = `Special Move: ${characterList[currentCharacterIndex].attack}`;
+      characterMoveHelp.innerText = `${characterList[currentCharacterIndex].selectHelpMessage}`;
+    }
   }
 
   // Event listener for previous button

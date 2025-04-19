@@ -13,11 +13,10 @@ import { character } from './characterData.types.js';
  */
 const characterSelectPicturePath = '../../../../static/character_select/';
 
-// TODO: Change characterAvatarPicture Path (I need to get proper avatars first)
 /**
  * @brief Path to the character avatar images.
  */
-const characterAvatarPicturePath = characterSelectPicturePath;
+const characterAvatarPicturePath = '../../../../static/character_portrait/';
 
 /**
  * @brief Array of character data objects.
@@ -30,56 +29,56 @@ const characterList: character[] = [
     attack: 'Super Shroom',
     characterSelectPicturePath: `${characterSelectPicturePath}mario.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}mario.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: "Eat one to increase your paddle's size!",
   },
   {
     name: 'Yoshi',
     attack: 'Egg Barrage',
     characterSelectPicturePath: `${characterSelectPicturePath}yoshi.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}yoshi.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: 'Fill the field with fake targets!',
   },
   {
     name: 'Sonic',
     attack: 'Spin Dash',
     characterSelectPicturePath: `${characterSelectPicturePath}sonic.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}sonic.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: "Increase the ball's speed!",
   },
   {
     name: 'Pikachu',
     attack: 'Thunder Wave',
     characterSelectPicturePath: `${characterSelectPicturePath}pikachu.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}pikachu.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: "Paralyze your opponent's paddle",
   },
   {
     name: 'Mewtwo',
     attack: 'Confusion',
     characterSelectPicturePath: `${characterSelectPicturePath}mewtwo.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}mewtwo.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: "Mess with your opponent's paddle!",
   },
   {
     name: 'Link',
     attack: 'Hurricane Blade',
     characterSelectPicturePath: `${characterSelectPicturePath}link.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}link.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: 'Redirect the ball with a sword slash!',
   },
   {
     name: 'Samus',
     attack: 'Missiles',
     characterSelectPicturePath: `${characterSelectPicturePath}samus.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}samus.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: "Aim and destroy your opponent's paddle!",
   },
   {
     name: 'Donkey Kong',
     attack: 'Giant Punch',
     characterSelectPicturePath: `${characterSelectPicturePath}donkey_kong.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}donkey_kong.png`,
-    selectHelpMessage: '',
+    selectHelpMessage: "Smash your opponent's paddle!",
   },
 ] as const;
 
