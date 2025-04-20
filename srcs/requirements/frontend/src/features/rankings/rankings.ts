@@ -4,8 +4,8 @@
  */
 
 /**
-* @brief Initializes view for rankings
-* 
-* This function sets up the view for rankings
-*/
-export async function initializeView(): Promise<void> { }
+ * @brief Initializes view for rankings
+ *
+ * This function sets up the view for rankings
+ */
+export async function initializeView(): Promise<void> {}

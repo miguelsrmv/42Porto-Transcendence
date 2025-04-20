@@ -1,0 +1,16 @@
+# Build output
+dist
+
+# Dependencies
+node_modules
+
+# Generated files 
+deploy.log
+blockchain_address.txt
+/secrets
+
+# Env files
+.env
+
+# Submodule assets 
+srcs/requirements/frontend/static/super_smash_assets/

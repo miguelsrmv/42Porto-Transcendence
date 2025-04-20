@@ -1,32 +1,33 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* src/tailwind.css */
 @tailwind utilities;
 
 /* Fonts */
 @font-face {
-    font-family: 'supersmash_title';
-    src: url('/static/fonts/super_smash_title_screen.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-} 
+  font-family: 'supersmash_title';
+  src: url('/static/fonts/super_smash_title_screen.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 .font-supersmash_title {
   font-family: 'supersmash_title', sans-serif;
 }
 
 @font-face {
-    font-family: 'serpentine';
-    src: url('/static/fonts/serpentine_std-medium.ttf') format('truetype'); /* Ensure the font file exists at this path */
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'serpentine';
+  src: url('/static/fonts/serpentine_std-medium.ttf') format('truetype'); /* Ensure the font file exists at this path */
+  font-weight: normal;
+  font-style: normal;
 }
 
 .font-serpentine {
   font-family: 'serpentine', sans-serif;
 }
 
-/* /* Custom styles using @apply */ */
+/* /* Custom styles using @apply */
+*/
 /* .nav-button { */
 /*   @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 */
 /* } */
@@ -35,19 +36,19 @@
 #enter-button.fade-in {
   opacity: 1;
   visibility: visible;
-  transition: opacity 1s
+  transition: opacity 1s;
 }
 
 #sub-title.fade-in {
-  opacity: 1; 
-  visibility: visible; 
-  transition: opacity 1s
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1s;
 }
 
 .login-modal {
-    opacity: 0; 
-    transform: fade(0.8);
-    pointer-events: none;
+  opacity: 0;
+  transform: fade(0.8);
+  pointer-events: none;
 }
 
 .page-fade-in {
@@ -59,7 +60,6 @@
   opacity: 0;
   transition: opacity 300ms ease-out;
 }
-
 
 /* Keyframes (Keep as they are) */
 @keyframes modalEnter {
@@ -103,10 +103,9 @@
 }
 
 .angled-top {
-clip-path: polygon(0% 30%, 100% 0%, 100% 100%, 0% 100%);
+  clip-path: polygon(0% 30%, 100% 0%, 100% 100%, 0% 100%);
 }
 
 .text-outline {
   -webkit-text-stroke: 4px black; /* Black outline */
 }
-
