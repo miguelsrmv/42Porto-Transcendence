@@ -8,6 +8,7 @@ export class Paddle {
   x: number;
   y: number;
   speedY: number;
+  speedModifier: number;
 
   constructor(width: number, height: number, color: string, x: number, y: number) {
     this.width = width;
@@ -16,6 +17,7 @@ export class Paddle {
     this.x = x;
     this.y = y;
     this.speedY = 0;
+    this.speedModifier = 1;
   }
 
   // Draws the paddle on the canvas
@@ -41,5 +43,9 @@ export class Paddle {
 
   setSpeedY(speedY: number): void {
     this.speedY = speedY;
+  }
+
+  setSpeedModifier(modifier: number): void {
+    this.speedModifier = modifier;
   }
 }

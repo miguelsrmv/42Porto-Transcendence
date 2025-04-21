@@ -1,6 +1,7 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
+import { setPaddleSpeedModifier } from './input.js';
 
 export class Attack {
   ownPaddle: Paddle;
@@ -105,19 +106,26 @@ export class Attack {
   async thunderWave(): Promise<void> {
     const slowdownFactor = 0.5;
 
-    const oldSpeed = this.enemyPaddle.speedY;
-    const newSpeed = oldSpeed * slowdownFactor;
-
-    this.enemyPaddle.setSpeedY(newSpeed);
+    this.enemyPaddle.setSpeedModifier(slowdownFactor);
 
     await wait(2);
 
     if (this.gameStateIsUnchanged()) {
-      this.enemyPaddle.setSpeedY(oldSpeed);
+      this.enemyPaddle.setSpeedModifier(1);
     }
   }
 
-  async confusion(): Promise<void> {}
+  async confusion(): Promise<void> {
+    const inversionFactor = -1;
+
+    this.enemyPaddle.setSpeedModifier(inversionFactor);
+
+    await wait(2);
+
+    if (this.gameStateIsUnchanged()) {
+      this.enemyPaddle.setSpeedModifier(1);
+    }
+  }
 
   async magicMirror(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
