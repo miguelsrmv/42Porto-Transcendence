@@ -31,18 +31,15 @@ export class Paddle {
     this.y = Math.max(0, Math.min(this.y, CANVAS_HEIGHT - this.height));
   }
 
-  async increaseHeight(factor: number): Promise<void> {
-    let startingHeight = this.height;
-    let newHeight = this.height * factor;
+  setHeight(height: number): void {
+    this.height = height;
+  }
 
-    this.height = newHeight;
-    let currentPosition = this.y;
-    this.y -= (newHeight - startingHeight) / 2;
+  setY(y: number): void {
+    this.y = y;
+  }
 
-    await wait(2);
-
-    this.height = startingHeight;
-    currentPosition = this.y;
-    this.y += (newHeight - startingHeight) / 2;
+  setSpeedY(speedY: number): void {
+    this.speedY = speedY;
   }
 }
