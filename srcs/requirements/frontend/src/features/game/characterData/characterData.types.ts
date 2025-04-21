@@ -30,5 +30,6 @@ export interface character {
   attack: attackIdentifier;
   characterSelectPicturePath: string;
   characterAvatarPicturePath: string;
+  accentColour: string;
   selectHelpMessage: string;
 }
