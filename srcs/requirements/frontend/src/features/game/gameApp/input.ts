@@ -1,4 +1,5 @@
 import { SPEED } from './game.js';
+import { Player } from './player.js';
 
 // Interface for paddle to define expected structure
 interface Paddle {
@@ -9,33 +10,50 @@ interface Paddle {
 const keys: Record<string, boolean> = {};
 
 // Add event listeners for keydown and keyup events
+// TODO: Handle multiple event firings for Enter and Space ?
 export function setupInput(): void {
   window.addEventListener('keydown', (e: KeyboardEvent) => {
-    keys[e.key] = true;
+    if (e.key !== ' ' && e.key !== 'Enter') {
+      keys[e.key] = true;
+    }
   });
 
   window.addEventListener('keyup', (e: KeyboardEvent) => {
-    keys[e.key] = false;
+    if (e.key !== ' ' && e.key !== 'Enter') {
+      keys[e.key] = false;
+    } else {
+      keys[e.key] = true;
+    }
   });
 }
 
 // Update paddle movement based on key input
-export function handleInput(leftPaddle: Paddle, rightPaddle: Paddle): void {
+export function handleInput(leftPlayer: Player, rightPlayer: Player): void {
   // Left paddle ('w' and 's')
   if (keys['w']) {
-    leftPaddle.speedY = -SPEED;
+    leftPlayer.ownPaddle.speedY = -SPEED;
   } else if (keys['s']) {
-    leftPaddle.speedY = SPEED;
+    leftPlayer.ownPaddle.speedY = SPEED;
   } else {
-    leftPaddle.speedY = 0;
+    leftPlayer.ownPaddle.speedY = 0;
   }
 
   // Right paddle ('ArrowUp' and 'ArrowDown')
   if (keys['ArrowUp']) {
-    rightPaddle.speedY = -SPEED;
+    rightPlayer.ownPaddle.speedY = -SPEED;
   } else if (keys['ArrowDown']) {
-    rightPaddle.speedY = SPEED;
+    rightPlayer.ownPaddle.speedY = SPEED;
   } else {
-    rightPaddle.speedY = 0;
+    rightPlayer.ownPaddle.speedY = 0;
+  }
+
+  if (keys[' ']) {
+    keys[' '] = false;
+    leftPlayer.attack();
+  }
+
+  if (keys['Enter']) {
+    keys['Enter'] = false;
+    rightPlayer.attack();
   }
 }
