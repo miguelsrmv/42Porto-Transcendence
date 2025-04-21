@@ -9,11 +9,11 @@ import { Player } from './player.js';
 
 export const SPEED = 5;
 export const CANVAS_HEIGHT = 720;
-const CANVAS_WIDTH = 1200;
-const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
-const PADDLE_WID = 10;
-const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
-const BALL_RADIUS = 10;
+export const CANVAS_WIDTH = 1200;
+export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
+const PADDLE_WID = 12;
+export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
+export const BALL_RADIUS = 10;
 
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
@@ -26,12 +26,19 @@ export type InputHandler  = {
   disable(): void;
 }
 
+export enum gameState {
+  playing,
+  paused,
+  ended
+}
+
 // TODO: Call stop() when leaving the page, etc.
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
   interval: undefined,
   inputHandler: null,
+  state: gameState.paused,
 
   start() {
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -48,7 +55,7 @@ const myGameArea: GameArea = {
       console.error('No canvas context available');
       return;
     }
-
+    this.state = gameState.playing;
     this.interval = window.setInterval(updateGameArea, 20);
   },
 
@@ -63,6 +70,7 @@ const myGameArea: GameArea = {
       clearInterval(this.interval);
     }
     this.inputHandler?.disable();
+    this.state = gameState.ended;
   },
 };
 
@@ -126,7 +134,7 @@ export function initializeGame(gameSettings: gameSettings): void {
 async function updateGameArea() {
   myGameArea.clear();
 
-  handleInput(leftPlayer, rightPlayer);
+  handleInput(leftPlayer, rightPlayer, myGameArea.state);
 
   leftPaddle.update();
   rightPaddle.update();
