@@ -36,8 +36,8 @@ export class Attack {
       'Spin Dash': () => this.spinDash(),
       'Thunder Wave': () => this.thunderWave(),
       Confusion: () => this.confusion(),
-      'Hurricane Blade': () => this.hurricaneBlade(),
-      Missiles: () => this.missiles(),
+      'Magic Mirror': () => this.magicMirror(),
+      Mini: () => this.mini(),
       'Giant Punch': () => this.giantPunch(),
     };
 
@@ -60,9 +60,9 @@ export class Attack {
 
   confusion(): void {}
 
-  hurricaneBlade(): void {}
+  magicMirror(): void {}
 
-  missiles(): void {}
+  mini(): void {}
 
   giantPunch(): void {}
 }
