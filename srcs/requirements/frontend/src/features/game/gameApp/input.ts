@@ -42,18 +42,18 @@ export function setupInput(leftPlayer: Player, rightPlayer: Player) {
 export function handleInput(leftPlayer: Player, rightPlayer: Player): void {
   // Left paddle ('w' and 's')
   if (keys['w']) {
-    leftPlayer.ownPaddle.speedY = -SPEED;
+    leftPlayer.ownPaddle.speedY = -SPEED * leftPlayer.ownPaddle.speedModifier;
   } else if (keys['s']) {
-    leftPlayer.ownPaddle.speedY = SPEED;
+    leftPlayer.ownPaddle.speedY = SPEED * leftPlayer.ownPaddle.speedModifier;
   } else {
     leftPlayer.ownPaddle.speedY = 0;
   }
 
   // Right paddle ('ArrowUp' and 'ArrowDown')
   if (keys['ArrowUp']) {
-    rightPlayer.ownPaddle.speedY = -SPEED;
+    rightPlayer.ownPaddle.speedY = -SPEED * rightPlayer.ownPaddle.speedModifier;
   } else if (keys['ArrowDown']) {
-    rightPlayer.ownPaddle.speedY = SPEED;
+    rightPlayer.ownPaddle.speedY = SPEED * rightPlayer.ownPaddle.speedModifier;
   } else {
     rightPlayer.ownPaddle.speedY = 0;
   }
