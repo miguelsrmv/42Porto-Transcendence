@@ -17,6 +17,7 @@ import type { character } from './characterData/characterData.types.js';
  * It is responsible for preparing the game page for user interaction.
  */
 export function initializeView(): void {
+  // TODO: Why is portrait showing up in Classic Pong ??
   const gameSettings = getGameSettings();
   if (gameSettings.gameType === 'Crazy Pong')
     updateHUD(gameSettings.character1, gameSettings.character2);
