@@ -24,6 +24,14 @@ export class Player {
     this.attackName = attackName;
   }
 
+  increaseScore(): void {
+    ++this.score;
+  }
+
+  getScore(): number {
+    return this.score;
+  }
+
   attack(): void {
     if (!this.attackName) return;
 
