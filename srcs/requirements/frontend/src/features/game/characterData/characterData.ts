@@ -29,6 +29,7 @@ const characterList: character[] = [
     attack: 'Super Shroom',
     characterSelectPicturePath: `${characterSelectPicturePath}mario.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}mario.png`,
+    accentColour: 'red',
     selectHelpMessage: "Eat one to increase your paddle's size!",
   },
   {
@@ -36,6 +37,7 @@ const characterList: character[] = [
     attack: 'Egg Barrage',
     characterSelectPicturePath: `${characterSelectPicturePath}yoshi.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}yoshi.png`,
+    accentColour: 'green',
     selectHelpMessage: 'Fill the field with fake targets!',
   },
   {
@@ -43,6 +45,7 @@ const characterList: character[] = [
     attack: 'Spin Dash',
     characterSelectPicturePath: `${characterSelectPicturePath}sonic.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}sonic.png`,
+    accentColour: 'blue',
     selectHelpMessage: "Increase the ball's speed!",
   },
   {
@@ -50,6 +53,7 @@ const characterList: character[] = [
     attack: 'Thunder Wave',
     characterSelectPicturePath: `${characterSelectPicturePath}pikachu.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}pikachu.png`,
+    accentColour: 'yellow',
     selectHelpMessage: "Paralyze your opponent's paddle",
   },
   {
@@ -57,6 +61,7 @@ const characterList: character[] = [
     attack: 'Confusion',
     characterSelectPicturePath: `${characterSelectPicturePath}mewtwo.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}mewtwo.png`,
+    accentColour: 'purple',
     selectHelpMessage: "Mess with your opponent's paddle!",
   },
   {
@@ -64,6 +69,7 @@ const characterList: character[] = [
     attack: 'Magic Mirror',
     characterSelectPicturePath: `${characterSelectPicturePath}link.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}link.png`,
+    accentColour: 'cyan',
     selectHelpMessage: "Use Link's Magic Mirror!",
   },
   {
@@ -71,6 +77,7 @@ const characterList: character[] = [
     attack: 'Mini',
     characterSelectPicturePath: `${characterSelectPicturePath}kirby.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}kirby.png`,
+    accentColour: 'pink',
     selectHelpMessage: 'Minify the ball!',
   },
   {
@@ -78,6 +85,7 @@ const characterList: character[] = [
     attack: 'Giant Punch',
     characterSelectPicturePath: `${characterSelectPicturePath}donkey_kong.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}donkey_kong.png`,
+    accentColour: 'orange',
     selectHelpMessage: "Smash your opponent's paddle!",
   },
 ] as const;
