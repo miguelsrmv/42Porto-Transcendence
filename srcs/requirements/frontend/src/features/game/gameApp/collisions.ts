@@ -124,11 +124,14 @@ async function resetBall(ball: Ball, gameArea: GameArea) {
     console.error('Error getting canvas element!');
     return;
   }
+
+  const pauseEvent = new CustomEvent('paused');
   ball.x = gameArea.canvas.width / 2;
   ball.y = gameArea.canvas.height / 2;
   ball.speedX = 0;
   ball.speedY = 0;
   gameArea.inputHandler?.disable();
+  window.dispatchEvent(pauseEvent);
   await wait(2);
   gameArea.inputHandler?.enable();
   ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
