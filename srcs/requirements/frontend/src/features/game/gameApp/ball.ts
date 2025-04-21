@@ -1,4 +1,5 @@
 import { wait } from '../../../utils/helpers.js';
+import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
 
 const BALL_COLOUR = 'white';
 
@@ -51,5 +52,13 @@ export class Ball {
 
   setRadius(radius: number): void {
     this.radius = radius;
+  }
+
+  reset(): void {
+    this.x = CANVAS_WIDTH / 2;
+    this.y = CANVAS_HEIGHT / 2;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.radius = BALL_RADIUS;
   }
 }

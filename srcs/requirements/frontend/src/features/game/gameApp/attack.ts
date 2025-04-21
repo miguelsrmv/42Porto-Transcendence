@@ -1,7 +1,6 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
-import { setPaddleSpeedModifier } from './input.js';
 
 export class Attack {
   ownPaddle: Paddle;
