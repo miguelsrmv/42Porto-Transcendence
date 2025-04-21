@@ -10,8 +10,8 @@ interface Paddle {
 const keys: Record<string, boolean> = {};
 
 // Add event listeners for keydown and keyup events
-export function setupInput(leftPlayer: Player, rightPlayer: Player): void {
-  window.addEventListener('keydown', (e: KeyboardEvent) => {
+export function setupInput(leftPlayer: Player, rightPlayer: Player) {
+  const keyDownHandler = (e: KeyboardEvent) => {
     if (e.key === ' ') {
       leftPlayer.attack?.attack();
     } else if (e.key === 'Enter') {
@@ -19,11 +19,23 @@ export function setupInput(leftPlayer: Player, rightPlayer: Player): void {
     } else {
       keys[e.key] = true;
     }
-  });
-
-  window.addEventListener('keyup', (e: KeyboardEvent) => {
+  };
+  const keyUpHandler = (e: KeyboardEvent) => {
     keys[e.key] = false;
-  });
+  };
+
+  window.addEventListener('keydown', keyDownHandler);
+  window.addEventListener('keyup', keyUpHandler);
+  return {
+    disable: () => {
+      window.removeEventListener('keydown', keyDownHandler);
+      window.removeEventListener('keyup', keyUpHandler);
+    },
+    enable: () => {
+      window.addEventListener('keydown', keyDownHandler);
+      window.addEventListener('keyup', keyUpHandler);
+    },
+  };
 }
 
 // Update paddle movement based on key input
