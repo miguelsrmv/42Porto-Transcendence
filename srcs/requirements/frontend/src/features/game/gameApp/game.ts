@@ -21,10 +21,10 @@ let ball: Ball;
 let leftPlayer: Player;
 let rightPlayer: Player;
 
-export type InputHandler  = {
+export type InputHandler = {
   enable(): void;
   disable(): void;
-}
+};
 
 export enum gameState {
   playing,

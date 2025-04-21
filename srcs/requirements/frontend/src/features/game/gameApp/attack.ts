@@ -2,6 +2,12 @@ import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
 
+let gameStateHasChanged: boolean = false;
+
+window.addEventListener('paused', () => {
+  gameStateHasChanged = true;
+});
+
 export class Attack {
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
@@ -14,7 +20,6 @@ export class Attack {
     this.ball = ball;
     this.attackName = attackName;
   }
-
   attack(): void {
     if (!this.attackName) return;
 
@@ -45,11 +50,7 @@ export class Attack {
     // TODO: Uncommend after attackIsEnabled is implemented
     //if (this.attackIsEnabled)
     attackMap[this.attackName]?.();
-  }
-
-  // TODO: Implement gamestate-change-listener
-  gameStateIsUnchanged(): boolean {
-    return true;
+    gameStateHasChanged = false;
   }
 
   async superShroom(): Promise<void> {
@@ -66,13 +67,14 @@ export class Attack {
 
     await wait(2);
 
-    if (this.gameStateIsUnchanged()) {
+    if (!gameStateHasChanged) {
       const newOriginalY = this.ownPaddle.y;
       this.ownPaddle.setHeight(originalHeight);
       this.ownPaddle.setY(newOriginalY + yOffset);
     }
   }
 
+  //TODO: Draw Canvas
   async eggBarrage(): Promise<void> {}
 
   async spinDash(): Promise<void> {
@@ -94,7 +96,7 @@ export class Attack {
 
     await wait(2);
 
-    if (this.gameStateIsUnchanged()) {
+    if (!gameStateHasChanged) {
       const oldSpeedX = this.ball.speedX > 0 ? Math.abs(startingSpeedX) : -Math.abs(startingSpeedX);
       const oldSpeedY = this.ball.speedY > 0 ? Math.abs(startingSpeedY) : -Math.abs(startingSpeedY);
 
@@ -109,7 +111,7 @@ export class Attack {
 
     await wait(2);
 
-    if (this.gameStateIsUnchanged()) {
+    if (!gameStateHasChanged) {
       this.enemyPaddle.setSpeedModifier(1);
     }
   }
@@ -121,7 +123,7 @@ export class Attack {
 
     await wait(2);
 
-    if (this.gameStateIsUnchanged()) {
+    if (!gameStateHasChanged) {
       this.enemyPaddle.setSpeedModifier(1);
     }
   }
@@ -140,7 +142,7 @@ export class Attack {
 
     await wait(2);
 
-    if (this.gameStateIsUnchanged()) {
+    if (!gameStateHasChanged) {
       this.ball.setRadius(oldRadius);
     }
   }
@@ -159,7 +161,7 @@ export class Attack {
 
     await wait(2);
 
-    if (this.gameStateIsUnchanged()) {
+    if (!gameStateHasChanged) {
       const newOriginalY = this.enemyPaddle.y;
       this.enemyPaddle.setHeight(originalHeight);
       this.enemyPaddle.setY(newOriginalY + yOffset);
