@@ -24,4 +24,12 @@ export class Player {
     this.score = 0;
     this.attack = new Attack(attackName, ownPaddle, enemyPaddle, ball);
   }
+
+  increaseScore(): void {
+    ++this.score;
+  }
+
+  getScore(): number {
+    return this.score;
+  }
 }
