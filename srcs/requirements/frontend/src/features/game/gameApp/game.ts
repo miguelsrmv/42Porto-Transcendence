@@ -21,11 +21,17 @@ let ball: Ball;
 let leftPlayer: Player;
 let rightPlayer: Player;
 
+export type InputHandler  = {
+  enable(): void;
+  disable(): void;
+}
+
 // TODO: Call stop() when leaving the page, etc.
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
   interval: undefined,
+  inputHandler: null,
 
   start() {
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -56,6 +62,7 @@ const myGameArea: GameArea = {
     if (this.interval !== undefined) {
       clearInterval(this.interval);
     }
+    this.inputHandler?.disable();
   },
 };
 
@@ -112,7 +119,7 @@ export function initializeGame(gameSettings: gameSettings): void {
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
-  setupInput(leftPlayer, rightPlayer);
+  myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer);
   myGameArea.start();
 }
 

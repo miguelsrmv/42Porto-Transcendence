@@ -128,7 +128,9 @@ async function resetBall(ball: Ball, gameArea: GameArea) {
   ball.y = gameArea.canvas.height / 2;
   ball.speedX = 0;
   ball.speedY = 0;
+  gameArea.inputHandler?.disable();
   await wait(2);
+  gameArea.inputHandler?.enable();
   ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
   ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }
