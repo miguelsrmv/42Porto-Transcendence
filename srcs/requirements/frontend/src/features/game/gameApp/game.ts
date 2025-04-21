@@ -5,6 +5,7 @@ import { checkWallCollision, checkPaddleCollision, checkGoal } from './collision
 import type { GameArea } from './types.js';
 import type { gameSettings, playType, gameType } from '../gameSettings/gameSettings.types.js';
 import type { background } from '../backgroundData/backgroundData.types.js';
+import { Player } from './player.js';
 
 export const SPEED = 7;
 export const CANVAS_HEIGHT = 720;
@@ -17,6 +18,8 @@ const BALL_RADIUS = 10;
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
+let leftPlayer : Player;
+let rightPlayer : Player;
 
 // TODO: Call stop() when leaving the page, etc.
 const myGameArea: GameArea = {
@@ -77,6 +80,11 @@ function setPaddles(gameSettings: gameSettings) {
   );
 }
 
+function setPlayers(leftPaddle: Paddle, rightPaddle: Paddle, ball: Ball, gameSettings: gameSettings): void {
+  leftPlayer = new Player(leftPaddle, rightPaddle, ball, gameSettings.alias1, gameSettings.character1?.attack);
+  rightPlayer = new Player(rightPaddle, leftPaddle, ball, gameSettings.alias2, gameSettings.character2?.attack);
+}
+
 export function initializeGame(gameSettings: gameSettings): void {
   const pongPage = document.getElementById('game-container') as HTMLElement | null;
   if (!pongPage) {
@@ -86,6 +94,7 @@ export function initializeGame(gameSettings: gameSettings): void {
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
+  setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
   setupInput();
   myGameArea.start();
 }
@@ -93,7 +102,7 @@ export function initializeGame(gameSettings: gameSettings): void {
 function updateGameArea(): void {
   myGameArea.clear();
 
-  handleInput(leftPaddle, rightPaddle);
+  handleInput(leftPlayer, rightPlayer);
 
   leftPaddle.update();
   rightPaddle.update();
