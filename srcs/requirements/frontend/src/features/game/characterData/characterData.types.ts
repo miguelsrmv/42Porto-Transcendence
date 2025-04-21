@@ -15,8 +15,8 @@ type attackIdentifier =
   | 'Spin Dash'
   | 'Thunder Wave'
   | 'Confusion'
-  | 'Hurricane Blade'
-  | 'Missiles'
+  | 'Magic Mirror'
+  | 'Mini'
   | 'Giant Punch';
 
 /**
