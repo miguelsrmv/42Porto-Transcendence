@@ -7,7 +7,7 @@ import type { gameSettings, playType, gameType } from '../gameSettings/gameSetti
 import type { background } from '../backgroundData/backgroundData.types.js';
 import { Player } from './player.js';
 
-export const SPEED = 7;
+export const SPEED = 5;
 export const CANVAS_HEIGHT = 720;
 const CANVAS_WIDTH = 1200;
 const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
@@ -99,7 +99,7 @@ export function initializeGame(gameSettings: gameSettings): void {
   myGameArea.start();
 }
 
-function updateGameArea(): void {
+async function updateGameArea() {
   myGameArea.clear();
 
   handleInput(leftPlayer, rightPlayer);
@@ -114,7 +114,7 @@ function updateGameArea(): void {
   }
   checkWallCollision(ball, myGameArea);
   checkPaddleCollision(ball, leftPaddle, rightPaddle);
-  checkGoal(ball, myGameArea);
+  await checkGoal(leftPlayer, rightPlayer, myGameArea);
 
   if (myGameArea.context) {
     leftPaddle.draw(myGameArea.context);
