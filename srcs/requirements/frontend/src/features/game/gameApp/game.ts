@@ -15,6 +15,7 @@ const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
 
+
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
@@ -123,11 +124,15 @@ export function initializeGame(gameSettings: gameSettings): void {
     console.error('Cannot start the game: game-container is missing.');
     return;
   }
+
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
   myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer);
+  // TODO: Look into event listeners for back/foward/reload
+  //window.addEventListener('beforeunload', () => myGameArea.stop());
+  //window.addEventListener('popstate', () => myGameArea.stop());
   myGameArea.start();
 }
 
