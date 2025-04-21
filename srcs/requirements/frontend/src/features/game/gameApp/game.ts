@@ -7,7 +7,7 @@ import type { gameSettings, playType, gameType } from '../gameSettings/gameSetti
 import type { background } from '../backgroundData/backgroundData.types.js';
 import { Player } from './player.js';
 
-export const SPEED = 7;
+export const SPEED = 3;
 export const CANVAS_HEIGHT = 720;
 const CANVAS_WIDTH = 1200;
 const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
@@ -18,8 +18,8 @@ const BALL_RADIUS = 10;
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
-let leftPlayer : Player;
-let rightPlayer : Player;
+let leftPlayer: Player;
+let rightPlayer: Player;
 
 // TODO: Call stop() when leaving the page, etc.
 const myGameArea: GameArea = {
@@ -80,9 +80,26 @@ function setPaddles(gameSettings: gameSettings) {
   );
 }
 
-function setPlayers(leftPaddle: Paddle, rightPaddle: Paddle, ball: Ball, gameSettings: gameSettings): void {
-  leftPlayer = new Player(leftPaddle, rightPaddle, ball, gameSettings.alias1, gameSettings.character1?.attack);
-  rightPlayer = new Player(rightPaddle, leftPaddle, ball, gameSettings.alias2, gameSettings.character2?.attack);
+function setPlayers(
+  leftPaddle: Paddle,
+  rightPaddle: Paddle,
+  ball: Ball,
+  gameSettings: gameSettings,
+): void {
+  leftPlayer = new Player(
+    leftPaddle,
+    rightPaddle,
+    ball,
+    gameSettings.alias1,
+    gameSettings.character1?.attack,
+  );
+  rightPlayer = new Player(
+    rightPaddle,
+    leftPaddle,
+    ball,
+    gameSettings.alias2,
+    gameSettings.character2?.attack,
+  );
 }
 
 export function initializeGame(gameSettings: gameSettings): void {
@@ -95,7 +112,7 @@ export function initializeGame(gameSettings: gameSettings): void {
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
-  setupInput();
+  setupInput(leftPlayer, rightPlayer);
   myGameArea.start();
 }
 

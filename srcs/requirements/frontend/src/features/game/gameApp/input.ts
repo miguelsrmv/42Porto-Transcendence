@@ -10,20 +10,19 @@ interface Paddle {
 const keys: Record<string, boolean> = {};
 
 // Add event listeners for keydown and keyup events
-// TODO: Handle multiple event firings for Enter and Space ?
-export function setupInput(): void {
+export function setupInput(leftPlayer: Player, rightPlayer: Player): void {
   window.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (e.key !== ' ' && e.key !== 'Enter') {
+    if (e.key === ' ') {
+      leftPlayer.attack?.attack();
+    } else if (e.key === 'Enter') {
+      rightPlayer.attack?.attack();
+    } else {
       keys[e.key] = true;
     }
   });
 
   window.addEventListener('keyup', (e: KeyboardEvent) => {
-    if (e.key !== ' ' && e.key !== 'Enter') {
-      keys[e.key] = false;
-    } else {
-      keys[e.key] = true;
-    }
+    keys[e.key] = false;
   });
 }
 
@@ -45,15 +44,5 @@ export function handleInput(leftPlayer: Player, rightPlayer: Player): void {
     rightPlayer.ownPaddle.speedY = SPEED;
   } else {
     rightPlayer.ownPaddle.speedY = 0;
-  }
-
-  if (keys[' ']) {
-    keys[' '] = false;
-    leftPlayer.attack();
-  }
-
-  if (keys['Enter']) {
-    keys['Enter'] = false;
-    rightPlayer.attack();
   }
 }
