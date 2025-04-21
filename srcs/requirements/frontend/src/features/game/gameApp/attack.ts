@@ -1,5 +1,6 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
+import { wait } from '../../../utils/helpers.js';
 
 export class Attack {
   ownPaddle: Paddle;
@@ -30,7 +31,7 @@ export class Attack {
     //   'Giant Punch': 5,
     // };
 
-    const attackMap: { [key: string]: () => void } = {
+    const attackMap: { [key: string]: () => Promise<void> } = {
       'Super Shroom': () => this.superShroom(),
       'Egg Barrage': () => this.eggBarrage(),
       'Spin Dash': () => this.spinDash(),
@@ -46,23 +47,115 @@ export class Attack {
     attackMap[this.attackName]?.();
   }
 
-  superShroom(): void {
-    this.ownPaddle.increaseHeight(1.25);
+  // TODO: Implement gamestate-change-listener
+  gameStateIsUnchanged(): boolean {
+    return true;
   }
 
-  eggBarrage(): void {}
+  async superShroom(): Promise<void> {
+    const growthFactor = 1.25;
 
-  spinDash(): void {
-    this.ball.increaseSpeed(5);
+    const originalHeight = this.ownPaddle.height;
+    const originalY = this.ownPaddle.y;
+
+    const boostedHeight = originalHeight * growthFactor;
+    const yOffset = (boostedHeight - originalHeight) / 2;
+
+    this.ownPaddle.setHeight(boostedHeight);
+    this.ownPaddle.setY(originalY - yOffset);
+
+    await wait(2);
+
+    if (this.gameStateIsUnchanged()) {
+      const newOriginalY = this.ownPaddle.y;
+      this.ownPaddle.setHeight(originalHeight);
+      this.ownPaddle.setY(newOriginalY + yOffset);
+    }
   }
 
-  thunderWave(): void {}
+  async eggBarrage(): Promise<void> {}
 
-  confusion(): void {}
+  async spinDash(): Promise<void> {
+    const growthFactor = 5;
 
-  magicMirror(): void {}
+    const startingSpeedX = this.ball.speedX;
+    const startingSpeedY = this.ball.speedY;
 
-  mini(): void {}
+    const newSpeedX =
+      Math.abs(this.ball.speedX) + growthFactor < 20
+        ? this.ball.speedX + growthFactor * Math.sign(this.ball.speedX)
+        : 20 * Math.sign(this.ball.speedX);
+    const newSpeedY =
+      Math.abs(this.ball.speedY) + growthFactor < 20
+        ? this.ball.speedY + growthFactor * Math.sign(this.ball.speedY)
+        : 20 * Math.sign(this.ball.speedY);
 
-  giantPunch(): void {}
+    this.ball.setSpeed(newSpeedX, newSpeedY);
+
+    await wait(2);
+
+    if (this.gameStateIsUnchanged()) {
+      const oldSpeedX = this.ball.speedX > 0 ? Math.abs(startingSpeedX) : -Math.abs(startingSpeedX);
+      const oldSpeedY = this.ball.speedY > 0 ? Math.abs(startingSpeedY) : -Math.abs(startingSpeedY);
+
+      this.ball.setSpeed(oldSpeedX, oldSpeedY);
+    }
+  }
+
+  async thunderWave(): Promise<void> {
+    const slowdownFactor = 0.5;
+
+    const oldSpeed = this.enemyPaddle.speedY;
+    const newSpeed = oldSpeed * slowdownFactor;
+
+    this.enemyPaddle.setSpeedY(newSpeed);
+
+    await wait(2);
+
+    if (this.gameStateIsUnchanged()) {
+      this.enemyPaddle.setSpeedY(oldSpeed);
+    }
+  }
+
+  async confusion(): Promise<void> {}
+
+  async magicMirror(): Promise<void> {
+    this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
+  }
+
+  async mini(): Promise<void> {
+    const shrinkFactor = 0.5;
+
+    const oldRadius = this.ball.radius;
+    const newRadius = oldRadius * shrinkFactor;
+
+    this.ball.setRadius(newRadius);
+
+    await wait(2);
+
+    if (this.gameStateIsUnchanged()) {
+      this.ball.setRadius(oldRadius);
+    }
+  }
+
+  async giantPunch(): Promise<void> {
+    const shrinkFactor = 0.5;
+
+    const originalHeight = this.enemyPaddle.height;
+    const originalY = this.enemyPaddle.y;
+
+    const boostedHeight = originalHeight * shrinkFactor;
+    const yOffset = (boostedHeight - originalHeight) / 2;
+
+    this.enemyPaddle.setHeight(boostedHeight);
+    this.enemyPaddle.setY(originalY - yOffset);
+
+    await wait(2);
+
+    if (this.gameStateIsUnchanged()) {
+      const newOriginalY = this.enemyPaddle.y;
+      this.enemyPaddle.setHeight(originalHeight);
+      this.enemyPaddle.setY(newOriginalY + yOffset);
+    }
+  }
 }

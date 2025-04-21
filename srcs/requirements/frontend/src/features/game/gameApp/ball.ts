@@ -44,33 +44,12 @@ export class Ball {
     this.speedY *= -1; // Reverse vertical direction
   }
 
-  async increaseSpeed(factor: number): Promise<void> {
-    let startingSpeed = this.speedX;
+  setSpeed(x: number, y: number): void {
+    this.speedX = x;
+    this.speedY = y;
+  }
 
-    console.log(`I started at ${this.speedX}`);
-
-    if (this.speedX >= 0) this.speedX + factor < 20 ? (this.speedX += factor) : (this.speedX = 20);
-    else this.speedX - factor > -20 ? (this.speedX -= factor) : (this.speedX = -20);
-
-    if (this.speedY >= 0) this.speedY + factor < 20 ? (this.speedY += factor) : (this.speedY = 20);
-    else this.speedY - factor > -20 ? (this.speedY -= factor) : (this.speedY = -20);
-
-    console.log(`I increased to ${this.speedX}`);
-
-    await wait(2);
-
-    if (this.speedX > 0) {
-      this.speedX = Math.abs(startingSpeed);
-    } else {
-      this.speedX = -Math.abs(startingSpeed);
-    }
-
-    if (this.speedY > 0) {
-      this.speedY = Math.abs(startingSpeed);
-    } else {
-      this.speedY = -Math.abs(startingSpeed);
-    }
-
-    console.log(`I'm back at ${this.speedX}`);
+  setRadius(radius: number): void {
+    this.radius = radius;
   }
 }
