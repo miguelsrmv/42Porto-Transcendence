@@ -1,5 +1,6 @@
 import { initializeGame } from './gameApp/game.js';
 import { getGameSettings } from './gameSetup.js';
+import type { character } from './characterData/characterData.types.js';
 
 /**
  * @file gamePage.ts
@@ -17,7 +18,54 @@ import { getGameSettings } from './gameSetup.js';
  */
 export function initializeView(): void {
   const gameSettings = getGameSettings();
+  if (gameSettings.gameType === 'Crazy Pong')
+    updateHUD(gameSettings.character1, gameSettings.character2);
   // TODO: Add logic if Remote game
   // TODO: Add logic if Tournament game
   initializeGame(gameSettings);
+}
+
+function updateHUD(
+  leftCharacter: character | undefined,
+  rightCharacter: character | undefined,
+): void {
+  const leftPortrait = document.getElementById('left-character-portrait') as HTMLImageElement;
+  if (leftPortrait) leftPortrait.src = leftCharacter?.characterAvatarPicturePath as string;
+
+  const leftHUD = document.getElementById('left-hud');
+  if (leftHUD) {
+    const redElements = leftHUD?.querySelectorAll('.bg-red-500');
+
+    redElements.forEach((el) => {
+      el.classList.remove('bg-red-500');
+      el.classList.add(`bg-${leftCharacter?.accentColour}-500`);
+    });
+
+    const redBorderedElements = leftHUD?.querySelectorAll('.border-red-500');
+
+    redBorderedElements.forEach((el) => {
+      el.classList.remove('border-red-500');
+      el.classList.add(`border-${leftCharacter?.accentColour}-500`);
+    });
+  }
+
+  const rightPortrait = document.getElementById('right-character-portrait') as HTMLImageElement;
+  if (rightPortrait) rightPortrait.src = rightCharacter?.characterAvatarPicturePath as string;
+
+  const rightHUD = document.getElementById('right-hud');
+  if (rightHUD) {
+    const blueElements = rightHUD?.querySelectorAll('.bg-blue-500');
+
+    blueElements.forEach((el) => {
+      el.classList.remove('bg-blue-500');
+      el.classList.add(`bg-${rightCharacter?.accentColour}-500`);
+    });
+
+    const blueBordeblueElements = rightHUD?.querySelectorAll('.border-blue-500');
+
+    blueBordeblueElements.forEach((el) => {
+      el.classList.remove('border-blue-500');
+      el.classList.add(`border-${rightCharacter?.accentColour}-500`);
+    });
+  }
 }
