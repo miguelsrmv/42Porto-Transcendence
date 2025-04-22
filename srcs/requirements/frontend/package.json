@@ -3,7 +3,9 @@
     "@tailwindcss/postcss": "^4.0.17",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.17"
+    "prettier": "^3.5.3",
+    "tailwindcss": "^4.0.17",
+    "typescript": "^5.8.3"
   },
   "name": "frontend",
   "version": "1.0.0",
@@ -12,7 +14,7 @@
   "scripts": {
     "dev-ts": "tsc --watch",
     "dev-tailwind": "npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles/tailwind.css --watch",
-    "build-ts":  "tsc",
+    "build-ts": "tsc",
     "build-tailwind": "npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles/tailwind.css"
   },
   "keywords": [],
