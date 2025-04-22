@@ -9,14 +9,14 @@
  *
  * This type defines the possible attack names associated with each character in the game.
  */
-type attackIdentifier =
+export type attackIdentifier =
   | 'Super Shroom'
   | 'Egg Barrage'
   | 'Spin Dash'
   | 'Thunder Wave'
   | 'Confusion'
-  | 'Hurricane Blade'
-  | 'Missiles'
+  | 'Magic Mirror'
+  | 'Mini'
   | 'Giant Punch';
 
 /**
@@ -30,5 +30,6 @@ export interface character {
   attack: attackIdentifier;
   characterSelectPicturePath: string;
   characterAvatarPicturePath: string;
+  accentColour: string;
   selectHelpMessage: string;
 }

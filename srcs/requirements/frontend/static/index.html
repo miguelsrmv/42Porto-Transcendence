@@ -1299,28 +1299,26 @@
           class="h-full flex flex-col items-center justify-center text-center"
         >
           <img
+            id="left-player-avatar"
             src="./static/avatar/default/mario.png"
             class="object-cover rounded-full h-[150px] w-[150px] border-6 border-red-500"
           />
           <h1 id="left-alias" class="flex text-3xl p-8">LEFT ALIAS</h1>
           <div id="left-score-card" class="flex space-x-2">
-            <!-- Filled dots -->
-            <div id="left-score-card-1" class="h-4 w-4 bg-red-500 rounded-full"></div>
-            <div id="left-score-card-2" class="h-4 w-4 bg-red-500 rounded-full"></div>
-            <div id="left-score-card-3" class="h-4 w-4 bg-red-500 rounded-full"></div>
-
-            <!-- Empty dots -->
+            <div id="left-score-card-1" class="h-4 w-4 border-2 border-red-500 rounded-full"></div>
+            <div id="left-score-card-2" class="h-4 w-4 border-2 border-red-500 rounded-full"></div>
+            <div id="left-score-card-3" class="h-4 w-4 border-2 border-red-500 rounded-full"></div>
             <div id="left-score-card-4" class="h-4 w-4 border-2 border-red-500 rounded-full"></div>
             <div id="left-score-card-5" class="h-4 w-4 border-2 border-red-500 rounded-full"></div>
           </div>
         </div>
         <div
           id="left-character-hud"
-          class="flex flex-col flex-grow w-full h-1/2 p-8 justify-center items-center"
+          class="flex flex-col flex-grow w-full h-1/2 p-8 justify-center items-center hidden"
         >
           <img
             src="./static/character_portrait/mario.png"
-            id="left-character-protrait"
+            id="left-character-portrait"
             class="flex w-full border-6 border-red-500"
           />
           <div id="left-character-power-bar" class="w-full bg-gray-800 rounded-full h-2.5 mt-6">
@@ -1342,24 +1340,31 @@
       </div>
       <div
         id="right-hud"
-        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl ml-6"
+        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl mr-6"
       >
         <div
           id="right-player-hud"
           class="h-full flex flex-col items-center justify-center text-center"
         >
           <img
+            id="right-player-avatar"
             src="./static/avatar/default/mario.png"
             class="object-cover rounded-full h-[150px] w-[150px] border-6 border-blue-500"
           />
           <h1 id="right-alias" class="flex text-3xl p-8">RIGHT ALIAS</h1>
           <div id="right-score-card" class="flex space-x-2">
-            <!-- Filled dots -->
-            <div id="right-score-card-1" class="h-4 w-4 bg-blue-500 rounded-full"></div>
-            <div id="right-score-card-2" class="h-4 w-4 bg-blue-500 rounded-full"></div>
-            <div id="right-score-card-3" class="h-4 w-4 bg-blue-500 rounded-full"></div>
-
-            <!-- Empty dots -->
+            <div
+              id="right-score-card-1"
+              class="h-4 w-4 border-2 border-blue-500 rounded-full"
+            ></div>
+            <div
+              id="right-score-card-2"
+              class="h-4 w-4 border-2 border-blue-500 rounded-full"
+            ></div>
+            <div
+              id="right-score-card-3"
+              class="h-4 w-4 border-2 border-blue-500 rounded-full"
+            ></div>
             <div
               id="right-score-card-4"
               class="h-4 w-4 border-2 border-blue-500 rounded-full"
@@ -1372,11 +1377,11 @@
         </div>
         <div
           id="right-character-hud"
-          class="flex flex-col flex-grow w-full h-1/2 p-8 justify-center items-center"
+          class="flex flex-col flex-grow w-full h-1/2 p-8 justify-center items-center hidden"
         >
           <img
             src="./static/character_portrait/mario.png"
-            id="right-character-protrait"
+            id="right-character-portrait"
             class="flex w-full border-6 border-blue-500"
           />
           <div id="right-character-power-bar" class="w-full bg-gray-800 rounded-full h-2.5 mt-6">

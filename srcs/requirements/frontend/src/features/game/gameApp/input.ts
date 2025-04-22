@@ -1,41 +1,65 @@
-import { SPEED } from './game.js';
-
-// Interface for paddle to define expected structure
-interface Paddle {
-  speedY: number;
-}
+import { gameState, SPEED } from './game.js';
+import { Player } from './player.js';
 
 // Track key states
 const keys: Record<string, boolean> = {};
 
-// Add event listeners for keydown and keyup events
-export function setupInput(): void {
-  window.addEventListener('keydown', (e: KeyboardEvent) => {
-    keys[e.key] = true;
-  });
+function resetKeys() {
+  for (const key in keys) {
+    keys[key] = false;
+  }
+}
 
-  window.addEventListener('keyup', (e: KeyboardEvent) => {
+// Add event listeners for keydown and keyup events
+export function setupInput(leftPlayer: Player, rightPlayer: Player) {
+  const keyDownHandler = (e: KeyboardEvent) => {
+    if (e.key === ' ') {
+      leftPlayer.attack?.attack();
+    } else if (e.key === 'Enter') {
+      rightPlayer.attack?.attack();
+    } else {
+      keys[e.key] = true;
+    }
+  };
+  const keyUpHandler = (e: KeyboardEvent) => {
     keys[e.key] = false;
-  });
+  };
+
+  window.addEventListener('keydown', keyDownHandler);
+  window.addEventListener('keyup', keyUpHandler);
+  return {
+    disable: () => {
+      window.removeEventListener('keydown', keyDownHandler);
+      window.removeEventListener('keyup', keyUpHandler);
+    },
+    enable: () => {
+      window.addEventListener('keydown', keyDownHandler);
+      window.addEventListener('keyup', keyUpHandler);
+    },
+  };
 }
 
 // Update paddle movement based on key input
-export function handleInput(leftPaddle: Paddle, rightPaddle: Paddle): void {
+export function handleInput(leftPlayer: Player, rightPlayer: Player, state: gameState): void {
+  if (state == gameState.paused) {
+    resetKeys();
+    return;
+  }
   // Left paddle ('w' and 's')
   if (keys['w']) {
-    leftPaddle.speedY = -SPEED;
+    leftPlayer.ownPaddle.speedY = -SPEED * leftPlayer.ownPaddle.speedModifier;
   } else if (keys['s']) {
-    leftPaddle.speedY = SPEED;
+    leftPlayer.ownPaddle.speedY = SPEED * leftPlayer.ownPaddle.speedModifier;
   } else {
-    leftPaddle.speedY = 0;
+    leftPlayer.ownPaddle.speedY = 0;
   }
 
   // Right paddle ('ArrowUp' and 'ArrowDown')
   if (keys['ArrowUp']) {
-    rightPaddle.speedY = -SPEED;
+    rightPlayer.ownPaddle.speedY = -SPEED * rightPlayer.ownPaddle.speedModifier;
   } else if (keys['ArrowDown']) {
-    rightPaddle.speedY = SPEED;
+    rightPlayer.ownPaddle.speedY = SPEED * rightPlayer.ownPaddle.speedModifier;
   } else {
-    rightPaddle.speedY = 0;
+    rightPlayer.ownPaddle.speedY = 0;
   }
 }
