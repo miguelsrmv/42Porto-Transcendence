@@ -23,6 +23,7 @@ const characterAvatarPicturePath = '../../../../static/character_portrait/';
  *
  * Each object contains the character's name, attack, image paths, and a help message.
  */
+// TODO: Add backgrounds and remove white background
 const characterList: character[] = [
   {
     name: 'Mario',

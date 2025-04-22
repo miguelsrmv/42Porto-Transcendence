@@ -24,7 +24,8 @@ export class Attack {
     if (!this.attackName) return;
 
     console.log(`Player space used ${this.attackName}`);
-    //  TODO: Implement attackIsEnabled state variable
+    // TODO: Implement coolDown
+    // TODO: Implement power-up bar
     // const attackCooldown: { [key: string]: number } = {
     //   'Super Shroom': 2,
     //   'Egg Barrage': 3,
@@ -47,10 +48,9 @@ export class Attack {
       'Giant Punch': () => this.giantPunch(),
     };
 
-    // TODO: Uncommend after attackIsEnabled is implemented
-    //if (this.attackIsEnabled)
     attackMap[this.attackName]?.();
     gameStateHasChanged = false;
+
   }
 
   async superShroom(): Promise<void> {

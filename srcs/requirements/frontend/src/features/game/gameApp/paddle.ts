@@ -1,5 +1,4 @@
-import { CANVAS_HEIGHT } from './game.js';
-import { wait } from '../../../utils/helpers.js';
+import { CANVAS_HEIGHT, PADDLE_LEN, PADDLE_START_Y_POS } from './game.js';
 
 export class Paddle {
   width: number;
@@ -47,5 +46,12 @@ export class Paddle {
 
   setSpeedModifier(modifier: number): void {
     this.speedModifier = modifier;
+  }
+
+  reset(): void {
+    this.y = PADDLE_START_Y_POS;
+    this.speedY = 0;
+    this.speedModifier = 1;
+    this.height = PADDLE_LEN;
   }
 }

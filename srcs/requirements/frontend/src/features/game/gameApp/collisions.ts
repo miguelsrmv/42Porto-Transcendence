@@ -1,5 +1,5 @@
 import { wait } from '../../../utils/helpers.js';
-import { SPEED } from './game.js';
+import { gameState, SPEED } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
 
@@ -13,6 +13,7 @@ interface Ball {
   speedY: number;
   bounceVertical(): void;
   bounceHorizontal(): void;
+  reset(): void;
 }
 
 interface Paddle {
@@ -44,6 +45,7 @@ function endGame(winningPlayer: Player, gameArea: GameArea) {
 }
 
 // Checks if ball reached vertical canvas limits
+// TODO: Paint scores in HTML
 export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
@@ -52,11 +54,11 @@ export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameAre
   if (leftPlayer.ball.x - leftPlayer.ball.radius <= 0) {
     rightPlayer.increaseScore();
     console.log(`Right player now has: ${rightPlayer.getScore()} points`);
-    await resetBall(leftPlayer.ball, gameArea);
+    await resetRound(leftPlayer, rightPlayer, gameArea);
   } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
     leftPlayer.increaseScore();
     console.log(`Left player now has: ${leftPlayer.getScore()} points`);
-    await resetBall(leftPlayer.ball, gameArea);
+    await resetRound(leftPlayer, rightPlayer, gameArea);
   }
   if (eitherPlayerHasWon(leftPlayer, rightPlayer))
     endGame(leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer, gameArea);
@@ -119,21 +121,22 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
 
 // TODO: Add countdown
 // Returns ball to center of canvas and starts round at random direction
-async function resetBall(ball: Ball, gameArea: GameArea) {
+async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
 
   const pauseEvent = new CustomEvent('paused');
-  ball.x = gameArea.canvas.width / 2;
-  ball.y = gameArea.canvas.height / 2;
-  ball.speedX = 0;
-  ball.speedY = 0;
+  leftPlayer.ball.reset();
+  leftPlayer.ownPaddle.reset();
+  rightPlayer.ownPaddle.reset();
   gameArea.inputHandler?.disable();
   window.dispatchEvent(pauseEvent);
+  gameArea.state = gameState.paused;
   await wait(2);
   gameArea.inputHandler?.enable();
-  ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
-  ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  gameArea.state = gameState.playing;
+  leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  leftPlayer.ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }
