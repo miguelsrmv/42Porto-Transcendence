@@ -17,3 +17,14 @@
 ### Date Created: 11/03/2025
 ### Branch: "Backend"
 ### Solution: added sudo rm -rf DATA to makefile clean rule
+
+## 5. Typescript compiling not in server container
+### Date Created: 01/03/2025
+### Branch: "Frontend"
+### Solution: Divided Frontend into one transient container (that compiles typescript & tailwind) and then copies these files to the nginx container.
+
+## 6. Server volume in server container
+### Date Created: 28/02/2025
+### Branch: "Frontend"
+### Solution: Same as #5
+

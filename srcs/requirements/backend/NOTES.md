@@ -78,6 +78,7 @@ backend/
 
 ## TODOs
 
+- Add user id to JWT and route to get user data
 - Improve error messages and object sent to frontend
 
 - Test edge cases

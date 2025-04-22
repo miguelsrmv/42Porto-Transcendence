@@ -1,117 +1,111 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* src/tailwind.css */
 @tailwind utilities;
 
 /* Fonts */
 @font-face {
-    font-family: 'supersmash_title';
-    src: url('/static/fonts/super_smash_title_screen.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-} 
+  font-family: 'supersmash_title';
+  src: url('/static/fonts/super_smash_title_screen.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 .font-supersmash_title {
   font-family: 'supersmash_title', sans-serif;
 }
 
 @font-face {
-    font-family: 'serpentine';
-    src: url('/static/fonts/serpentine_std-medium.ttf') format('truetype'); /* Ensure the font file exists at this path */
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'serpentine';
+  src: url('/static/fonts/serpentine_std-medium.ttf') format('truetype'); /* Ensure the font file exists at this path */
+  font-weight: normal;
+  font-style: normal;
 }
 
 .font-serpentine {
   font-family: 'serpentine', sans-serif;
 }
 
-/* Custom styles using @apply */
-.nav-button {
-  @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500
-}
-
-/* Add this to your CSS or tailwind classes */
-/*
-#enter-button-hidden {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 2s ease-in-out, visibility 0s linear 1s;
-}
+/* /* Custom styles using @apply */
 */
-
+/* .nav-button { */
+/*   @apply bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 */
+/* } */
+/**/
 /* Animations */
 #enter-button.fade-in {
-  opacity: 1; /* Make it fully visible */
-  visibility: visible; /* Ensure it is visible */
-  transition: opacity 1s
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1s;
 }
 
 #sub-title.fade-in {
-  opacity: 1; 
-  visibility: visible; 
-  transition: opacity 1s
-}
-
-/* Modal */
-.login-modal {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
-  width: 80%;
-  max-width: 1200px;
-  height: 80%;
-  background-color: white;
-  border: 4px solid black;
-  opacity: 0;
-  z-index: 100;
-  transition: all 0.3s ease-out;
-}
-
-.login-modal.active {
-  display: block;
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  visibility: visible;
+  transition: opacity 1s;
 }
 
-/* Add this to your CSS */
+.login-modal {
+  opacity: 0;
+  transform: fade(0.8);
+  pointer-events: none;
+}
+
+.page-fade-in {
+  opacity: 1;
+  transition: opacity 300ms ease-out;
+}
+
+.page-fade-out {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+/* Keyframes (Keep as they are) */
 @keyframes modalEnter {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: fade(0.8);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: fade(1);
   }
 }
 
 @keyframes modalExit {
   0% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: fade(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: fade(0.8);
   }
 }
 
 .login-modal.entering {
   animation: modalEnter 0.3s ease-out forwards;
-  display: block;
+  pointer-events: auto;
+  opacity: 1;
+  transform: scale(1);
 }
 
 .login-modal.exiting {
-  animation: modalExit 0.3s ease-out forwards; }
+  animation: modalExit 0.3s ease-out forwards;
+  pointer-events: none;
+}
+
+#enter-button.fade-in,
+#sub-title.fade-in {
+  opacity: 1;
+  visibility: visible;
+}
 
 .angled-top {
-clip-path: polygon(0% 30%, 100% 0%, 100% 100%, 0% 100%);
+  clip-path: polygon(0% 30%, 100% 0%, 100% 100%, 0% 100%);
 }
 
 .text-outline {
   -webkit-text-stroke: 4px black; /* Black outline */
 }
-

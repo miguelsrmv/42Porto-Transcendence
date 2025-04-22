@@ -11,7 +11,6 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 - `Makefile`: Contains build automation rules and commands for the project
 - `en.subject.pdf`: Project requirements and specifications document
 - `srcs/`: Source code and infrastructure configurations
-- `assets/`: Static resources, media files, and other project assets
 - `docs/`: Comprehensive project documentation
 
 ## Documentation Structure (`docs/`)
@@ -31,6 +30,9 @@ Mockup on [Google Drive](https://docs.google.com/presentation/d/16AGtsTiVEO5TQ0u
 - Code style guides
 - Pull request procedures
 - Best practices
+
+### Guides (`docs/guides/`)
+- Guides for how to dev or setup the project
 
 ### Documentation Assets (`docs/images/`)
 - Images used in documentation
@@ -63,7 +65,8 @@ Contains Dockerfiles and configurations for different services
 - Database service Dockerfile
 - Database initialization scripts
 
-#### Server (`server/`)
+#### Frontend (`frontend/`)
+- Compilation container
 - Web server Dockerfile
 - Server configuration files
 
