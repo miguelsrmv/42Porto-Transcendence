@@ -30,6 +30,9 @@ function updateHUD(
   leftCharacter: character | undefined,
   rightCharacter: character | undefined,
 ): void {
+  const leftCharHUD = document.getElementById('left-character-hud');
+  if (leftCharHUD) leftCharHUD.classList.toggle('hidden');
+
   const leftPortrait = document.getElementById('left-character-portrait') as HTMLImageElement;
   if (leftPortrait) leftPortrait.src = leftCharacter?.characterAvatarPicturePath as string;
 
@@ -49,6 +52,9 @@ function updateHUD(
       el.classList.add(`border-${leftCharacter?.accentColour}-500`);
     });
   }
+
+  const rightCharHUD = document.getElementById('right-character-hud');
+  if (rightCharHUD) rightCharHUD.classList.toggle('hidden');
 
   const rightPortrait = document.getElementById('right-character-portrait') as HTMLImageElement;
   if (rightPortrait) rightPortrait.src = rightCharacter?.characterAvatarPicturePath as string;

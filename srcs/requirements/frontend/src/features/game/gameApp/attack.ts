@@ -50,7 +50,6 @@ export class Attack {
 
     attackMap[this.attackName]?.();
     gameStateHasChanged = false;
-
   }
 
   async superShroom(): Promise<void> {
@@ -74,7 +73,7 @@ export class Attack {
     }
   }
 
-  //TODO: Draw Canvas
+  //TODO: Draw On Canvas
   async eggBarrage(): Promise<void> {}
 
   async spinDash(): Promise<void> {
