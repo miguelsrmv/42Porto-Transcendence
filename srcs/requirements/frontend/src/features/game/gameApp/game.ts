@@ -194,6 +194,19 @@ export function getGameVersion(): number {
   return leftPlayer.getScore() + rightPlayer.getScore();
 }
 
+export function paintScore(side: string, score: number): void {
+  const emptyScorePoint = document.getElementById(`${side}-score-card-${score}`);
+  if (!emptyScorePoint) {
+    console.warn(`No element found: ${side}-score-card-${score}`);
+    return;
+  }
+
+  const colour = emptyScorePoint.className.match(/border-([a-z]+)-500/)?.[1];
+
+  emptyScorePoint.classList.remove('border-2', `border-${colour}-500`);
+  emptyScorePoint.classList.add(`bg-${colour}-500`);
+}
+
 /* // Unused but might be useful in the future
 function paintBackground(context : CanvasRenderingContext2D): void {
 
