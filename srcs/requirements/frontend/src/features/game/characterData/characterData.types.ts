@@ -9,7 +9,7 @@
  *
  * This type defines the possible attack names associated with each character in the game.
  */
-type attackIdentifier =
+export type attackIdentifier =
   | 'Super Shroom'
   | 'Egg Barrage'
   | 'Spin Dash'

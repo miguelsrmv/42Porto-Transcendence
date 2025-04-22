@@ -15,7 +15,6 @@ const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
 
-
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
@@ -30,7 +29,7 @@ export type InputHandler = {
 export enum gameState {
   playing,
   paused,
-  ended
+  ended,
 }
 
 // TODO: Call stop() when leaving the page, etc.
@@ -116,6 +115,31 @@ function setPlayers(
     gameSettings.alias2,
     gameSettings.character2?.attack,
   );
+
+  function setPowerUpBar(player: Player, side: string): void {
+    const PlayerBar = document.getElementById(`${side}-character-power-bar-fill`);
+
+    if (!PlayerBar) {
+      console.warn(`${side} player bar not found`);
+      return;
+    }
+
+    window.setInterval(() => {
+      if (player.attack) {
+        const lastUsed: number = player.attack.lastUsed;
+        const coolDown: number = player.attack.attackCooldown;
+        const currentTime: number = Date.now();
+
+        const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
+        PlayerBar.style.width = `${percentage}%`;
+
+        if (percentage == 100) player.attack.attackIsAvailable = true;
+      }
+    }, 20);
+  }
+
+  setPowerUpBar(leftPlayer, 'left');
+  setPowerUpBar(rightPlayer, 'right');
 }
 
 export function initializeGame(gameSettings: gameSettings): void {
@@ -164,6 +188,10 @@ function updateBackground(background: background | null) {
   if (!background) return;
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
   backgroundImg.src = background.imagePath;
+}
+
+export function getGameVersion(): number {
+  return leftPlayer.getScore() + rightPlayer.getScore();
 }
 
 /* // Unused but might be useful in the future
