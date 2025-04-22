@@ -87,6 +87,11 @@ export class Attack {
     this.attackIsAvailable = false;
   }
 
+  reset(): void {
+    this.lastUsed = Date.now();
+    this.attackIsAvailable = false;
+  }
+
   gameVersionHasChanged(oldVersion: number): boolean {
     return oldVersion !== getGameVersion() ? true : false;
   }

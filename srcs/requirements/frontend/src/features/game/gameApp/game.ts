@@ -125,7 +125,7 @@ function setPlayers(
     }
 
     window.setInterval(() => {
-      if (player.attack) {
+      if (player.attack && myGameArea.state === gameState.playing) {
         const lastUsed: number = player.attack.lastUsed;
         const coolDown: number = player.attack.attackCooldown;
         const currentTime: number = Date.now();

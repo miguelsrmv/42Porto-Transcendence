@@ -135,6 +135,8 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
   window.dispatchEvent(pauseEvent);
   gameArea.state = gameState.paused;
   await wait(2);
+  leftPlayer.attack?.reset();
+  rightPlayer.attack?.reset();
   gameArea.inputHandler?.enable();
   gameArea.state = gameState.playing;
   leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
