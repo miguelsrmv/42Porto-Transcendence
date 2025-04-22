@@ -107,6 +107,7 @@ function setPlayers(
     ball,
     gameSettings.alias1,
     gameSettings.character1?.attack,
+    'left',
   );
   rightPlayer = new Player(
     rightPaddle,
@@ -114,13 +115,14 @@ function setPlayers(
     ball,
     gameSettings.alias2,
     gameSettings.character2?.attack,
+    'right',
   );
 
-  function setPowerUpBar(player: Player, side: string): void {
-    const PlayerBar = document.getElementById(`${side}-character-power-bar-fill`);
+  function setPowerUpBar(player: Player): void {
+    const PlayerBar = document.getElementById(`${player.side}-character-power-bar-fill`);
 
     if (!PlayerBar) {
-      console.warn(`${side} player bar not found`);
+      console.warn(`${player.side} player bar not found`);
       return;
     }
 
@@ -138,8 +140,8 @@ function setPlayers(
     }, 20);
   }
 
-  setPowerUpBar(leftPlayer, 'left');
-  setPowerUpBar(rightPlayer, 'right');
+  setPowerUpBar(leftPlayer);
+  setPowerUpBar(rightPlayer);
 }
 
 export function initializeGame(gameSettings: gameSettings): void {
