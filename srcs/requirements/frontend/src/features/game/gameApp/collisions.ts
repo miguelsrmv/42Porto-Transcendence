@@ -1,5 +1,5 @@
 import { wait } from '../../../utils/helpers.js';
-import { gameState, SPEED } from './game.js';
+import { gameState, SPEED, paintScore } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
 
@@ -53,10 +53,12 @@ export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameAre
   }
   if (leftPlayer.ball.x - leftPlayer.ball.radius <= 0) {
     rightPlayer.increaseScore();
+    paintScore('right', rightPlayer.getScore());
     console.log(`Right player now has: ${rightPlayer.getScore()} points`);
     await resetRound(leftPlayer, rightPlayer, gameArea);
   } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
     leftPlayer.increaseScore();
+    paintScore('left', leftPlayer.getScore());
     console.log(`Left player now has: ${leftPlayer.getScore()} points`);
     await resetRound(leftPlayer, rightPlayer, gameArea);
   }
