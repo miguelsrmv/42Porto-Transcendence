@@ -1,4 +1,6 @@
-import { SPEED } from './game.js';
+import { wait } from '../../../utils/helpers.js';
+import { gameState, SPEED, paintScore } from './game.js';
+import { Player } from './player.js';
 import { GameArea } from './types.js';
 
 interface Ball {
@@ -11,6 +13,7 @@ interface Ball {
   speedY: number;
   bounceVertical(): void;
   bounceHorizontal(): void;
+  reset(): void;
 }
 
 interface Paddle {
@@ -31,19 +34,36 @@ export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
   }
 }
 
+// TODO: Get winning score from settings ?
+function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
+  return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
+}
+
+function endGame(winningPlayer: Player, gameArea: GameArea) {
+  window.alert(`${winningPlayer.alias} has won!`);
+  gameArea.stop();
+}
+
 // Checks if ball reached vertical canvas limits
-export function checkGoal(ball: Ball, gameArea: GameArea): void {
+// TODO: Paint scores in HTML
+export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
-  if (ball.x - ball.radius <= 0) {
-    console.log('Goal for Player 2!');
-    resetBall(ball, gameArea);
-  } else if (ball.x + ball.radius >= gameArea.canvas.width) {
-    console.log('Goal for Player 1!');
-    resetBall(ball, gameArea);
+  if (leftPlayer.ball.x - leftPlayer.ball.radius <= 0) {
+    rightPlayer.increaseScore();
+    paintScore('right', rightPlayer.getScore());
+    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
+    await resetRound(leftPlayer, rightPlayer, gameArea);
+  } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
+    leftPlayer.increaseScore();
+    paintScore('left', leftPlayer.getScore());
+    console.log(`Left player now has: ${leftPlayer.getScore()} points`);
+    await resetRound(leftPlayer, rightPlayer, gameArea);
   }
+  if (eitherPlayerHasWon(leftPlayer, rightPlayer))
+    endGame(leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer, gameArea);
 }
 
 // Checks if ball went over paddle x coordinate
@@ -101,14 +121,26 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
   }
 }
 
+// TODO: Add countdown
 // Returns ball to center of canvas and starts round at random direction
-function resetBall(ball: Ball, gameArea: GameArea): void {
+async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
-  ball.x = gameArea.canvas.width / 2;
-  ball.y = gameArea.canvas.height / 2;
-  ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
-  ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
+
+  const pauseEvent = new CustomEvent('paused');
+  leftPlayer.ball.reset();
+  leftPlayer.ownPaddle.reset();
+  rightPlayer.ownPaddle.reset();
+  gameArea.inputHandler?.disable();
+  window.dispatchEvent(pauseEvent);
+  gameArea.state = gameState.paused;
+  await wait(2);
+  leftPlayer.attack?.reset();
+  rightPlayer.attack?.reset();
+  gameArea.inputHandler?.enable();
+  gameArea.state = gameState.playing;
+  leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  leftPlayer.ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }

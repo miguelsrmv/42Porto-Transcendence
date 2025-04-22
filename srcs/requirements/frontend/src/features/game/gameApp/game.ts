@@ -5,24 +5,40 @@ import { checkWallCollision, checkPaddleCollision, checkGoal } from './collision
 import type { GameArea } from './types.js';
 import type { gameSettings, playType, gameType } from '../gameSettings/gameSettings.types.js';
 import type { background } from '../backgroundData/backgroundData.types.js';
+import { Player } from './player.js';
 
-export const SPEED = 7;
+export const SPEED = 5;
 export const CANVAS_HEIGHT = 720;
-const CANVAS_WIDTH = 1200;
-const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
-const PADDLE_WID = 10;
-const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
-const BALL_RADIUS = 10;
+export const CANVAS_WIDTH = 1200;
+export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
+const PADDLE_WID = 12;
+export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
+export const BALL_RADIUS = 10;
 
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
+let leftPlayer: Player;
+let rightPlayer: Player;
+
+export type InputHandler = {
+  enable(): void;
+  disable(): void;
+};
+
+export enum gameState {
+  playing,
+  paused,
+  ended,
+}
 
 // TODO: Call stop() when leaving the page, etc.
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
   interval: undefined,
+  inputHandler: null,
+  state: gameState.paused,
 
   start() {
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -39,7 +55,7 @@ const myGameArea: GameArea = {
       console.error('No canvas context available');
       return;
     }
-
+    this.state = gameState.playing;
     this.interval = window.setInterval(updateGameArea, 20);
   },
 
@@ -53,6 +69,8 @@ const myGameArea: GameArea = {
     if (this.interval !== undefined) {
       clearInterval(this.interval);
     }
+    this.inputHandler?.disable();
+    this.state = gameState.ended;
   },
 };
 
@@ -77,23 +95,75 @@ function setPaddles(gameSettings: gameSettings) {
   );
 }
 
+function setPlayers(
+  leftPaddle: Paddle,
+  rightPaddle: Paddle,
+  ball: Ball,
+  gameSettings: gameSettings,
+): void {
+  leftPlayer = new Player(
+    leftPaddle,
+    rightPaddle,
+    ball,
+    gameSettings.alias1,
+    gameSettings.character1?.attack,
+  );
+  rightPlayer = new Player(
+    rightPaddle,
+    leftPaddle,
+    ball,
+    gameSettings.alias2,
+    gameSettings.character2?.attack,
+  );
+
+  function setPowerUpBar(player: Player, side: string): void {
+    const PlayerBar = document.getElementById(`${side}-character-power-bar-fill`);
+
+    if (!PlayerBar) {
+      console.warn(`${side} player bar not found`);
+      return;
+    }
+
+    window.setInterval(() => {
+      if (player.attack && myGameArea.state === gameState.playing) {
+        const lastUsed: number = player.attack.lastUsed;
+        const coolDown: number = player.attack.attackCooldown;
+        const currentTime: number = Date.now();
+
+        const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
+        PlayerBar.style.width = `${percentage}%`;
+
+        if (percentage == 100) player.attack.attackIsAvailable = true;
+      }
+    }, 20);
+  }
+
+  setPowerUpBar(leftPlayer, 'left');
+  setPowerUpBar(rightPlayer, 'right');
+}
+
 export function initializeGame(gameSettings: gameSettings): void {
   const pongPage = document.getElementById('game-container') as HTMLElement | null;
   if (!pongPage) {
     console.error('Cannot start the game: game-container is missing.');
     return;
   }
+
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
-  setupInput();
+  setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
+  myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer);
+  // TODO: Look into event listeners for back/foward/reload
+  //window.addEventListener('beforeunload', () => myGameArea.stop());
+  //window.addEventListener('popstate', () => myGameArea.stop());
   myGameArea.start();
 }
 
-function updateGameArea(): void {
+async function updateGameArea() {
   myGameArea.clear();
 
-  handleInput(leftPaddle, rightPaddle);
+  handleInput(leftPlayer, rightPlayer, myGameArea.state);
 
   leftPaddle.update();
   rightPaddle.update();
@@ -105,7 +175,7 @@ function updateGameArea(): void {
   }
   checkWallCollision(ball, myGameArea);
   checkPaddleCollision(ball, leftPaddle, rightPaddle);
-  checkGoal(ball, myGameArea);
+  await checkGoal(leftPlayer, rightPlayer, myGameArea);
 
   if (myGameArea.context) {
     leftPaddle.draw(myGameArea.context);
@@ -118,6 +188,23 @@ function updateBackground(background: background | null) {
   if (!background) return;
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
   backgroundImg.src = background.imagePath;
+}
+
+export function getGameVersion(): number {
+  return leftPlayer.getScore() + rightPlayer.getScore();
+}
+
+export function paintScore(side: string, score: number): void {
+  const emptyScorePoint = document.getElementById(`${side}-score-card-${score}`);
+  if (!emptyScorePoint) {
+    console.warn(`No element found: ${side}-score-card-${score}`);
+    return;
+  }
+
+  const colour = emptyScorePoint.className.match(/border-([a-z]+)-500/)?.[1];
+
+  emptyScorePoint.classList.remove('border-2', `border-${colour}-500`);
+  emptyScorePoint.classList.add(`bg-${colour}-500`);
 }
 
 /* // Unused but might be useful in the future
