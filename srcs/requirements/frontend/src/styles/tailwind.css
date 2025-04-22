@@ -109,3 +109,82 @@
 .text-outline {
   -webkit-text-stroke: 4px black; /* Black outline */
 }
+
+/* Power up Animations */
+@keyframes powerUp {
+  0% {
+    transform: scale(1) translateY(0);
+    filter: drop-shadow(0 0 0 currentColor);
+  }
+  25% {
+    transform: scale(0.9) translateY(5px);
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  50% {
+    transform: scale(1.15) translateY(-10px);
+    filter: drop-shadow(0 0 15px currentColor);
+  }
+  75% {
+    transform: scale(1.1) translateY(-5px);
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    filter: drop-shadow(0 0 0 currentColor);
+  }
+}
+
+/* Main power-up class used by all characters */
+.power-up {
+  animation: powerUp 0.8s ease-in-out;
+  color: inherit; /* This will inherit color set via JavaScript */
+}
+
+/* Power bar transition animation */
+.power-increase {
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
+}
+
+/* Final shimmer effect animation */
+@keyframes shimmer {
+  0% {
+    filter: brightness(1) saturate(100%);
+  }
+  50% {
+    filter: brightness(1.5) saturate(150%);
+  }
+  100% {
+    filter: brightness(1) saturate(100%);
+  }
+}
+
+.final-shimmer {
+  animation: shimmer 0.6s ease-in-out;
+  position: relative;
+}
+
+/* Optional: Shimmer overlay effect */
+.final-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmerEffect 0.6s ease-in-out;
+}
+
+@keyframes shimmerEffect {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -15,6 +15,7 @@ export class Attack {
   enemyPaddle: Paddle;
   ball: Ball;
   attackName: string | undefined;
+  side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
   activeAttack: () => Promise<void>;
@@ -22,11 +23,18 @@ export class Attack {
   attackCooldown: number;
   attackMap: { [key in attackIdentifier]: AttackData };
 
-  constructor(attackName: string | undefined, ownPaddle: Paddle, enemyPaddle: Paddle, ball: Ball) {
+  constructor(
+    attackName: string | undefined,
+    ownPaddle: Paddle,
+    enemyPaddle: Paddle,
+    ball: Ball,
+    side: string,
+  ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.attackName = attackName;
+    this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
     this.attackMap = {
@@ -82,6 +90,8 @@ export class Attack {
 
     this.lastUsed = Date.now();
 
+    this.powerUpAnimation();
+
     this.activeAttack();
 
     this.attackIsAvailable = false;
@@ -109,8 +119,6 @@ export class Attack {
 
     this.ownPaddle.setHeight(boostedHeight);
     this.ownPaddle.setY(originalY - yOffset);
-
-    await wait(this.attackDuration);
 
     if (!this.gameVersionHasChanged(startingVersion)) {
       const newOriginalY = this.ownPaddle.y;
@@ -223,5 +231,69 @@ export class Attack {
       this.enemyPaddle.setHeight(originalHeight);
       this.enemyPaddle.setY(newOriginalY + yOffset);
     }
+  }
+
+  powerUpAnimation() {
+    const portrait = document.getElementById(`${this.side}-character-portrait`);
+    const powerBar = document.getElementById(`${this.side}-character-power-bar-fill`);
+
+    if (!portrait) return; // Exit if portrait not found
+
+    // Extract the current border color to use in the animation
+    const computedStyle = window.getComputedStyle(portrait);
+    const borderColor = computedStyle.borderColor;
+
+    // Set the color property to the border color for use with currentColor in CSS
+    portrait.style.color = borderColor;
+
+    // Add the power-up animation class
+    portrait.classList.add('power-up');
+
+    // Handle power bar animation if it exists
+    if (powerBar) {
+      // Get current power or use default
+      const currentPower = parseFloat(powerBar.style.width) || 45;
+
+      // Calculate new power (increase by 25%, cap at 100%)
+      const newPower = Math.min(currentPower + 25, 100);
+
+      // Apply animation class and set new width
+      powerBar.classList.add('power-increase');
+      powerBar.style.width = newPower + '%';
+    }
+
+    // Temporarily increase border width for emphasis
+    const originalBorderWidth = computedStyle.borderWidth;
+    portrait.style.borderWidth = '6px';
+
+    // Remove power-up animation class after it completes
+    setTimeout(() => {
+      portrait.classList.remove('power-up');
+
+      // Add final shimmer effect
+      portrait.classList.add('final-shimmer');
+
+      // Remove shimmer after it completes
+      setTimeout(() => {
+        portrait.classList.remove('final-shimmer');
+        // Optional: Reset border width to original after animations complete
+        // portrait.style.borderWidth = originalBorderWidth;
+      }, 600);
+    }, 800);
+
+    // Add small jump when animation ends for that extra touch
+    setTimeout(() => {
+      portrait.animate(
+        [
+          { transform: 'translateY(0)' },
+          { transform: 'translateY(-10px)' },
+          { transform: 'translateY(0)' },
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in-out',
+        },
+      );
+    }, 900);
   }
 }
