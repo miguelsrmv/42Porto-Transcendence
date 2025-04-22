@@ -1,58 +1,99 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
+import { getGameVersion } from './game.js';
+import type { attackIdentifier } from '../characterData/characterData.types.js';
 
-let gameStateHasChanged: boolean = false;
-
-window.addEventListener('paused', () => {
-  gameStateHasChanged = true;
-});
+type AttackData = {
+  handler: () => Promise<void>; // The attack function
+  duration: number; // How long the effect lasts
+  cooldown: number; // How long until the attack can be used again, in miliseconds
+};
 
 export class Attack {
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
   ball: Ball;
   attackName: string | undefined;
+  lastUsed: number;
+  attackIsAvailable: boolean;
+  activeAttack: () => Promise<void>;
+  attackDuration: number;
+  attackCooldown: number;
+  attackMap: { [key in attackIdentifier]: AttackData };
 
   constructor(attackName: string | undefined, ownPaddle: Paddle, enemyPaddle: Paddle, ball: Ball) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.attackName = attackName;
-  }
-  attack(): void {
-    if (!this.attackName) return;
-
-    console.log(`Player space used ${this.attackName}`);
-    // TODO: Implement coolDown
-    // TODO: Implement power-up bar
-    // const attackCooldown: { [key: string]: number } = {
-    //   'Super Shroom': 2,
-    //   'Egg Barrage': 3,
-    //   'Spin Dash': 2,
-    //   'Thunder Wave': 3,
-    //   Confusion: 2,
-    //   'Hurricane Blade': 5,
-    //   Missiles: 4,
-    //   'Giant Punch': 5,
-    // };
-
-    const attackMap: { [key: string]: () => Promise<void> } = {
-      'Super Shroom': () => this.superShroom(),
-      'Egg Barrage': () => this.eggBarrage(),
-      'Spin Dash': () => this.spinDash(),
-      'Thunder Wave': () => this.thunderWave(),
-      Confusion: () => this.confusion(),
-      'Magic Mirror': () => this.magicMirror(),
-      Mini: () => this.mini(),
-      'Giant Punch': () => this.giantPunch(),
+    this.lastUsed = Date.now();
+    this.attackIsAvailable = false;
+    this.attackMap = {
+      'Super Shroom': {
+        handler: async () => this.superShroom(),
+        duration: 5,
+        cooldown: 8000,
+      },
+      'Egg Barrage': {
+        handler: async () => this.eggBarrage(),
+        duration: 5,
+        cooldown: 8000,
+      },
+      'Spin Dash': {
+        handler: async () => this.spinDash(),
+        duration: 2,
+        cooldown: 10000,
+      },
+      'Thunder Wave': {
+        handler: async () => this.thunderWave(),
+        duration: 3,
+        cooldown: 10000,
+      },
+      Confusion: {
+        handler: async () => this.confusion(),
+        duration: 4,
+        cooldown: 7500,
+      },
+      'Magic Mirror': {
+        handler: async () => this.magicMirror(),
+        duration: 0,
+        cooldown: 7500,
+      },
+      Mini: {
+        handler: async () => this.mini(),
+        duration: 5,
+        cooldown: 5000,
+      },
+      'Giant Punch': {
+        handler: async () => this.giantPunch(),
+        duration: 4,
+        cooldown: 10000,
+      },
     };
 
-    attackMap[this.attackName]?.();
-    gameStateHasChanged = false;
+    this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    this.attackDuration = this.attackMap[attackName as attackIdentifier].duration;
+    this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
+  }
+
+  attack(): void {
+    if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable) return;
+
+    this.lastUsed = Date.now();
+
+    this.activeAttack();
+
+    this.attackIsAvailable = false;
+  }
+
+  gameVersionHasChanged(oldVersion: number): boolean {
+    return oldVersion !== getGameVersion() ? true : false;
   }
 
   async superShroom(): Promise<void> {
+    const startingVersion = getGameVersion();
+
     const growthFactor = 1.25;
 
     const originalHeight = this.ownPaddle.height;
@@ -64,9 +105,9 @@ export class Attack {
     this.ownPaddle.setHeight(boostedHeight);
     this.ownPaddle.setY(originalY - yOffset);
 
-    await wait(2);
+    await wait(this.attackDuration);
 
-    if (!gameStateHasChanged) {
+    if (!this.gameVersionHasChanged(startingVersion)) {
       const newOriginalY = this.ownPaddle.y;
       this.ownPaddle.setHeight(originalHeight);
       this.ownPaddle.setY(newOriginalY + yOffset);
@@ -74,9 +115,13 @@ export class Attack {
   }
 
   //TODO: Draw On Canvas
-  async eggBarrage(): Promise<void> {}
+  async eggBarrage(): Promise<void> {
+    await wait(this.attackDuration);
+  }
 
   async spinDash(): Promise<void> {
+    const startingVersion = getGameVersion();
+
     const growthFactor = 5;
 
     const startingSpeedX = this.ball.speedX;
@@ -93,9 +138,9 @@ export class Attack {
 
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
-    await wait(2);
+    await wait(this.attackDuration);
 
-    if (!gameStateHasChanged) {
+    if (!this.gameVersionHasChanged(startingVersion)) {
       const oldSpeedX = this.ball.speedX > 0 ? Math.abs(startingSpeedX) : -Math.abs(startingSpeedX);
       const oldSpeedY = this.ball.speedY > 0 ? Math.abs(startingSpeedY) : -Math.abs(startingSpeedY);
 
@@ -104,25 +149,29 @@ export class Attack {
   }
 
   async thunderWave(): Promise<void> {
+    const startingVersion = getGameVersion();
+
     const slowdownFactor = 0.5;
 
     this.enemyPaddle.setSpeedModifier(slowdownFactor);
 
-    await wait(2);
+    await wait(this.attackDuration);
 
-    if (!gameStateHasChanged) {
+    if (!this.gameVersionHasChanged(startingVersion)) {
       this.enemyPaddle.setSpeedModifier(1);
     }
   }
 
   async confusion(): Promise<void> {
+    const startingVersion = getGameVersion();
+
     const inversionFactor = -1;
 
     this.enemyPaddle.setSpeedModifier(inversionFactor);
 
-    await wait(2);
+    await wait(this.attackDuration);
 
-    if (!gameStateHasChanged) {
+    if (!this.gameVersionHasChanged(startingVersion)) {
       this.enemyPaddle.setSpeedModifier(1);
     }
   }
@@ -132,6 +181,8 @@ export class Attack {
   }
 
   async mini(): Promise<void> {
+    const startingVersion = getGameVersion();
+
     const shrinkFactor = 0.5;
 
     const oldRadius = this.ball.radius;
@@ -139,14 +190,16 @@ export class Attack {
 
     this.ball.setRadius(newRadius);
 
-    await wait(2);
+    await wait(this.attackDuration);
 
-    if (!gameStateHasChanged) {
+    if (!this.gameVersionHasChanged(startingVersion)) {
       this.ball.setRadius(oldRadius);
     }
   }
 
   async giantPunch(): Promise<void> {
+    const startingVersion = getGameVersion();
+
     const shrinkFactor = 0.5;
 
     const originalHeight = this.enemyPaddle.height;
@@ -158,9 +211,9 @@ export class Attack {
     this.enemyPaddle.setHeight(boostedHeight);
     this.enemyPaddle.setY(originalY - yOffset);
 
-    await wait(2);
+    await wait(this.attackDuration);
 
-    if (!gameStateHasChanged) {
+    if (!this.gameVersionHasChanged(startingVersion)) {
       const newOriginalY = this.enemyPaddle.y;
       this.enemyPaddle.setHeight(originalHeight);
       this.enemyPaddle.setY(newOriginalY + yOffset);
