@@ -10,7 +10,13 @@ import {
   createBackgroundLoop,
   createCharacterLoop,
   setGameSettings,
+  getGameSettings,
+  updateHUD,
 } from '../game/gameSetup.js';
+
+import { initializeLocalGame } from '../game/localGameApp/game.js';
+
+import { loadView } from '../../core/viewLoader.js';
 
 /**
  * @brief Initializes view for local play
@@ -59,7 +65,10 @@ export async function initializeView(): Promise<void> {
   if (playButton) {
     playButton.addEventListener('click', () => {
       setGameSettings(gameType, 'Local Play');
-      window.location.hash = 'game-page';
+      loadView('game-page');
+      if (gameType === 'Crazy Pong')
+        updateHUD(getGameSettings().character1, getGameSettings().character2);
+      initializeLocalGame(getGameSettings());
     });
   } else console.warn('Play Button not found');
 }
