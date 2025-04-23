@@ -7,14 +7,17 @@ This document is a guide to several foundational concepts in web development, ca
 ## 🔐 Safety and Authentication
 
 ### What is JWT?
+
 **JWT** stands for **JSON Web Token**. It is a compact, URL-safe way of representing claims between two parties. It's commonly used for authentication.
 
 A JWT has three parts:
+
 1. **Header** – contains the signing algorithm and token type (e.g., HS256).
 2. **Payload** – contains claims (data) like user ID, role, or expiry time.
 3. **Signature** – a hash of the header and payload, signed with a secret or private key.
 
 Example:
+
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
 .
@@ -24,13 +27,14 @@ sflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 ```
 
 ### Where to store JWT?
+
 There are three main options:
 
-| Storage         | Pros                                  | Cons                                      |
-|----------------|---------------------------------------|-------------------------------------------|
-| **LocalStorage**     | Easy to use                         | Vulnerable to XSS attacks                 |
-| **SessionStorage**   | Cleared when tab closes             | Still vulnerable to XSS                  |
-| **HTTP-only Cookies**| Secure from JS (XSS safe)           | Vulnerable to CSRF if not protected      |
+| Storage               | Pros                      | Cons                                |
+| --------------------- | ------------------------- | ----------------------------------- |
+| **LocalStorage**      | Easy to use               | Vulnerable to XSS attacks           |
+| **SessionStorage**    | Cleared when tab closes   | Still vulnerable to XSS             |
+| **HTTP-only Cookies** | Secure from JS (XSS safe) | Vulnerable to CSRF if not protected |
 
 **Best practice:** Store JWTs in **HTTP-only cookies** (with `Secure` and `SameSite=strict`) for better security against XSS. Add CSRF protection if needed.
 
@@ -39,6 +43,7 @@ There are three main options:
 ## 🌐 HTML and TypeScript Interaction
 
 ### What is `FormData`?
+
 `FormData` is a built-in browser API that lets you easily construct a set of key/value pairs to send form data via JavaScript.
 
 ```ts
@@ -47,27 +52,31 @@ const data = new FormData(form);
 ```
 
 You can then send it using `fetch`:
+
 ```ts
 fetch('/submit', {
   method: 'POST',
-  body: data
+  body: data,
 });
 ```
 
 It handles file uploads, checkboxes, and input fields gracefully.
 
 ### What is the `JSON` object?
+
 `JSON` (JavaScript Object Notation) is a global object in JavaScript/TypeScript for parsing and stringifying data.
 
 Common functions:
+
 - `JSON.stringify(obj)` → Converts an object to a JSON string.
 - `JSON.parse(str)` → Converts a JSON string back into a JS object.
 
 Example:
+
 ```ts
-const user = { name: "Alice", age: 25 };
+const user = { name: 'Alice', age: 25 };
 const json = JSON.stringify(user); // '{"name":"Alice","age":25}'
-const back = JSON.parse(json);     // { name: "Alice", age: 25 }
+const back = JSON.parse(json); // { name: "Alice", age: 25 }
 ```
 
 You use JSON to send data over the network, store it, or interact with APIs.
@@ -79,6 +88,7 @@ You use JSON to send data over the network, store it, or interact with APIs.
 ### What's the point of `package.json`, `package-lock.json`, and `tailwind.config.js`?
 
 #### `package.json`
+
 - Keeps track of your project’s dependencies and scripts.
 - Defines project name, version, entry file, etc.
 
@@ -96,10 +106,12 @@ You use JSON to send data over the network, store it, or interact with APIs.
 ```
 
 #### `package-lock.json`
+
 - Exact version snapshot of all dependencies (including nested ones).
 - Ensures **consistent installs** across machines.
 
 #### `tailwind.config.js`
+
 - Customization file for Tailwind.
 - Lets you extend the default theme, define custom colors, or add plugins.
 
@@ -116,14 +128,17 @@ module.exports = {
 ### What are Node, NodeJS, npm, and npx?
 
 #### Node / NodeJS
+
 - A runtime that allows you to run JavaScript code **outside the browser**.
 - You use it to run build tools, servers, scripts, etc.
 
 #### npm
+
 - **Node Package Manager** – helps you install and manage libraries/packages.
 - Usage: `npm install package-name`
 
 #### npx
+
 - A tool bundled with npm that lets you run a package **without installing it globally**.
 - Usage: `npx tailwindcss init`
 

@@ -1,0 +1,27 @@
+Margin on the right hud
+
+
+Paddle left
+Paddle right
+Ball
+Game Area
+
+Ataque (minha paddle, paddle inimiga, bola, gameArea) Abstract (ASpell)
+- SuperShroom
+- Egg Barrage
+
+Scores
+
+
+Player(own paddle, enemy paddle, ball)
+-- Dados do player
+» Alias (vem do gameSettings)
+» Avatar (vem do gameSettings)
+
+-- Dados do jogo
+» Paddle
+» Score
+
+-- Dados do character
+» Character (vem do gameSettings)
+» Função de ataque (classe implementada por nós)

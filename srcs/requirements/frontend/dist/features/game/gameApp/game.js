@@ -66,12 +66,12 @@ function setPaddles(gameSettings) {
     rightPaddle = new Paddle(PADDLE_WID, PADDLE_LEN, gameSettings.paddleColour2, CANVAS_WIDTH - 20, PADDLE_START_Y_POS);
 }
 function setPlayers(leftPaddle, rightPaddle, ball, gameSettings) {
-    leftPlayer = new Player(leftPaddle, rightPaddle, ball, gameSettings.alias1, gameSettings.character1?.attack, 'left');
-    rightPlayer = new Player(rightPaddle, leftPaddle, ball, gameSettings.alias2, gameSettings.character2?.attack, 'right');
-    function setPowerUpBar(player) {
-        const PlayerBar = document.getElementById(`${player.side}-character-power-bar-fill`);
+    leftPlayer = new Player(leftPaddle, rightPaddle, ball, gameSettings.alias1, gameSettings.character1?.attack);
+    rightPlayer = new Player(rightPaddle, leftPaddle, ball, gameSettings.alias2, gameSettings.character2?.attack);
+    function setPowerUpBar(player, side) {
+        const PlayerBar = document.getElementById(`${side}-character-power-bar-fill`);
         if (!PlayerBar) {
-            console.warn(`${player.side} player bar not found`);
+            console.warn(`${side} player bar not found`);
             return;
         }
         window.setInterval(() => {
@@ -86,8 +86,8 @@ function setPlayers(leftPaddle, rightPaddle, ball, gameSettings) {
             }
         }, 20);
     }
-    setPowerUpBar(leftPlayer);
-    setPowerUpBar(rightPlayer);
+    setPowerUpBar(leftPlayer, 'left');
+    setPowerUpBar(rightPlayer, 'right');
 }
 export function initializeGame(gameSettings) {
     const pongPage = document.getElementById('game-container');

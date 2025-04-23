@@ -30,6 +30,8 @@ backend/
 |   |   |── hash.ts                 # Password hashing
 |   |   |── prisma.ts               # Prisma client setup
 |   |   |── prismaExtensions.ts     # Prisma extensions
+|   |── validation/                 # Validation logic for preHandler hooks
+|   |   |── user.validation.ts
 |   |── app.ts                      # Fastify app setup
 |   |── server.ts                   # Fastify instance setup
 |   |── fastify.d.ts                # Declaration file to provide typescript type information about the Fastify app
@@ -64,8 +66,10 @@ backend/
 - `npm run test` to run Vitest tests
 - `npm run populate` to populate the database
 - `npm run build` to compile ts files into js
+- `npm run build-dev` to compile ts files into js in watch mode for hot reload
 - `npm run dev` to launch the app locally (directly from ts file)
-- `npm run start` to launch the app locally (js)
+- `npm run start` to launch the app (js)
+- `npm run start-dev` to launch the app with nodemon (js)
 
 ## Notes
 
@@ -74,6 +78,7 @@ backend/
 
 ## TODOs
 
+- Add user id to JWT and route to get user data
 - Improve error messages and object sent to frontend
 
 - Test edge cases

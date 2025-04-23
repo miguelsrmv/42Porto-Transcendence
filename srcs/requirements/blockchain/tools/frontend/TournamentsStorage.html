@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments DApp</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script defer src="./scripts/TournamentsStorage.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Container for the boxes */
+        .box-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        .box {
+            border: 2px solid #333;
+            padding: 15px;
+            margin: 15px;
+            width: 350px;
+            border-radius: 8px;
+            background: #f9f9f9;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input,
+        button {
+            display: block;
+            width: 80%;
+            margin: 5px auto;
+            padding: 8px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resultBox {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            min-width: 300px;
+            text-align: left;
+            background: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tournaments DApp</h1>
+
+    <!-- Container for the boxes (with flexbox grid layout) -->
+    <div class="box-container">
+        <div class="box">
+            <h3>Fetch Tournament Data</h3>
+            <input type="number" id="tournamentId" placeholder="Tournament ID">
+            <button onclick="fetchTournament()">Get Tournament</button>
+            <button onclick="fetchParticipants()">Get Participants</button>
+            <button onclick="fetchMatchedParticipants()">Get Matched Participants</button>
+            <button onclick="fetchScores()">Get Scores</button>
+        </div>
+
+        <div class="box">
+            <h3>Create Tournament</h3>
+            <button onclick="createNewTournament()">Create Tournament</button>
+        </div>
+
+        <div class="box">
+            <h3>Join Tournament</h3>
+            <input type="text" id="joinTournamentId" placeholder="Tournament ID">
+            <input type="text" id="participantName" placeholder="Participant Name">
+            <button onclick="joinTournamentAction()">Join Tournament</button>
+        </div>
+
+        <div class="box">
+            <h3>Add Winner</h3>
+            <input type="text" id="winnerTournamentId" placeholder="Tournament ID">
+            <input type="text" id="winnerName" placeholder="Winner Name">
+            <button onclick="addWinnerAction()">Add Winner</button>
+        </div>
+
+        <div class="box">
+            <h3>Save Score</h3>
+            <input type="text" id="SaveScoreTournamentId" placeholder="Tournament ID">
+            <input type="text" id="playerOneName" placeholder="Player One Name">
+            <input type="text" id="playerOneScore" placeholder="Player One Score">
+            <input type="text" id="playerTwoName" placeholder="Player Two Name">
+            <input type="text" id="playerTwoScore" placeholder="Player Two Score">
+            <button onclick="saveScoreAction()">Save Score</button>
+        </div>
+
+        <div id="resultBox">Results will appear here...</div>
+
+    </div>
+
+    <div id="bracket"></div>
+
+    <script>
+        function displayResult(data) {
+            let outputBox = document.getElementById('resultBox');
+
+            // Handle different types of data
+            if (Array.isArray(data)) {
+                // Convert array elements to a readable list
+                outputBox.innerHTML = "<strong>Result:</strong><br>" + data.map(item => `- ${item}`).join("<br>");
+            } else if (typeof data === 'object' && data !== null) {
+                // Display objects as JSON
+                outputBox.innerText = JSON.stringify(data, null, 2);
+            } else {
+                // Display other values as plain text
+                outputBox.innerText = data;
+            }
+        }
+
+        async function fetchTournament() {
+            const id = document.getElementById('tournamentId').value;
+            if (!id) return alert("Enter a valid Tournament ID");
+            try {
+                const result = await getTournament(parseInt(id));
+                displayResult(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        async function fetchParticipants() {
+            const id = document.getElementById('tournamentId').value;
+            if (!id) return alert("Enter a valid Tournament ID");
+            try {
+                const result = await getParticipants(parseInt(id));
+                displayResult(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        async function fetchMatchedParticipants() {
+            const id = document.getElementById('tournamentId').value;
+            if (!id) return alert("Enter a valid Tournament ID");
+            try {
+                const result = await getMatchedParticipants(parseInt(id));
+                displayResult(result);
+                displayBracket(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        async function fetchScores() {
+            const id = document.getElementById('tournamentId').value;
+            if (!id) return alert("Enter a valid Tournament ID");
+            try {
+                const result = await getScores(parseInt(id));
+                displayResult(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        function displayBracket(matchedParticipants) {
+            const bracketDiv = document.getElementById('bracket');
+            bracketDiv.innerHTML = '';
+
+            let levels = [
+                [ // Round 1: Initial Matches (4 participants → 2 winners)
+                    `${matchedParticipants[0]} vs ${matchedParticipants[1]}`,
+                    `${matchedParticipants[2]} vs ${matchedParticipants[3]}`
+                ],
+                [ // Round 2: 2 winners → 1 final match
+                    matchedParticipants[4] ? `${matchedParticipants[4]} vs ${matchedParticipants[5]}` : 'TBD'
+                ],
+                [ // Finals: 1 winner
+                    matchedParticipants[6] ? `${matchedParticipants[6]}` : 'TBD'
+                ]
+            ];
+
+            levels.forEach((round, index) => {
+                const roundDiv = document.createElement('div');
+                if (index === 2) { roundDiv.innerHTML = `<h3>Winner</h3>` + round.map(match => `<p>${match}</p>`).join(''); }
+                else { roundDiv.innerHTML = `<h3>Round ${index + 1}</h3>` + round.map(match => `<p>${match}</p>`).join(''); }
+                bracketDiv.appendChild(roundDiv);
+            });
+        }
+
+
+
+        async function createNewTournament() {
+            try {
+                const result = await createTournament();
+                displayResult(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        async function joinTournamentAction() {
+            const id = document.getElementById('joinTournamentId').value;
+            const name = document.getElementById('participantName').value;
+            if (!id || !name) return alert("Enter valid Tournament ID and Participant Name");
+            try {
+                const result = await joinTournament(parseInt(id), name);
+                displayResult(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        async function addWinnerAction() {
+            const id = document.getElementById('winnerTournamentId').value;
+            const name = document.getElementById('winnerName').value;
+            if (!id || !name) return alert("Enter valid Tournament ID and Winner Name");
+            try {
+                const result = await addWinner(parseInt(id), name);
+                displayResult(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+
+        async function saveScoreAction() {
+            const id = document.getElementById('SaveScoreTournamentId').value;
+            const p1 = document.getElementById('playerOneName').value;
+            const s1 = document.getElementById('playerOneScore').value;
+            const p2 = document.getElementById('playerTwoName').value;
+            const s2 = document.getElementById('playerTwoScore').value;
+            if (!id || !p1 || !s1 || !p2 || !s2) return alert("Enter valid data");
+            try {
+                const result = await saveScore(parseInt(id), p1, parseInt(s1), p2, parseInt(s2));
+                displayResult(result);
+            } catch (error) {
+                displayResult({ error: error.message });
+            }
+        }
+    </script>
+</body>
+
+</html>

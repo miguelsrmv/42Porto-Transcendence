@@ -19,6 +19,7 @@ function endGame(winningPlayer, gameArea) {
     gameArea.stop();
 }
 // Checks if ball reached vertical canvas limits
+// TODO: Paint scores in HTML
 export async function checkGoal(leftPlayer, rightPlayer, gameArea) {
     if (!gameArea.canvas) {
         console.error('Error getting canvas element!');
