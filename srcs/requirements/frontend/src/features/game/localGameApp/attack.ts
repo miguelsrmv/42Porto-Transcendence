@@ -1,16 +1,9 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
-import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  BALL_RADIUS,
-  SPEED,
-  getGameVersion,
-  fakeBalls,
-} from './game.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, getGameVersion, fakeBalls } from './game.js';
 import type { attackIdentifier } from '../characterData/characterData.types.js';
-import { powerUpAnimation } from './animations.js';
+import { powerUpAnimation } from '../animations/animations.js';
 
 type AttackData = {
   handler: () => Promise<void>; // The attack function
@@ -115,6 +108,7 @@ export class Attack {
   }
 
   async superShroom(): Promise<void> {
+    console.log(`Super shroom called by ${this.side}`);
     const growthFactor = 1.25;
 
     const startingVersion = getGameVersion();
@@ -127,6 +121,8 @@ export class Attack {
 
     this.ownPaddle.setHeight(boostedHeight);
     this.ownPaddle.setY(originalY - yOffset);
+
+    await wait(this.attackDuration);
 
     if (!this.gameVersionHasChanged(startingVersion)) {
       const newOriginalY = this.ownPaddle.y;
@@ -237,6 +233,7 @@ export class Attack {
   }
 
   async giantPunch(): Promise<void> {
+    console.log('Giant punch called');
     const startingVersion = getGameVersion();
 
     const shrinkFactor = 0.5;
