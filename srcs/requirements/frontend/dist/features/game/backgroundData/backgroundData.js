@@ -1,0 +1,107 @@
+/**
+ * @file backgroundData.ts
+ * @brief Provides data and functions related to game background images.
+ *
+ * This file contains the path to background images and a list of available backgrounds
+ * with their respective image paths. It also provides a function to retrieve the list
+ * of backgrounds.
+ */
+/**
+ * @brief Path to the background selection images.
+ *
+ * This constant defines the base path where all background images are stored.
+ */
+const backgroundPicturePath = '../../../../static/backgrounds/';
+/**
+ * @brief List of available backgrounds.
+ *
+ * This constant array contains objects representing each background, including its name
+ * and the path to its image file.
+ */
+const backgroundList = [
+    {
+        name: 'Backyard',
+        imagePath: `${backgroundPicturePath}Backyard.png`,
+    },
+    {
+        name: 'Beach',
+        imagePath: `${backgroundPicturePath}Beach.png`,
+    },
+    {
+        name: 'Cave',
+        imagePath: `${backgroundPicturePath}Cave.png`,
+    },
+    {
+        name: 'Checks',
+        imagePath: `${backgroundPicturePath}Checks.png`,
+    },
+    {
+        name: 'Desert',
+        imagePath: `${backgroundPicturePath}Desert.png`,
+    },
+    {
+        name: 'Forest',
+        imagePath: `${backgroundPicturePath}Forest.png`,
+    },
+    {
+        name: 'Machine',
+        imagePath: `${backgroundPicturePath}Machine.png`,
+    },
+    {
+        name: 'Nostalgic',
+        imagePath: `${backgroundPicturePath}Nostalgic.png`,
+    },
+    {
+        name: 'Pikapika_Platinum',
+        imagePath: `${backgroundPicturePath}Pikapika_Platinum.png`,
+    },
+    {
+        name: 'Pokemon_Center',
+        imagePath: `${backgroundPicturePath}Pokemon_Center.png`,
+    },
+    {
+        name: 'River',
+        imagePath: `${backgroundPicturePath}River.png`,
+    },
+    {
+        name: 'Savanna',
+        imagePath: `${backgroundPicturePath}Savanna.png`,
+    },
+    {
+        name: 'Seafloor',
+        imagePath: `${backgroundPicturePath}Seafloor.png`,
+    },
+    {
+        name: 'Simple',
+        imagePath: `${backgroundPicturePath}Simple.png`,
+    },
+    {
+        name: 'Sky',
+        imagePath: `${backgroundPicturePath}Sky.png`,
+    },
+    {
+        name: 'Snow',
+        imagePath: `${backgroundPicturePath}Snow.png`,
+    },
+    {
+        name: 'Space',
+        imagePath: `${backgroundPicturePath}Space.png`,
+    },
+    {
+        name: 'Torchic',
+        imagePath: `${backgroundPicturePath}Torchic.png`,
+    },
+    {
+        name: 'Volcano',
+        imagePath: `${backgroundPicturePath}Volcano.png`,
+    },
+];
+/**
+ * @brief Retrieves the list of available backgrounds.
+ *
+ * @return An array of backgroundData objects, each containing the name and image path of a background.
+ */
+export function getBackgroundList() {
+    return backgroundList;
+}
+//# sourceMappingURL=backgroundData.js.map

@@ -1,5 +1,5 @@
 import { TournamentPlayer } from '../controllers/tournament.controller';
-import { prisma } from '../utils/prisma';
+import { prisma } from '../../utils/prisma';
 
 export async function createTournamentParticipant(participant: TournamentPlayer) {
   const tournament = await prisma.tournament.findUniqueOrThrow({
