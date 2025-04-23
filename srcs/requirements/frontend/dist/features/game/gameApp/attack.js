@@ -5,19 +5,17 @@ export class Attack {
     enemyPaddle;
     ball;
     attackName;
-    side;
     lastUsed;
     attackIsAvailable;
     activeAttack;
     attackDuration;
     attackCooldown;
     attackMap;
-    constructor(attackName, ownPaddle, enemyPaddle, ball, side) {
+    constructor(attackName, ownPaddle, enemyPaddle, ball) {
         this.ownPaddle = ownPaddle;
         this.enemyPaddle = enemyPaddle;
         this.ball = ball;
         this.attackName = attackName;
-        this.side = side;
         this.lastUsed = Date.now();
         this.attackIsAvailable = false;
         this.attackMap = {
@@ -70,7 +68,6 @@ export class Attack {
         if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable)
             return;
         this.lastUsed = Date.now();
-        this.powerUpAnimation();
         this.activeAttack();
         this.attackIsAvailable = false;
     }
@@ -90,6 +87,7 @@ export class Attack {
         const yOffset = (boostedHeight - originalHeight) / 2;
         this.ownPaddle.setHeight(boostedHeight);
         this.ownPaddle.setY(originalY - yOffset);
+        await wait(this.attackDuration);
         if (!this.gameVersionHasChanged(startingVersion)) {
             const newOriginalY = this.ownPaddle.y;
             this.ownPaddle.setHeight(originalHeight);
@@ -166,54 +164,6 @@ export class Attack {
             this.enemyPaddle.setHeight(originalHeight);
             this.enemyPaddle.setY(newOriginalY + yOffset);
         }
-    }
-    powerUpAnimation() {
-        const portrait = document.getElementById(`${this.side}-character-portrait`);
-        const powerBar = document.getElementById(`${this.side}-character-power-bar-fill`);
-        if (!portrait)
-            return; // Exit if portrait not found
-        // Extract the current border color to use in the animation
-        const computedStyle = window.getComputedStyle(portrait);
-        const borderColor = computedStyle.borderColor;
-        // Set the color property to the border color for use with currentColor in CSS
-        portrait.style.color = borderColor;
-        // Add the power-up animation class
-        portrait.classList.add('power-up');
-        // Handle power bar animation if it exists
-        if (powerBar) {
-            // Get current power or use default
-            const currentPower = parseFloat(powerBar.style.width) || 45;
-            // Calculate new power (increase by 25%, cap at 100%)
-            const newPower = Math.min(currentPower + 25, 100);
-            // Apply animation class and set new width
-            powerBar.classList.add('power-increase');
-            powerBar.style.width = newPower + '%';
-        }
-        // Temporarily increase border width for emphasis
-        portrait.style.borderWidth = '6px';
-        // Remove power-up animation class after it completes
-        setTimeout(() => {
-            portrait.classList.remove('power-up');
-            // Add final shimmer effect
-            portrait.classList.add('final-shimmer');
-            // Remove shimmer after it completes
-            setTimeout(() => {
-                portrait.classList.remove('final-shimmer');
-                // Optional: Reset border width to original after animations complete
-                // portrait.style.borderWidth = originalBorderWidth;
-            }, 600);
-        }, 800);
-        // Add small jump when animation ends for that extra touch
-        setTimeout(() => {
-            portrait.animate([
-                { transform: 'translateY(0)' },
-                { transform: 'translateY(-10px)' },
-                { transform: 'translateY(0)' },
-            ], {
-                duration: 300,
-                easing: 'ease-in-out',
-            });
-        }, 900);
     }
 }
 //# sourceMappingURL=attack.js.map

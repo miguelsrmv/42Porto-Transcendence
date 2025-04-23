@@ -42,3 +42,6 @@ content-type: application/json
 
 ### Check Login status
 GET http://localhost:3000/users/checkLoginStatus HTTP/1.1
+
+### Get logged in user data
+GET http://localhost:3000/users/me HTTP/1.1
