@@ -1,4 +1,4 @@
-# Endpoints
+# API Endpoints
 
 | Method   | Route                      |   URL parameters    |                     Body                     | Description                                |
 | -------- | -------------------------- | :-----------------: | :------------------------------------------: | ------------------------------------------ |
@@ -32,6 +32,17 @@
 | `PATCH`  | `/tournaments/:id`         | `id` tournaments id |                data to update                | Update data on a specific tournament       |
 | `DELETE` | `/tournaments/:id`         | `id` tournaments id |                                              | Delete a tournament                        |
 | `POST`   | `/tournaments/participant` |                     |        playerId, alias and character         | Create a tournamentParticipant entry       |
+
+## WebSocket Routes
+
+**Note:** in maintenance (TODO: move to a different file?)
+
+| Event     | Route           | Parameters | Payload Sent / Expected | Description                      |
+| --------- | --------------- | ---------- | ----------------------- | -------------------------------- |
+| `connect` | `/ws`           |            |                         | Initiates a WebSocket connection |
+| `message` | `/ws`           |            |                         | Message sent by client           |
+| `error`   | server → client |            |                         | Sent when client sends bad data  |
+| `close`   | `/ws`           |            |                         | Connection is closed             |
 
 ## Base
 

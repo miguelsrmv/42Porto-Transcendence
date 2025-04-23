@@ -11,7 +11,10 @@ import type { GameArea } from './types.js';
 import type { gameSettings, playType, gameType } from '../gameSettings/gameSettings.types.js';
 import type { background } from '../backgroundData/backgroundData.types.js';
 import { Player } from './player.js';
-import { activatePowerBarAnimation, deactivatePowerBarAnimation } from './animations.js';
+import {
+  activatePowerBarAnimation,
+  deactivatePowerBarAnimation,
+} from '../animations/animations.js';
 
 export const SPEED = 5;
 export const CANVAS_HEIGHT = 720;
@@ -164,7 +167,7 @@ function setPlayers(
   setPowerUpBar(rightPlayer);
 }
 
-export function initializeGame(gameSettings: gameSettings): void {
+export function initializeLocalGame(gameSettings: gameSettings): void {
   const pongPage = document.getElementById('game-container') as HTMLElement | null;
   if (!pongPage) {
     console.error('Cannot start the game: game-container is missing.');

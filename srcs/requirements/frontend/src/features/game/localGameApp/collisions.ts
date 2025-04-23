@@ -2,7 +2,7 @@ import { wait } from '../../../utils/helpers.js';
 import { gameState, SPEED, paintScore, fakeBalls } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
-import { scoreAnimation } from './animations.js';
+import { scoreAnimation } from '../animations/animations.js';
 
 interface Ball {
   x: number;

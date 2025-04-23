@@ -10,12 +10,18 @@ import {
   createBackgroundLoop,
   createCharacterLoop,
   setGameSettings,
+  getGameSettings,
+  updateHUD,
 } from '../game/gameSetup.js';
 
+import { initializeRemoteGame } from '../game/remoteGameApp/remoteGame.js';
+
+import { loadView } from '../../core/viewLoader.js';
+
 /**
- * @brief Initializes view for remote play
+ * @brief Initializes view for local play
  *
- * This function sets up the pre-game page for remote play
+ * This function sets up the pre-game page for local play
  */
 export async function initializeView(): Promise<void> {
   // Gets Classic or Crazy Pong
@@ -31,15 +37,15 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
-  // Hidens Player 2 settings
+  // Toggle second player
   const player2Settings = document.getElementById('player-2-settings');
   if (player2Settings) player2Settings.classList.add('hidden');
-  else console.warn('Player 2 settings menu not found');
+  else console.warn('Player 2 Settings not found.');
 
-  // Hides background settings
   const backgroundSettings = document.getElementById('board-settings-content');
+
   if (backgroundSettings) backgroundSettings.classList.add('hidden');
-  else console.warn('Background settings menu not found');
+  else console.warn('Background Settings not found.');
 
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
   if (gameType === 'Crazy Pong') {
@@ -48,15 +54,23 @@ export async function initializeView(): Promise<void> {
     if (characterSelect1) characterSelect1.classList.remove('hidden');
     else console.warn('Character Select 1 not found.');
 
+    const characterSelect2 = document.getElementById('player-2-character');
+    if (characterSelect2) characterSelect2.classList.remove('hidden');
+    else console.warn('Character Select 2 not found.');
+
     // Creates character loop (for both players)
     createCharacterLoop();
+    createCharacterLoop(2);
   }
 
   const playButton = document.getElementById('play-button');
   if (playButton) {
     playButton.addEventListener('click', () => {
-      setGameSettings(gameType, 'Remote Play');
-      window.location.hash = 'game-page';
+      setGameSettings(gameType, 'Local Play');
+      loadView('game-page');
+      if (gameType === 'Crazy Pong')
+        updateHUD(getGameSettings().character1, getGameSettings().character2);
+      initializeRemoteGame(getGameSettings());
     });
   } else console.warn('Play Button not found');
 }
