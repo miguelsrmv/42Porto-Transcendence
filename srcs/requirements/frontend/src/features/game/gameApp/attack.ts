@@ -1,8 +1,16 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
-import { getGameVersion } from './game.js';
+import {
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  BALL_RADIUS,
+  SPEED,
+  getGameVersion,
+  fakeBalls,
+} from './game.js';
 import type { attackIdentifier } from '../characterData/characterData.types.js';
+import { powerUpAnimation } from './animations.js';
 
 type AttackData = {
   handler: () => Promise<void>; // The attack function
@@ -15,6 +23,7 @@ export class Attack {
   enemyPaddle: Paddle;
   ball: Ball;
   attackName: string | undefined;
+  side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
   activeAttack: () => Promise<void>;
@@ -22,11 +31,18 @@ export class Attack {
   attackCooldown: number;
   attackMap: { [key in attackIdentifier]: AttackData };
 
-  constructor(attackName: string | undefined, ownPaddle: Paddle, enemyPaddle: Paddle, ball: Ball) {
+  constructor(
+    attackName: string | undefined,
+    ownPaddle: Paddle,
+    enemyPaddle: Paddle,
+    ball: Ball,
+    side: string,
+  ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.attackName = attackName;
+    this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
     this.attackMap = {
@@ -82,14 +98,16 @@ export class Attack {
 
     this.lastUsed = Date.now();
 
+    powerUpAnimation(this.side);
+
     this.activeAttack();
 
     this.attackIsAvailable = false;
   }
 
-  reset(): void {
-    this.lastUsed = Date.now();
-    this.attackIsAvailable = false;
+  reset(beforeTime: number, newTime: number): void {
+    this.lastUsed += newTime - beforeTime;
+    //this.attackIsAvailable = false;
   }
 
   gameVersionHasChanged(oldVersion: number): boolean {
@@ -97,9 +115,9 @@ export class Attack {
   }
 
   async superShroom(): Promise<void> {
-    const startingVersion = getGameVersion();
-
     const growthFactor = 1.25;
+
+    const startingVersion = getGameVersion();
 
     const originalHeight = this.ownPaddle.height;
     const originalY = this.ownPaddle.y;
@@ -110,8 +128,6 @@ export class Attack {
     this.ownPaddle.setHeight(boostedHeight);
     this.ownPaddle.setY(originalY - yOffset);
 
-    await wait(this.attackDuration);
-
     if (!this.gameVersionHasChanged(startingVersion)) {
       const newOriginalY = this.ownPaddle.y;
       this.ownPaddle.setHeight(originalHeight);
@@ -119,9 +135,27 @@ export class Attack {
     }
   }
 
-  //TODO: Draw On Canvas
   async eggBarrage(): Promise<void> {
+    let fakeEggNumber = 5;
+
+    const startingVersion = getGameVersion();
+
+    for (let i = 0; i < fakeEggNumber; i++) {
+      let fakeBall = new Ball(
+        Math.random() * 0.5 * CANVAS_WIDTH + 0.25 * CANVAS_WIDTH,
+        Math.random() * 0.5 * CANVAS_HEIGHT + 0.25 * CANVAS_HEIGHT,
+        BALL_RADIUS,
+        this.ball.speedX * (Math.random() > 0.5 ? 1 : -1),
+        this.ball.speedY * (Math.random() > 0.5 ? 1 : -1),
+      );
+      fakeBalls.push(fakeBall);
+    }
+
     await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      for (let i = 0; i < fakeEggNumber; i++) fakeBalls.shift();
+    }
   }
 
   async spinDash(): Promise<void> {
