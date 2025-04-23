@@ -7,6 +7,7 @@ import type { gameType } from '../game/gameSettings/gameSettings.types.js';
 
 import {
   getGameType,
+  createBackgroundLoop,
   createCharacterLoop,
   setGameSettings,
   getGameSettings,
@@ -36,6 +37,16 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
+  // Toggle second player
+  const player2Settings = document.getElementById('player-2-settings');
+  if (player2Settings) player2Settings.classList.add('hidden');
+  else console.warn('Player 2 Settings not found.');
+
+  const backgroundSettings = document.getElementById('board-settings-content');
+
+  if (backgroundSettings) backgroundSettings.classList.add('hidden');
+  else console.warn('Background Settings not found.');
+
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
   if (gameType === 'Crazy Pong') {
     // Unhides character selection
@@ -43,14 +54,19 @@ export async function initializeView(): Promise<void> {
     if (characterSelect1) characterSelect1.classList.remove('hidden');
     else console.warn('Character Select 1 not found.');
 
+    const characterSelect2 = document.getElementById('player-2-character');
+    if (characterSelect2) characterSelect2.classList.remove('hidden');
+    else console.warn('Character Select 2 not found.');
+
     // Creates character loop (for both players)
     createCharacterLoop();
+    createCharacterLoop(2);
   }
 
   const playButton = document.getElementById('play-button');
   if (playButton) {
     playButton.addEventListener('click', () => {
-      setGameSettings(gameType, 'Remote Play');
+      setGameSettings(gameType, 'Local Play');
       loadView('game-page');
       if (gameType === 'Crazy Pong')
         updateHUD(getGameSettings().character1, getGameSettings().character2);
