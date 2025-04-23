@@ -1,7 +1,11 @@
 import type { gameSettings } from '../gameSettings/gameSettings.types.js';
 
 export function initializeRemoteGame(gameSettings: gameSettings) {
-  console.log('Hi from remote Game');
-  console.log("Here's the game settings:");
-  console.log(gameSettings);
+  const webSocket = new WebSocket('wss://padaria.42.pt/ws');
+
+  const serializedGameSettings = JSON.stringify(gameSettings);
+
+  webSocket.onopen = (event) => {
+    webSocket.send(serializedGameSettings);
+  };
 }
