@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { prisma } from '../utils/prisma';
-import { handleError } from '../utils/errorHandler';
+import { prisma } from '../../utils/prisma';
+import { handleError } from '../../utils/errorHandler';
 import { Character, TournamentStatus } from '@prisma/client';
-import { defaultGameSettings } from '../utils/defaults';
+import { defaultGameSettings } from '../../utils/defaults';
 import {
   createTournamentParticipant,
   createTournamentByPlayer,

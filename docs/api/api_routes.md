@@ -4,6 +4,7 @@
 | -------- | -------------------------- | :-----------------: | :------------------------------------------: | ------------------------------------------ |
 | `GET`    | `/`                        |                     |                                              | Base route for test                        |
 | `GET`    | `/users`                   |                     |                                              | Get all users                              |
+| `GET`    | `/users/me`                |                     |                                              | Get own user                               |
 | `GET`    | `/users/:id`               |    `id` user id     |                                              | Get a specific user                        |
 | `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                          |
 | `PATCH`  | `/users/:id`               |    `id` user id     |                data to update                | Update data on a specific user             |
@@ -42,6 +43,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 - **Get all users (Protected):** `GET /users`
 - **Get a specific user:** `GET /users/:id`
+- **Get own user:** `GET /users/me`
 - **Create a new user:** `POST /users`
 
 ```json

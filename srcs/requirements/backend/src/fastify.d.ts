@@ -8,6 +8,7 @@ declare global {
 }
 
 type JwtUserPayload = {
+  id: string;
   email: string;
   username: string;
 }

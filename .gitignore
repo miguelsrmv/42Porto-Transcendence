@@ -5,5 +5,8 @@ dev.db
 srcs/requirements/frontend/dist/
 
 /secrets
+
+*.log
 blockchain_address.txt
-deploy.log
+**/output/
+settings.json
