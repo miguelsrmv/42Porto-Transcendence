@@ -52,6 +52,15 @@ export async function adjustHeader(view: string) {
         .join(' ');
     }
 
+    const meData = await fetch('/api/users/me', {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    const data = meData.json();
+
+    console.log(data);
+
     const headerUserName = header.querySelector('#player-name') as HTMLElement;
     if (headerUserName) {
       headerUserName.innerText = 'FAZ_A_API_DAVID';
