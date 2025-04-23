@@ -1,8 +1,9 @@
 import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
-import { checkWallCollision, checkPaddleCollision, checkGoal } from './collisions.js';
+import { checkWallCollision, checkPaddleCollision, checkGoal, checkFakeBallWallCollision, } from './collisions.js';
 import { Player } from './player.js';
+import { activatePowerBarAnimation, deactivatePowerBarAnimation } from './animations.js';
 export const SPEED = 5;
 export const CANVAS_HEIGHT = 720;
 export const CANVAS_WIDTH = 1200;
@@ -13,6 +14,7 @@ export const BALL_RADIUS = 10;
 let rightPaddle;
 let leftPaddle;
 let ball;
+export let fakeBalls = [];
 let leftPlayer;
 let rightPlayer;
 export var gameState;
@@ -66,14 +68,15 @@ function setPaddles(gameSettings) {
     rightPaddle = new Paddle(PADDLE_WID, PADDLE_LEN, gameSettings.paddleColour2, CANVAS_WIDTH - 20, PADDLE_START_Y_POS);
 }
 function setPlayers(leftPaddle, rightPaddle, ball, gameSettings) {
-    leftPlayer = new Player(leftPaddle, rightPaddle, ball, gameSettings.alias1, gameSettings.character1?.attack);
-    rightPlayer = new Player(rightPaddle, leftPaddle, ball, gameSettings.alias2, gameSettings.character2?.attack);
-    function setPowerUpBar(player, side) {
-        const PlayerBar = document.getElementById(`${side}-character-power-bar-fill`);
+    leftPlayer = new Player(leftPaddle, rightPaddle, ball, gameSettings.alias1, gameSettings.character1?.attack, 'left');
+    rightPlayer = new Player(rightPaddle, leftPaddle, ball, gameSettings.alias2, gameSettings.character2?.attack, 'right');
+    function setPowerUpBar(player) {
+        const PlayerBar = document.getElementById(`${player.side}-character-power-bar-fill`);
         if (!PlayerBar) {
-            console.warn(`${side} player bar not found`);
+            console.warn(`${player.side} player bar not found`);
             return;
         }
+        let filledAnimationIsOn = false;
         window.setInterval(() => {
             if (player.attack && myGameArea.state === gameState.playing) {
                 const lastUsed = player.attack.lastUsed;
@@ -81,13 +84,24 @@ function setPlayers(leftPaddle, rightPaddle, ball, gameSettings) {
                 const currentTime = Date.now();
                 const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
                 PlayerBar.style.width = `${percentage}%`;
-                if (percentage == 100)
+                if (percentage == 100) {
                     player.attack.attackIsAvailable = true;
+                    if (!filledAnimationIsOn) {
+                        activatePowerBarAnimation(`${player.side}`);
+                        filledAnimationIsOn = true;
+                    }
+                }
+                else {
+                    if (filledAnimationIsOn) {
+                        deactivatePowerBarAnimation(`${player.side}`);
+                        filledAnimationIsOn = false;
+                    }
+                }
             }
         }, 20);
     }
-    setPowerUpBar(leftPlayer, 'left');
-    setPowerUpBar(rightPlayer, 'right');
+    setPowerUpBar(leftPlayer);
+    setPowerUpBar(rightPlayer);
 }
 export function initializeGame(gameSettings) {
     const pongPage = document.getElementById('game-container');
@@ -97,7 +111,7 @@ export function initializeGame(gameSettings) {
     }
     updateBackground(gameSettings.background);
     setPaddles(gameSettings);
-    ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
+    ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
     setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
     myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer);
     // TODO: Look into event listeners for back/foward/reload
@@ -111,17 +125,20 @@ async function updateGameArea() {
     leftPaddle.update();
     rightPaddle.update();
     ball.move();
+    fakeBalls.forEach((fakeBall) => fakeBall.move());
     if (!myGameArea.canvas) {
         console.error('Error getting canvas element!');
         return;
     }
     checkWallCollision(ball, myGameArea);
+    fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall, myGameArea));
     checkPaddleCollision(ball, leftPaddle, rightPaddle);
     await checkGoal(leftPlayer, rightPlayer, myGameArea);
     if (myGameArea.context) {
         leftPaddle.draw(myGameArea.context);
         rightPaddle.draw(myGameArea.context);
         ball.draw(myGameArea.context);
+        fakeBalls.forEach((fakeBall) => fakeBall.draw(myGameArea.context));
     }
 }
 function updateBackground(background) {
@@ -132,6 +149,9 @@ function updateBackground(background) {
 }
 export function getGameVersion() {
     return leftPlayer.getScore() + rightPlayer.getScore();
+}
+export function getGameArea() {
+    return myGameArea;
 }
 export function paintScore(side, score) {
     const emptyScorePoint = document.getElementById(`${side}-score-card-${score}`);

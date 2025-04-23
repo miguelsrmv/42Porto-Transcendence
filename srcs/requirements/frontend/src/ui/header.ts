@@ -52,20 +52,13 @@ export async function adjustHeader(view: string) {
         .join(' ');
     }
 
+    if (!window.localStorage.getItem('Username')) await fetchUserData();
+
     const headerUserName = header.querySelector('#player-name') as HTMLElement;
     if (headerUserName) {
-      headerUserName.innerText = 'FAZ_A_API_DAVID';
-      // TODO: Change this when API is created
-      // try {
-      //   const userNameResponse = await fetch('/api/users/XXXXXXXXXXXXX', {
-      //     method: 'GET',
-      //     credentials: 'include',
-      //   });
-      //   const userName = await userNameResponse.json();
-      //   headerUserName.innerText = userName;
-      // } catch (error) {
-      //   console.error('Acquiring username failed: ', error);
-      // }
+      headerUserName.innerText = window.localStorage.getItem('Username') as string;
+    } else {
+      console.error('Acquiring username failed');
     }
 
     // Shows back button if not on main page
@@ -79,4 +72,17 @@ export async function adjustHeader(view: string) {
       };
     }
   }
+}
+
+async function fetchUserData() {
+  const response = await fetch('/api/users/me', {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  let responsejson = await response.json();
+
+  window.localStorage.setItem('Username', responsejson.username);
+  window.localStorage.setItem('Email', responsejson.email);
+  window.localStorage.setItem('ID', responsejson.id);
 }
