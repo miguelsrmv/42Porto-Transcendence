@@ -12,14 +12,14 @@ export class Ball {
   speedX: number;
   speedY: number;
 
-  constructor(x: number, y: number, radius: number, speed: number) {
+  constructor(x: number, y: number, radius: number, speedX: number, speedY: number) {
     this.x = x;
     this.y = y;
     this.previousX = x;
     this.previousY = y;
     this.radius = radius;
-    this.speedX = speed;
-    this.speedY = speed;
+    this.speedX = speedX;
+    this.speedY = speedY;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {

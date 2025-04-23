@@ -18,6 +18,7 @@ export async function logoutUser() {
       method: 'DELETE',
       credentials: 'include',
     });
+    window.localStorage.clear();
   } catch (error) {
     console.error('Logout failed: ', error);
   }

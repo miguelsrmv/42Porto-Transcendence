@@ -8,14 +8,14 @@ export class Ball {
     radius;
     speedX;
     speedY;
-    constructor(x, y, radius, speed) {
+    constructor(x, y, radius, speedX, speedY) {
         this.x = x;
         this.y = y;
         this.previousX = x;
         this.previousY = y;
         this.radius = radius;
-        this.speedX = speed;
-        this.speedY = speed;
+        this.speedX = speedX;
+        this.speedY = speedY;
     }
     draw(ctx) {
         ctx.beginPath();
