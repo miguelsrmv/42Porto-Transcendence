@@ -22,7 +22,11 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.post('/login', { schema: loginSchema }, login);
   fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
-  fastify.get('/:id', { schema: getByIdSchema }, getUserById);
+  fastify.get<{ Params: IParams }>(
+    '/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    getUserById,
+  );
   fastify.patch('/:id', { schema: updateUserSchema }, updateUser);
   fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
 }
