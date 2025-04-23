@@ -98,7 +98,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { email: request.body.email },
-      select: { username: true, email: true, hashedPassword: true, salt: true },
+      select: { id: true, username: true, email: true, hashedPassword: true, salt: true },
     });
 
     const isMatch = verifyPassword({
@@ -112,10 +112,9 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
     }
 
     const token = request.server.jwt.sign({
-      payload: {
-        email: user.email,
-        userName: user.username,
-      },
+      id: user.id,
+      email: user.email,
+      userName: user.username,
     });
 
     reply.setCookie('access_token', token, {
