@@ -6,6 +6,7 @@ import type { GameArea } from './types.js';
 import type { gameSettings, playType, gameType } from '../gameSettings/gameSettings.types.js';
 import type { background } from '../backgroundData/backgroundData.types.js';
 import { Player } from './player.js';
+import { activatePowerBarAnimation, deactivatePowerBarAnimation } from './animations.js';
 
 export const SPEED = 5;
 export const CANVAS_HEIGHT = 720;
@@ -126,6 +127,8 @@ function setPlayers(
       return;
     }
 
+    let filledAnimationIsOn = false;
+
     window.setInterval(() => {
       if (player.attack && myGameArea.state === gameState.playing) {
         const lastUsed: number = player.attack.lastUsed;
@@ -135,7 +138,18 @@ function setPlayers(
         const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
         PlayerBar.style.width = `${percentage}%`;
 
-        if (percentage == 100) player.attack.attackIsAvailable = true;
+        if (percentage == 100) {
+          player.attack.attackIsAvailable = true;
+          if (!filledAnimationIsOn) {
+            activatePowerBarAnimation(`${player.side}`);
+            filledAnimationIsOn = true;
+          }
+        } else {
+          if (filledAnimationIsOn) {
+            deactivatePowerBarAnimation(`${player.side}`);
+            filledAnimationIsOn = false;
+          }
+        }
       }
     }, 20);
   }
