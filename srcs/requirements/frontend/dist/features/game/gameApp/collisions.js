@@ -1,5 +1,5 @@
 import { wait } from '../../../utils/helpers.js';
-import { gameState, SPEED, paintScore } from './game.js';
+import { gameState, SPEED, paintScore, fakeBalls } from './game.js';
 import { scoreAnimation } from './animations.js';
 // Checks if ball reached horizontal canvas limits
 export function checkWallCollision(ball, gameArea) {
@@ -9,6 +9,18 @@ export function checkWallCollision(ball, gameArea) {
     }
     if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
         ball.bounceVertical();
+    }
+}
+export function checkFakeBallWallCollision(ball, gameArea) {
+    if (!gameArea.canvas) {
+        console.error('Error getting canvas element!');
+        return;
+    }
+    if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
+        ball.bounceVertical();
+    }
+    if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= gameArea.canvas.width) {
+        ball.bounceHorizontal();
     }
 }
 // TODO: Get winning score from settings ?
@@ -101,6 +113,7 @@ async function resetRound(leftPlayer, rightPlayer, gameArea) {
     leftPlayer.ball.reset();
     leftPlayer.ownPaddle.reset();
     rightPlayer.ownPaddle.reset();
+    fakeBalls.splice(0, fakeBalls.length);
     gameArea.inputHandler?.disable();
     window.dispatchEvent(pauseEvent);
     gameArea.state = gameState.paused;
