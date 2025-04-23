@@ -7,15 +7,20 @@ import type { gameType } from '../game/gameSettings/gameSettings.types.js';
 
 import {
   getGameType,
-  createBackgroundLoop,
   createCharacterLoop,
   setGameSettings,
+  getGameSettings,
+  updateHUD,
 } from '../game/gameSetup.js';
 
+import { initializeRemoteGame } from '../game/remoteGameApp/remoteGame.js';
+
+import { loadView } from '../../core/viewLoader.js';
+
 /**
- * @brief Initializes view for remote play
+ * @brief Initializes view for local play
  *
- * This function sets up the pre-game page for remote play
+ * This function sets up the pre-game page for local play
  */
 export async function initializeView(): Promise<void> {
   // Gets Classic or Crazy Pong
@@ -30,16 +35,6 @@ export async function initializeView(): Promise<void> {
   const gameSettingsMenu = document.getElementById('game-settings-menu');
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
-
-  // Hidens Player 2 settings
-  const player2Settings = document.getElementById('player-2-settings');
-  if (player2Settings) player2Settings.classList.add('hidden');
-  else console.warn('Player 2 settings menu not found');
-
-  // Hides background settings
-  const backgroundSettings = document.getElementById('board-settings-content');
-  if (backgroundSettings) backgroundSettings.classList.add('hidden');
-  else console.warn('Background settings menu not found');
 
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
   if (gameType === 'Crazy Pong') {
@@ -56,7 +51,10 @@ export async function initializeView(): Promise<void> {
   if (playButton) {
     playButton.addEventListener('click', () => {
       setGameSettings(gameType, 'Remote Play');
-      window.location.hash = 'game-page';
+      loadView('game-page');
+      if (gameType === 'Crazy Pong')
+        updateHUD(getGameSettings().character1, getGameSettings().character2);
+      initializeRemoteGame(getGameSettings());
     });
   } else console.warn('Play Button not found');
 }
