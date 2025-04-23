@@ -1,7 +1,8 @@
 import { wait } from '../../../utils/helpers.js';
-import { gameState, SPEED, paintScore } from './game.js';
+import { gameState, SPEED, paintScore, fakeBalls } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
+import { scoreAnimation } from '../animations/animations.js';
 
 interface Ball {
   x: number;
@@ -34,6 +35,19 @@ export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
   }
 }
 
+export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void {
+  if (!gameArea.canvas) {
+    console.error('Error getting canvas element!');
+    return;
+  }
+  if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
+    ball.bounceVertical();
+  }
+  if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= gameArea.canvas.width) {
+    ball.bounceHorizontal();
+  }
+}
+
 // TODO: Get winning score from settings ?
 function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
@@ -45,7 +59,6 @@ function endGame(winningPlayer: Player, gameArea: GameArea) {
 }
 
 // Checks if ball reached vertical canvas limits
-// TODO: Paint scores in HTML
 export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
@@ -54,11 +67,13 @@ export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameAre
   if (leftPlayer.ball.x - leftPlayer.ball.radius <= 0) {
     rightPlayer.increaseScore();
     paintScore('right', rightPlayer.getScore());
+    scoreAnimation('right');
     console.log(`Right player now has: ${rightPlayer.getScore()} points`);
     await resetRound(leftPlayer, rightPlayer, gameArea);
   } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
     leftPlayer.increaseScore();
     paintScore('left', leftPlayer.getScore());
+    scoreAnimation('left');
     console.log(`Left player now has: ${leftPlayer.getScore()} points`);
     await resetRound(leftPlayer, rightPlayer, gameArea);
   }
@@ -130,15 +145,18 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
   }
 
   const pauseEvent = new CustomEvent('paused');
+  const beforeTime = Date.now();
   leftPlayer.ball.reset();
   leftPlayer.ownPaddle.reset();
   rightPlayer.ownPaddle.reset();
+  fakeBalls.splice(0, fakeBalls.length);
   gameArea.inputHandler?.disable();
   window.dispatchEvent(pauseEvent);
   gameArea.state = gameState.paused;
   await wait(2);
-  leftPlayer.attack?.reset();
-  rightPlayer.attack?.reset();
+  const newTime = Date.now();
+  leftPlayer.attack?.reset(beforeTime, newTime);
+  rightPlayer.attack?.reset(beforeTime, newTime);
   gameArea.inputHandler?.enable();
   gameArea.state = gameState.playing;
   leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);

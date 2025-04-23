@@ -127,7 +127,8 @@ function toggleLoginMenu(): void {
         loginButton.addEventListener('click', function (event) {
           attemptLogin.call(loginForm as HTMLFormElement, event);
         });
-        loginFormListenerAttached = true;
+        //loginFormListenerAttached = true;
+        //TODO: Check if this is a bug or not?
       }
     }
 

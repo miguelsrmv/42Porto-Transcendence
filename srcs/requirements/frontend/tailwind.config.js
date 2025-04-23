@@ -4,7 +4,14 @@ module.exports = {
     './static/index.html', // or wherever your HTML files are located
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        pulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+        },
+      },
+    },
   },
   safelist: [
     'bg-red-500',
@@ -24,5 +31,6 @@ module.exports = {
     'bg-orange-500',
     'border-orange-500',
   ],
+
   plugins: [require('tailwindcss-textshadow')],
 };
