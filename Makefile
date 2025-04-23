@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mde-sa-- <mde-sa--@student.42porto.com>    +#+  +:+       +#+         #
+#    By: damachad <damachad@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/03 14:09:04 by mde-sa--          #+#    #+#              #
-#    Updated: 2025/02/03 14:09:14 by mde-sa--         ###   ########.fr        #
+#    Updated: 2025/04/15 17:49:24 by damachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,7 +72,10 @@ bc_clean:
 	$(COMPOSE) rm -sf blockchain
 	@docker rmi -f blockchain || true
 
+db_reset:
+	@docker exec -it backend sh -c "npm run populate"
+
 test: 
 	@./docs/scripts/build_dockerfile_test.sh  #Tests build
 
-.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test 
+.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test db_reset

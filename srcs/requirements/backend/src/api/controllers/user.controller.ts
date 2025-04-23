@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { prisma } from '../utils/prisma';
-import { verifyPassword } from '../utils/hash';
-import { handleError } from '../utils/errorHandler';
+import { prisma } from '../../utils/prisma';
+import { verifyPassword } from '../../utils/hash';
+import { handleError } from '../../utils/errorHandler';
 
 export type UserCreate = {
   username: string;
@@ -138,4 +138,18 @@ export async function checkLoginStatus(request: FastifyRequest, reply: FastifyRe
 export async function logout(request: FastifyRequest, reply: FastifyReply) {
   reply.clearCookie('access_token');
   reply.send({ message: 'Logout successful!' });
+}
+
+export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const userId = request.user.id;
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { id: true, username: true, email: true },
+    });
+
+    reply.send(user);
+  } catch (error) {
+    handleError(error, reply);
+  }
 }

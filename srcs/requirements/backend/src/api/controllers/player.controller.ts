@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { prisma } from '../utils/prisma';
-import { handleError } from '../utils/errorHandler';
+import { prisma } from '../../utils/prisma';
+import { handleError } from '../../utils/errorHandler';
 import { getPlayerClassicStats, getPlayerCustomStats } from '../services/player.services';
 
 type PlayerUpdate = {
