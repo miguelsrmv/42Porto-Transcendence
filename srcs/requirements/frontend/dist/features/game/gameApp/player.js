@@ -6,13 +6,15 @@ export class Player {
     alias;
     score;
     attack;
-    constructor(ownPaddle, enemyPaddle, ball, alias, attackName) {
+    side;
+    constructor(ownPaddle, enemyPaddle, ball, alias, attackName, side) {
         this.ownPaddle = ownPaddle;
         this.enemyPaddle = enemyPaddle;
         this.ball = ball;
         this.alias = alias;
         this.score = 0;
-        this.attack = new Attack(attackName, ownPaddle, enemyPaddle, ball);
+        this.attack = new Attack(attackName, ownPaddle, enemyPaddle, ball, side);
+        this.side = side;
     }
     increaseScore() {
         ++this.score;
