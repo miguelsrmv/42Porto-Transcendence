@@ -78,7 +78,7 @@ backend/
 
 ## TODOs
 
-- Add user id to JWT and route to get user data
+- Install fastify-type-provider-typebox and remove zod (change logic)
 - Improve error messages and object sent to frontend
 
 - Test edge cases
