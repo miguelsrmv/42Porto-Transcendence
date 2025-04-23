@@ -1,21 +1,24 @@
 import { wait } from '../../../utils/helpers.js';
 import { getGameVersion } from './game.js';
+import { powerUpAnimation } from './animations.js';
 export class Attack {
     ownPaddle;
     enemyPaddle;
     ball;
     attackName;
+    side;
     lastUsed;
     attackIsAvailable;
     activeAttack;
     attackDuration;
     attackCooldown;
     attackMap;
-    constructor(attackName, ownPaddle, enemyPaddle, ball) {
+    constructor(attackName, ownPaddle, enemyPaddle, ball, side) {
         this.ownPaddle = ownPaddle;
         this.enemyPaddle = enemyPaddle;
         this.ball = ball;
         this.attackName = attackName;
+        this.side = side;
         this.lastUsed = Date.now();
         this.attackIsAvailable = false;
         this.attackMap = {
@@ -68,12 +71,13 @@ export class Attack {
         if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable)
             return;
         this.lastUsed = Date.now();
+        powerUpAnimation(this.side);
         this.activeAttack();
         this.attackIsAvailable = false;
     }
-    reset() {
-        this.lastUsed = Date.now();
-        this.attackIsAvailable = false;
+    reset(beforeTime, newTime) {
+        this.lastUsed += newTime - beforeTime;
+        //this.attackIsAvailable = false;
     }
     gameVersionHasChanged(oldVersion) {
         return oldVersion !== getGameVersion() ? true : false;
@@ -87,7 +91,6 @@ export class Attack {
         const yOffset = (boostedHeight - originalHeight) / 2;
         this.ownPaddle.setHeight(boostedHeight);
         this.ownPaddle.setY(originalY - yOffset);
-        await wait(this.attackDuration);
         if (!this.gameVersionHasChanged(startingVersion)) {
             const newOriginalY = this.ownPaddle.y;
             this.ownPaddle.setHeight(originalHeight);
