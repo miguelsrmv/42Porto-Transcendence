@@ -1,5 +1,5 @@
 import { wait } from '../../../utils/helpers.js';
-import { gameState, SPEED, paintScore } from './game.js';
+import { gameState, SPEED, paintScore, fakeBalls } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
 import { scoreAnimation } from './animations.js';
@@ -32,6 +32,19 @@ export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
   }
   if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
     ball.bounceVertical();
+  }
+}
+
+export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void {
+  if (!gameArea.canvas) {
+    console.error('Error getting canvas element!');
+    return;
+  }
+  if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
+    ball.bounceVertical();
+  }
+  if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= gameArea.canvas.width) {
+    ball.bounceHorizontal();
   }
 }
 
@@ -136,6 +149,7 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
   leftPlayer.ball.reset();
   leftPlayer.ownPaddle.reset();
   rightPlayer.ownPaddle.reset();
+  fakeBalls.splice(0, fakeBalls.length);
   gameArea.inputHandler?.disable();
   window.dispatchEvent(pauseEvent);
   gameArea.state = gameState.paused;

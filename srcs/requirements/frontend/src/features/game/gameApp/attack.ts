@@ -1,7 +1,14 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
-import { getGameVersion } from './game.js';
+import {
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  BALL_RADIUS,
+  SPEED,
+  getGameVersion,
+  fakeBalls,
+} from './game.js';
 import type { attackIdentifier } from '../characterData/characterData.types.js';
 import { powerUpAnimation } from './animations.js';
 
@@ -108,9 +115,9 @@ export class Attack {
   }
 
   async superShroom(): Promise<void> {
-    const startingVersion = getGameVersion();
-
     const growthFactor = 1.25;
+
+    const startingVersion = getGameVersion();
 
     const originalHeight = this.ownPaddle.height;
     const originalY = this.ownPaddle.y;
@@ -128,9 +135,27 @@ export class Attack {
     }
   }
 
-  //TODO: Draw On Canvas
   async eggBarrage(): Promise<void> {
+    let fakeEggNumber = 5;
+
+    const startingVersion = getGameVersion();
+
+    for (let i = 0; i < fakeEggNumber; i++) {
+      let fakeBall = new Ball(
+        Math.random() * 0.5 * CANVAS_WIDTH + 0.25 * CANVAS_WIDTH,
+        Math.random() * 0.5 * CANVAS_HEIGHT + 0.25 * CANVAS_HEIGHT,
+        BALL_RADIUS,
+        this.ball.speedX * (Math.random() > 0.5 ? 1 : -1),
+        this.ball.speedY * (Math.random() > 0.5 ? 1 : -1),
+      );
+      fakeBalls.push(fakeBall);
+    }
+
     await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      for (let i = 0; i < fakeEggNumber; i++) fakeBalls.shift();
+    }
   }
 
   async spinDash(): Promise<void> {

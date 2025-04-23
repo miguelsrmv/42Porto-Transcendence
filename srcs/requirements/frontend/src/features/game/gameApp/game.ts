@@ -1,7 +1,12 @@
 import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
-import { checkWallCollision, checkPaddleCollision, checkGoal } from './collisions.js';
+import {
+  checkWallCollision,
+  checkPaddleCollision,
+  checkGoal,
+  checkFakeBallWallCollision,
+} from './collisions.js';
 import type { GameArea } from './types.js';
 import type { gameSettings, playType, gameType } from '../gameSettings/gameSettings.types.js';
 import type { background } from '../backgroundData/backgroundData.types.js';
@@ -19,6 +24,7 @@ export const BALL_RADIUS = 10;
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
+export let fakeBalls: Ball[] = [];
 let leftPlayer: Player;
 let rightPlayer: Player;
 
@@ -167,7 +173,7 @@ export function initializeGame(gameSettings: gameSettings): void {
 
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
-  ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
+  ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
   myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer);
   // TODO: Look into event listeners for back/foward/reload
@@ -184,19 +190,23 @@ async function updateGameArea() {
   leftPaddle.update();
   rightPaddle.update();
   ball.move();
+  fakeBalls.forEach((fakeBall) => fakeBall.move());
 
   if (!myGameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
   checkWallCollision(ball, myGameArea);
+  fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall, myGameArea));
   checkPaddleCollision(ball, leftPaddle, rightPaddle);
+
   await checkGoal(leftPlayer, rightPlayer, myGameArea);
 
   if (myGameArea.context) {
     leftPaddle.draw(myGameArea.context);
     rightPaddle.draw(myGameArea.context);
     ball.draw(myGameArea.context);
+    fakeBalls.forEach((fakeBall) => fakeBall.draw(myGameArea.context as CanvasRenderingContext2D));
   }
 }
 
@@ -208,6 +218,10 @@ function updateBackground(background: background | null) {
 
 export function getGameVersion(): number {
   return leftPlayer.getScore() + rightPlayer.getScore();
+}
+
+export function getGameArea(): GameArea {
+  return myGameArea;
 }
 
 export function paintScore(side: string, score: number): void {

@@ -1,7 +1,7 @@
 import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
-import { checkWallCollision, checkPaddleCollision, checkGoal } from './collisions.js';
+import { checkWallCollision, checkPaddleCollision, checkGoal, checkFakeBallWallCollision, } from './collisions.js';
 import { Player } from './player.js';
 import { activatePowerBarAnimation, deactivatePowerBarAnimation } from './animations.js';
 export const SPEED = 5;
@@ -14,6 +14,7 @@ export const BALL_RADIUS = 10;
 let rightPaddle;
 let leftPaddle;
 let ball;
+export let fakeBalls = [];
 let leftPlayer;
 let rightPlayer;
 export var gameState;
@@ -110,7 +111,7 @@ export function initializeGame(gameSettings) {
     }
     updateBackground(gameSettings.background);
     setPaddles(gameSettings);
-    ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED);
+    ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
     setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
     myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer);
     // TODO: Look into event listeners for back/foward/reload
@@ -124,17 +125,20 @@ async function updateGameArea() {
     leftPaddle.update();
     rightPaddle.update();
     ball.move();
+    fakeBalls.forEach((fakeBall) => fakeBall.move());
     if (!myGameArea.canvas) {
         console.error('Error getting canvas element!');
         return;
     }
     checkWallCollision(ball, myGameArea);
+    fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall, myGameArea));
     checkPaddleCollision(ball, leftPaddle, rightPaddle);
     await checkGoal(leftPlayer, rightPlayer, myGameArea);
     if (myGameArea.context) {
         leftPaddle.draw(myGameArea.context);
         rightPaddle.draw(myGameArea.context);
         ball.draw(myGameArea.context);
+        fakeBalls.forEach((fakeBall) => fakeBall.draw(myGameArea.context));
     }
 }
 function updateBackground(background) {
@@ -145,6 +149,9 @@ function updateBackground(background) {
 }
 export function getGameVersion() {
     return leftPlayer.getScore() + rightPlayer.getScore();
+}
+export function getGameArea() {
+    return myGameArea;
 }
 export function paintScore(side, score) {
     const emptyScorePoint = document.getElementById(`${side}-score-card-${score}`);
