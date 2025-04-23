@@ -20,9 +20,9 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
   fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
   fastify.post('/login', { schema: loginSchema }, login);
+  fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
   fastify.get('/:id', { schema: getByIdSchema }, getUserById);
   fastify.patch('/:id', { schema: updateUserSchema }, updateUser);
   fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
-  fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
 }

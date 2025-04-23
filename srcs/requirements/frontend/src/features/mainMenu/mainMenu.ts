@@ -12,6 +12,12 @@ import { userIsLoggedIn } from '../auth/auth.service.js';
  * This function sets up the main menu, depending on if the user has logged in or not
  */
 export async function initializeView() {
+  const resp = await fetch('/api/users/me', {
+    method: 'GET',
+    credentials: 'include',
+  });
+  console.log(`Resp is ${resp}`);
+
   if (await userIsLoggedIn())
     document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
       showMenuHelperText(anchor);
