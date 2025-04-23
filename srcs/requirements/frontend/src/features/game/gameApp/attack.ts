@@ -263,7 +263,6 @@ export class Attack {
     }
 
     // Temporarily increase border width for emphasis
-    const originalBorderWidth = computedStyle.borderWidth;
     portrait.style.borderWidth = '6px';
 
     // Remove power-up animation class after it completes
