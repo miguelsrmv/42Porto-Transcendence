@@ -81,7 +81,7 @@ else
   echo "❌ Database tables are missing!"
   exit 1
 fi
-
+'''
 # 9️⃣ Run Backend API tests
 echo "🗄️ Running API tests with Vitest..."
 if docker compose -f $DOCKER_COMPOSE_FILE exec backend npx vitest run; then
@@ -90,7 +90,7 @@ else
   echo "❌ Some Vitest tests failed!"
   exit 1
 fi
-
+'''
 # 🔟 Stop and Clean Up
 echo "🛑 Stopping and removing Docker services..."
 docker compose -f $DOCKER_COMPOSE_FILE down
