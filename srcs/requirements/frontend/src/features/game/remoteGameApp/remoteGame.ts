@@ -5,7 +5,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
 
   const serializedLeanGameSettings = JSON.stringify(leanGameSettings);
 
-  // TODO: Also send ID
   webSocket.onopen = (event) => {
     webSocket.send(serializedLeanGameSettings);
   };
