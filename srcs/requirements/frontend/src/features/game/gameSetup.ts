@@ -272,8 +272,6 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   }
 
   settings.background = backgroundList[backgroundIndex];
-
-  console.log(`Settings now are ${JSON.stringify(settings)}`);
 }
 
 /**
