@@ -1,3 +1,11 @@
+// TODO: Add 3-2-1 "Go"
+// TODO: Better win animation
+// TODO: Stop game when back / foward / refresh is clicked
+// TODO: Change ball incidence after paddle ricochet
+// TODO: Add delta time?
+// TODO: Add "If" statements regarding gameType on attack listeners
+// TODO: Edit HTML to fix game dimensions, check if paddles are always correclty drawn afterwards
+
 import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
