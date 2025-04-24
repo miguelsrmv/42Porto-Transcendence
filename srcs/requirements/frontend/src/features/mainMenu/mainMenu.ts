@@ -34,7 +34,13 @@ export async function initializeView() {
       const buttonContainerOverlay = document.getElementById(buttonContainerOverlayId);
 
       if (button) {
-        button.classList.remove('transform', 'transition', 'duration-200', 'hover:scale-105');
+        button.classList.remove(
+          'transform',
+          'transition',
+          'duration-200',
+          'hover:scale-105',
+          'hover:shadow-2xl',
+        );
         button.removeAttribute('href');
         button.removeAttribute('data-target');
         button.classList.add('disabled-button');
