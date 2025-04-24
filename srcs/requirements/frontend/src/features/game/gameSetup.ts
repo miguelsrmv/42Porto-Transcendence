@@ -6,7 +6,12 @@
  * characters, and backgrounds. It also manages user interactions for these selections.
  */
 
-import type { gameType, playType, gameSettings } from './gameSettings/gameSettings.types.js';
+import type {
+  gameType,
+  playType,
+  gameSettings,
+  leanGameSettings,
+} from './gameSettings/gameSettings.types.js';
 import type { character } from './characterData/characterData.types.js';
 import { getCharacterList } from './characterData/characterData.js';
 import { getBackgroundList } from './backgroundData/backgroundData.js';
@@ -270,10 +275,32 @@ export function setGameSettings(gameType: gameType, playType: playType) {
  * This function returns the current configuration of game settings, including game type, play type,
  * player aliases, paddle colors, and character selections.
  *
- * @return The current game settings object.
+ * @return The current game settings object for 2 players.
  */
 export function getGameSettings(): gameSettings {
   return settings as gameSettings;
+}
+
+/**
+ * @brief Retrieves the current game settings for 1-player mode.
+ *
+ * This function returns the current configuration of game settings, including game type, play type,
+ * player alias, paddle colors, and character selections.
+ *
+ * @return The current game settings object for remote play.
+ */
+export function getLeanGameSettings(): leanGameSettings {
+  let fullSettings: gameSettings = getGameSettings();
+
+  let leanGameSettings: leanGameSettings = {
+    playType: fullSettings.playType,
+    gameType: fullSettings.gameType,
+    alias: fullSettings.alias1,
+    paddleColour: fullSettings.paddleColour1,
+    character: fullSettings.character1,
+  };
+
+  return leanGameSettings;
 }
 
 export function updateHUD(
