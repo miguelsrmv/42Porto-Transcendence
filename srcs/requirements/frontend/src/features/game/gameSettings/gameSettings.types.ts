@@ -32,11 +32,26 @@ export type gameType = 'Classic Pong' | 'Crazy Pong';
 export interface gameSettings {
   playType: playType;
   gameType: gameType;
-  alias1?: string;
-  alias2?: string;
+  alias1: string;
+  alias2: string;
   paddleColour1: string;
-  paddleColour2?: string;
-  character1?: character;
-  character2?: character;
+  paddleColour2: string;
+  character1: character | null;
+  character2: character | null;
   background: background;
+}
+
+/**
+ * @brief Initial interface for remote game settings.
+ *
+ * This interface defines the structure for game settings, including play type, game type,
+ * optional player aliases, paddle colors and optional character; it's used to send to the backend
+ */
+export interface leanGameSettings {
+  playerID: string;
+  playType: playType;
+  gameType: gameType;
+  alias: string;
+  paddleColour: string;
+  character: character | null;
 }

@@ -6,7 +6,12 @@
  * characters, and backgrounds. It also manages user interactions for these selections.
  */
 
-import type { gameType, playType, gameSettings } from './gameSettings/gameSettings.types.js';
+import type {
+  gameType,
+  playType,
+  gameSettings,
+  leanGameSettings,
+} from './gameSettings/gameSettings.types.js';
 import type { character } from './characterData/characterData.types.js';
 import { getCharacterList } from './characterData/characterData.js';
 import { getBackgroundList } from './backgroundData/backgroundData.js';
@@ -229,8 +234,8 @@ export function setGameSettings(gameType: gameType, playType: playType) {
 
   const player1InputAlias = document.getElementById('player-1-alias') as HTMLInputElement;
   if (player1InputAlias) {
-    console.log(player1InputAlias.value);
-    settings.alias1 = player1InputAlias.value;
+    const inputValue = player1InputAlias.value.trim();
+    settings.alias1 = inputValue !== '' ? inputValue : 'Player 1';
   } else console.warn('Player 1 alias input form not found');
 
   const player1PaddleColour = document.getElementById(
@@ -243,12 +248,17 @@ export function setGameSettings(gameType: gameType, playType: playType) {
 
   if (settings.gameType === 'Crazy Pong') {
     settings.character1 = characterList[currentCharacterIndex1];
+  } else {
+    settings.character1 = null;
+    settings.character2 = null;
   }
 
   if (settings.playType === 'Local Play') {
     const player2InputAlias = document.getElementById('player-2-alias') as HTMLInputElement;
-    if (player2InputAlias) settings.alias2 = player2InputAlias.value;
-    else console.warn('Player 2 alias input form not found');
+    if (player2InputAlias) {
+      const inputValue2 = player1InputAlias.value.trim();
+      settings.alias2 = inputValue2 !== '' ? inputValue2 : 'Player 2';
+    } else console.warn('Player 2 alias input form not found');
 
     const player2PaddleColour = document.getElementById(
       'player-2-paddle-colour-input',
@@ -270,16 +280,36 @@ export function setGameSettings(gameType: gameType, playType: playType) {
  * This function returns the current configuration of game settings, including game type, play type,
  * player aliases, paddle colors, and character selections.
  *
- * @return The current game settings object.
+ * @return The current game settings object for 2 players.
  */
 export function getGameSettings(): gameSettings {
   return settings as gameSettings;
 }
 
-export function updateHUD(
-  leftCharacter: character | undefined,
-  rightCharacter: character | undefined,
-): void {
+/**
+ * @brief Retrieves the current game settings for 1-player mode.
+ *
+ * This function returns the current configuration of game settings, including game type, play type,
+ * player alias, paddle colors, and character selections.
+ *
+ * @return The current game settings object for remote play.
+ */
+export function getLeanGameSettings(): leanGameSettings {
+  let fullSettings: gameSettings = getGameSettings();
+
+  let leanGameSettings: leanGameSettings = {
+    playerID: window.localStorage.getItem('ID') as string,
+    playType: fullSettings.playType,
+    gameType: fullSettings.gameType,
+    alias: fullSettings.alias1,
+    paddleColour: fullSettings.paddleColour1,
+    character: fullSettings.character1,
+  };
+
+  return leanGameSettings;
+}
+
+export function updateHUD(leftCharacter: character, rightCharacter: character): void {
   const leftCharHUD = document.getElementById('left-character-hud');
   if (leftCharHUD) leftCharHUD.classList.toggle('hidden');
 
