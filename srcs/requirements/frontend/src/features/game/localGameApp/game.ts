@@ -3,7 +3,7 @@
 // TODO: Stop game when back / foward / refresh is clicked
 // FIX: Change ball incidence after paddle ricochet
 // TODO: Add delta time?
-// TODO: Add "If" statements regarding gameType on attack listeners
+// FIX: Add "If" statements regarding gameType on attack listeners
 // TODO: Edit HTML to fix game dimensions, check if paddles are always correclty drawn afterwards
 
 import { Paddle } from './paddle.js';
@@ -24,13 +24,16 @@ import {
   deactivatePowerBarAnimation,
 } from '../animations/animations.js';
 
-export const SPEED = 5;
+export const SPEED = 250;
 export const CANVAS_HEIGHT = 720;
 export const CANVAS_WIDTH = 1200;
 export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
 const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
+
+let lastTime = 0; // Time of the last frame
+let animationFrameId: number | null = null; // To potentially stop the loop
 
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
@@ -54,7 +57,6 @@ export enum gameState {
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
-  interval: undefined,
   inputHandler: null,
   state: gameState.paused,
 
@@ -74,7 +76,7 @@ const myGameArea: GameArea = {
       return;
     }
     this.state = gameState.playing;
-    this.interval = window.setInterval(updateGameArea, 20);
+    animationFrameId = requestAnimationFrame(updateGameArea);
   },
 
   clear() {
@@ -84,11 +86,15 @@ const myGameArea: GameArea = {
   },
 
   stop() {
-    if (this.interval !== undefined) {
-      clearInterval(this.interval);
+    // Stop the animation frame loop
+    if (animationFrameId !== null) {
+      // Check if it's running
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null; // Reset the ID
     }
+
     this.inputHandler?.disable();
-    this.state = gameState.ended;
+    this.state = gameState.ended; // Or paused, depending on desired behavior
   },
 };
 
@@ -186,22 +192,37 @@ export function initializeLocalGame(gameSettings: gameSettings): void {
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
-  myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer);
+  myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer, gameSettings.gameType);
   // TODO: Look into event listeners for back/foward/reload
   //window.addEventListener('beforeunload', () => myGameArea.stop());
   //window.addEventListener('popstate', () => myGameArea.stop());
   myGameArea.start();
 }
 
-async function updateGameArea() {
+async function updateGameArea(currentTime: number) {
+  // Request the next frame immediately. If we need to stop, we cancel this ID.
+  animationFrameId = requestAnimationFrame(updateGameArea);
+
+  // Calculate deltaTime in seconds
+  // Use performance.now() for high-resolution time
+  if (lastTime === 0) {
+    lastTime = currentTime; // Initialize lastTime on the first frame
+  }
+  const deltaTime = (currentTime - lastTime) / 1000; // Delta time in seconds
+  lastTime = currentTime; // Update lastTime for the next frame
+
+  // --- Optional: Cap deltaTime to prevent large jumps if tab loses focus ---
+  const maxDeltaTime = 0.1; // e.g., cap at 100ms (1/10th second)
+  const dt = Math.min(deltaTime, maxDeltaTime); // Use 'dt' for updates
+
   myGameArea.clear();
 
   handleInput(leftPlayer, rightPlayer, myGameArea.state);
 
-  leftPaddle.update();
-  rightPaddle.update();
-  ball.move();
-  fakeBalls.forEach((fakeBall) => fakeBall.move());
+  leftPaddle.update(dt);
+  rightPaddle.update(dt);
+  ball.move(dt);
+  fakeBalls.forEach((fakeBall) => fakeBall.move(dt));
 
   if (!myGameArea.canvas) {
     console.error('Error getting canvas element!');

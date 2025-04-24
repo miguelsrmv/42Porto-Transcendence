@@ -1,5 +1,6 @@
 import { gameState, SPEED } from './game.js';
 import { Player } from './player.js';
+import type { gameType } from '../gameSettings/gameSettings.types.js';
 
 // Track key states
 const keys: Record<string, boolean> = {};
@@ -11,11 +12,11 @@ function resetKeys() {
 }
 
 // Add event listeners for keydown and keyup events
-export function setupInput(leftPlayer: Player, rightPlayer: Player) {
+export function setupInput(leftPlayer: Player, rightPlayer: Player, gameType: gameType) {
   const keyDownHandler = (e: KeyboardEvent) => {
-    if (e.key === ' ') {
+    if (e.key === ' ' && gameType === 'Crazy Pong') {
       leftPlayer.attack?.attack();
-    } else if (e.key === 'Enter') {
+    } else if (e.key === 'Enter' && gameType === 'Crazy Pong') {
       rightPlayer.attack?.attack();
     } else {
       keys[e.key] = true;
