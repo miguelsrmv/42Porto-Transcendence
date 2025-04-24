@@ -53,18 +53,23 @@ export class Ball {
     );
 
     // --- 2. Calculate Bounce Angle ---
-    const maxBounceAngle = (75 * Math.PI) / 180; // 75 degrees in radians
+    const maxBounceAngle = (60 * Math.PI) / 180; // 60 degrees in radians, correspondes to maximum steepness
     const bounceAngle = normalizedRelativeIntersectionY * maxBounceAngle;
 
-    // --- 3. Calculate Speed Magnitude (No Increase) ---
+    // --- 3. Calculate Speed Magnitude (10% overall speed increase) ---
     const speed = Math.sqrt(this.speedX ** 2 + this.speedY ** 2);
+    const newSpeed = speed * 1.1;
 
     // --- 4. Determine Outgoing Horizontal Direction ---
     const newSpeedXSign = this.speedX > 0 ? -1 : 1;
 
     // --- 5. Set New Velocities ---
-    this.speedX = newSpeedXSign * speed * Math.cos(bounceAngle);
-    this.speedY = speed * Math.sin(bounceAngle); // Sign now correctly determined by bounceAngle
+    this.speedX = newSpeedXSign * newSpeed * Math.cos(bounceAngle);
+    this.speedY = newSpeed * Math.sin(bounceAngle); // Sign now correctly determined by bounceAngle
+  }
+
+  bounceHorizontalFakeBall(): void {
+    this.speedX *= -1; // Reverse horizontal direction
   }
 
   bounceVertical(): void {
