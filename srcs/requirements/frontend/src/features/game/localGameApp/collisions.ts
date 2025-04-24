@@ -28,25 +28,35 @@ import { Paddle } from './paddle.js';
 
 // Checks if ball reached horizontal canvas limits
 export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
+  const nudgeAmount = 1;
+
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
   if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
     ball.bounceVertical();
+    if (ball.y - ball.radius <= 0 + nudgeAmount) ball.y = ball.radius + nudgeAmount;
+    else ball.y = gameArea.canvas.height - ball.radius - nudgeAmount;
   }
 }
 
 export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void {
+  const nudgeAmount = 1;
+
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
   if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
     ball.bounceVertical();
+    if (ball.y - ball.radius <= 0 + nudgeAmount) ball.y = ball.radius + nudgeAmount;
+    else ball.y = gameArea.canvas.height - ball.radius - nudgeAmount;
   }
   if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= gameArea.canvas.width) {
-    ball.setSpeed(-ball.x, ball.y);
+    ball.bounceHorizontalFakeBall();
+    if (ball.x - ball.radius <= 0 + nudgeAmount) ball.x = ball.radius + nudgeAmount;
+    else ball.x = gameArea.canvas.width - ball.radius - nudgeAmount;
   }
 }
 
@@ -119,9 +129,8 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
     isWithinPaddleHeight(ball, leftPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
-    ball.x = leftPaddle.x + leftPaddle.width + ball.radius;
     ball.bounceHorizontal(leftPaddle);
-    ball.speedX *= 1.1;
+    ball.x = leftPaddle.x + leftPaddle.width + ball.radius;
     capMaxSpeed(ball, 20);
   }
 
@@ -131,9 +140,8 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
     isWithinPaddleHeight(ball, rightPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
-    ball.x = rightPaddle.x - ball.radius;
     ball.bounceHorizontal(rightPaddle);
-    ball.speedX *= 1.1;
+    ball.x = rightPaddle.x - ball.radius;
     capMaxSpeed(ball, 20);
   }
 }
