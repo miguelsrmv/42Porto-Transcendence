@@ -48,6 +48,7 @@ export interface gameSettings {
  * optional player aliases, paddle colors and optional character; it's used to send to the backend
  */
 export interface leanGameSettings {
+  playerID: string;
   playType: playType;
   gameType: gameType;
   alias: string;

@@ -293,6 +293,7 @@ export function getLeanGameSettings(): leanGameSettings {
   let fullSettings: gameSettings = getGameSettings();
 
   let leanGameSettings: leanGameSettings = {
+    playerID: window.localStorage.getItem('ID') as string,
     playType: fullSettings.playType,
     gameType: fullSettings.gameType,
     alias: fullSettings.alias1,
