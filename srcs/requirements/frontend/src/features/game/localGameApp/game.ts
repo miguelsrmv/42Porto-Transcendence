@@ -57,6 +57,7 @@ export enum gameState {
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
+  interval: undefined,
   inputHandler: null,
   state: gameState.paused,
 
@@ -130,7 +131,7 @@ function setPlayers(
     rightPaddle,
     ball,
     gameSettings.alias1,
-    gameSettings.character1?.attack,
+    gameSettings.character1 ? gameSettings.character1.attack : null,
     'left',
   );
   rightPlayer = new Player(
@@ -138,7 +139,7 @@ function setPlayers(
     leftPaddle,
     ball,
     gameSettings.alias2,
-    gameSettings.character2?.attack,
+    gameSettings.character2 ? gameSettings.character2.attack : null,
     'right',
   );
 

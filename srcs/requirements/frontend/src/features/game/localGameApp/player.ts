@@ -8,15 +8,15 @@ export class Player {
   ball: Ball;
   alias?: string;
   score: number;
-  attack?: Attack;
+  attack: Attack | null;
   side: string;
 
   constructor(
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
-    alias: string | undefined,
-    attackName: string | undefined,
+    alias: string,
+    attackName: string | null,
     side: string,
   ) {
     this.ownPaddle = ownPaddle;
@@ -24,7 +24,7 @@ export class Player {
     this.ball = ball;
     this.alias = alias;
     this.score = 0;
-    this.attack = new Attack(attackName, ownPaddle, enemyPaddle, ball, side);
+    this.attack = attackName ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side) : null;
     this.side = side;
   }
 
