@@ -2,7 +2,7 @@ data
 node_modules
 dev.db
 
-srcs/requirements/frontend/dist/
+**/dist/
 
 /secrets
 
