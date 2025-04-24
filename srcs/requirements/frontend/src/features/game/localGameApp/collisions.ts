@@ -3,26 +3,28 @@ import { gameState, SPEED, paintScore, fakeBalls } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
 import { scoreAnimation } from '../animations/animations.js';
-
-interface Ball {
-  x: number;
-  y: number;
-  previousX: number;
-  previousY: number;
-  radius: number;
-  speedX: number;
-  speedY: number;
-  bounceVertical(): void;
-  bounceHorizontal(): void;
-  reset(): void;
-}
-
-interface Paddle {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import { Ball } from './ball.js';
+import { Paddle } from './paddle.js';
+//
+// interface Ball {
+//   x: number;
+//   y: number;
+//   previousX: number;
+//   previousY: number;
+//   radius: number;
+//   speedX: number;
+//   speedY: number;
+//   bounceVertical(): void;
+//   bounceHorizontal(): void;
+//   reset(): void;
+// }
+//
+// interface Paddle {
+//   x: number;
+//   y: number;
+//   width: number;
+//   height: number;
+// }
 
 // Checks if ball reached horizontal canvas limits
 export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
@@ -44,7 +46,7 @@ export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void
     ball.bounceVertical();
   }
   if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= gameArea.canvas.width) {
-    ball.bounceHorizontal();
+    ball.setSpeed(-ball.x, ball.y);
   }
 }
 
@@ -118,7 +120,7 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
   ) {
     // Adjustment to prevent sticking to paddle
     ball.x = leftPaddle.x + leftPaddle.width + ball.radius;
-    ball.bounceHorizontal();
+    ball.bounceHorizontal(leftPaddle);
     ball.speedX *= 1.1;
     capMaxSpeed(ball, 20);
   }
@@ -130,7 +132,7 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
   ) {
     // Adjustment to prevent sticking to paddle
     ball.x = rightPaddle.x - ball.radius;
-    ball.bounceHorizontal();
+    ball.bounceHorizontal(rightPaddle);
     ball.speedX *= 1.1;
     capMaxSpeed(ball, 20);
   }
