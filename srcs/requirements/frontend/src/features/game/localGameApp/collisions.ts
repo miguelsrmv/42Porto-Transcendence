@@ -5,6 +5,9 @@ import { GameArea } from './types.js';
 import { scoreAnimation } from '../animations/animations.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
+
+export const MAX_BALL_SPEED: number = 1000;
+
 //
 // interface Ball {
 //   x: number;
@@ -131,7 +134,7 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
     // Adjustment to prevent sticking to paddle
     ball.bounceHorizontal(leftPaddle);
     ball.x = leftPaddle.x + leftPaddle.width + ball.radius;
-    capMaxSpeed(ball, 20);
+    capMaxSpeed(ball, MAX_BALL_SPEED);
   }
 
   if (
@@ -142,7 +145,7 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
     // Adjustment to prevent sticking to paddle
     ball.bounceHorizontal(rightPaddle);
     ball.x = rightPaddle.x - ball.radius;
-    capMaxSpeed(ball, 20);
+    capMaxSpeed(ball, MAX_BALL_SPEED);
   }
 }
 

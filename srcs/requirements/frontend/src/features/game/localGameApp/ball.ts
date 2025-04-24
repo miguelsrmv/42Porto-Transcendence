@@ -30,11 +30,9 @@ export class Ball {
     ctx.closePath();
   }
 
-  move(): void {
-    this.previousX = this.x;
-    this.previousY = this.y;
-    this.x += this.speedX;
-    this.y += this.speedY;
+  move(dt: number): void {
+    this.x += this.speedX * dt;
+    this.y += this.speedY * dt;
   }
 
   bounceHorizontal(paddle: Paddle): void {

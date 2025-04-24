@@ -4,6 +4,7 @@ import { wait } from '../../../utils/helpers.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, getGameVersion, fakeBalls } from './game.js';
 import type { attackIdentifier } from '../characterData/characterData.types.js';
 import { powerUpAnimation } from '../animations/animations.js';
+import { MAX_BALL_SPEED } from './collisions.js';
 
 type AttackData = {
   handler: () => Promise<void>; // The attack function
@@ -155,31 +156,39 @@ export class Attack {
   }
 
   async spinDash(): Promise<void> {
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(); // Check score changes
 
-    const growthFactor = 5;
+    const growthFactor = 1.25; // Speed multiplier
 
     const startingSpeedX = this.ball.speedX;
     const startingSpeedY = this.ball.speedY;
 
-    const newSpeedX =
-      Math.abs(this.ball.speedX) + growthFactor < 20
-        ? this.ball.speedX + growthFactor * Math.sign(this.ball.speedX)
-        : 20 * Math.sign(this.ball.speedX);
-    const newSpeedY =
-      Math.abs(this.ball.speedY) + growthFactor < 20
-        ? this.ball.speedY + growthFactor * Math.sign(this.ball.speedY)
-        : 20 * Math.sign(this.ball.speedY);
+    const currentSpeedXMag = Math.abs(startingSpeedX);
+    const boostedSpeedXMag = currentSpeedXMag * growthFactor;
+    const cappedSpeedXMag = Math.min(boostedSpeedXMag, MAX_BALL_SPEED);
+    const newSpeedX = cappedSpeedXMag * Math.sign(startingSpeedX);
+
+    const currentSpeedYMag = Math.abs(startingSpeedY);
+    const boostedSpeedYMag = currentSpeedYMag * growthFactor;
+    const cappedSpeedYMag = Math.min(boostedSpeedYMag, MAX_BALL_SPEED);
+    const newSpeedY = cappedSpeedYMag * Math.sign(startingSpeedY);
 
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
     await wait(this.attackDuration);
 
     if (!this.gameVersionHasChanged(startingVersion)) {
-      const oldSpeedX = this.ball.speedX > 0 ? Math.abs(startingSpeedX) : -Math.abs(startingSpeedX);
-      const oldSpeedY = this.ball.speedY > 0 ? Math.abs(startingSpeedY) : -Math.abs(startingSpeedY);
+      const currentSpeedX = this.ball.speedX;
+      const currentSpeedY = this.ball.speedY;
 
-      this.ball.setSpeed(oldSpeedX, oldSpeedY);
+      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
+      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
+
+      const scaleFactor = originalMagnitude / currentMagnitude;
+      const revertedSpeedX = currentSpeedX * scaleFactor;
+      const revertedSpeedY = currentSpeedY * scaleFactor;
+
+      this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
     }
   }
 
