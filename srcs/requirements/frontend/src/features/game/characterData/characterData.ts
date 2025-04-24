@@ -62,7 +62,7 @@ const characterList: character[] = [
     characterSelectPicturePath: `${characterSelectPicturePath}mewtwo.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}mewtwo.png`,
     accentColour: 'purple',
-    selectHelpMessage: "Mess with your opponent's paddle!",
+    selectHelpMessage: "Mess with your opponent's controls!",
   },
   {
     name: 'Link',
@@ -70,7 +70,7 @@ const characterList: character[] = [
     characterSelectPicturePath: `${characterSelectPicturePath}link.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}link.png`,
     accentColour: 'cyan',
-    selectHelpMessage: "Use Link's Magic Mirror!",
+    selectHelpMessage: "Reflect the ball's trajectory!",
   },
   {
     name: 'Kirby',
