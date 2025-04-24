@@ -234,8 +234,8 @@ export function setGameSettings(gameType: gameType, playType: playType) {
 
   const player1InputAlias = document.getElementById('player-1-alias') as HTMLInputElement;
   if (player1InputAlias) {
-    console.log(player1InputAlias.value);
-    settings.alias1 = player1InputAlias.value;
+    const inputValue = player1InputAlias.value.trim();
+    settings.alias1 = inputValue !== '' ? inputValue : 'Player 1';
   } else console.warn('Player 1 alias input form not found');
 
   const player1PaddleColour = document.getElementById(
@@ -248,12 +248,17 @@ export function setGameSettings(gameType: gameType, playType: playType) {
 
   if (settings.gameType === 'Crazy Pong') {
     settings.character1 = characterList[currentCharacterIndex1];
+  } else {
+    settings.character1 = null;
+    settings.character2 = null;
   }
 
   if (settings.playType === 'Local Play') {
     const player2InputAlias = document.getElementById('player-2-alias') as HTMLInputElement;
-    if (player2InputAlias) settings.alias2 = player2InputAlias.value;
-    else console.warn('Player 2 alias input form not found');
+    if (player2InputAlias) {
+      const inputValue2 = player1InputAlias.value.trim();
+      settings.alias2 = inputValue2 !== '' ? inputValue2 : 'Player 2';
+    } else console.warn('Player 2 alias input form not found');
 
     const player2PaddleColour = document.getElementById(
       'player-2-paddle-colour-input',
@@ -267,6 +272,8 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   }
 
   settings.background = backgroundList[backgroundIndex];
+
+  console.log(`Settings now are ${JSON.stringify(settings)}`);
 }
 
 /**
@@ -304,10 +311,7 @@ export function getLeanGameSettings(): leanGameSettings {
   return leanGameSettings;
 }
 
-export function updateHUD(
-  leftCharacter: character | undefined,
-  rightCharacter: character | undefined,
-): void {
+export function updateHUD(leftCharacter: character, rightCharacter: character): void {
   const leftCharHUD = document.getElementById('left-character-hud');
   if (leftCharHUD) leftCharHUD.classList.toggle('hidden');
 

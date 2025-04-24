@@ -36,8 +36,8 @@ export interface gameSettings {
   alias2: string;
   paddleColour1: string;
   paddleColour2: string;
-  character1?: character;
-  character2?: character;
+  character1: character | null;
+  character2: character | null;
   background: background;
 }
 
@@ -53,5 +53,5 @@ export interface leanGameSettings {
   gameType: gameType;
   alias: string;
   paddleColour: string;
-  character?: character;
+  character: character | null;
 }
