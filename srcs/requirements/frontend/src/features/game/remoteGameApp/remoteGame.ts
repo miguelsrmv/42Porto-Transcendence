@@ -3,10 +3,12 @@ import type { gameSettings, leanGameSettings } from '../gameSettings/gameSetting
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   const webSocket = new WebSocket('wss://padaria.42.pt/ws');
 
-  const serializedLeanGameSettings = JSON.stringify(leanGameSettings);
+  const joinGameMsg = { type: 'join_game', playerSettings: leanGameSettings};
+
+  const serializedMsg = JSON.stringify(joinGameMsg);
 
   webSocket.onopen = (event) => {
-    webSocket.send(serializedLeanGameSettings);
+    webSocket.send(serializedMsg);
   };
 
   // TODO: Update HUD after, only then initialize the actual
