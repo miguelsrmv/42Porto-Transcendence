@@ -13,12 +13,13 @@ import * as tournamentPlayModule from '../features/tournamentPlay/tournamentPlay
 import * as friendModule from '../features/friends/friends.js';
 import * as rankingsModule from '../features/rankings/rankings.js';
 //import * as gameModule from '../features/game/gamePage.js';
+import { endGameIfRunning } from '../features/game/localGameApp/game.js';
 
 type FeatureModule = {
   initializeView: () => void;
 };
 
-const routes: { [key: string]: FeatureModule } = {
+export const routes: { [key: string]: FeatureModule } = {
   'landing-page': landingPageModule as FeatureModule,
   'main-menu-page': mainMenuModule as FeatureModule,
   'local-play-page': localPlayModule as FeatureModule,
@@ -36,6 +37,9 @@ let currentView = '';
  * @returns A promise that resolves when the view is loaded.
  */
 function handleRouteChange(): void {
+  // If a game is running, stop it
+  endGameIfRunning();
+
   // Get the view name from the URL hash, trim the first #
   const viewName = window.location.hash.substring(1) || 'landing-page';
 
@@ -57,6 +61,23 @@ function handleRouteChange(): void {
     return;
   }
 
+  // Find the route function for import
+  const featureModule = routes[viewName];
+
+  if (featureModule) {
+    if (featureModule.initializeView) {
+      featureModule.initializeView();
+    } else {
+      // Warn of lack of initializeView function
+      console.warn(`Module for ${viewName} loaded but has no initializeView function.`);
+    }
+  } else {
+    // Handle unknown routes - redirect to landing page or a 404 view
+    console.error(`No route defined for ${viewName}.`);
+  }
+}
+
+export function forceRouteChange(viewName: string): void {
   // Find the route function for import
   const featureModule = routes[viewName];
 
