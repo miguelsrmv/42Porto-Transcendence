@@ -1,21 +1,10 @@
 import WebSocket from 'ws';
 import { background, gameSettings, leanGameSettings } from './settings';
 import { getBackgroundList } from './backgroundData';
+import { GameSession, GameSessionSerializable } from './types';
 
 const classicPongSessions: GameSession[] = [];
 const crazyPongSessions: GameSession[] = [];
-
-// TODO: Add gameState
-interface GameSession {
-  players: { [id: string]: WebSocket };
-  settings: gameSettings;
-}
-
-// To be able to print
-interface GameSessionSerializable {
-  players: string[]; // just the player IDs
-  settings: gameSettings;
-}
 
 // TODO: generate just a random background name?
 function getRandomBackground(): background {
@@ -49,16 +38,17 @@ function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings): gameSet
   };
 }
 
+// TODO: clean up code, smaller function to add player to session
 function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean {
   if (playerSettings.gameType === 'Classic Pong') {
-    for (const session of classicPongSessions.values()) {
-      if (Object.keys(session.players).length === 1) {
-        session.players[playerSettings.playerID] = ws;
+    for (const session of classicPongSessions) {
+      if (session.players.size === 1) {
+        session.players.set(ws, playerSettings.playerID);
         session.settings = mergePlayer2IntoGameSettings(session.settings, playerSettings);
 
         // For testing purposes
         const serializableSession: GameSessionSerializable = {
-          players: Object.keys(session.players), // only the IDs
+          players: [...session.players.values()], // only the IDs
           settings: session.settings,
         };
 
@@ -70,14 +60,14 @@ function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean 
       }
     }
   } else if (playerSettings.gameType === 'Crazy Pong') {
-    for (const session of crazyPongSessions.values()) {
-      if (Object.keys(session.players).length === 1) {
-        session.players[playerSettings.playerID] = ws;
+    for (const session of crazyPongSessions) {
+      if (session.players.size === 1) {
+        session.players.set(ws, playerSettings.playerID);
         session.settings = mergePlayer2IntoGameSettings(session.settings, playerSettings);
 
         // For testing purposes
         const serializableSession: GameSessionSerializable = {
-          players: Object.keys(session.players), // only the IDs
+          players: [...session.players.values()], // only the IDs
           settings: session.settings,
         };
 
@@ -94,13 +84,13 @@ function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean 
 
 function createSession(ws: WebSocket, playerSettings: leanGameSettings) {
   const newSession: GameSession = {
-    players: { [playerSettings.playerID]: ws },
+    players: new Map<WebSocket, string>([[ws, playerSettings.playerID]]),
     settings: mergePlayer1IntoGameSettings(playerSettings),
   };
 
   // For testing purposes
   const serializableSession: GameSessionSerializable = {
-    players: Object.keys(newSession.players), // only the IDs
+    players: [...newSession.players.values()], // only the IDs
     settings: newSession.settings,
   };
 
@@ -126,3 +116,38 @@ export function getClassicPongSessions(): GameSession[] {
 export function getCrazyPongSessions(): GameSession[] {
   return crazyPongSessions;
 }
+
+// TODO: Cover case where multiple instances of a WS?
+export function getGameSession(playerSocket: WebSocket): GameSession | null {
+  const gameSessions = classicPongSessions.concat(crazyPongSessions);
+  for (const session of gameSessions) {
+    if (session.players.get(playerSocket)) {
+      return session;
+    }
+  }
+  return null;
+}
+
+export function playerIsInASession(playerSocket: WebSocket): boolean {
+  const gameSessions = classicPongSessions.concat(crazyPongSessions);
+  gameSessions.forEach((session) => {
+    if (session.players.get(playerSocket)) {
+      return true;
+    }
+  });
+  return false;
+}
+
+export function removePlayer(playerSocket: WebSocket) {
+  const playerSession = getGameSession(playerSocket);
+  if (playerSession) playerSession.players.delete(playerSocket);
+}
+
+// function printSessions() {
+//   const gameSessions = classicPongSessions.concat(crazyPongSessions);
+//   const serializedSessions = gameSessions.map(({ players, settings }) => ({
+//     players: [...players.values()],
+//     settings,
+//   }));
+//   console.log(JSON.stringify(serializedSessions));
+// }
