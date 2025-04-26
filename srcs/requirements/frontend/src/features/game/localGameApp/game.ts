@@ -1,6 +1,6 @@
 // TODO: Add 3-2-1 "Go"
 // TODO: Better win animation
-// TODO: Stop game when back / foward / refresh is clicked
+// FIX: Stop game when back / foward / refresh is clicked
 // FIX: Change ball incidence after paddle ricochet
 // FIX: Add delta time?
 // FIX: Add "If" statements regarding gameType on attack listeners
@@ -23,6 +23,7 @@ import {
   activatePowerBarAnimation,
   deactivatePowerBarAnimation,
 } from '../animations/animations.js';
+import { gameStats } from './gameStats.js';
 
 export const SPEED = 250;
 export const CANVAS_HEIGHT = 720;
@@ -41,6 +42,7 @@ let ball: Ball;
 export let fakeBalls: Ball[] = [];
 let leftPlayer: Player;
 let rightPlayer: Player;
+export let stats: gameStats = new gameStats();
 
 export type InputHandler = {
   enable(): void;

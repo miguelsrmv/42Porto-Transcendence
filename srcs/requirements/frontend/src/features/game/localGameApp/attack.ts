@@ -5,6 +5,7 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, getGameVersion, fakeBalls } f
 import type { attackIdentifier } from '../characterData/characterData.types.js';
 import { powerUpAnimation } from '../animations/animations.js';
 import { MAX_BALL_SPEED } from './collisions.js';
+import { stats } from './game.js';
 
 type AttackData = {
   handler: () => Promise<void>; // The attack function
@@ -91,6 +92,8 @@ export class Attack {
     if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable) return;
 
     this.lastUsed = Date.now();
+
+    this.side === 'left' ? stats.left.increasePowersUsed() : stats.right.increasePowersUsed();
 
     powerUpAnimation(this.side);
 

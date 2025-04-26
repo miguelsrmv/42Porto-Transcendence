@@ -5,11 +5,29 @@ module.exports = {
   ],
   theme: {
     extend: {
+      transitionProperty: {
+        'opacity-and-transform': 'opacity, transform',
+      },
+      colors: {
+        customBlue: '#1e40af',
+      },
       keyframes: {
         pulse: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.5' },
         },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.75s ease-out forwards',
+        'fade-out': 'fadeOut 0.75s ease-out forwards',
       },
     },
   },
