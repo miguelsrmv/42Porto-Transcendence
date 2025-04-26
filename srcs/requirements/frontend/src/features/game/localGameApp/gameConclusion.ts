@@ -3,6 +3,7 @@ import { stats } from './game.js';
 import { loadView } from './../../../core/viewLoader.js';
 import { getGameSettings } from '../gameSetup.js';
 import { fadeIn, fadeOut } from '../../../ui/animations.js';
+import { forceRouteChange } from '../../../core/router.js';
 
 export function triggerEndGameMenu(winningPlayer: Player): void {
   const winnerHUD = document.getElementById(`${winningPlayer.side}-hud`);
@@ -135,6 +136,7 @@ function updateButtons(): void {
   if (playAgainButton) {
     playAgainButton.addEventListener('click', () => {
       loadView(targetPage);
+      forceRouteChange(targetPage);
     });
   } else console.warn('Play Again Button not found');
 }

@@ -1,5 +1,5 @@
 // TODO: Add 3-2-1 "Go"
-// TODO: Better win animation
+// FIX: Better win animation
 // FIX: Stop game when back / foward / refresh is clicked
 // FIX: Change ball incidence after paddle ricochet
 // FIX: Add delta time?

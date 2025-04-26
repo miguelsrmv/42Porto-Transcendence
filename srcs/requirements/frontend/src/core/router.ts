@@ -19,7 +19,7 @@ type FeatureModule = {
   initializeView: () => void;
 };
 
-const routes: { [key: string]: FeatureModule } = {
+export const routes: { [key: string]: FeatureModule } = {
   'landing-page': landingPageModule as FeatureModule,
   'main-menu-page': mainMenuModule as FeatureModule,
   'local-play-page': localPlayModule as FeatureModule,
@@ -61,6 +61,23 @@ function handleRouteChange(): void {
     return;
   }
 
+  // Find the route function for import
+  const featureModule = routes[viewName];
+
+  if (featureModule) {
+    if (featureModule.initializeView) {
+      featureModule.initializeView();
+    } else {
+      // Warn of lack of initializeView function
+      console.warn(`Module for ${viewName} loaded but has no initializeView function.`);
+    }
+  } else {
+    // Handle unknown routes - redirect to landing page or a 404 view
+    console.error(`No route defined for ${viewName}.`);
+  }
+}
+
+export function forceRouteChange(viewName: string): void {
   // Find the route function for import
   const featureModule = routes[viewName];
 
