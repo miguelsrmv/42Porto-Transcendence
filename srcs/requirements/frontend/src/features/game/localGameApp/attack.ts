@@ -1,7 +1,15 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
-import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, getGameVersion, fakeBalls } from './game.js';
+import {
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  BALL_RADIUS,
+  PADDLE_LEN,
+  SPEED,
+  getGameVersion,
+  fakeBalls,
+} from './game.js';
 import type { attackIdentifier } from '../characterData/characterData.types.js';
 import { powerUpAnimation } from '../animations/animations.js';
 import { MAX_BALL_SPEED } from './collisions.js';
@@ -113,14 +121,14 @@ export class Attack {
 
   async superShroom(): Promise<void> {
     console.log(`Super shroom called by ${this.side}`);
-    const growthFactor = 1.25;
+    const growth = PADDLE_LEN * 0.25;
 
     const startingVersion = getGameVersion();
 
     const originalHeight = this.ownPaddle.height;
     const originalY = this.ownPaddle.y;
 
-    const boostedHeight = originalHeight * growthFactor;
+    const boostedHeight = originalHeight + growth;
     const yOffset = (boostedHeight - originalHeight) / 2;
 
     this.ownPaddle.setHeight(boostedHeight);
@@ -130,7 +138,7 @@ export class Attack {
 
     if (!this.gameVersionHasChanged(startingVersion)) {
       const newOriginalY = this.ownPaddle.y;
-      this.ownPaddle.setHeight(originalHeight);
+      this.ownPaddle.setHeight(this.ownPaddle.height - growth);
       this.ownPaddle.setY(newOriginalY + yOffset);
     }
   }
@@ -248,12 +256,12 @@ export class Attack {
     console.log('Giant punch called');
     const startingVersion = getGameVersion();
 
-    const shrinkFactor = 0.5;
+    const shrink = PADDLE_LEN * 0.4;
 
     const originalHeight = this.enemyPaddle.height;
     const originalY = this.enemyPaddle.y;
 
-    const boostedHeight = originalHeight * shrinkFactor;
+    const boostedHeight = originalHeight - shrink;
     const yOffset = (boostedHeight - originalHeight) / 2;
 
     this.enemyPaddle.setHeight(boostedHeight);
@@ -263,7 +271,7 @@ export class Attack {
 
     if (!this.gameVersionHasChanged(startingVersion)) {
       const newOriginalY = this.enemyPaddle.y;
-      this.enemyPaddle.setHeight(originalHeight);
+      this.enemyPaddle.setHeight(this.enemyPaddle.height + shrink);
       this.enemyPaddle.setY(newOriginalY + yOffset);
     }
   }
