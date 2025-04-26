@@ -1,10 +1,10 @@
 // TODO: Add 3-2-1 "Go"
-// TODO: Better win animation
-// TODO: Stop game when back / foward / refresh is clicked
+// FIX: Better win animation
+// FIX: Stop game when back / foward / refresh is clicked
 // FIX: Change ball incidence after paddle ricochet
 // FIX: Add delta time?
 // FIX: Add "If" statements regarding gameType on attack listeners
-// TODO: Edit HTML to fix game dimensions, check if paddles are always correclty drawn afterwards
+// FIX: Edit HTML to fix game dimensions, check if paddles are always correclty drawn afterwards
 
 import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
@@ -23,6 +23,7 @@ import {
   activatePowerBarAnimation,
   deactivatePowerBarAnimation,
 } from '../animations/animations.js';
+import { gameStats } from './gameStats.js';
 
 export const SPEED = 250;
 export const CANVAS_HEIGHT = 720;
@@ -41,6 +42,7 @@ let ball: Ball;
 export let fakeBalls: Ball[] = [];
 let leftPlayer: Player;
 let rightPlayer: Player;
+export let stats: gameStats = new gameStats();
 
 export type InputHandler = {
   enable(): void;
@@ -194,9 +196,6 @@ export function initializeLocalGame(gameSettings: gameSettings): void {
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
   myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer, gameSettings.gameType);
-  // TODO: Look into event listeners for back/foward/reload
-  //window.addEventListener('beforeunload', () => myGameArea.stop());
-  //window.addEventListener('popstate', () => myGameArea.stop());
   myGameArea.start();
 }
 
@@ -268,6 +267,10 @@ export function paintScore(side: string, score: number): void {
 
   emptyScorePoint.classList.remove('border-2', `border-${colour}-500`);
   emptyScorePoint.classList.add(`bg-${colour}-500`);
+}
+
+export function endGameIfRunning(): void {
+  if (myGameArea.state !== gameState.ended) myGameArea.stop();
 }
 
 /* // Unused but might be useful in the future
