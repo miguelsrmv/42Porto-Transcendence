@@ -2,6 +2,7 @@ import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
 import { Paddle } from './paddle.js';
 
 const BALL_COLOUR = 'white';
+const BORDER_COLOUR = 'gray';
 
 export class Ball {
   x: number;
@@ -27,6 +28,8 @@ export class Ball {
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fillStyle = BALL_COLOUR;
     ctx.fill();
+    ctx.strokeStyle = BORDER_COLOUR;
+    ctx.stroke();
     ctx.closePath();
   }
 

@@ -64,7 +64,6 @@ export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void
   }
 }
 
-// TODO: Get winning score from settings ?
 function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
