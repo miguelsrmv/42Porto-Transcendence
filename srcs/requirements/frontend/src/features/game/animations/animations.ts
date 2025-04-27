@@ -1,7 +1,7 @@
 import { wait } from '../../../utils/helpers.js';
 
 // TODO: Check why the power bar sometimes activates out of nowhere
-// TODO: Try to export the animations to tailwindcss or tailwind.config.js
+// TODO: Try to export the animations to tailwindcss
 export function activatePowerBarAnimation(side: string) {
   const powerBarFill = document.getElementById(`${side}-character-power-bar-fill`);
   if (!powerBarFill) {
