@@ -26,8 +26,8 @@ export class Paddle {
   }
 
   // Updates paddle position
-  update(): void {
-    this.y += this.speedY;
+  update(dt: number): void {
+    this.y += this.speedY * dt;
     // Clamp position within canvas bounds
     this.y = Math.max(0, Math.min(this.y, CANVAS_HEIGHT - this.height));
   }

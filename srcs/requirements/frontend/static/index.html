@@ -1286,7 +1286,7 @@
     <div id="gaming-page" class="w-screen h-[720px] flex flex-row">
       <div
         id="left-hud"
-        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl ml-6"
+        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl ml-6 transition-opacity duration-500 opacity-100"
       >
         <div
           id="left-player-hud"
@@ -1323,18 +1323,22 @@
             ></div>
           </div>
         </div>
+        <img id="winner-picture-left" src="./static/images/winner.png" class="hidden opacity-0" />
       </div>
-      <div id="game-container" class="h-full w-[1200px] flex justify-center mx-auto relative">
+      <div
+        id="game-container"
+        class="h-full min-w-[1240px] flex justify-center mx-auto relative transition-opacity duration-500 opacity-100"
+      >
         <img
           src="./static/backgrounds/Backyard.png"
           id="game-background"
-          class="h-[740px] w-[1240px] z-0 absolute inset-0 m-auto"
+          class="h-[740px] min-w-[1240px] z-0 absolute inset-0 m-auto"
         />
-        <canvas id="game-canvas" class="h-full w-[1200px] absolute inset-0 m-auto z-5"></canvas>
+        <canvas id="game-canvas" class="h-full min-w-[1200px] absolute inset-0 m-auto z-5"></canvas>
       </div>
       <div
         id="right-hud"
-        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl mr-6"
+        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl mr-6 transition-opacity duration-500 opacity-100"
       >
         <div
           id="right-player-hud"
@@ -1384,6 +1388,64 @@
               class="bg-blue-500 h-2.5 rounded-full"
               style="width: 45%"
             ></div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="game-stats"
+        class="hidden flex gap-4 bg-gray-700 items-center mx-auto w-3/4 opacity-0"
+      >
+        <div id="player-identifier" class="flex"></div>
+        <div id="stats" class="flex flex-col gap-4 w-2/3 mr-6">
+          <div
+            id="winner"
+            class="flex font-serpentine text-6xl text-white text-center justify-center mb-4"
+          >
+            Winner!
+          </div>
+          <div class="flex bg-gray-800 rounded-lg p-4 text-center">
+            <p id="goals-scored-title" class="font-serpentine text-green-400 text-2xl mr-4">
+              Goals Scored
+            </p>
+            <p id="goals-scored-result" class="font-serpentine text-white text-3xl font-bold" d></p>
+          </div>
+          <div class="flex bg-gray-800 rounded-lg p-4 text-center">
+            <p id="goals-suffered-title" class="font-serpentine text-green-400 text-2xl mr-4">
+              Goals Suffered
+            </p>
+            <p id="goals-suffered-result" class="font-serpentine text-white text-3xl font-bold"></p>
+          </div>
+          <div class="flex bg-gray-800 rounded-lg p-4 text-center">
+            <p id="saves-title" class="font-serpentine text-green-400 text-2xl mr-4">Goals Saved</p>
+            <p id="saves-result" class="font-serpentine text-white text-3xl font-bold"></p>
+          </div>
+
+          <div class="flex bg-gray-800 rounded-lg p-4 text-center">
+            <p id="powers-used-title" class="font-serpentine text-green-400 text-2xl mr-4">
+              Powers Used
+            </p>
+            <p id="powers-used-result" class="font-serpentine text-white text-3xl font-bold"></p>
+          </div>
+          <div class="flex bg-gray-800 rounded-lg p-4 text-center">
+            <p id="max-ball-speed-title" class="font-serpentine text-green-400 text-2xl mr-4">
+              Max Ball Speed
+            </p>
+            <p id="max-ball-speed-result" class="font-serpentine text-white text-3xl font-bold"></p>
+          </div>
+          <div id="after-game-buttons" class="flex justify-center items-center p-4">
+            <a
+              href="#main-menu-page"
+              id="go-back-to-main-menu-button"
+              class="bg-gray-800 text-gray-700 border-gray-300 hover:bg-gray-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider mr-6"
+            >
+              Go back to main menu
+            </a>
+            <button
+              id="play-again-button"
+              class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider ml-6"
+            >
+              Play another Game!
+            </button>
           </div>
         </div>
       </div>

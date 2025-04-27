@@ -1,50 +1,66 @@
 import { wait } from '../../../utils/helpers.js';
-import { gameState, SPEED, paintScore, fakeBalls } from './game.js';
+import { gameState, SPEED, paintScore, fakeBalls, stats } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
 import { scoreAnimation } from '../animations/animations.js';
+import { triggerEndGameMenu } from './gameConclusion.js';
+import { Ball } from './ball.js';
+import { Paddle } from './paddle.js';
 
-interface Ball {
-  x: number;
-  y: number;
-  previousX: number;
-  previousY: number;
-  radius: number;
-  speedX: number;
-  speedY: number;
-  bounceVertical(): void;
-  bounceHorizontal(): void;
-  reset(): void;
-}
+export const MAX_BALL_SPEED: number = 1000;
 
-interface Paddle {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+//
+// interface Ball {
+//   x: number;
+//   y: number;
+//   previousX: number;
+//   previousY: number;
+//   radius: number;
+//   speedX: number;
+//   speedY: number;
+//   bounceVertical(): void;
+//   bounceHorizontal(): void;
+//   reset(): void;
+// }
+//
+// interface Paddle {
+//   x: number;
+//   y: number;
+//   width: number;
+//   height: number;
+// }
 
 // Checks if ball reached horizontal canvas limits
 export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
+  const nudgeAmount = 1;
+
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
   if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
     ball.bounceVertical();
+    if (ball.y - ball.radius <= 0 + nudgeAmount) ball.y = ball.radius + nudgeAmount;
+    else ball.y = gameArea.canvas.height - ball.radius - nudgeAmount;
   }
 }
 
 export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void {
+  const nudgeAmount = 1;
+
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
   }
   if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
     ball.bounceVertical();
+    if (ball.y - ball.radius <= 0 + nudgeAmount) ball.y = ball.radius + nudgeAmount;
+    else ball.y = gameArea.canvas.height - ball.radius - nudgeAmount;
   }
   if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= gameArea.canvas.width) {
-    ball.bounceHorizontal();
+    ball.bounceHorizontalFakeBall();
+    if (ball.x - ball.radius <= 0 + nudgeAmount) ball.x = ball.radius + nudgeAmount;
+    else ball.x = gameArea.canvas.width - ball.radius - nudgeAmount;
   }
 }
 
@@ -53,9 +69,10 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
 
-function endGame(winningPlayer: Player, gameArea: GameArea) {
-  window.alert(`${winningPlayer.alias} has won!`);
+function endGame(winningPlayer: Player, gameArea: GameArea): void {
   gameArea.stop();
+  gameArea.clear();
+  triggerEndGameMenu(winningPlayer);
 }
 
 // Checks if ball reached vertical canvas limits
@@ -69,12 +86,17 @@ export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameAre
     paintScore('right', rightPlayer.getScore());
     scoreAnimation('right');
     console.log(`Right player now has: ${rightPlayer.getScore()} points`);
+    stats.right.increaseGoals();
+    stats.left.increaseSufferedGoals();
+    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
     await resetRound(leftPlayer, rightPlayer, gameArea);
   } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
     leftPlayer.increaseScore();
     paintScore('left', leftPlayer.getScore());
     scoreAnimation('left');
     console.log(`Left player now has: ${leftPlayer.getScore()} points`);
+    stats.left.increaseGoals();
+    stats.right.increaseSufferedGoals();
     await resetRound(leftPlayer, rightPlayer, gameArea);
   }
   if (eitherPlayerHasWon(leftPlayer, rightPlayer))
@@ -117,10 +139,11 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
     isWithinPaddleHeight(ball, leftPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
+    ball.bounceHorizontal(leftPaddle);
     ball.x = leftPaddle.x + leftPaddle.width + ball.radius;
-    ball.bounceHorizontal();
-    ball.speedX *= 1.1;
-    capMaxSpeed(ball, 20);
+    capMaxSpeed(ball, MAX_BALL_SPEED);
+    stats.maxSpeed = Math.sqrt(ball.speedX ** 2 + ball.speedY ** 2);
+    stats.left.increaseSaves();
   }
 
   if (
@@ -129,10 +152,11 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
     isWithinPaddleHeight(ball, rightPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
+    ball.bounceHorizontal(rightPaddle);
     ball.x = rightPaddle.x - ball.radius;
-    ball.bounceHorizontal();
-    ball.speedX *= 1.1;
-    capMaxSpeed(ball, 20);
+    capMaxSpeed(ball, MAX_BALL_SPEED);
+    stats.maxSpeed = Math.sqrt(ball.speedX ** 2 + ball.speedY ** 2);
+    stats.right.increaseSaves();
   }
 }
 

@@ -66,8 +66,7 @@ export async function initializeView(): Promise<void> {
     playButton.addEventListener('click', () => {
       setGameSettings(gameType, 'Local Play');
       loadView('game-page');
-      if (gameType === 'Crazy Pong')
-        updateHUD(getGameSettings().character1!, getGameSettings().character2!);
+      updateHUD(getGameSettings(), gameType);
       initializeLocalGame(getGameSettings());
     });
   } else console.warn('Play Button not found');
