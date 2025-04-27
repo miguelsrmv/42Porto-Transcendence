@@ -1,5 +1,5 @@
-import { wait } from '../../../utils/helpers.js';
 import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
+import { Paddle } from './paddle.js';
 
 const BALL_COLOUR = 'white';
 
@@ -30,14 +30,43 @@ export class Ball {
     ctx.closePath();
   }
 
-  move(): void {
-    this.previousX = this.x;
-    this.previousY = this.y;
-    this.x += this.speedX;
-    this.y += this.speedY;
+  move(dt: number): void {
+    this.x += this.speedX * dt;
+    this.y += this.speedY * dt;
   }
 
-  bounceHorizontal(): void {
+  bounceHorizontal(paddle: Paddle): void {
+    // NOTE: Old implementation!
+    // this.speedX *= -1; // Reverse horizontal direction
+
+    // NOTE: Check how this feels!
+    // --- Correctly Calculate Paddle Center Y ---
+    const paddleCenterY = paddle.y + paddle.height / 2.0; // Calculate the actual center
+
+    // --- 1. Calculate Relative Intersection & Normalize (Use paddleCenterY) ---
+    const relativeIntersectY = this.y - paddleCenterY; // Use the calculated center
+    const normalizedRelativeIntersectionY = Math.max(
+      -1,
+      Math.min(1, relativeIntersectY / (paddle.height / 2.0)),
+    );
+
+    // --- 2. Calculate Bounce Angle ---
+    const maxBounceAngle = (60 * Math.PI) / 180; // 60 degrees in radians, correspondes to maximum steepness
+    const bounceAngle = normalizedRelativeIntersectionY * maxBounceAngle;
+
+    // --- 3. Calculate Speed Magnitude (10% overall speed increase) ---
+    const speed = Math.sqrt(this.speedX ** 2 + this.speedY ** 2);
+    const newSpeed = speed * 1.1;
+
+    // --- 4. Determine Outgoing Horizontal Direction ---
+    const newSpeedXSign = this.speedX > 0 ? -1 : 1;
+
+    // --- 5. Set New Velocities ---
+    this.speedX = newSpeedXSign * newSpeed * Math.cos(bounceAngle);
+    this.speedY = newSpeed * Math.sin(bounceAngle); // Sign now correctly determined by bounceAngle
+  }
+
+  bounceHorizontalFakeBall(): void {
     this.speedX *= -1; // Reverse horizontal direction
   }
 

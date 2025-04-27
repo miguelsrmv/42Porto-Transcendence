@@ -1,4 +1,4 @@
-import { gameState, InputHandler } from "./game";
+import { gameState, InputHandler } from './game';
 
 export interface GameArea {
   canvas: HTMLCanvasElement | null;
