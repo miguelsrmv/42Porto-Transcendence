@@ -1,13 +1,5 @@
-// TODO: Add 3-2-1 "Go"
-// FIX: Better win animation
-// FIX: Stop game when back / foward / refresh is clicked
-// FIX: Change ball incidence after paddle ricochet
-// FIX: Add delta time?
-// FIX: Add "If" statements regarding gameType on attack listeners
-// FIX: Edit HTML to fix game dimensions, check if paddles are always correclty drawn afterwards
-
 import { Paddle } from './paddle.js';
-import { Ball } from './ball.js';
+import { Ball, ballCountdown } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import {
   checkWallCollision,
@@ -24,6 +16,7 @@ import {
   deactivatePowerBarAnimation,
 } from '../animations/animations.js';
 import { gameStats } from './gameStats.js';
+import { wait } from '../../../utils/helpers.js';
 
 export const SPEED = 250;
 export const CANVAS_HEIGHT = 720;
