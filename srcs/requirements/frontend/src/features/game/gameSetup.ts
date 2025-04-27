@@ -256,7 +256,7 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   if (settings.playType === 'Local Play') {
     const player2InputAlias = document.getElementById('player-2-alias') as HTMLInputElement;
     if (player2InputAlias) {
-      const inputValue2 = player1InputAlias.value.trim();
+      const inputValue2 = player2InputAlias.value.trim();
       settings.alias2 = inputValue2 !== '' ? inputValue2 : 'Player 2';
     } else console.warn('Player 2 alias input form not found');
 
@@ -309,50 +309,61 @@ export function getLeanGameSettings(): leanGameSettings {
   return leanGameSettings;
 }
 
-export function updateHUD(leftCharacter: character, rightCharacter: character): void {
-  const leftCharHUD = document.getElementById('left-character-hud');
-  if (leftCharHUD) leftCharHUD.classList.toggle('hidden');
+export function updateHUD(gameSettings: gameSettings, gameType: gameType): void {
+  const leftAlias = document.getElementById('left-alias');
+  if (leftAlias) leftAlias.innerText = gameSettings.alias1;
 
-  const leftPortrait = document.getElementById('left-character-portrait') as HTMLImageElement;
-  if (leftPortrait) leftPortrait.src = leftCharacter?.characterAvatarPicturePath as string;
+  const rightAlias = document.getElementById('right-alias');
+  if (rightAlias) rightAlias.innerText = gameSettings.alias2;
 
-  const leftHUD = document.getElementById('left-hud');
-  if (leftHUD) {
-    const redElements = leftHUD?.querySelectorAll('.bg-red-500');
+  if (gameType == 'Crazy Pong') {
+    const leftCharacter = gameSettings.character1;
+    const rightCharacter = gameSettings.character2;
 
-    redElements.forEach((el) => {
-      el.classList.remove('bg-red-500');
-      el.classList.add(`bg-${leftCharacter?.accentColour}-500`);
-    });
+    const leftCharHUD = document.getElementById('left-character-hud');
+    if (leftCharHUD) leftCharHUD.classList.toggle('hidden');
 
-    const redBorderedElements = leftHUD?.querySelectorAll('.border-red-500');
+    const leftPortrait = document.getElementById('left-character-portrait') as HTMLImageElement;
+    if (leftPortrait) leftPortrait.src = leftCharacter?.characterAvatarPicturePath as string;
 
-    redBorderedElements.forEach((el) => {
-      el.classList.remove('border-red-500');
-      el.classList.add(`border-${leftCharacter?.accentColour}-500`);
-    });
-  }
+    const leftHUD = document.getElementById('left-hud');
+    if (leftHUD) {
+      const redElements = leftHUD?.querySelectorAll('.bg-red-500');
 
-  const rightCharHUD = document.getElementById('right-character-hud');
-  if (rightCharHUD) rightCharHUD.classList.toggle('hidden');
+      redElements.forEach((el) => {
+        el.classList.remove('bg-red-500');
+        el.classList.add(`bg-${leftCharacter?.accentColour}-500`);
+      });
 
-  const rightPortrait = document.getElementById('right-character-portrait') as HTMLImageElement;
-  if (rightPortrait) rightPortrait.src = rightCharacter?.characterAvatarPicturePath as string;
+      const redBorderedElements = leftHUD?.querySelectorAll('.border-red-500');
 
-  const rightHUD = document.getElementById('right-hud');
-  if (rightHUD) {
-    const blueElements = rightHUD?.querySelectorAll('.bg-blue-500');
+      redBorderedElements.forEach((el) => {
+        el.classList.remove('border-red-500');
+        el.classList.add(`border-${leftCharacter?.accentColour}-500`);
+      });
+    }
 
-    blueElements.forEach((el) => {
-      el.classList.remove('bg-blue-500');
-      el.classList.add(`bg-${rightCharacter?.accentColour}-500`);
-    });
+    const rightCharHUD = document.getElementById('right-character-hud');
+    if (rightCharHUD) rightCharHUD.classList.toggle('hidden');
 
-    const blueBordeblueElements = rightHUD?.querySelectorAll('.border-blue-500');
+    const rightPortrait = document.getElementById('right-character-portrait') as HTMLImageElement;
+    if (rightPortrait) rightPortrait.src = rightCharacter?.characterAvatarPicturePath as string;
 
-    blueBordeblueElements.forEach((el) => {
-      el.classList.remove('border-blue-500');
-      el.classList.add(`border-${rightCharacter?.accentColour}-500`);
-    });
+    const rightHUD = document.getElementById('right-hud');
+    if (rightHUD) {
+      const blueElements = rightHUD?.querySelectorAll('.bg-blue-500');
+
+      blueElements.forEach((el) => {
+        el.classList.remove('bg-blue-500');
+        el.classList.add(`bg-${rightCharacter?.accentColour}-500`);
+      });
+
+      const blueBordeblueElements = rightHUD?.querySelectorAll('.border-blue-500');
+
+      blueBordeblueElements.forEach((el) => {
+        el.classList.remove('border-blue-500');
+        el.classList.add(`border-${rightCharacter?.accentColour}-500`);
+      });
+    }
   }
 }
