@@ -30,7 +30,7 @@ export type ClientMessage =
 
 export type ServerMessage =
   | { type: 'game_state'; state: GameSate }
-  | { type: 'game_start'; players: [string, string] }
+  | { type: 'game_start'; players: [string, string]; settings: gameSettings }
   | { type: 'error'; message: string };
 
 export interface GameSession {
