@@ -4,7 +4,7 @@ import { Player } from './player.js';
 import { GameArea } from './types.js';
 import { scoreAnimation } from '../animations/animations.js';
 import { triggerEndGameMenu } from './gameConclusion.js';
-import { Ball } from './ball.js';
+import { Ball, ballCountdown } from './ball.js';
 import { Paddle } from './paddle.js';
 
 export const MAX_BALL_SPEED: number = 1000;
@@ -159,7 +159,6 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
   }
 }
 
-// TODO: Add countdown
 // Returns ball to center of canvas and starts round at random direction
 async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
@@ -176,7 +175,8 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
   gameArea.inputHandler?.disable();
   window.dispatchEvent(pauseEvent);
   gameArea.state = gameState.paused;
-  await wait(2);
+  ballCountdown();
+  await wait(3);
   const newTime = Date.now();
   leftPlayer.attack?.reset(beforeTime, newTime);
   rightPlayer.attack?.reset(beforeTime, newTime);
