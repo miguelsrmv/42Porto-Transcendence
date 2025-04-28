@@ -22,7 +22,7 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
       if (playerSession && isSessionFull(playerSession)) {
         // TODO: error handling for no game session returned
         const matchSettings = playerSession.settings;
-        const response = { type: 'game_start', settings: matchSettings } as ServerMessage;
+        const response = { type: 'game_setup', settings: matchSettings } as ServerMessage;
         broadcastMessage(playerSession, JSON.stringify(response));
       }
       break;
