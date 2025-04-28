@@ -129,6 +129,11 @@ export function getGameSession(playerSocket: WebSocket): GameSession | null {
   return null;
 }
 
+export function isSessionFull(session: GameSession): boolean {
+  if (session.players.size === 2) return true;
+  return false;
+}
+
 export function playerIsInASession(playerSocket: WebSocket): boolean {
   const gameSessions = classicPongSessions.concat(crazyPongSessions);
   gameSessions.forEach((session) => {
