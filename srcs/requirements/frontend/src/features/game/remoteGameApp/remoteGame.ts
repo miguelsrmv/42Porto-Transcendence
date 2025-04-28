@@ -30,6 +30,32 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       loadView('game-page');
       updateHUD(gameSettings, gameSettings.gameType);
       updateBackground(gameSettings.background.imagePath);
+
+      const keyDownHandler = (e: KeyboardEvent) => {
+        if (e.key === ' ' && gameSettings.gameType === 'Crazy Pong') {
+          webSocket.send(JSON.stringify({ type: 'power_up' }));
+          console.log('Send power up');
+        } else if (e.key == 'ArrowUp') {
+          webSocket.send(JSON.stringify({ type: 'movement', payload: 'up' }));
+          console.log('Sent up arrow');
+          // Send Up
+        } else if (e.key == 'ArrowDown') {
+          webSocket.send(JSON.stringify({ type: 'movement', payload: 'down' }));
+          console.log('Sent up down');
+          // Send Down
+        }
+      };
+
+      const keyUpHandler = (e: KeyboardEvent) => {
+        // Send Stop
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          webSocket.send(JSON.stringify({ type: 'movement', payload: 'stop' }));
+          console.log('Stopped sending input');
+        }
+      };
+
+      window.addEventListener('keydown', keyDownHandler);
+      window.addEventListener('keyup', keyUpHandler);
     }
     // Else if a mensagem for dados de renderização
     //{
@@ -48,3 +74,5 @@ function updateBackground(backgroundPath: string): void {
   }
   backgroundImg.src = backgroundPath;
 }
+
+function setSendSignals(): void {}
