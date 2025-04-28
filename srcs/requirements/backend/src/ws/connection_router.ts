@@ -1,12 +1,22 @@
 import WebSocket from 'ws';
-import { attributePlayerToSession, removePlayer } from './remoteGameApp/sessionManagement';
-import { ClientMessage } from './remoteGameApp/types';
+import {
+  attributePlayerToSession,
+  getGameSession,
+  removePlayer,
+} from './remoteGameApp/sessionManagement';
+import { ClientMessage, ServerMessage } from './remoteGameApp/types';
 
 function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
   switch (message.type) {
     case 'join_game': {
       const playerSettings = message.playerSettings;
       attributePlayerToSession(socket, playerSettings);
+      const playerSession = getGameSession(socket);
+      // TODO: error handling for no game session returned
+      const matchSettings = playerSession?.settings;
+      const response = { type: 'game_start', ...matchSettings } as ServerMessage;
+      console.log(`Response: ${JSON.stringify(response)}`);
+      socket.send(JSON.stringify(response));
       break;
     }
     case 'movement': {
@@ -27,7 +37,6 @@ export async function handleSocketConnection(socket: WebSocket) {
   socket.on('message', (message) => {
     console.log('Received message:', message.toString());
     messageTypeHandler(JSON.parse(message.toString()), socket);
-    socket.send('Hi from server');
   });
 
   socket.on('close', () => {

@@ -11,5 +11,9 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
     webSocket.send(serializedMsg);
   };
 
+  webSocket.onmessage = (event) => {
+    console.log(event.data);
+  }
+
   // TODO: Update HUD after, only then initialize the actual
 }
