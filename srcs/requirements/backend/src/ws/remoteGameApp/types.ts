@@ -29,8 +29,10 @@ export type ClientMessage =
   | { type: 'power_up' };
 
 export type ServerMessage =
+  | { type: 'game_setup'; players: [string, string]; settings: gameSettings }
+  | { type: 'game_start' }
   | { type: 'game_state'; state: GameSate }
-  | { type: 'game_start'; players: [string, string]; settings: gameSettings }
+  // | { type: 'game_end'; results:  }
   | { type: 'error'; message: string };
 
 export interface GameSession {

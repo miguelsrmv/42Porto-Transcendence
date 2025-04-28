@@ -40,11 +40,19 @@ Messages **sent from the server to the client**.
   - **Description:** Update the client with the current game state.
   - **Payload:**
     - `state: GameSate`
-- `game_start`
-  - **Description:** Notify clients that the game has started.
+- `game_setup`
+  - **Description:** Notify clients that the players have been matched.
   - **Payload:**
     - `players: [string, string]` — Tuple of player IDs.
-    - `settings: gameSettings` — Full game settings
+    - `settings: gameSettings` — Full game settings.
+- `game_start`
+  - **Description:** Notify the client that the game has started.
+  - **Payload:**
+    - _(none)_
+- `game_end` **NOT IMPLEMENTED YET**
+  - **Description:** Notify the client that the game has ended.
+  - **Payload:**
+    - `results: ??` — Scores and stats of the game.
 - `error`
   - **Description:** Inform the client that an error occurred.
   - **Payload:**
