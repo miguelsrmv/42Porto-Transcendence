@@ -29,6 +29,12 @@ export const BALL_RADIUS = 10;
 let lastTime = 0; // Time of the last frame
 let animationFrameId: number | null = null; // To potentially stop the loop
 
+// For initial countdown
+let countdownTimeLeft = 3;
+let countdownBlinkTimer = 0;
+let countdownVisible = true;
+let isInitialCountdownActive = true;
+
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
@@ -72,6 +78,7 @@ const myGameArea: GameArea = {
       return;
     }
     this.state = gameState.playing;
+
     animationFrameId = requestAnimationFrame(updateGameArea);
   },
 
@@ -193,34 +200,58 @@ export function initializeLocalGame(gameSettings: gameSettings): void {
 }
 
 async function updateGameArea(currentTime: number) {
-  // Request the next frame immediately. If we need to stop, we cancel this ID.
   animationFrameId = requestAnimationFrame(updateGameArea);
 
-  // Calculate deltaTime in seconds
-  // Use performance.now() for high-resolution time
   if (lastTime === 0) {
-    lastTime = currentTime; // Initialize lastTime on the first frame
+    lastTime = currentTime;
   }
-  const deltaTime = (currentTime - lastTime) / 1000; // Delta time in seconds
-  lastTime = currentTime; // Update lastTime for the next frame
+  const deltaTime = (currentTime - lastTime) / 1000;
+  lastTime = currentTime;
 
-  // --- Optional: Cap deltaTime to prevent large jumps if tab loses focus ---
-  const maxDeltaTime = 0.1; // e.g., cap at 100ms (1/10th second)
-  const dt = Math.min(deltaTime, maxDeltaTime); // Use 'dt' for updates
+  const maxDeltaTime = 0.1;
+  const dt = Math.min(deltaTime, maxDeltaTime);
 
   myGameArea.clear();
 
   handleInput(leftPlayer, rightPlayer, myGameArea.state);
 
+  if (!myGameArea.canvas) {
+    console.error('Error getting canvas element!');
+    return;
+  }
+
+  if (isInitialCountdownActive) {
+    // Handle countdown logic
+    countdownTimeLeft -= dt;
+    countdownBlinkTimer -= dt;
+
+    if (countdownBlinkTimer <= 0) {
+      countdownVisible = !countdownVisible;
+      countdownBlinkTimer = 0.5; // Blink every 0.5s
+    }
+
+    if (myGameArea.context) {
+      leftPaddle.draw(myGameArea.context);
+      rightPaddle.draw(myGameArea.context);
+      if (countdownVisible) {
+        ball.draw(myGameArea.context);
+      }
+    }
+
+    if (countdownTimeLeft <= 0) {
+      isInitialCountdownActive = false;
+      myGameArea.inputHandler?.enable();
+      myGameArea.state = gameState.playing;
+    }
+    return; // Exit early, don't update game yet
+  }
+
+  // Normal game update
   leftPaddle.update(dt);
   rightPaddle.update(dt);
   ball.move(dt);
   fakeBalls.forEach((fakeBall) => fakeBall.move(dt));
 
-  if (!myGameArea.canvas) {
-    console.error('Error getting canvas element!');
-    return;
-  }
   checkWallCollision(ball, myGameArea);
   fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall, myGameArea));
   checkPaddleCollision(ball, leftPaddle, rightPaddle);
@@ -234,6 +265,51 @@ async function updateGameArea(currentTime: number) {
     fakeBalls.forEach((fakeBall) => fakeBall.draw(myGameArea.context as CanvasRenderingContext2D));
   }
 }
+
+//
+//
+// async function updateGameArea(currentTime: number) {
+//   // Request the next frame immediately. If we need to stop, we cancel this ID.
+//   animationFrameId = requestAnimationFrame(updateGameArea);
+//
+//   // Calculate deltaTime in seconds
+//   // Use performance.now() for high-resolution time
+//   if (lastTime === 0) {
+//     lastTime = currentTime; // Initialize lastTime on the first frame
+//   }
+//   const deltaTime = (currentTime - lastTime) / 1000; // Delta time in seconds
+//   lastTime = currentTime; // Update lastTime for the next frame
+//
+//   // --- Optional: Cap deltaTime to prevent large jumps if tab loses focus ---
+//   const maxDeltaTime = 0.1; // e.g., cap at 100ms (1/10th second)
+//   const dt = Math.min(deltaTime, maxDeltaTime); // Use 'dt' for updates
+//
+//   myGameArea.clear();
+//
+//   handleInput(leftPlayer, rightPlayer, myGameArea.state);
+//
+//   leftPaddle.update(dt);
+//   rightPaddle.update(dt);
+//   ball.move(dt);
+//   fakeBalls.forEach((fakeBall) => fakeBall.move(dt));
+//
+//   if (!myGameArea.canvas) {
+//     console.error('Error getting canvas element!');
+//     return;
+//   }
+//   checkWallCollision(ball, myGameArea);
+//   fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall, myGameArea));
+//   checkPaddleCollision(ball, leftPaddle, rightPaddle);
+//
+//   await checkGoal(leftPlayer, rightPlayer, myGameArea);
+//
+//   if (myGameArea.context) {
+//     leftPaddle.draw(myGameArea.context);
+//     rightPaddle.draw(myGameArea.context);
+//     ball.draw(myGameArea.context);
+//     fakeBalls.forEach((fakeBall) => fakeBall.draw(myGameArea.context as CanvasRenderingContext2D));
+//   }
+// }
 
 function updateBackground(background: background | null) {
   if (!background) return;
