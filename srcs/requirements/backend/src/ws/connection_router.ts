@@ -13,6 +13,8 @@ function broadcastMessage(session: GameSession, message: string) {
   }
 }
 
+// TODO: send who triggered animation
+
 function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
   switch (message.type) {
     case 'join_game': {
@@ -24,13 +26,8 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
         const matchSettings = playerSession.settings;
         const response = { type: 'game_setup', settings: matchSettings } as ServerMessage;
         broadcastMessage(playerSession, JSON.stringify(response));
+        // Game start gameStart(playerSession);
       }
-      break;
-    }
-    case 'movement': {
-      break;
-    }
-    case 'power_up': {
       break;
     }
   }
