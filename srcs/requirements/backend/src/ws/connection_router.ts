@@ -2,9 +2,16 @@ import WebSocket from 'ws';
 import {
   attributePlayerToSession,
   getGameSession,
+  isSessionFull,
   removePlayer,
 } from './remoteGameApp/sessionManagement';
-import { ClientMessage, ServerMessage } from './remoteGameApp/types';
+import { ClientMessage, GameSession, ServerMessage } from './remoteGameApp/types';
+
+function broadcastMessage(session: GameSession, message: string) {
+  for (const [socket] of session.players) {
+    if (socket.readyState === WebSocket.OPEN) socket.send(message);
+  }
+}
 
 function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
   switch (message.type) {
@@ -12,11 +19,12 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
       const playerSettings = message.playerSettings;
       attributePlayerToSession(socket, playerSettings);
       const playerSession = getGameSession(socket);
-      // TODO: error handling for no game session returned
-      const matchSettings = playerSession?.settings;
-      const response = { type: 'game_start', ...matchSettings } as ServerMessage;
-      console.log(`Response: ${JSON.stringify(response)}`);
-      socket.send(JSON.stringify(response));
+      if (playerSession && isSessionFull(playerSession)) {
+        // TODO: error handling for no game session returned
+        const matchSettings = playerSession.settings;
+        const response = { type: 'game_start', settings: matchSettings } as ServerMessage;
+        broadcastMessage(playerSession, JSON.stringify(response));
+      }
       break;
     }
     case 'movement': {
