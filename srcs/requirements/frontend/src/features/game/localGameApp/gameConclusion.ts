@@ -72,6 +72,12 @@ function updateStatsColour(colour: string, stats: HTMLElement): void {
     element.classList.remove('text-green-400');
     element.classList.add(`text-${colour}-400`);
   });
+
+  stats.classList.remove('border-green-500');
+  stats.classList.add(`border-${colour}-500`);
+
+  stats.classList.remove('hover:shadow-green-500/30');
+  stats.classList.add(`hover:shadow-${colour}-500/30`);
 }
 
 function updateStatsContents(side: string): void {
