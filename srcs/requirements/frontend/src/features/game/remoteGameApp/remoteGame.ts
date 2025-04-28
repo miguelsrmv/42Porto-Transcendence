@@ -36,11 +36,11 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
           webSocket.send(JSON.stringify({ type: 'power_up' }));
           console.log('Send power up');
         } else if (e.key == 'ArrowUp') {
-          webSocket.send(JSON.stringify({ type: 'movement', payload: 'up' }));
+          webSocket.send(JSON.stringify({ type: 'movement', direction: 'up' }));
           console.log('Sent up arrow');
           // Send Up
         } else if (e.key == 'ArrowDown') {
-          webSocket.send(JSON.stringify({ type: 'movement', payload: 'down' }));
+          webSocket.send(JSON.stringify({ type: 'movement', direction: 'down' }));
           console.log('Sent up down');
           // Send Down
         }
@@ -49,7 +49,7 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       const keyUpHandler = (e: KeyboardEvent) => {
         // Send Stop
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-          webSocket.send(JSON.stringify({ type: 'movement', payload: 'stop' }));
+          webSocket.send(JSON.stringify({ type: 'movement', direction: 'stop' }));
           console.log('Stopped sending input');
         }
       };
