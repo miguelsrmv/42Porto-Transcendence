@@ -24,16 +24,17 @@ function mergePlayer2IntoGameSettings(
   };
 }
 
+// TODO: Remove placeholders
 function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings): gameSettings {
   return {
     playType: playerSettings.playType,
     gameType: playerSettings.gameType,
     alias1: playerSettings.alias,
-    alias2: '',
+    alias2: 'playerPlaceholder',
     paddleColour1: playerSettings.paddleColour,
-    paddleColour2: '',
+    paddleColour2: '#ff0000',
     character1: playerSettings.character,
-    character2: null,
+    character2: playerSettings.character,
     background: getRandomBackground(),
   };
 }
