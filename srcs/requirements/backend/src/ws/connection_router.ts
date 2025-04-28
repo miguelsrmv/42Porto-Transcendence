@@ -36,8 +36,15 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
   }
 }
 
+let pingInterval: NodeJS.Timeout;
+
 export async function handleSocketConnection(socket: WebSocket) {
   socket.on('open', () => {
+    pingInterval = setInterval(() => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.ping(); // send a ping frame
+      }
+    }, 30000); // every 30 seconds
     console.log('New client connection on /ws');
     socket.send('You have connected to the ft_transcendence server');
   });
@@ -49,6 +56,7 @@ export async function handleSocketConnection(socket: WebSocket) {
 
   socket.on('close', () => {
     removePlayer(socket);
+    clearInterval(pingInterval);
     console.log('Client disconnected');
   });
 
