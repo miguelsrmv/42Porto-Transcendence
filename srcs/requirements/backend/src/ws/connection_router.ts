@@ -5,12 +5,11 @@ import {
   isSessionFull,
   removePlayer,
 } from './remoteGameApp/sessionManagement';
-import { ClientMessage, GameSession, ServerMessage } from './remoteGameApp/types';
+import { ClientMessage, ServerMessage } from './remoteGameApp/types';
 
-function broadcastMessage(session: GameSession, message: string) {
-  for (const [socket] of session.players) {
-    if (socket.readyState === WebSocket.OPEN) socket.send(message);
-  }
+export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, message: string) {
+  if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
+  if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
 }
 
 // TODO: send who triggered animation
@@ -25,7 +24,8 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
         // TODO: error handling for no game session returned
         const matchSettings = playerSession.settings;
         const response = { type: 'game_setup', settings: matchSettings } as ServerMessage;
-        broadcastMessage(playerSession, JSON.stringify(response));
+        const [ws1, ws2] = Array.from(playerSession.players.keys());
+        broadcastMessage(ws1, ws2, JSON.stringify(response));
         // Game start gameStart(playerSession);
       }
       break;

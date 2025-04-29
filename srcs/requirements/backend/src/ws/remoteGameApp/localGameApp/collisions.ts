@@ -1,66 +1,33 @@
-import { wait } from '../../../utils/helpers.js';
-import { gameState, SPEED, paintScore, fakeBalls, stats } from './game.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, gameArea, gameState, SPEED, stats } from './game.js';
 import { Player } from './player.js';
-import { GameArea } from './types.js';
-import { scoreAnimation } from '../animations/animations.js';
-import { triggerEndGameMenu } from './gameConclusion.js';
 import { Ball, ballCountdown } from './ball.js';
 import { Paddle } from './paddle.js';
+import { broadcastMessage } from '../../connection_router.js';
+import { wait } from '../helpers.js';
 
 export const MAX_BALL_SPEED: number = 1000;
 
-//
-// interface Ball {
-//   x: number;
-//   y: number;
-//   previousX: number;
-//   previousY: number;
-//   radius: number;
-//   speedX: number;
-//   speedY: number;
-//   bounceVertical(): void;
-//   bounceHorizontal(): void;
-//   reset(): void;
-// }
-//
-// interface Paddle {
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-// }
-
 // Checks if ball reached horizontal canvas limits
-export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
+export function checkWallCollision(ball: Ball): void {
   const nudgeAmount = 1;
-
-  if (!gameArea.canvas) {
-    console.error('Error getting canvas element!');
-    return;
-  }
-  if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
+  if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= CANVAS_HEIGHT) {
     ball.bounceVertical();
     if (ball.y - ball.radius <= 0 + nudgeAmount) ball.y = ball.radius + nudgeAmount;
-    else ball.y = gameArea.canvas.height - ball.radius - nudgeAmount;
+    else ball.y = CANVAS_HEIGHT - ball.radius - nudgeAmount;
   }
 }
 
-export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void {
+export function checkFakeBallWallCollision(ball: Ball): void {
   const nudgeAmount = 1;
-
-  if (!gameArea.canvas) {
-    console.error('Error getting canvas element!');
-    return;
-  }
-  if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= gameArea.canvas.height) {
+  if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= CANVAS_HEIGHT) {
     ball.bounceVertical();
     if (ball.y - ball.radius <= 0 + nudgeAmount) ball.y = ball.radius + nudgeAmount;
-    else ball.y = gameArea.canvas.height - ball.radius - nudgeAmount;
+    else ball.y = CANVAS_HEIGHT - ball.radius - nudgeAmount;
   }
-  if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= gameArea.canvas.width) {
+  if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= CANVAS_WIDTH) {
     ball.bounceHorizontalFakeBall();
     if (ball.x - ball.radius <= 0 + nudgeAmount) ball.x = ball.radius + nudgeAmount;
-    else ball.x = gameArea.canvas.width - ball.radius - nudgeAmount;
+    else ball.x = CANVAS_WIDTH - ball.radius - nudgeAmount;
   }
 }
 
@@ -68,38 +35,35 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
 
-function endGame(winningPlayer: Player, gameArea: GameArea): void {
+function endGame(winningPlayer: Player, gameArea: gameArea): void {
   gameArea.stop();
-  gameArea.clear();
-  triggerEndGameMenu(winningPlayer);
+  broadcastMessage(gameArea.leftPlayer.socket, gameArea.rightPlayer.socket, 'game_end');
 }
 
 // Checks if ball reached vertical canvas limits
-export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
-  if (!gameArea.canvas) {
-    console.error('Error getting canvas element!');
-    return;
-  }
-  if (leftPlayer.ball.x - leftPlayer.ball.radius <= 0) {
-    rightPlayer.increaseScore();
-    paintScore('right', rightPlayer.getScore());
-    scoreAnimation('right');
-    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
+export async function checkGoal(gameArea: gameArea) {
+  if (gameArea.leftPlayer.ball.x - gameArea.leftPlayer.ball.radius <= 0) {
+    gameArea.rightPlayer.increaseScore();
+    // paintScore('right', gameArea.rightPlayer.getScore());
+    // scoreAnimation('right');
     stats.right.increaseGoals();
     stats.left.increaseSufferedGoals();
-    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
-    await resetRound(leftPlayer, rightPlayer, gameArea);
-  } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
-    leftPlayer.increaseScore();
-    paintScore('left', leftPlayer.getScore());
-    scoreAnimation('left');
-    console.log(`Left player now has: ${leftPlayer.getScore()} points`);
+    await resetRound(gameArea);
+  } else if (gameArea.leftPlayer.ball.x + gameArea.leftPlayer.ball.radius >= CANVAS_WIDTH) {
+    gameArea.leftPlayer.increaseScore();
+    // paintScore('left', gameArea.leftPlayer.getScore());
+    // scoreAnimation('left');
     stats.left.increaseGoals();
     stats.right.increaseSufferedGoals();
-    await resetRound(leftPlayer, rightPlayer, gameArea);
+    await resetRound(gameArea);
   }
-  if (eitherPlayerHasWon(leftPlayer, rightPlayer))
-    endGame(leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer, gameArea);
+  if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer))
+    endGame(
+      gameArea.leftPlayer.getScore() > gameArea.rightPlayer.getScore()
+        ? gameArea.leftPlayer
+        : gameArea.rightPlayer,
+      gameArea,
+    );
 }
 
 // Checks if ball went over paddle x coordinate
@@ -160,28 +124,19 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
 }
 
 // Returns ball to center of canvas and starts round at random direction
-async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
-  if (!gameArea.canvas) {
-    console.error('Error getting canvas element!');
-    return;
-  }
-
-  const pauseEvent = new CustomEvent('paused');
+async function resetRound(gameArea: gameArea) {
   const beforeTime = Date.now();
-  leftPlayer.ball.reset();
-  leftPlayer.ownPaddle.reset();
-  rightPlayer.ownPaddle.reset();
-  fakeBalls.splice(0, fakeBalls.length);
-  gameArea.inputHandler?.disable();
-  window.dispatchEvent(pauseEvent);
+  gameArea.leftPlayer.ball.reset();
+  gameArea.leftPlayer.ownPaddle.reset();
+  gameArea.rightPlayer.ownPaddle.reset();
+  gameArea.fakeBalls.splice(0, gameArea.fakeBalls.length);
   gameArea.state = gameState.paused;
   ballCountdown();
   await wait(3);
   const newTime = Date.now();
-  leftPlayer.attack?.reset(beforeTime, newTime);
-  rightPlayer.attack?.reset(beforeTime, newTime);
-  gameArea.inputHandler?.enable();
+  gameArea.leftPlayer.attack?.reset(beforeTime, newTime);
+  gameArea.rightPlayer.attack?.reset(beforeTime, newTime);
   gameArea.state = gameState.playing;
-  leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
-  leftPlayer.ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  gameArea.leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  gameArea.leftPlayer.ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }

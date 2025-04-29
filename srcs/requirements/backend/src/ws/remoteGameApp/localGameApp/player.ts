@@ -1,6 +1,8 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { Attack } from './attack.js';
+import WebSocket from 'ws';
+import { PlayerInput } from '../types.js';
 
 export class Player {
   ownPaddle: Paddle;
@@ -10,6 +12,9 @@ export class Player {
   score: number;
   attack: Attack | null;
   side: string;
+  socket: WebSocket;
+  input: PlayerInput;
+  requiresPowerUp: boolean;
 
   constructor(
     ownPaddle: Paddle,
@@ -18,6 +23,7 @@ export class Player {
     alias: string,
     attackName: string | null,
     side: string,
+    socket: WebSocket,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -26,6 +32,9 @@ export class Player {
     this.score = 0;
     this.attack = attackName ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side) : null;
     this.side = side;
+    this.socket = socket;
+    this.input = PlayerInput.stop;
+    this.requiresPowerUp = false;
   }
 
   increaseScore(): void {
