@@ -1,3 +1,4 @@
+import { gameStats } from './localGameApp/gameStats';
 import { gameSettings, leanGameSettings } from './settings';
 import WebSocket from 'ws';
 
@@ -23,16 +24,33 @@ export interface GameSate {
   };
 }
 
+export enum PlayerInput {
+  'up',
+  'down',
+  'stop',
+}
+
+enum AnimationType {
+  'paint_score',
+  'score',
+}
+
+enum SoundType {
+  'score',
+}
+
 export type ClientMessage =
   | { type: 'join_game'; playerSettings: leanGameSettings }
-  | { type: 'movement'; direction: 'up' | 'down' | 'stop' }
+  | { type: 'movement'; direction: PlayerInput }
   | { type: 'power_up' };
 
 export type ServerMessage =
   | { type: 'game_setup'; players: [string, string]; settings: gameSettings }
   | { type: 'game_start' }
   | { type: 'game_state'; state: GameSate }
-  // | { type: 'game_end'; results:  }
+  | { type: 'game_end'; results: gameStats }
+  | { type: 'animation'; animation: AnimationType; player: 'left' | 'right' }
+  | { type: 'sound'; sound: SoundType }
   | { type: 'error'; message: string };
 
 export interface GameSession {

@@ -1,66 +1,36 @@
-import { gameState, SPEED } from './game.js';
-import { Player } from './player.js';
-import type { gameType } from '../gameSettings/gameSettings.types.js';
-
-// Track key states
-const keys: Record<string, boolean> = {};
-
-function resetKeys() {
-  for (const key in keys) {
-    keys[key] = false;
-  }
-}
+import { gameArea, gameState, SPEED } from './game.js';
+import { PlayerInput } from '../types.js';
 
 // Add event listeners for keydown and keyup events
-export function setupInput(leftPlayer: Player, rightPlayer: Player, gameType: gameType) {
-  const keyDownHandler = (e: KeyboardEvent) => {
-    if (e.key === ' ' && gameType === 'Crazy Pong') {
-      leftPlayer.attack?.attack();
-    } else if (e.key === 'Enter' && gameType === 'Crazy Pong') {
-      rightPlayer.attack?.attack();
-    } else {
-      keys[e.key] = true;
+export function setupInput(gameArea: gameArea) {
+  gameArea.leftPlayer.socket.on('message', (message) => {
+    const parsedMessage = JSON.parse(message.toString());
+    if (parsedMessage.type === 'movement') {
+      gameArea.leftPlayer.input = parsedMessage.direction as PlayerInput;
     }
-  };
-  const keyUpHandler = (e: KeyboardEvent) => {
-    keys[e.key] = false;
-  };
-
-  window.addEventListener('keydown', keyDownHandler);
-  window.addEventListener('keyup', keyUpHandler);
-  return {
-    disable: () => {
-      window.removeEventListener('keydown', keyDownHandler);
-      window.removeEventListener('keyup', keyUpHandler);
-    },
-    enable: () => {
-      window.addEventListener('keydown', keyDownHandler);
-      window.addEventListener('keyup', keyUpHandler);
-    },
-  };
+    if (parsedMessage.type === 'power_up') {
+      gameArea.leftPlayer.requiresPowerUp = true;
+    }
+  });
 }
 
 // Update paddle movement based on key input
-export function handleInput(leftPlayer: Player, rightPlayer: Player, state: gameState): void {
-  if (state == gameState.paused) {
-    resetKeys();
-    return;
-  }
-  // Left paddle ('w' and 's')
-  if (keys['w']) {
-    leftPlayer.ownPaddle.speedY = -SPEED * leftPlayer.ownPaddle.speedModifier;
-  } else if (keys['s']) {
-    leftPlayer.ownPaddle.speedY = SPEED * leftPlayer.ownPaddle.speedModifier;
+export function handleInput(gameArea: gameArea): void {
+  if (gameArea.state == gameState.paused) return;
+
+  if (gameArea.leftPlayer.input === PlayerInput.up) {
+    gameArea.leftPlayer.ownPaddle.speedY = -SPEED * gameArea.leftPlayer.ownPaddle.speedModifier;
+  } else if (gameArea.leftPlayer.input === PlayerInput.down) {
+    gameArea.leftPlayer.ownPaddle.speedY = SPEED * gameArea.leftPlayer.ownPaddle.speedModifier;
   } else {
-    leftPlayer.ownPaddle.speedY = 0;
+    gameArea.leftPlayer.ownPaddle.speedY = 0;
   }
 
-  // Right paddle ('ArrowUp' and 'ArrowDown')
-  if (keys['ArrowUp']) {
-    rightPlayer.ownPaddle.speedY = -SPEED * rightPlayer.ownPaddle.speedModifier;
-  } else if (keys['ArrowDown']) {
-    rightPlayer.ownPaddle.speedY = SPEED * rightPlayer.ownPaddle.speedModifier;
+  if (gameArea.rightPlayer.input === PlayerInput.up) {
+    gameArea.rightPlayer.ownPaddle.speedY = -SPEED * gameArea.rightPlayer.ownPaddle.speedModifier;
+  } else if (gameArea.rightPlayer.input === PlayerInput.down) {
+    gameArea.rightPlayer.ownPaddle.speedY = SPEED * gameArea.rightPlayer.ownPaddle.speedModifier;
   } else {
-    rightPlayer.ownPaddle.speedY = 0;
+    gameArea.rightPlayer.ownPaddle.speedY = 0;
   }
 }
