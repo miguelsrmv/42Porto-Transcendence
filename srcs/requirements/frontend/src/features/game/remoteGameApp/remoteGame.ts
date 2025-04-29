@@ -1,6 +1,7 @@
 import type { gameSettings, leanGameSettings } from '../gameSettings/gameSettings.types.js';
 import { updateHUD } from '../gameSetup.js';
 import { loadView } from '../../../core/viewLoader.js';
+import { updateBackground, renderGame } from './renderGame.js';
 
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   const webSocket = new WebSocket('wss://padaria.42.pt/ws');
@@ -34,15 +35,10 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       const keyDownHandler = (e: KeyboardEvent) => {
         if (e.key === ' ' && gameSettings.gameType === 'Crazy Pong') {
           webSocket.send(JSON.stringify({ type: 'power_up' }));
-          console.log('Send power up');
         } else if (e.key == 'ArrowUp') {
           webSocket.send(JSON.stringify({ type: 'movement', direction: 'up' }));
-          console.log('Sent up arrow');
-          // Send Up
         } else if (e.key == 'ArrowDown') {
           webSocket.send(JSON.stringify({ type: 'movement', direction: 'down' }));
-          console.log('Sent up down');
-          // Send Down
         }
       };
 
@@ -56,23 +52,10 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
 
       window.addEventListener('keydown', keyDownHandler);
       window.addEventListener('keyup', keyUpHandler);
+    } else if (messageData.type === 'game_start') {
+      // TODO: Change to game start??
+      renderGame(webSocket);
     }
-    // Else if a mensagem for dados de renderização
-    //{
-    //renderGame(serverData);
-    //}
-
     // Else if a mensagem for game terminou e respetivos resultados
   };
 }
-
-function updateBackground(backgroundPath: string): void {
-  const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
-  if (!backgroundImg) {
-    console.warn("Couldn't find backgroundImg element");
-    return;
-  }
-  backgroundImg.src = backgroundPath;
-}
-
-function setSendSignals(): void {}
