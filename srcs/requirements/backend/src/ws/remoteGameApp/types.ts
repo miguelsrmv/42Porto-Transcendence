@@ -28,7 +28,7 @@ export type ClientMessage =
   | { type: 'stop_game' };
 
 export type ServerMessage =
-  | { type: 'game_setup'; players: [string, string]; settings: gameSettings }
+  | { type: 'game_setup'; settings: gameSettings }
   | { type: 'game_start' }
   | { type: 'game_state'; state: GameState }
   | { type: 'game_goal'; scoringSide: 'left' | 'right' }
