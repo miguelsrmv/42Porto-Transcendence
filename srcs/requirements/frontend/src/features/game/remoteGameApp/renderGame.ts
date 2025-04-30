@@ -8,6 +8,9 @@ import type { GameArea, GameState, Paddle, Ball } from './remoteGameTypes.js';
 const BALL_COLOUR = 'white';
 const BORDER_COLOUR = 'gray';
 
+let leftPowerBarAnimation: boolean = false;
+let rightPowerBarAnimation: boolean = false;
+
 export function updateBackground(backgroundPath: string): void {
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
   if (!backgroundImg) {
@@ -54,13 +57,23 @@ const myGameArea: GameArea = {
 export function renderGame(webSocket: WebSocket) {
   myGameArea.start();
   let filledAnimationIsOn: boolean = false;
-
+  const leftPowerBar = document.getElementById('left-character-power-bar-fill');
+  if (!leftPowerBar) {
+    console.warn('left-character player bar not found');
+    return;
+  }
+  const rightPowerBar = document.getElementById('right-character-power-bar-fill');
+  if (!rightPowerBar) {
+    console.warn('right-character player bar not found');
+    return;
+  }
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
     if (messageData.type === 'game_state') {
       myGameArea.clear();
       drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state as GameState);
-      drawPowerBar(messageData.state as GameState, filledAnimationIsOn);
+      drawPowerBar(messageData.state.leftPowerBarFill, leftPowerBar, 'left');
+      drawPowerBar(messageData.state.rightPowerBarFill, rightPowerBar, 'right');
       triggerAnimation(myGameArea.context as CanvasRenderingContext2D, messageData.state);
       triggerSound(myGameArea.context as CanvasRenderingContext2D, messageData.state);
     }
@@ -91,27 +104,20 @@ function drawBall(ctx: CanvasRenderingContext2D, ball: Ball) {
   }
 }
 
-function drawPowerBar(state: GameState, filledAnimationIsOn: boolean) {
-  function updatePowerBar(side: string, value: number, filledAnimationIsOn: boolean) {
-    const powerBar = document.getElementById(`${side}-character-power-bar-fill`);
-    if (!powerBar) {
-      console.warn(`${side}-character player bar not found`);
-      return;
-    }
+function drawPowerBar(value: number, powerBar: HTMLElement, side: string): void {
+  powerBar.style.width = `${value}%`;
 
-    powerBar.style.width = `${value}`;
-
-    if (value === 100) {
+  if (value === 100) {
+    if (
+      (side === 'left' && !leftPowerBarAnimation) ||
+      (side === 'right' && !rightPowerBarAnimation)
+    )
       activatePowerBarAnimation(side);
-      filledAnimationIsOn = true;
-    } else {
-      deactivatePowerBarAnimation(side);
-      filledAnimationIsOn = false;
-    }
+    side === 'left' ? (leftPowerBarAnimation = true) : (rightPowerBarAnimation = true);
+  } else {
+    deactivatePowerBarAnimation(side);
+    side === 'left' ? (leftPowerBarAnimation = false) : (rightPowerBarAnimation = false);
   }
-
-  updatePowerBar('left', state.leftPowerBarFill, filledAnimationIsOn);
-  updatePowerBar('right', state.rightPowerBarFill, filledAnimationIsOn);
 }
 
 function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
@@ -120,3 +126,9 @@ function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
 }
 
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
+
+// TODO:
+// When exit, send stop signal
+// Score goals
+// HTML Canvas 4/3
+// When win, get game stats screen
