@@ -4,6 +4,7 @@ import { Attack } from './attack.js';
 import WebSocket from 'ws';
 import { PlayerInput } from '../types.js';
 import { gameStats } from './gameStats.js';
+import { gameArea } from './game.js';
 
 export class Player {
   ownPaddle: Paddle;
@@ -25,6 +26,7 @@ export class Player {
     side: string,
     socket: WebSocket,
     stats: gameStats,
+    gameArea: gameArea,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -32,7 +34,7 @@ export class Player {
     this.alias = alias;
     this.score = 0;
     this.attack = attackName
-      ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side, stats)
+      ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side, stats, gameArea)
       : null;
     this.side = side;
     this.socket = socket;

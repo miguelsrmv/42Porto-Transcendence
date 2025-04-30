@@ -1,4 +1,4 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH, gameArea, gameState, SPEED } from './game.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, gameArea, gameRunningState, SPEED } from './game.js';
 import { Player } from './player.js';
 import { Ball, ballCountdown } from './ball.js';
 import { Paddle } from './paddle.js';
@@ -129,13 +129,13 @@ async function resetRound(gameArea: gameArea) {
   gameArea.leftPlayer.ownPaddle.reset();
   gameArea.rightPlayer.ownPaddle.reset();
   gameArea.fakeBalls.splice(0, gameArea.fakeBalls.length);
-  gameArea.state = gameState.paused;
+  gameArea.runningState = gameRunningState.paused;
   ballCountdown();
   await wait(3);
   const newTime = Date.now();
   gameArea.leftPlayer.attack?.reset(beforeTime, newTime);
   gameArea.rightPlayer.attack?.reset(beforeTime, newTime);
-  gameArea.state = gameState.playing;
+  gameArea.runningState = gameRunningState.playing;
   gameArea.leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
   gameArea.leftPlayer.ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }

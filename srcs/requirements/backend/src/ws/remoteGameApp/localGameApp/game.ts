@@ -11,7 +11,7 @@ import {
 import { Player } from './player.js';
 import { gameStats } from './gameStats.js';
 import { gameSettings } from '../settings.js';
-import { GameSate } from '../types.js';
+import { GameState } from '../types.js';
 
 // Starting state
 //// Constants
@@ -26,35 +26,39 @@ const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
 
-export enum gameState {
+export enum gameRunningState {
   playing,
   paused,
   ended,
 }
 
-function setPowerUpBar(player: Player, gameArea: gameArea): void {
-  let filledAnimationIsOn = false;
-
+function setPowerUpBar(gameArea: gameArea): void {
   setInterval(() => {
-    if (player.attack && gameArea.state === gameState.playing) {
-      const lastUsed: number = player.attack.lastUsed;
-      const coolDown: number = player.attack.attackCooldown;
+    if (gameArea.leftPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
+      const lastUsed: number = gameArea.leftPlayer!.attack.lastUsed;
+      const coolDown: number = gameArea.leftPlayer!.attack.attackCooldown;
       const currentTime: number = Date.now();
 
       const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
-      // PlayerBar.style.width = `${percentage}%`;
+      gameArea.leftPowerBarFill = percentage;
 
       if (percentage == 100) {
-        player.attack.attackIsAvailable = true;
-        if (!filledAnimationIsOn) {
-          activatePowerBarAnimation(`${player.side}`);
-          filledAnimationIsOn = true;
-        }
-      } else {
-        if (filledAnimationIsOn) {
-          deactivatePowerBarAnimation(`${player.side}`);
-          filledAnimationIsOn = false;
-        }
+        gameArea.leftPlayer!.attack.attackIsAvailable = true;
+      }
+    }
+  }, 20);
+
+  setInterval(() => {
+    if (gameArea.rightPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
+      const lastUsed: number = gameArea.rightPlayer!.attack.lastUsed;
+      const coolDown: number = gameArea.rightPlayer!.attack.attackCooldown;
+      const currentTime: number = Date.now();
+
+      const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
+      gameArea.rightPowerBarFill = percentage;
+
+      if (percentage == 100) {
+        gameArea.rightPlayer!.attack.attackIsAvailable = true;
       }
     }
   }, 20);
@@ -64,12 +68,16 @@ export interface gameArea {
   ball: Ball;
   leftPaddle: Paddle;
   rightPaddle: Paddle;
-  leftPlayer: Player;
-  rightPlayer: Player;
-  state: gameState;
+  leftPlayer: Player | null;
+  rightPlayer: Player | null;
+  runningState: gameRunningState;
   lastTime: number;
   fakeBalls: Ball[];
   stats: gameStats;
+  leftPowerBarFill: number;
+  rightPowerBarFill: number;
+  leftAnimation: boolean;
+  rightAnimation: boolean;
   gameLoop(): void;
   pause(): void;
   stop(): void;
@@ -101,36 +109,22 @@ function initializeGameArea(
     ball: ball,
     leftPaddle: leftPaddle,
     rightPaddle: rightPaddle,
-    leftPlayer: new Player(
-      leftPaddle,
-      rightPaddle,
-      ball,
-      gameSettings.alias1,
-      gameSettings.character1 ? gameSettings.character1.attack : null,
-      'left',
-      p1socket,
-      stats,
-    ),
-    rightPlayer: new Player(
-      rightPaddle,
-      leftPaddle,
-      ball,
-      gameSettings.alias2,
-      gameSettings.character2 ? gameSettings.character2.attack : null,
-      'right',
-      p2socket,
-      stats,
-    ),
-    state: gameState.playing,
+    leftPlayer: null,
+    rightPlayer: null,
+    runningState: gameRunningState.playing,
     lastTime: 0,
     fakeBalls: [],
     stats: stats,
+    leftPowerBarFill: 0,
+    rightPowerBarFill: 0,
+    leftAnimation: false,
+    rightAnimation: false,
     gameLoop: () => {},
     pause() {
-      this.state = gameState.paused;
+      this.runningState = gameRunningState.paused;
     },
     stop() {
-      this.state = gameState.ended;
+      this.runningState = gameRunningState.ended;
     },
     broadcastMessage: () => {},
   };
@@ -150,10 +144,33 @@ function initializeGameArea(
     setImmediate(() => this.gameLoop());
   };
   gameArea.broadcastMessage = function broadcastMessage(message: string) {
+    if (!this.leftPlayer || !this.rightPlayer) return;
     if (this.leftPlayer.socket.readyState === WebSocket.OPEN) this.leftPlayer.socket.send(message);
     if (this.rightPlayer.socket.readyState === WebSocket.OPEN)
       this.rightPlayer.socket.send(message);
   };
+  gameArea.leftPlayer = new Player(
+    leftPaddle,
+    rightPaddle,
+    ball,
+    gameSettings.alias1,
+    gameSettings.character1 ? gameSettings.character1.attack : null,
+    'left',
+    p1socket,
+    stats,
+    gameArea,
+  );
+  gameArea.rightPlayer = new Player(
+    rightPaddle,
+    leftPaddle,
+    ball,
+    gameSettings.alias2,
+    gameSettings.character2 ? gameSettings.character2.attack : null,
+    'right',
+    p2socket,
+    stats,
+    gameArea,
+  );
   return gameArea;
 }
 
@@ -164,20 +181,18 @@ export function initializeRemoteGame(
 ): void {
   const gameArea = initializeGameArea(player1socket, player2socket, gameSettings);
   setupInput(gameArea);
-  setPowerUpBar(gameArea.leftPlayer, gameArea);
-  setPowerUpBar(gameArea.rightPlayer, gameArea);
+  setPowerUpBar(gameArea);
   gameArea.gameLoop();
 }
 
 async function updateGameArea(dt: number, gameArea: gameArea) {
   handleInput(gameArea);
-  handlePowerUp(gameArea);
 
   gameArea.leftPaddle.update(dt);
   gameArea.rightPaddle.update(dt);
   gameArea.ball.move(dt);
 
-  // Send fakeBalls in gameState?
+  // Send fakeBalls in gameRunningState?
   gameArea.fakeBalls.forEach((fakeBall) => fakeBall.move(dt));
 
   checkWallCollision(gameArea.ball);
@@ -190,15 +205,19 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     ball: gameArea.ball,
     leftPaddle: gameArea.leftPaddle,
     rightPaddle: gameArea.rightPaddle,
-  } as GameSate;
+    leftPowerBarFill: gameArea.leftPowerBarFill,
+    rightPowerBarFill: gameArea.rightPowerBarFill,
+    leftAnimation: gameArea.leftAnimation,
+    rightAnimation: gameArea.rightAnimation,
+  } as GameState;
 
   gameArea.broadcastMessage(JSON.stringify(gameSate));
 }
 
 export function getGameVersion(gameArea: gameArea): number {
-  return gameArea.leftPlayer.getScore() + gameArea.rightPlayer.getScore();
+  return gameArea.leftPlayer!.getScore() + gameArea.rightPlayer!.getScore();
 }
 
 export function endGameIfRunning(gameArea: gameArea): void {
-  if (gameArea.state !== gameState.ended) gameArea.stop();
+  if (gameArea.runningState !== gameRunningState.ended) gameArea.stop();
 }
