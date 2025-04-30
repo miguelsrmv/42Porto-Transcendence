@@ -24,14 +24,15 @@ export enum PlayerInput {
 export type ClientMessage =
   | { type: 'join_game'; playerSettings: leanGameSettings }
   | { type: 'movement'; direction: PlayerInput }
-  | { type: 'power_up' };
+  | { type: 'power_up' }
+  | { type: 'stop_game' };
 
 export type ServerMessage =
   | { type: 'game_setup'; players: [string, string]; settings: gameSettings }
   | { type: 'game_start' }
   | { type: 'game_state'; state: GameState }
   | { type: 'game_goal'; scoringSide: 'left' | 'right' }
-  | { type: 'game_end'; results: gameStats }
+  | { type: 'game_end'; winningPlayer: 'left' | 'right'; stats: gameStats }
   | { type: 'error'; message: string };
 
 export interface GameSession {
