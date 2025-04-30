@@ -20,8 +20,11 @@ export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, messa
 function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
   switch (message.type) {
     case 'join_game': {
-      if (playerIsInASession(socket)) return;
       const playerSettings = message.playerSettings;
+      if (playerIsInASession(playerSettings.playerID)) {
+        // TODO: send error saying player is in session?
+        return;
+      }
       attributePlayerToSession(socket, playerSettings);
       const playerSession = getGameSession(socket);
       if (playerSession && isSessionFull(playerSession)) {

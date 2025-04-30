@@ -134,13 +134,15 @@ export function isSessionFull(session: GameSession): boolean {
   return false;
 }
 
-export function playerIsInASession(playerSocket: WebSocket): boolean {
+export function playerIsInASession(playerId: string): boolean {
   const gameSessions = classicPongSessions.concat(crazyPongSessions);
-  gameSessions.forEach((session) => {
-    if (session.players.get(playerSocket)) {
-      return true;
+  for (const session of gameSessions) {
+    for (const value of session.players.values()) {
+      if (value === playerId) {
+        return true;
+      }
     }
-  });
+  }
   return false;
 }
 
