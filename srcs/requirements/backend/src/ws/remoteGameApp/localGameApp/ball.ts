@@ -1,8 +1,6 @@
 import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
 import { Paddle } from './paddle.js';
 
-let BALL_COLOUR = 'white';
-const BORDER_COLOUR = 'gray';
 let isVisible = true;
 
 export class Ball {
@@ -22,18 +20,6 @@ export class Ball {
     this.radius = radius;
     this.speedX = speedX;
     this.speedY = speedY;
-  }
-
-  draw(ctx: CanvasRenderingContext2D): void {
-    if (isVisible) {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = BALL_COLOUR;
-      ctx.fill();
-      ctx.strokeStyle = BORDER_COLOUR;
-      ctx.stroke();
-      ctx.closePath();
-    }
   }
 
   move(dt: number): void {

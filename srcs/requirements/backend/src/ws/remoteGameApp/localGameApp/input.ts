@@ -9,14 +9,23 @@ export function setupInput(gameArea: gameArea) {
       gameArea.leftPlayer.input = parsedMessage.direction as PlayerInput;
     }
     if (parsedMessage.type === 'power_up') {
-      gameArea.leftPlayer.requiresPowerUp = true;
+      gameArea.leftPlayer.attack?.attack();
+    }
+  });
+  gameArea.rightPlayer.socket.on('message', (message) => {
+    const parsedMessage = JSON.parse(message.toString());
+    if (parsedMessage.type === 'movement') {
+      gameArea.rightPlayer.input = parsedMessage.direction as PlayerInput;
+    }
+    if (parsedMessage.type === 'power_up') {
+      gameArea.rightPlayer.attack?.attack();
     }
   });
 }
 
 // Update paddle movement based on key input
 export function handleInput(gameArea: gameArea): void {
-  if (gameArea.state == gameState.paused) return;
+  if (gameArea.state !== gameState.playing) return;
 
   if (gameArea.leftPlayer.input === PlayerInput.up) {
     gameArea.leftPlayer.ownPaddle.speedY = -SPEED * gameArea.leftPlayer.ownPaddle.speedModifier;
@@ -33,4 +42,10 @@ export function handleInput(gameArea: gameArea): void {
   } else {
     gameArea.rightPlayer.ownPaddle.speedY = 0;
   }
+}
+
+export function handlePowerUp(gameArea: gameArea): void {
+  if (gameArea.state !== gameState.playing) return;
+
+
 }

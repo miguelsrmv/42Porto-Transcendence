@@ -7,6 +7,7 @@ import {
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, ServerMessage } from './remoteGameApp/types';
 
+// TODO: Change name or remove
 export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, message: string) {
   if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
   if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);

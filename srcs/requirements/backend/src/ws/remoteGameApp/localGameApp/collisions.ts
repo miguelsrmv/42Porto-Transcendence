@@ -1,8 +1,7 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH, gameArea, gameState, SPEED, stats } from './game.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, gameArea, gameState, SPEED } from './game.js';
 import { Player } from './player.js';
 import { Ball, ballCountdown } from './ball.js';
 import { Paddle } from './paddle.js';
-import { broadcastMessage } from '../../connection_router.js';
 import { wait } from '../helpers.js';
 
 export const MAX_BALL_SPEED: number = 1000;
@@ -37,7 +36,7 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
 
 function endGame(winningPlayer: Player, gameArea: gameArea): void {
   gameArea.stop();
-  broadcastMessage(gameArea.leftPlayer.socket, gameArea.rightPlayer.socket, 'game_end');
+  gameArea.broadcastMessage('game_end');
 }
 
 // Checks if ball reached vertical canvas limits
@@ -46,15 +45,15 @@ export async function checkGoal(gameArea: gameArea) {
     gameArea.rightPlayer.increaseScore();
     // paintScore('right', gameArea.rightPlayer.getScore());
     // scoreAnimation('right');
-    stats.right.increaseGoals();
-    stats.left.increaseSufferedGoals();
+    gameArea.stats.right.increaseGoals();
+    gameArea.stats.left.increaseSufferedGoals();
     await resetRound(gameArea);
   } else if (gameArea.leftPlayer.ball.x + gameArea.leftPlayer.ball.radius >= CANVAS_WIDTH) {
     gameArea.leftPlayer.increaseScore();
     // paintScore('left', gameArea.leftPlayer.getScore());
     // scoreAnimation('left');
-    stats.left.increaseGoals();
-    stats.right.increaseSufferedGoals();
+    gameArea.stats.left.increaseGoals();
+    gameArea.stats.right.increaseSufferedGoals();
     await resetRound(gameArea);
   }
   if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer))
@@ -95,31 +94,31 @@ function capMaxSpeed(ball: Ball, maxSpeed: number): void {
 }
 
 // Checks if ball collided with either paddle
-export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle: Paddle): void {
+export function checkPaddleCollision(gameArea: gameArea): void {
   if (
     // Left paddle collision
-    crossedPaddleHorizontally(ball, leftPaddle) &&
-    isWithinPaddleHeight(ball, leftPaddle)
+    crossedPaddleHorizontally(gameArea.ball, gameArea.leftPaddle) &&
+    isWithinPaddleHeight(gameArea.ball, gameArea.leftPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
-    ball.bounceHorizontal(leftPaddle);
-    ball.x = leftPaddle.x + leftPaddle.width + ball.radius;
-    capMaxSpeed(ball, MAX_BALL_SPEED);
-    stats.maxSpeed = Math.sqrt(ball.speedX ** 2 + ball.speedY ** 2);
-    stats.left.increaseSaves();
+    gameArea.ball.bounceHorizontal(gameArea.leftPaddle);
+    gameArea.ball.x = gameArea.leftPaddle.x + gameArea.leftPaddle.width + gameArea.ball.radius;
+    capMaxSpeed(gameArea.ball, MAX_BALL_SPEED);
+    gameArea.stats.maxSpeed = Math.sqrt(gameArea.ball.speedX ** 2 + gameArea.ball.speedY ** 2);
+    gameArea.stats.left.increaseSaves();
   }
 
   if (
     // Right paddle collision
-    crossedPaddleHorizontally(ball, rightPaddle) &&
-    isWithinPaddleHeight(ball, rightPaddle)
+    crossedPaddleHorizontally(gameArea.ball, gameArea.rightPaddle) &&
+    isWithinPaddleHeight(gameArea.ball, gameArea.rightPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
-    ball.bounceHorizontal(rightPaddle);
-    ball.x = rightPaddle.x - ball.radius;
-    capMaxSpeed(ball, MAX_BALL_SPEED);
-    stats.maxSpeed = Math.sqrt(ball.speedX ** 2 + ball.speedY ** 2);
-    stats.right.increaseSaves();
+    gameArea.ball.bounceHorizontal(gameArea.rightPaddle);
+    gameArea.ball.x = gameArea.rightPaddle.x - gameArea.ball.radius;
+    capMaxSpeed(gameArea.ball, MAX_BALL_SPEED);
+    gameArea.stats.maxSpeed = Math.sqrt(gameArea.ball.speedX ** 2 + gameArea.ball.speedY ** 2);
+    gameArea.stats.right.increaseSaves();
   }
 }
 

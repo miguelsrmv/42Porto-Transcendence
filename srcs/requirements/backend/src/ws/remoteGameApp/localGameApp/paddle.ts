@@ -19,12 +19,6 @@ export class Paddle {
     this.speedModifier = 1;
   }
 
-  // Draws the paddle on the canvas
-  draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-  }
-
   // Updates paddle position
   update(dt: number): void {
     this.y += this.speedY * dt;
