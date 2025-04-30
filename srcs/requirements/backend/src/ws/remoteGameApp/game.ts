@@ -69,6 +69,7 @@ function setPowerUpBar(gameArea: gameArea): void {
   }, 20);
 }
 
+let counter = 0;
 export interface gameArea {
   ball: Ball;
   leftPaddle: Paddle;
@@ -134,6 +135,7 @@ function initializeGameArea(
     broadcastMessage: () => {},
   };
   gameArea.gameLoop = function gameLoop() {
+    counter++;
     const currentTime = Date.now() / 1000; // In seconds
     if (this.lastTime === 0) {
       this.lastTime = currentTime;
@@ -145,7 +147,7 @@ function initializeGameArea(
     const dt = Math.min(deltaTime, maxDeltaTime);
 
     updateGameArea(dt, this);
-
+    if (counter === 10) return;
     setImmediate(() => this.gameLoop());
   };
   gameArea.broadcastMessage = function broadcastMessage(message: string) {
@@ -196,8 +198,6 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
   gameArea.leftPaddle.update(dt);
   gameArea.rightPaddle.update(dt);
   gameArea.ball.move(dt);
-
-  // Send fakeBalls in gameRunningState?
   gameArea.fakeBalls.forEach((fakeBall) => fakeBall.move(dt));
 
   checkWallCollision(gameArea.ball);
@@ -215,7 +215,7 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
-
+  console.log(JSON.stringify(gameSate));
   gameArea.broadcastMessage(JSON.stringify(gameSate));
 }
 

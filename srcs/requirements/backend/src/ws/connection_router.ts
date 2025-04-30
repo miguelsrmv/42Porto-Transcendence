@@ -6,6 +6,7 @@ import {
   removePlayer,
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, ServerMessage } from './remoteGameApp/types';
+import { initializeRemoteGame } from './remoteGameApp/game';
 
 // TODO: Change name or remove
 export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, message: string) {
@@ -27,7 +28,7 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
         const response = { type: 'game_setup', settings: matchSettings } as ServerMessage;
         const [ws1, ws2] = Array.from(playerSession.players.keys());
         broadcastMessage(ws1, ws2, JSON.stringify(response));
-        // Game start gameStart(playerSession);
+        initializeRemoteGame(ws1, ws2, matchSettings);
       }
       break;
     }
