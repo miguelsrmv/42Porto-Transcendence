@@ -49,12 +49,15 @@ const myGameArea: GameArea = {
 };
 
 export function renderGame(webSocket: WebSocket) {
+  console.log('I got here');
   myGameArea.start();
   let filledAnimationIsOn: boolean = false;
+  console.log('I got here 2');
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
     if (messageData.type === 'game-state') {
+      console.log(messageData);
       drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state);
       drawPowerBar(messageData.state, filledAnimationIsOn);
       triggerAnimation(myGameArea.context as CanvasRenderingContext2D, messageData.state);
