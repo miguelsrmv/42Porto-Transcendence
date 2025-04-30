@@ -13,6 +13,7 @@ import { gameSettings } from './settings.js';
 import { GameState } from './types.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
+import { removePlayer } from './sessionManagement.js';
 
 export const SPEED = 250;
 export const CANVAS_HEIGHT = 720;
@@ -32,7 +33,7 @@ function setPowerUpBar(gameArea: gameArea): void {
   if (gameArea.leftPlayer!.attack) gameArea.leftPlayer!.attack.lastUsed = Date.now();
   if (gameArea.rightPlayer!.attack) gameArea.rightPlayer!.attack.lastUsed = Date.now();
 
-  setInterval(() => {
+  const leftBarInterval = setInterval(() => {
     if (gameArea.leftPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
       const lastUsed: number = gameArea.leftPlayer!.attack.lastUsed;
       const coolDown: number = gameArea.leftPlayer!.attack.attackCooldown;
@@ -46,8 +47,9 @@ function setPowerUpBar(gameArea: gameArea): void {
       }
     }
   }, 20);
+  gameArea.intervals.push(leftBarInterval);
 
-  setInterval(() => {
+  const rightBarInterval = setInterval(() => {
     if (gameArea.rightPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
       const lastUsed: number = gameArea.rightPlayer!.attack.lastUsed;
       const coolDown: number = gameArea.rightPlayer!.attack.attackCooldown;
@@ -61,6 +63,7 @@ function setPowerUpBar(gameArea: gameArea): void {
       }
     }
   }, 20);
+  gameArea.intervals.push(rightBarInterval);
 }
 
 export interface gameArea {
@@ -81,10 +84,12 @@ export interface gameArea {
   countdownBlinkTimer: number;
   countdownVisible: boolean;
   isInitialCountdownActive: boolean;
+  intervals: NodeJS.Timeout[];
   gameLoop(): void;
   pause(): void;
   stop(): void;
   broadcastMessage(message: string): void;
+  clear(): void;
 }
 
 function initializeGameArea(
@@ -126,14 +131,19 @@ function initializeGameArea(
     countdownBlinkTimer: 0,
     countdownVisible: true,
     isInitialCountdownActive: true,
+    intervals: [],
     gameLoop: () => {},
     pause() {
       this.runningState = gameRunningState.paused;
     },
     stop() {
       this.runningState = gameRunningState.ended;
+      this.clear();
     },
     broadcastMessage: () => {},
+    clear() {
+      this.intervals.forEach((interval) => clearInterval(interval));
+    },
   };
   gameArea.gameLoop = async function gameLoop() {
     const currentTime = Date.now() / 1000; // In seconds
@@ -214,6 +224,24 @@ function initializeGameArea(
   return gameArea;
 }
 
+function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: gameArea) {
+  player1socket.on('message', (message) => {
+    const parsedMessage = JSON.parse(message.toString());
+    if (parsedMessage.type === 'stop_game') {
+      gameArea.stop();
+      removePlayer(player1socket);
+      // TODO: Remove both players?
+    }
+  });
+  player2socket.on('message', (message) => {
+    const parsedMessage = JSON.parse(message.toString());
+    if (parsedMessage.type === 'stop_game') {
+      gameArea.stop();
+      removePlayer(player2socket);
+    }
+  });
+}
+
 export function initializeRemoteGame(
   player1socket: WebSocket,
   player2socket: WebSocket,
@@ -222,9 +250,11 @@ export function initializeRemoteGame(
   const gameArea = initializeGameArea(player1socket, player2socket, gameSettings);
   setupInput(gameArea);
   setPowerUpBar(gameArea);
-  setInterval(() => {
+  setCloseGame(player1socket, player2socket, gameArea);
+  const gameInterval = setInterval(() => {
     gameArea.gameLoop();
   }, 20);
+  gameArea.intervals.push(gameInterval);
 }
 
 async function updateGameArea(dt: number, gameArea: gameArea) {

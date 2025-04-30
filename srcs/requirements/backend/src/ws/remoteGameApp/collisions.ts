@@ -38,7 +38,9 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
 
 function endGame(winningPlayer: Player, gameArea: gameArea): void {
   gameArea.stop();
-  gameArea.broadcastMessage('game_end');
+  const message = { type: 'game_end', winningPlayer: winningPlayer.side, stats: gameArea.stats };
+  // TODO: Separate message to each player?
+  gameArea.broadcastMessage(JSON.stringify(message));
 }
 
 // Checks if ball reached vertical canvas limits
@@ -135,6 +137,8 @@ async function resetRound(gameArea: gameArea) {
   ballCountdown(gameArea.ball);
   await wait(3);
   const newTime = Date.now();
+  gameArea.leftAnimation = false;
+  gameArea.rightAnimation = false;
   gameArea.leftPlayer!.attack?.reset(beforeTime, newTime);
   gameArea.rightPlayer!.attack?.reset(beforeTime, newTime);
   gameArea.runningState = gameRunningState.playing;
