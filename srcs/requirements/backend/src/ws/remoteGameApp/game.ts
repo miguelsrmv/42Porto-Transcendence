@@ -209,7 +209,7 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
 
   await checkGoal(gameArea);
 
-  const gameSate = {
+  const gameState = {
     ball: gameArea.ball,
     fakeBalls: gameArea.fakeBalls,
     leftPaddle: gameArea.leftPaddle,
@@ -219,8 +219,8 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
-  // console.log(JSON.stringify(gameSate));
-  gameArea.broadcastMessage(JSON.stringify(gameSate));
+  const response = { type: 'game_state', state: gameState };
+  gameArea.broadcastMessage(JSON.stringify(response));
 }
 
 export function getGameVersion(gameArea: gameArea): number {
