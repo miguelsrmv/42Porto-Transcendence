@@ -1,3 +1,6 @@
+import { Ball } from '../localGameApp/ball.js';
+import { Paddle } from '../localGameApp/paddle.js';
+
 export interface GameArea {
   canvas: HTMLCanvasElement | null;
   context?: CanvasRenderingContext2D | null;
@@ -7,23 +10,11 @@ export interface GameArea {
 }
 
 export interface GameState {
-  ball: { x: number; y: number; radius: number; speedY: number; speedX: number };
-  leftPaddle: {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    color: string;
-    speedY: number;
-    speedModifier: number;
-  };
-  rightPaddle: {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    color: string;
-    speedY: number;
-    speedModifier: number;
-  };
+  ball: Ball;
+  leftPaddle: Paddle;
+  rightPaddle: Paddle;
+  leftPowerBarFill: number;
+  rightPowerBarFill: number;
+  leftAnimation: boolean;
+  rightAnimation: boolean;
 }

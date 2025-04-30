@@ -56,8 +56,14 @@ export function renderGame(webSocket: WebSocket) {
   };
 }
 
-function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {}
+function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {
+  state.leftPaddle.draw(ctx);
+  state.rightPaddle.draw(ctx);
+  state.ball.draw(ctx);
+}
 
-function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {}
+function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
+  if 
+}
 
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
