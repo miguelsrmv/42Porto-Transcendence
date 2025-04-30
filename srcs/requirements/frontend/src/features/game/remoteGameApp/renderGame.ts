@@ -3,7 +3,10 @@ import {
   deactivatePowerBarAnimation,
   powerUpAnimation,
 } from '../animations/animations.js';
-import type { GameArea, GameState } from './remoteGameTypes.js';
+import type { GameArea, GameState, Paddle, Ball } from './remoteGameTypes.js';
+
+const BALL_COLOUR = 'white';
+const BORDER_COLOUR = 'gray';
 
 export function updateBackground(backgroundPath: string): void {
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
@@ -49,17 +52,15 @@ const myGameArea: GameArea = {
 };
 
 export function renderGame(webSocket: WebSocket) {
-  console.log('I got here');
   myGameArea.start();
   let filledAnimationIsOn: boolean = false;
-  console.log('I got here 2');
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
-    if (messageData.type === 'game-state') {
-      console.log(messageData);
-      drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state);
-      drawPowerBar(messageData.state, filledAnimationIsOn);
+    if (messageData.type === 'game_state') {
+      myGameArea.clear();
+      drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state as GameState);
+      drawPowerBar(messageData.state as GameState, filledAnimationIsOn);
       triggerAnimation(myGameArea.context as CanvasRenderingContext2D, messageData.state);
       triggerSound(myGameArea.context as CanvasRenderingContext2D, messageData.state);
     }
@@ -67,10 +68,27 @@ export function renderGame(webSocket: WebSocket) {
 }
 
 function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {
-  state.leftPaddle.draw(ctx);
-  state.rightPaddle.draw(ctx);
-  state.ball.draw(ctx);
-  state.fakeBalls.forEach((fakeBall) => fakeBall.draw(ctx));
+  drawPaddle(ctx, state.leftPaddle);
+  drawPaddle(ctx, state.rightPaddle);
+  drawBall(ctx, state.ball);
+  state.fakeBalls.forEach((fakeBall) => drawBall(ctx, fakeBall));
+}
+
+function drawPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
+  ctx.fillStyle = paddle.color;
+  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+}
+
+function drawBall(ctx: CanvasRenderingContext2D, ball: Ball) {
+  if (ball.isVisible) {
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+    ctx.fillStyle = BALL_COLOUR;
+    ctx.fill();
+    ctx.strokeStyle = BORDER_COLOUR;
+    ctx.stroke();
+    ctx.closePath();
+  }
 }
 
 function drawPowerBar(state: GameState, filledAnimationIsOn: boolean) {
