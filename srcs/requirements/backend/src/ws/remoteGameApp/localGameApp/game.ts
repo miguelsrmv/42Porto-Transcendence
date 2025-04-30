@@ -26,63 +26,39 @@ const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
 
-//let lastTime = 0; // Time of the last frame
-//let animationFrameId: number | null = null; // To potentially stop the loop
-
-export const stats: gameStats = new gameStats();
-
-export type InputHandler = {
-  enable(): void;
-  disable(): void;
-};
-
 export enum gameState {
   playing,
   paused,
   ended,
 }
 
-function setPlayers(gameState: GameSate, gameSettings: gameSettings): [Player, Player] {
-  function setPowerUpBar(player: Player): void {
-    const PlayerBar = document.getElementById(`${player.side}-character-power-bar-fill`);
+function setPowerUpBar(player: Player, gameArea: gameArea): void {
+  let filledAnimationIsOn = false;
 
-    if (!PlayerBar) {
-      console.warn(`${player.side} player bar not found`);
-      return;
-    }
+  setInterval(() => {
+    if (player.attack && gameArea.state === gameState.playing) {
+      const lastUsed: number = player.attack.lastUsed;
+      const coolDown: number = player.attack.attackCooldown;
+      const currentTime: number = Date.now();
 
-    let filledAnimationIsOn = false;
+      const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
+      // PlayerBar.style.width = `${percentage}%`;
 
-    window.setInterval(() => {
-      if (player.attack && myGameArea.state === gameState.playing) {
-        const lastUsed: number = player.attack.lastUsed;
-        const coolDown: number = player.attack.attackCooldown;
-        const currentTime: number = Date.now();
-
-        const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
-        PlayerBar.style.width = `${percentage}%`;
-
-        if (percentage == 100) {
-          player.attack.attackIsAvailable = true;
-          if (!filledAnimationIsOn) {
-            activatePowerBarAnimation(`${player.side}`);
-            filledAnimationIsOn = true;
-          }
-        } else {
-          if (filledAnimationIsOn) {
-            deactivatePowerBarAnimation(`${player.side}`);
-            filledAnimationIsOn = false;
-          }
+      if (percentage == 100) {
+        player.attack.attackIsAvailable = true;
+        if (!filledAnimationIsOn) {
+          activatePowerBarAnimation(`${player.side}`);
+          filledAnimationIsOn = true;
+        }
+      } else {
+        if (filledAnimationIsOn) {
+          deactivatePowerBarAnimation(`${player.side}`);
+          filledAnimationIsOn = false;
         }
       }
-    }, 20);
-  }
-
-  setPowerUpBar(leftPlayer);
-  setPowerUpBar(rightPlayer);
+    }
+  }, 20);
 }
-
-
 
 export interface gameArea {
   ball: Ball;
@@ -93,9 +69,11 @@ export interface gameArea {
   state: gameState;
   lastTime: number;
   fakeBalls: Ball[];
+  stats: gameStats;
   gameLoop(): void;
   pause(): void;
   stop(): void;
+  broadcastMessage(message: string): void;
 }
 
 function initializeGameArea(
@@ -118,6 +96,7 @@ function initializeGameArea(
     CANVAS_WIDTH - 20,
     PADDLE_START_Y_POS,
   );
+  const stats = new gameStats();
   const gameArea: gameArea = {
     ball: ball,
     leftPaddle: leftPaddle,
@@ -130,6 +109,7 @@ function initializeGameArea(
       gameSettings.character1 ? gameSettings.character1.attack : null,
       'left',
       p1socket,
+      stats,
     ),
     rightPlayer: new Player(
       rightPaddle,
@@ -139,10 +119,12 @@ function initializeGameArea(
       gameSettings.character2 ? gameSettings.character2.attack : null,
       'right',
       p2socket,
+      stats,
     ),
     state: gameState.playing,
     lastTime: 0,
     fakeBalls: [],
+    stats: stats,
     gameLoop: () => {},
     pause() {
       this.state = gameState.paused;
@@ -150,6 +132,7 @@ function initializeGameArea(
     stop() {
       this.state = gameState.ended;
     },
+    broadcastMessage: () => {},
   };
   gameArea.gameLoop = function gameLoop() {
     const currentTime = Date.now() / 1000; // In seconds
@@ -166,6 +149,11 @@ function initializeGameArea(
 
     setImmediate(() => this.gameLoop());
   };
+  gameArea.broadcastMessage = function broadcastMessage(message: string) {
+    if (this.leftPlayer.socket.readyState === WebSocket.OPEN) this.leftPlayer.socket.send(message);
+    if (this.rightPlayer.socket.readyState === WebSocket.OPEN)
+      this.rightPlayer.socket.send(message);
+  };
   return gameArea;
 }
 
@@ -176,29 +164,35 @@ export function initializeRemoteGame(
 ): void {
   const gameArea = initializeGameArea(player1socket, player2socket, gameSettings);
   setupInput(gameArea);
+  setPowerUpBar(gameArea.leftPlayer, gameArea);
+  setPowerUpBar(gameArea.rightPlayer, gameArea);
   gameArea.gameLoop();
 }
 
 async function updateGameArea(dt: number, gameArea: gameArea) {
   handleInput(gameArea);
+  handlePowerUp(gameArea);
 
   gameArea.leftPaddle.update(dt);
   gameArea.rightPaddle.update(dt);
   gameArea.ball.move(dt);
+
+  // Send fakeBalls in gameState?
   gameArea.fakeBalls.forEach((fakeBall) => fakeBall.move(dt));
 
   checkWallCollision(gameArea.ball);
   gameArea.fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall));
-  checkPaddleCollision(gameArea.ball, gameArea.leftPaddle, gameArea.rightPaddle);
+  checkPaddleCollision(gameArea);
 
   await checkGoal(gameArea);
 
-  if (myGameArea.context) {
-    leftPaddle.draw(myGameArea.context);
-    rightPaddle.draw(myGameArea.context);
-    ball.draw(myGameArea.context);
-    fakeBalls.forEach((fakeBall) => fakeBall.draw(myGameArea.context as CanvasRenderingContext2D));
-  }
+  const gameSate = {
+    ball: gameArea.ball,
+    leftPaddle: gameArea.leftPaddle,
+    rightPaddle: gameArea.rightPaddle,
+  } as GameSate;
+
+  gameArea.broadcastMessage(JSON.stringify(gameSate));
 }
 
 export function getGameVersion(gameArea: gameArea): number {

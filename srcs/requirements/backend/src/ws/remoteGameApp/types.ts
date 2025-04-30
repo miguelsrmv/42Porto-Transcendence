@@ -22,6 +22,10 @@ export interface GameSate {
     speedY: number;
     speedModifier: number;
   };
+  leftPowerBar: number;
+  rightPowerBar: number;
+  leftAnimation: boolean;
+  rightAnimation: boolean;
 }
 
 export enum PlayerInput {

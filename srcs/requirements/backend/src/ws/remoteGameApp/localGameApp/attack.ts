@@ -1,25 +1,25 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
-import { wait } from '../../../utils/helpers.js';
-import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  BALL_RADIUS,
-  PADDLE_LEN,
-  SPEED,
-  getGameVersion,
-  fakeBalls,
-} from './game.js';
-import type { attackIdentifier } from '../characterData/characterData.types.js';
-import { powerUpAnimation } from '../animations/animations.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, PADDLE_LEN, getGameVersion } from './game.js';
 import { MAX_BALL_SPEED } from './collisions.js';
-import { stats } from './game.js';
+import { wait } from '../helpers.js';
+import { gameStats } from './gameStats.js';
 
 type AttackData = {
   handler: () => Promise<void>; // The attack function
   duration: number; // How long the effect lasts
   cooldown: number; // How long until the attack can be used again, in miliseconds
 };
+
+type attackIdentifier =
+  | 'Super Shroom'
+  | 'Egg Barrage'
+  | 'Spin Dash'
+  | 'Thunder Wave'
+  | 'Confusion'
+  | 'Magic Mirror'
+  | 'Mini'
+  | 'Giant Punch';
 
 export class Attack {
   ownPaddle: Paddle;
@@ -29,6 +29,7 @@ export class Attack {
   side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
+  stats: gameStats;
   activeAttack: () => Promise<void>;
   attackDuration: number;
   attackCooldown: number;
@@ -40,6 +41,7 @@ export class Attack {
     enemyPaddle: Paddle,
     ball: Ball,
     side: string,
+    stats: gameStats,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -48,6 +50,7 @@ export class Attack {
     this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
+    this.stats = stats;
     this.attackMap = {
       'Super Shroom': {
         handler: async () => this.superShroom(),
@@ -101,7 +104,9 @@ export class Attack {
 
     this.lastUsed = Date.now();
 
-    this.side === 'left' ? stats.left.increasePowersUsed() : stats.right.increasePowersUsed();
+    this.side === 'left'
+      ? this.stats.left.increasePowersUsed()
+      : this.stats.right.increasePowersUsed();
 
     powerUpAnimation(this.side);
 
