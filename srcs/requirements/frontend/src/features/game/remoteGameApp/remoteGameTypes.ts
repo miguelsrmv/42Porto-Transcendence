@@ -11,6 +11,7 @@ export interface GameArea {
 
 export interface GameState {
   ball: Ball;
+  fakeBalls: Ball[];
   leftPaddle: Paddle;
   rightPaddle: Paddle;
   leftPowerBarFill: number;

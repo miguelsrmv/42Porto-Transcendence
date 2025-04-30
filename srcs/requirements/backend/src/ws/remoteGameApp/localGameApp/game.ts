@@ -33,6 +33,9 @@ export enum gameRunningState {
 }
 
 function setPowerUpBar(gameArea: gameArea): void {
+  if (gameArea.leftPlayer!.attack) gameArea.leftPlayer!.attack.lastUsed = Date.now();
+  if (gameArea.rightPlayer!.attack) gameArea.rightPlayer!.attack.lastUsed = Date.now();
+
   setInterval(() => {
     if (gameArea.leftPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
       const lastUsed: number = gameArea.leftPlayer!.attack.lastUsed;

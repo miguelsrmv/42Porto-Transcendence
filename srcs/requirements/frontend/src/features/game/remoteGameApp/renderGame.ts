@@ -1,3 +1,8 @@
+import {
+  activatePowerBarAnimation,
+  deactivatePowerBarAnimation,
+  powerUpAnimation,
+} from '../animations/animations.js';
 import type { GameArea, GameState } from './remoteGameTypes.js';
 
 export function updateBackground(backgroundPath: string): void {
@@ -45,11 +50,13 @@ const myGameArea: GameArea = {
 
 export function renderGame(webSocket: WebSocket) {
   myGameArea.start();
+  let filledAnimationIsOn: boolean = false;
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
     if (messageData.type === 'game-state') {
       drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state);
+      drawPowerBar(messageData.state, filledAnimationIsOn);
       triggerAnimation(myGameArea.context as CanvasRenderingContext2D, messageData.state);
       triggerSound(myGameArea.context as CanvasRenderingContext2D, messageData.state);
     }
@@ -60,10 +67,35 @@ function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {
   state.leftPaddle.draw(ctx);
   state.rightPaddle.draw(ctx);
   state.ball.draw(ctx);
+  state.fakeBalls.forEach((fakeBall) => fakeBall.draw(ctx));
+}
+
+function drawPowerBar(state: GameState, filledAnimationIsOn: boolean) {
+  function updatePowerBar(side: string, value: number, filledAnimationIsOn: boolean) {
+    const powerBar = document.getElementById(`${side}-character-power-bar-fill`);
+    if (!powerBar) {
+      console.warn(`${side}-character player bar not found`);
+      return;
+    }
+
+    powerBar.style.width = `${value}`;
+
+    if (value === 100) {
+      activatePowerBarAnimation(side);
+      filledAnimationIsOn = true;
+    } else {
+      deactivatePowerBarAnimation(side);
+      filledAnimationIsOn = false;
+    }
+  }
+
+  updatePowerBar('left', state.leftPowerBarFill, filledAnimationIsOn);
+  updatePowerBar('right', state.rightPowerBarFill, filledAnimationIsOn);
 }
 
 function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
-  if 
+  if (state.leftAnimation) powerUpAnimation('left');
+  if (state.rightAnimation) powerUpAnimation('right');
 }
 
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
