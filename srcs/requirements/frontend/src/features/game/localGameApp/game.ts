@@ -155,6 +155,8 @@ function setPlayers(
 
     let filledAnimationIsOn = false;
 
+    if (player.attack) player.attack.lastUsed = Date.now();
+
     window.setInterval(() => {
       if (player.attack && myGameArea.state === gameState.playing) {
         const lastUsed: number = player.attack.lastUsed;
