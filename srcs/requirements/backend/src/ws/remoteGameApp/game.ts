@@ -1,4 +1,3 @@
-
 import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import WebSocket from 'ws';
@@ -27,6 +26,9 @@ export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
 const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
+
+// let counter = 0;
+// const GAME_LOOPS = 50;
 
 export enum gameRunningState {
   playing,
@@ -69,7 +71,6 @@ function setPowerUpBar(gameArea: gameArea): void {
   }, 20);
 }
 
-let counter = 0;
 export interface gameArea {
   ball: Ball;
   leftPaddle: Paddle;
@@ -134,8 +135,8 @@ function initializeGameArea(
     },
     broadcastMessage: () => {},
   };
-  gameArea.gameLoop = function gameLoop() {
-    counter++;
+  gameArea.gameLoop = async function gameLoop() {
+    // counter++;
     const currentTime = Date.now() / 1000; // In seconds
     if (this.lastTime === 0) {
       this.lastTime = currentTime;
@@ -146,9 +147,9 @@ function initializeGameArea(
     const maxDeltaTime = 0.1;
     const dt = Math.min(deltaTime, maxDeltaTime);
 
-    updateGameArea(dt, this);
-    if (counter === 10) return;
-    setImmediate(() => this.gameLoop());
+    await updateGameArea(dt, this);
+    // if (counter === GAME_LOOPS) return;
+    // setImmediate(() => this.gameLoop());
   };
   gameArea.broadcastMessage = function broadcastMessage(message: string) {
     if (!this.leftPlayer || !this.rightPlayer) return;
@@ -189,7 +190,9 @@ export function initializeRemoteGame(
   const gameArea = initializeGameArea(player1socket, player2socket, gameSettings);
   setupInput(gameArea);
   setPowerUpBar(gameArea);
-  gameArea.gameLoop();
+  setInterval(() => {
+    gameArea.gameLoop();
+  }, 20);
 }
 
 async function updateGameArea(dt: number, gameArea: gameArea) {
@@ -208,6 +211,7 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
 
   const gameSate = {
     ball: gameArea.ball,
+    fakeBalls: gameArea.fakeBalls,
     leftPaddle: gameArea.leftPaddle,
     rightPaddle: gameArea.rightPaddle,
     leftPowerBarFill: gameArea.leftPowerBarFill,
@@ -215,7 +219,7 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
-  console.log(JSON.stringify(gameSate));
+  // console.log(JSON.stringify(gameSate));
   gameArea.broadcastMessage(JSON.stringify(gameSate));
 }
 
