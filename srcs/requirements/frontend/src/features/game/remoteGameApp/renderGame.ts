@@ -67,6 +67,7 @@ function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {
   state.leftPaddle.draw(ctx);
   state.rightPaddle.draw(ctx);
   state.ball.draw(ctx);
+  state.fakeBalls.forEach((fakeBall) => fakeBall.draw(ctx));
 }
 
 function drawPowerBar(state: GameState, filledAnimationIsOn: boolean) {
