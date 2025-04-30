@@ -54,7 +54,7 @@ export function renderGame(webSocket: WebSocket) {
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
-    if (messageData.type === 'game-state') {
+    if (messageData.type === 'game_state') {
       drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state);
       drawPowerBar(messageData.state, filledAnimationIsOn);
       triggerAnimation(myGameArea.context as CanvasRenderingContext2D, messageData.state);
