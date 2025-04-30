@@ -1,5 +1,4 @@
 import { Ball } from './ball.js';
-import { Paddle } from './paddle.js';
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -9,8 +8,9 @@ import {
   getGameVersion,
 } from './game.js';
 import { MAX_BALL_SPEED } from './collisions.js';
-import { wait } from '../helpers.js';
+import { wait } from './helpers.js';
 import { gameStats } from './gameStats.js';
+import { Paddle } from './paddle.js';
 
 type AttackData = {
   handler: () => Promise<void>; // The attack function

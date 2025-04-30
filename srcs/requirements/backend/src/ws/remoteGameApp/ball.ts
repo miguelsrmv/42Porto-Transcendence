@@ -1,6 +1,7 @@
 import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
 import { Paddle } from './paddle.js';
 
+
 let isVisible = true;
 
 export class Ball {
