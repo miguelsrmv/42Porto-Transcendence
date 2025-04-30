@@ -7,8 +7,7 @@ export function setupInput(gameArea: gameArea) {
     const parsedMessage = JSON.parse(message.toString());
     if (parsedMessage.type === 'movement') {
       gameArea.leftPlayer!.input = parsedMessage.direction as PlayerInput;
-    }
-    if (parsedMessage.type === 'power_up') {
+    } else if (parsedMessage.type === 'power_up') {
       gameArea.leftPlayer!.attack?.attack();
     }
   });
@@ -16,8 +15,7 @@ export function setupInput(gameArea: gameArea) {
     const parsedMessage = JSON.parse(message.toString());
     if (parsedMessage.type === 'movement') {
       gameArea.rightPlayer!.input = parsedMessage.direction as PlayerInput;
-    }
-    if (parsedMessage.type === 'power_up') {
+    } else if (parsedMessage.type === 'power_up') {
       gameArea.rightPlayer!.attack?.attack();
     }
   });
