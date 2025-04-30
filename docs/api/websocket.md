@@ -29,6 +29,10 @@ Messages **sent from the client to the server**.
   - **Description:** Notify the server that the player wants to use a power-up.
   - **Payload:**
     - _(none)_
+- `stop_game`
+  - **Description:** Notify the server to stop the game.
+  - **Payload:**
+    - _(none)_
 
 ### ServerMessage
 
@@ -43,16 +47,20 @@ Messages **sent from the server to the client**.
 - `game_setup`
   - **Description:** Notify clients that the players have been matched.
   - **Payload:**
-    - `players: [string, string]` — Tuple of player IDs.
     - `settings: gameSettings` — Full game settings.
 - `game_start`
   - **Description:** Notify the client that the game has started.
   - **Payload:**
     - _(none)_
-- `game_end` **NOT IMPLEMENTED YET**
+- `game_end`
   - **Description:** Notify the client that the game has ended.
   - **Payload:**
-    - `results: ??` — Scores and stats of the game.
+    - `winningPlayer: string` — Winning player side (`left` or `right`)
+    - `stats: gameStats` — Scores and stats of the game.
+- `game_goal`
+  - **Description:** Notify the client that there was a goal.
+  - **Payload:**
+    - `scoringSide: string` — Scoring player side (`left` or `right`)
 - `error`
   - **Description:** Inform the client that an error occurred.
   - **Payload:**
