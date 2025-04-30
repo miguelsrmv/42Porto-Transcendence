@@ -1,6 +1,6 @@
-import { Ball } from './localGameApp/ball';
-import { gameStats } from './localGameApp/gameStats';
-import { Paddle } from './localGameApp/paddle';
+import { Ball } from './ball';
+import { gameStats } from './gameStats';
+import { Paddle } from './paddle';
 import { gameSettings, leanGameSettings } from './settings';
 import WebSocket from 'ws';
 

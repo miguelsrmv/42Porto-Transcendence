@@ -1,5 +1,5 @@
 import { gameArea, gameRunningState, SPEED } from './game.js';
-import { PlayerInput } from '../types.js';
+import { PlayerInput } from './types.js';
 
 // Add event listeners for keydown and keyup events
 export function setupInput(gameArea: gameArea) {

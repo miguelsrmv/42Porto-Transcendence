@@ -1,4 +1,4 @@
-import { Paddle } from './paddle.js';
+
 import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import WebSocket from 'ws';
@@ -8,10 +8,12 @@ import {
   checkGoal,
   checkFakeBallWallCollision,
 } from './collisions.js';
-import { Player } from './player.js';
+
 import { gameStats } from './gameStats.js';
-import { gameSettings } from '../settings.js';
-import { GameState } from '../types.js';
+import { gameSettings } from './settings.js';
+import { GameState } from './types.js';
+import { Paddle } from './paddle.js';
+import { Player } from './player.js';
 
 // Starting state
 //// Constants
