@@ -1,9 +1,6 @@
 import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
 import { Paddle } from './paddle.js';
 
-
-let isVisible = true;
-
 export class Ball {
   x: number;
   y: number;
@@ -12,6 +9,7 @@ export class Ball {
   radius: number;
   speedX: number;
   speedY: number;
+  isVisible: boolean;
 
   constructor(x: number, y: number, radius: number, speedX: number, speedY: number) {
     this.x = x;
@@ -21,6 +19,7 @@ export class Ball {
     this.radius = radius;
     this.speedX = speedX;
     this.speedY = speedY;
+    this.isVisible = true;
   }
 
   move(dt: number): void {
@@ -85,11 +84,11 @@ export class Ball {
   }
 }
 
-export function ballCountdown() {
+export function ballCountdown(ball: Ball) {
   let count: number = 0;
 
   const interval = setInterval(() => {
-    isVisible = !isVisible;
+    ball.isVisible = !ball.isVisible;
     count++;
 
     if (count >= 6) {
