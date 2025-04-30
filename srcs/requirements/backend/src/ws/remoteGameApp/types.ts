@@ -6,6 +6,7 @@ import WebSocket from 'ws';
 
 export interface GameState {
   ball: Ball;
+  fakeBalls: Ball[];
   leftPaddle: Paddle;
   rightPaddle: Paddle;
   leftPowerBarFill: number;
@@ -15,9 +16,9 @@ export interface GameState {
 }
 
 export enum PlayerInput {
-  'up',
-  'down',
-  'stop',
+  up = 'up',
+  down = 'down',
+  stop = 'stop',
 }
 
 export type ClientMessage =
