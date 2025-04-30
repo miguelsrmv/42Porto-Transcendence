@@ -219,6 +219,7 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
+  // TODO: Filter before sending
   const response = { type: 'game_state', state: gameState };
   gameArea.broadcastMessage(JSON.stringify(response));
 }
