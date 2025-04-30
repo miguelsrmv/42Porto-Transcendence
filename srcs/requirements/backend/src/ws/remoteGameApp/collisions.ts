@@ -51,6 +51,8 @@ export async function checkGoal(gameArea: gameArea) {
     // scoreAnimation('right');
     gameArea.stats.right.increaseGoals();
     gameArea.stats.left.increaseSufferedGoals();
+    const message = { type: 'game_goal', scoringSide: 'right' };
+    gameArea.broadcastMessage(JSON.stringify(message));
     await resetRound(gameArea);
   } else if (gameArea.leftPlayer!.ball.x + gameArea.leftPlayer!.ball.radius >= CANVAS_WIDTH) {
     gameArea.leftPlayer!.increaseScore();
@@ -58,6 +60,8 @@ export async function checkGoal(gameArea: gameArea) {
     // scoreAnimation('left');
     gameArea.stats.left.increaseGoals();
     gameArea.stats.right.increaseSufferedGoals();
+    const message = { type: 'game_goal', scoringSide: 'left' };
+    gameArea.broadcastMessage(JSON.stringify(message));
     await resetRound(gameArea);
   }
   if (eitherPlayerHasWon(gameArea.leftPlayer!, gameArea.rightPlayer!))
