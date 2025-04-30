@@ -14,11 +14,6 @@ import { GameState } from './types.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
 
-// Starting state
-//// Constants
-
-//// GameObjects
-
 export const SPEED = 250;
 export const CANVAS_HEIGHT = 720;
 export const CANVAS_WIDTH = 1200;
@@ -26,9 +21,6 @@ export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
 const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
-
-// let counter = 0;
-// const GAME_LOOPS = 50;
 
 export enum gameRunningState {
   playing,
@@ -85,6 +77,10 @@ export interface gameArea {
   rightPowerBarFill: number;
   leftAnimation: boolean;
   rightAnimation: boolean;
+  countdownTimeLeft: number;
+  countdownBlinkTimer: number;
+  countdownVisible: boolean;
+  isInitialCountdownActive: boolean;
   gameLoop(): void;
   pause(): void;
   stop(): void;
@@ -118,7 +114,7 @@ function initializeGameArea(
     rightPaddle: rightPaddle,
     leftPlayer: null,
     rightPlayer: null,
-    runningState: gameRunningState.playing,
+    runningState: gameRunningState.paused,
     lastTime: 0,
     fakeBalls: [],
     stats: stats,
@@ -126,6 +122,10 @@ function initializeGameArea(
     rightPowerBarFill: 0,
     leftAnimation: false,
     rightAnimation: false,
+    countdownTimeLeft: 3,
+    countdownBlinkTimer: 0,
+    countdownVisible: true,
+    isInitialCountdownActive: true,
     gameLoop: () => {},
     pause() {
       this.runningState = gameRunningState.paused;
@@ -136,7 +136,6 @@ function initializeGameArea(
     broadcastMessage: () => {},
   };
   gameArea.gameLoop = async function gameLoop() {
-    // counter++;
     const currentTime = Date.now() / 1000; // In seconds
     if (this.lastTime === 0) {
       this.lastTime = currentTime;
@@ -147,9 +146,42 @@ function initializeGameArea(
     const maxDeltaTime = 0.1;
     const dt = Math.min(deltaTime, maxDeltaTime);
 
+    if (this.isInitialCountdownActive) {
+      // Handle countdown logic
+      this.countdownTimeLeft -= dt;
+      this.countdownBlinkTimer -= dt;
+
+      if (this.countdownBlinkTimer <= 0) {
+        this.countdownVisible = !this.countdownVisible;
+        this.countdownBlinkTimer = 0.5; // Blink every 0.5s
+      }
+      this.ball.isVisible = false;
+      if (this.countdownVisible) {
+        this.ball.isVisible = true;
+      }
+
+      if (this.countdownTimeLeft <= 0) {
+        this.isInitialCountdownActive = false;
+        this.ball.isVisible = true;
+        this.runningState = gameRunningState.playing;
+      }
+      const gameState = {
+        ball: gameArea.ball,
+        fakeBalls: gameArea.fakeBalls,
+        leftPaddle: gameArea.leftPaddle,
+        rightPaddle: gameArea.rightPaddle,
+        leftPowerBarFill: gameArea.leftPowerBarFill,
+        rightPowerBarFill: gameArea.rightPowerBarFill,
+        leftAnimation: gameArea.leftAnimation,
+        rightAnimation: gameArea.rightAnimation,
+      } as GameState;
+      // TODO: Filter before sending
+      const response = { type: 'game_state', state: gameState };
+      this.broadcastMessage(JSON.stringify(response));
+      return; // Exit early, don't update game yet
+    }
+
     await updateGameArea(dt, this);
-    // if (counter === GAME_LOOPS) return;
-    // setImmediate(() => this.gameLoop());
   };
   gameArea.broadcastMessage = function broadcastMessage(message: string) {
     if (!this.leftPlayer || !this.rightPlayer) return;
