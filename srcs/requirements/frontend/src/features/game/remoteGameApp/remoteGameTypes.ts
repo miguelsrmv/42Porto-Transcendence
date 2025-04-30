@@ -13,4 +13,8 @@ export interface GameState {
   ball: Ball;
   leftPaddle: Paddle;
   rightPaddle: Paddle;
+  leftPowerBarFill: number;
+  rightPowerBarFill: number;
+  leftAnimation: boolean;
+  rightAnimation: boolean;
 }
