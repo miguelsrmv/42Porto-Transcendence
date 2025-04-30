@@ -132,7 +132,7 @@ async function resetRound(gameArea: gameArea) {
   gameArea.rightPlayer!.ownPaddle.reset();
   gameArea.fakeBalls.splice(0, gameArea.fakeBalls.length);
   gameArea.runningState = gameRunningState.paused;
-  ballCountdown();
+  ballCountdown(gameArea.ball);
   await wait(3);
   const newTime = Date.now();
   gameArea.leftPlayer!.attack?.reset(beforeTime, newTime);
