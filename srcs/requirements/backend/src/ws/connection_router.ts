@@ -3,6 +3,7 @@ import {
   attributePlayerToSession,
   getGameSession,
   isSessionFull,
+  playerIsInASession,
   removePlayer,
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, ServerMessage } from './remoteGameApp/types';
@@ -19,6 +20,7 @@ export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, messa
 function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
   switch (message.type) {
     case 'join_game': {
+      if (playerIsInASession(socket)) return;
       const playerSettings = message.playerSettings;
       attributePlayerToSession(socket, playerSettings);
       const playerSession = getGameSession(socket);
