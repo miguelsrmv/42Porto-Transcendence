@@ -1,6 +1,13 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
-import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, PADDLE_LEN, getGameVersion } from './game.js';
+import {
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  BALL_RADIUS,
+  PADDLE_LEN,
+  gameArea,
+  getGameVersion,
+} from './game.js';
 import { MAX_BALL_SPEED } from './collisions.js';
 import { wait } from '../helpers.js';
 import { gameStats } from './gameStats.js';
@@ -34,6 +41,7 @@ export class Attack {
   attackDuration: number;
   attackCooldown: number;
   attackMap: { [key in attackIdentifier]: AttackData };
+  gameArea: gameArea;
 
   constructor(
     attackName: string | undefined,
@@ -42,6 +50,7 @@ export class Attack {
     ball: Ball,
     side: string,
     stats: gameStats,
+    gameArea: gameArea,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -51,6 +60,7 @@ export class Attack {
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
     this.stats = stats;
+    this.gameArea = gameArea;
     this.attackMap = {
       'Super Shroom': {
         handler: async () => this.superShroom(),
@@ -104,11 +114,15 @@ export class Attack {
 
     this.lastUsed = Date.now();
 
-    this.side === 'left'
-      ? this.stats.left.increasePowersUsed()
-      : this.stats.right.increasePowersUsed();
-
-    powerUpAnimation(this.side);
+    if (this.side === 'left') {
+      this.stats.left.increasePowersUsed();
+      this.gameArea.leftAnimation = true;
+      this.gameArea.leftPowerBarFill = 0;
+    } else {
+      this.stats.right.increasePowersUsed();
+      this.gameArea.rightAnimation = true;
+      this.gameArea.rightPowerBarFill = 0;
+    }
 
     this.activeAttack();
 
@@ -121,14 +135,14 @@ export class Attack {
   }
 
   gameVersionHasChanged(oldVersion: number): boolean {
-    return oldVersion !== getGameVersion() ? true : false;
+    return oldVersion !== getGameVersion(this.gameArea) ? true : false;
   }
 
   async superShroom(): Promise<void> {
     console.log(`Super shroom called by ${this.side}`);
     const growth = PADDLE_LEN * 0.25;
 
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const originalHeight = this.ownPaddle.height;
     const originalY = this.ownPaddle.y;
@@ -149,30 +163,30 @@ export class Attack {
   }
 
   async eggBarrage(): Promise<void> {
-    let fakeEggNumber = 5;
+    const fakeEggNumber = 5;
 
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     for (let i = 0; i < fakeEggNumber; i++) {
-      let fakeBall = new Ball(
+      const fakeBall = new Ball(
         Math.random() * 0.5 * CANVAS_WIDTH + 0.25 * CANVAS_WIDTH,
         Math.random() * 0.5 * CANVAS_HEIGHT + 0.25 * CANVAS_HEIGHT,
         BALL_RADIUS,
         this.ball.speedX * (Math.random() > 0.5 ? 1 : -1),
         this.ball.speedY * (Math.random() > 0.5 ? 1 : -1),
       );
-      fakeBalls.push(fakeBall);
+      this.gameArea.fakeBalls.push(fakeBall);
     }
 
     await wait(this.attackDuration);
 
     if (!this.gameVersionHasChanged(startingVersion)) {
-      for (let i = 0; i < fakeEggNumber; i++) fakeBalls.shift();
+      for (let i = 0; i < fakeEggNumber; i++) this.gameArea.fakeBalls.shift();
     }
   }
 
   async spinDash(): Promise<void> {
-    const startingVersion = getGameVersion(); // Check score changes
+    const startingVersion = getGameVersion(this.gameArea); // Check score changes
 
     const growthFactor = 1.25; // Speed multiplier
 
@@ -209,7 +223,7 @@ export class Attack {
   }
 
   async thunderWave(): Promise<void> {
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const slowdownFactor = 0.5;
 
@@ -223,7 +237,7 @@ export class Attack {
   }
 
   async confusion(): Promise<void> {
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const inversionFactor = -1;
 
@@ -241,7 +255,7 @@ export class Attack {
   }
 
   async mini(): Promise<void> {
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const shrinkFactor = 0.5;
 
@@ -259,7 +273,7 @@ export class Attack {
 
   async giantPunch(): Promise<void> {
     console.log('Giant punch called');
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const shrink = PADDLE_LEN * 0.4;
 
