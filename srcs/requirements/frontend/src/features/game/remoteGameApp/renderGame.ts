@@ -153,7 +153,7 @@ function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
 
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
 
-// TODO: When exit, send stop signal
+// FIX: When exit, send stop signal
 // FIX: Score goals
 // TODO: HTML Canvas 4/3
 // TODO: When win, get game stats screen
