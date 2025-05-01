@@ -34,7 +34,7 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
         const [ws1, ws2] = Array.from(playerSession.players.keys());
         broadcastMessage(ws1, ws2, JSON.stringify(response));
         initializeRemoteGame(ws1, ws2, matchSettings);
-        const gameStartMsg = { type: 'game_start' };
+        const gameStartMsg = { type: 'game_start' } as ServerMessage;
         broadcastMessage(ws1, ws2, JSON.stringify(gameStartMsg));
       }
       break;

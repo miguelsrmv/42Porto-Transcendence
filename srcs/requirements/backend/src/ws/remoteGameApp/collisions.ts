@@ -5,6 +5,7 @@ import { Ball, ballCountdown } from './ball.js';
 import { wait } from './helpers.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
+import { ServerMessage } from './types.js';
 
 export const MAX_BALL_SPEED: number = 1000;
 
@@ -38,9 +39,13 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
 
 function endGame(winningPlayer: Player, gameArea: gameArea): void {
   gameArea.stop();
-  const message = { type: 'game_end', winningPlayer: winningPlayer.side, stats: gameArea.stats };
+  const gameEndMsg = {
+    type: 'game_end',
+    winningPlayer: winningPlayer.side,
+    stats: gameArea.stats,
+  } as ServerMessage;
   // TODO: Separate message to each player?
-  gameArea.broadcastMessage(JSON.stringify(message));
+  gameArea.broadcastMessage(JSON.stringify(gameEndMsg));
 }
 
 // Checks if ball reached vertical canvas limits
@@ -51,8 +56,8 @@ export async function checkGoal(gameArea: gameArea) {
     // scoreAnimation('right');
     gameArea.stats.right.increaseGoals();
     gameArea.stats.left.increaseSufferedGoals();
-    const message = { type: 'game_goal', scoringSide: 'right' };
-    gameArea.broadcastMessage(JSON.stringify(message));
+    const gameGoal = { type: 'game_goal', scoringSide: 'right' } as ServerMessage;
+    gameArea.broadcastMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   } else if (gameArea.leftPlayer!.ball.x + gameArea.leftPlayer!.ball.radius >= CANVAS_WIDTH) {
     gameArea.leftPlayer!.increaseScore();
@@ -60,8 +65,8 @@ export async function checkGoal(gameArea: gameArea) {
     // scoreAnimation('left');
     gameArea.stats.left.increaseGoals();
     gameArea.stats.right.increaseSufferedGoals();
-    const message = { type: 'game_goal', scoringSide: 'left' };
-    gameArea.broadcastMessage(JSON.stringify(message));
+    const gameGoal = { type: 'game_goal', scoringSide: 'left' } as ServerMessage;
+    gameArea.broadcastMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   }
   if (eitherPlayerHasWon(gameArea.leftPlayer!, gameArea.rightPlayer!))
