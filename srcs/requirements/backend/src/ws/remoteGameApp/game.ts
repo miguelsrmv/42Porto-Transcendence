@@ -10,7 +10,7 @@ import {
 
 import { gameStats } from './gameStats.js';
 import { gameSettings } from './settings.js';
-import { GameState } from './types.js';
+import { ClientMessage, GameState, ServerMessage } from './types.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
 import { removePlayer } from './sessionManagement.js';
@@ -186,8 +186,8 @@ function initializeGameArea(
         rightAnimation: gameArea.rightAnimation,
       } as GameState;
       // TODO: Filter before sending
-      const response = { type: 'game_state', state: gameState };
-      this.broadcastMessage(JSON.stringify(response));
+      const gameStateMsg = { type: 'game_state', state: gameState } as ServerMessage;
+      this.broadcastMessage(JSON.stringify(gameStateMsg));
       return; // Exit early, don't update game yet
     }
 
@@ -225,19 +225,25 @@ function initializeGameArea(
 }
 
 function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: gameArea) {
+  const playerLeft = { type: 'player_left' } as ServerMessage;
   player1socket.on('message', (message) => {
-    const parsedMessage = JSON.parse(message.toString());
+    const parsedMessage = JSON.parse(message.toString()) as ClientMessage;
     if (parsedMessage.type === 'stop_game') {
       gameArea.stop();
       removePlayer(player1socket);
-      // TODO: Remove both players?
+      if (player2socket.readyState === WebSocket.OPEN)
+        player2socket.send(JSON.stringify(playerLeft));
+      removePlayer(player2socket);
     }
   });
   player2socket.on('message', (message) => {
-    const parsedMessage = JSON.parse(message.toString());
+    const parsedMessage = JSON.parse(message.toString()) as ClientMessage;
     if (parsedMessage.type === 'stop_game') {
       gameArea.stop();
       removePlayer(player2socket);
+      if (player1socket.readyState === WebSocket.OPEN)
+        player1socket.send(JSON.stringify(playerLeft));
+      removePlayer(player1socket);
     }
   });
 }
@@ -282,8 +288,8 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
   // TODO: Filter before sending
-  const response = { type: 'game_state', state: gameState };
-  gameArea.broadcastMessage(JSON.stringify(response));
+  const gameStateMsg = { type: 'game_state', state: gameState } as ServerMessage;
+  gameArea.broadcastMessage(JSON.stringify(gameStateMsg));
 }
 
 export function getGameVersion(gameArea: gameArea): number {

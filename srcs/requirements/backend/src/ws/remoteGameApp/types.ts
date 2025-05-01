@@ -33,6 +33,7 @@ export type ServerMessage =
   | { type: 'game_state'; state: GameState }
   | { type: 'game_goal'; scoringSide: 'left' | 'right' }
   | { type: 'game_end'; winningPlayer: 'left' | 'right'; stats: gameStats }
+  | { type: 'player_left' }
   | { type: 'error'; message: string };
 
 export interface GameSession {
