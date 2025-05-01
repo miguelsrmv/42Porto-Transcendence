@@ -10,6 +10,8 @@ const BORDER_COLOUR = 'gray';
 
 let leftPowerBarAnimation: boolean = false;
 let rightPowerBarAnimation: boolean = false;
+let leftSideGoal: number = 0;
+let rightSideGoal: number = 0;
 
 export function updateBackground(backgroundPath: string): void {
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
@@ -76,6 +78,8 @@ export function renderGame(webSocket: WebSocket) {
       drawPowerBar(messageData.state.rightPowerBarFill, rightPowerBar, 'right');
       triggerAnimation(myGameArea.context as CanvasRenderingContext2D, messageData.state);
       triggerSound(myGameArea.context as CanvasRenderingContext2D, messageData.state);
+    } else if (messageData.type === 'game_goal') {
+      renderGoal(messageData.scoringSide);
     }
   };
 }
@@ -120,6 +124,28 @@ function drawPowerBar(value: number, powerBar: HTMLElement, side: string): void 
   }
 }
 
+function renderGoal(scoringSide: string) {
+  let scorePoint: number;
+  if (scoringSide === 'left') {
+    leftSideGoal++;
+    scorePoint = leftSideGoal;
+  } else {
+    rightSideGoal++;
+    scorePoint = rightSideGoal;
+  }
+
+  const emptyScorePoint = document.getElementById(`${scoringSide}-score-card-${scorePoint}`);
+  if (!emptyScorePoint) {
+    console.warn(`No element found: ${scoringSide}-score-card-${scorePoint}`);
+    return;
+  }
+
+  const colour = emptyScorePoint.className.match(/border-([a-z]+)-500/)?.[1];
+
+  emptyScorePoint.classList.remove('border-2', `border-${colour}-500`);
+  emptyScorePoint.classList.add(`bg-${colour}-500`);
+}
+
 function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
   if (state.leftAnimation) powerUpAnimation('left');
   if (state.rightAnimation) powerUpAnimation('right');
@@ -127,8 +153,7 @@ function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
 
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
 
-// TODO:
-// When exit, send stop signal
-// Score goals
-// HTML Canvas 4/3
-// When win, get game stats screen
+// TODO: When exit, send stop signal
+// FIX: Score goals
+// TODO: HTML Canvas 4/3
+// TODO: When win, get game stats screen
