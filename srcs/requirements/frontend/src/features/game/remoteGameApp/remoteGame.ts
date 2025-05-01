@@ -3,8 +3,11 @@ import { updateHUD } from '../gameSetup.js';
 import { loadView } from '../../../core/viewLoader.js';
 import { updateBackground, renderGame } from './renderGame.js';
 
+let gameIsRunning: boolean = false;
+let webSocket: WebSocket;
+
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
-  const webSocket = new WebSocket('wss://padaria.42.pt/ws');
+  webSocket = new WebSocket('wss://padaria.42.pt/ws');
 
   const joinGameMsg = { type: 'join_game', playerSettings: leanGameSettings };
 
@@ -54,8 +57,16 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       window.addEventListener('keyup', keyUpHandler);
     } else if (messageData.type === 'game_start') {
       // TODO: Change to game start??
+      gameIsRunning = true;
       renderGame(webSocket);
     }
     // Else if a mensagem for game terminou e respetivos resultados
   };
+}
+
+export function endRemoteGameIfRunning(): void {
+  const stopMessage = JSON.stringify({ type: 'stop_game' });
+  if (gameIsRunning) {
+    webSocket.send(stopMessage);
+  }
 }

@@ -13,7 +13,8 @@ import * as tournamentPlayModule from '../features/tournamentPlay/tournamentPlay
 import * as friendModule from '../features/friends/friends.js';
 import * as rankingsModule from '../features/rankings/rankings.js';
 //import * as gameModule from '../features/game/gamePage.js';
-import { endGameIfRunning } from '../features/game/localGameApp/game.js';
+import { endLocalGameIfRunning } from '../features/game/localGameApp/game.js';
+import { endRemoteGameIfRunning } from '../features/game/remoteGameApp/remoteGame.js';
 
 type FeatureModule = {
   initializeView: () => void;
@@ -37,8 +38,11 @@ let currentView = '';
  * @returns A promise that resolves when the view is loaded.
  */
 function handleRouteChange(): void {
-  // If a game is running, stop it
-  endGameIfRunning();
+  // If a local game is running, stop it
+  endLocalGameIfRunning();
+
+  // If a remote game is running, stop it
+  endRemoteGameIfRunning();
 
   // Get the view name from the URL hash, trim the first #
   const viewName = window.location.hash.substring(1) || 'landing-page';
