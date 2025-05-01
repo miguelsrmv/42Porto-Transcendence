@@ -295,7 +295,7 @@ export function paintScore(side: string, score: number): void {
   emptyScorePoint.classList.add(`bg-${colour}-500`);
 }
 
-export function endGameIfRunning(): void {
+export function endLocalGameIfRunning(): void {
   if (myGameArea.state !== gameState.ended) myGameArea.stop();
 }
 
