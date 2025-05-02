@@ -9,7 +9,7 @@ import {
 } from './collisions.js';
 import { gameStats } from './gameStats.js';
 import { gameSettings } from './settings.js';
-import { ClientMessage, GameState, ServerMessage } from './types.js';
+import { ClientMessage, gameArea, gameRunningState, GameState, ServerMessage } from './types.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
 import { removePlayer } from './sessionManagement.js';
@@ -21,12 +21,6 @@ export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
 const PADDLE_WID = 12;
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
-
-export enum gameRunningState {
-  playing,
-  paused,
-  ended,
-}
 
 function setPlayerPowerBarInterval(player: Player, gameArea: gameArea) {
   if (player.attack) player.attack.lastUsed = Date.now();
@@ -53,30 +47,7 @@ function setPowerUpBar(gameArea: gameArea): void {
   setPlayerPowerBarInterval(gameArea.rightPlayer!, gameArea);
 }
 
-export interface gameArea {
-  ball: Ball;
-  leftPaddle: Paddle;
-  rightPaddle: Paddle;
-  leftPlayer: Player | null;
-  rightPlayer: Player | null;
-  runningState: gameRunningState;
-  lastTime: number;
-  fakeBalls: Ball[];
-  stats: gameStats;
-  leftAnimation: boolean;
-  rightAnimation: boolean;
-  countdownTimeLeft: number;
-  countdownBlinkTimer: number;
-  countdownVisible: boolean;
-  isInitialCountdownActive: boolean;
-  intervals: NodeJS.Timeout[];
-  gameLoop(): void;
-  pause(): void;
-  stop(): void;
-  broadcastSessionMessage(message: string): void;
-  clear(): void;
-}
-
+// TODO: transform gameArea into a class
 function initializeGameArea(
   p1socket: WebSocket,
   p2socket: WebSocket,
