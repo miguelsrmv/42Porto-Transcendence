@@ -1,6 +1,5 @@
 import { getByIdSchema } from './global.schema';
 
-// TODO: Uniformize 'data' wrapping
 export const createFriendSchema = {
   body: {
     type: 'object',
