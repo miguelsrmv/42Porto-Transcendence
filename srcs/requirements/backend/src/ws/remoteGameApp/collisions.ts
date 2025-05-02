@@ -43,7 +43,7 @@ function endGame(winningPlayer: Player, gameArea: gameArea): void {
     stats: gameArea.stats,
   } as ServerMessage;
   // TODO: Separate message to each player?
-  gameArea.broadcastMessage(JSON.stringify(gameEndMsg));
+  gameArea.broadcastSessionMessage(JSON.stringify(gameEndMsg));
 }
 
 // Checks if ball reached vertical canvas limits
@@ -53,14 +53,14 @@ export async function checkGoal(gameArea: gameArea) {
     gameArea.stats.right.increaseGoals();
     gameArea.stats.left.increaseSufferedGoals();
     const gameGoal = { type: 'game_goal', scoringSide: 'right' } as ServerMessage;
-    gameArea.broadcastMessage(JSON.stringify(gameGoal));
+    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   } else if (gameArea.leftPlayer!.ball.x + gameArea.leftPlayer!.ball.radius >= CANVAS_WIDTH) {
     gameArea.leftPlayer!.increaseScore();
     gameArea.stats.left.increaseGoals();
     gameArea.stats.right.increaseSufferedGoals();
     const gameGoal = { type: 'game_goal', scoringSide: 'left' } as ServerMessage;
-    gameArea.broadcastMessage(JSON.stringify(gameGoal));
+    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   }
   if (eitherPlayerHasWon(gameArea.leftPlayer!, gameArea.rightPlayer!))
