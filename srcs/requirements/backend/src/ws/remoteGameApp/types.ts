@@ -1,6 +1,7 @@
 import { Ball } from './ball';
 import { gameStats } from './gameStats';
 import { Paddle } from './paddle';
+import { Player } from './player';
 import { gameSettings, leanGameSettings } from './settings';
 import WebSocket from 'ws';
 
@@ -13,6 +14,36 @@ export interface GameState {
   rightPowerBarFill: number;
   leftAnimation: boolean;
   rightAnimation: boolean;
+}
+
+export enum gameRunningState {
+  playing,
+  paused,
+  ended,
+}
+
+export interface gameArea {
+  ball: Ball;
+  leftPaddle: Paddle;
+  rightPaddle: Paddle;
+  leftPlayer: Player | null;
+  rightPlayer: Player | null;
+  runningState: gameRunningState;
+  lastTime: number;
+  fakeBalls: Ball[];
+  stats: gameStats;
+  leftAnimation: boolean;
+  rightAnimation: boolean;
+  countdownTimeLeft: number;
+  countdownBlinkTimer: number;
+  countdownVisible: boolean;
+  isInitialCountdownActive: boolean;
+  intervals: NodeJS.Timeout[];
+  gameLoop(): void;
+  pause(): void;
+  stop(): void;
+  broadcastSessionMessage(message: string): void;
+  clear(): void;
 }
 
 export enum PlayerInput {
