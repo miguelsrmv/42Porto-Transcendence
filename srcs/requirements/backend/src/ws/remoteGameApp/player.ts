@@ -16,6 +16,7 @@ export class Player {
   side: string;
   socket: WebSocket;
   input: PlayerInput;
+  powerBarFill: number;
 
   constructor(
     ownPaddle: Paddle,
@@ -39,6 +40,7 @@ export class Player {
     this.side = side;
     this.socket = socket;
     this.input = PlayerInput.stop;
+    this.powerBarFill = 0;
   }
 
   increaseScore(): void {
