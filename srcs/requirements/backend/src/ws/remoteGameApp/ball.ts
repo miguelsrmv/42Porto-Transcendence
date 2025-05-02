@@ -1,4 +1,4 @@
-import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
+import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './gameArea.js';
 import { Paddle } from './paddle.js';
 
 export class Ball {

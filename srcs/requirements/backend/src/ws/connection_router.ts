@@ -36,11 +36,11 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: s
       if (playerSession && isSessionFull(playerSession)) {
         // TODO: error handling for no game session returned
         const matchSettings = playerSession.settings;
-        const response = { type: 'game_setup', settings: matchSettings } as ServerMessage;
+        const response: ServerMessage = { type: 'game_setup', settings: matchSettings };
         const [ws1, ws2] = Array.from(playerSession.players.keys());
         broadcastMessageTo(ws1, ws2, JSON.stringify(response));
         initializeRemoteGame(ws1, ws2, matchSettings);
-        const gameStartMsg = { type: 'game_start' } as ServerMessage;
+        const gameStartMsg: ServerMessage = { type: 'game_start' };
         broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
       }
       break;
