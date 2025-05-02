@@ -6,7 +6,6 @@ import { GameSession, GameSessionSerializable } from './types';
 const classicPongSessions: GameSession[] = [];
 const crazyPongSessions: GameSession[] = [];
 
-// TODO: generate just a random background name?
 function getRandomBackground(): background {
   const backgroundList = getBackgroundList();
   return backgroundList[Math.floor(Math.random() * backgroundList.length)];
@@ -39,7 +38,7 @@ function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings): gameSet
   };
 }
 
-// TODO: clean up code, smaller function to add player to session
+// TODO: remove repeated code (pass respective array of sessions)
 function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean {
   if (playerSettings.gameType === 'Classic Pong') {
     for (const session of classicPongSessions) {

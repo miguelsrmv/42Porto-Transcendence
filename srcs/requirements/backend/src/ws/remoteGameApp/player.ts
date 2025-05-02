@@ -27,7 +27,7 @@ export class Player {
     side: string,
     socket: WebSocket,
     stats: gameStats,
-    GameArea: GameArea,
+    gameArea: GameArea,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -35,7 +35,7 @@ export class Player {
     this.alias = alias;
     this.score = 0;
     this.attack = attackName
-      ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side, stats, GameArea)
+      ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side, stats, gameArea)
       : null;
     this.side = side;
     this.socket = socket;
