@@ -8,6 +8,7 @@ import {
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, ServerMessage } from './remoteGameApp/types';
 import { initializeRemoteGame } from './remoteGameApp/game';
+import { FastifyRequest } from 'fastify';
 
 // TODO: Change name or remove
 export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, message: string) {
@@ -15,13 +16,19 @@ export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, messa
   if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
 }
 
-// TODO: send who triggered animation
-
 // TODO: Rename function
-function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
+function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
   switch (message.type) {
     case 'join_game': {
       const playerSettings = message.playerSettings;
+      if (playerSettings.playerID !== userId) {
+        console.log(
+          `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
+        );
+        const errorMessage = { type: 'error', message: '401 Unauthorized'}
+        if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
+        return;
+      }
       if (playerIsInASession(playerSettings.playerID)) {
         return;
       }
@@ -44,7 +51,7 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
 
 let pingInterval: NodeJS.Timeout;
 
-export async function handleSocketConnection(socket: WebSocket) {
+export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
   socket.on('open', () => {
     pingInterval = setInterval(() => {
       if (socket.readyState === WebSocket.OPEN) {
@@ -57,7 +64,7 @@ export async function handleSocketConnection(socket: WebSocket) {
 
   socket.on('message', (message) => {
     console.log('Received message:', message.toString());
-    messageTypeHandler(JSON.parse(message.toString()), socket);
+    messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
   });
 
   socket.on('close', () => {
