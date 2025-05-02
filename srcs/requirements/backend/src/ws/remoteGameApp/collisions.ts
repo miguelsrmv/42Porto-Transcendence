@@ -1,7 +1,5 @@
 import { CANVAS_HEIGHT, CANVAS_WIDTH, gameArea, gameRunningState, SPEED } from './game.js';
-
 import { Ball, ballCountdown } from './ball.js';
-
 import { wait } from './helpers.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
@@ -52,8 +50,6 @@ function endGame(winningPlayer: Player, gameArea: gameArea): void {
 export async function checkGoal(gameArea: gameArea) {
   if (gameArea.leftPlayer!.ball.x - gameArea.leftPlayer!.ball.radius <= 0) {
     gameArea.rightPlayer!.increaseScore();
-    // paintScore('right', gameArea.rightPlayer!.getScore());
-    // scoreAnimation('right');
     gameArea.stats.right.increaseGoals();
     gameArea.stats.left.increaseSufferedGoals();
     const gameGoal = { type: 'game_goal', scoringSide: 'right' } as ServerMessage;
@@ -61,8 +57,6 @@ export async function checkGoal(gameArea: gameArea) {
     await resetRound(gameArea);
   } else if (gameArea.leftPlayer!.ball.x + gameArea.leftPlayer!.ball.radius >= CANVAS_WIDTH) {
     gameArea.leftPlayer!.increaseScore();
-    // paintScore('left', gameArea.leftPlayer!.getScore());
-    // scoreAnimation('left');
     gameArea.stats.left.increaseGoals();
     gameArea.stats.right.increaseSufferedGoals();
     const gameGoal = { type: 'game_goal', scoringSide: 'left' } as ServerMessage;
