@@ -35,7 +35,7 @@ export class Attack {
   attackDuration: number;
   attackCooldown: number;
   attackMap: { [key in attackIdentifier]: AttackData };
-  GameArea: GameArea;
+  gameArea: GameArea;
 
   constructor(
     attackName: string | undefined,
@@ -44,7 +44,7 @@ export class Attack {
     ball: Ball,
     side: string,
     stats: gameStats,
-    GameArea: GameArea,
+    gameArea: GameArea,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -54,7 +54,7 @@ export class Attack {
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
     this.stats = stats;
-    this.GameArea = GameArea;
+    this.gameArea = gameArea;
     this.attackMap = {
       'Super Shroom': {
         handler: async () => this.superShroom(),
@@ -110,12 +110,12 @@ export class Attack {
 
     if (this.side === 'left') {
       this.stats.left.increasePowersUsed();
-      this.GameArea.leftAnimation = true;
-      this.GameArea.leftPlayer.powerBarFill = 0;
+      this.gameArea.leftAnimation = true;
+      this.gameArea.leftPlayer.powerBarFill = 0;
     } else {
       this.stats.right.increasePowersUsed();
-      this.GameArea.rightAnimation = true;
-      this.GameArea.rightPlayer.powerBarFill = 0;
+      this.gameArea.rightAnimation = true;
+      this.gameArea.rightPlayer.powerBarFill = 0;
     }
 
     this.activeAttack();
@@ -129,14 +129,14 @@ export class Attack {
   }
 
   gameVersionHasChanged(oldVersion: number): boolean {
-    return oldVersion !== getGameVersion(this.GameArea) ? true : false;
+    return oldVersion !== getGameVersion(this.gameArea) ? true : false;
   }
 
   async superShroom(): Promise<void> {
     console.log(`Super shroom called by ${this.side}`);
     const growth = PADDLE_LEN * 0.25;
 
-    const startingVersion = getGameVersion(this.GameArea);
+    const startingVersion = getGameVersion(this.gameArea);
 
     const originalHeight = this.ownPaddle.height;
     const originalY = this.ownPaddle.y;
@@ -159,7 +159,7 @@ export class Attack {
   async eggBarrage(): Promise<void> {
     const fakeEggNumber = 5;
 
-    const startingVersion = getGameVersion(this.GameArea);
+    const startingVersion = getGameVersion(this.gameArea);
 
     for (let i = 0; i < fakeEggNumber; i++) {
       const fakeBall = new Ball(
@@ -169,18 +169,18 @@ export class Attack {
         this.ball.speedX * (Math.random() > 0.5 ? 1 : -1),
         this.ball.speedY * (Math.random() > 0.5 ? 1 : -1),
       );
-      this.GameArea.fakeBalls.push(fakeBall);
+      this.gameArea.fakeBalls.push(fakeBall);
     }
 
     await wait(this.attackDuration);
 
     if (!this.gameVersionHasChanged(startingVersion)) {
-      for (let i = 0; i < fakeEggNumber; i++) this.GameArea.fakeBalls.shift();
+      for (let i = 0; i < fakeEggNumber; i++) this.gameArea.fakeBalls.shift();
     }
   }
 
   async spinDash(): Promise<void> {
-    const startingVersion = getGameVersion(this.GameArea); // Check score changes
+    const startingVersion = getGameVersion(this.gameArea); // Check score changes
 
     const growthFactor = 1.25; // Speed multiplier
 
@@ -217,7 +217,7 @@ export class Attack {
   }
 
   async thunderWave(): Promise<void> {
-    const startingVersion = getGameVersion(this.GameArea);
+    const startingVersion = getGameVersion(this.gameArea);
 
     const slowdownFactor = 0.5;
 
@@ -231,7 +231,7 @@ export class Attack {
   }
 
   async confusion(): Promise<void> {
-    const startingVersion = getGameVersion(this.GameArea);
+    const startingVersion = getGameVersion(this.gameArea);
 
     const inversionFactor = -1;
 
@@ -249,7 +249,7 @@ export class Attack {
   }
 
   async mini(): Promise<void> {
-    const startingVersion = getGameVersion(this.GameArea);
+    const startingVersion = getGameVersion(this.gameArea);
 
     const shrinkFactor = 0.5;
 
@@ -267,7 +267,7 @@ export class Attack {
 
   async giantPunch(): Promise<void> {
     console.log('Giant punch called');
-    const startingVersion = getGameVersion(this.GameArea);
+    const startingVersion = getGameVersion(this.gameArea);
 
     const shrink = PADDLE_LEN * 0.4;
 

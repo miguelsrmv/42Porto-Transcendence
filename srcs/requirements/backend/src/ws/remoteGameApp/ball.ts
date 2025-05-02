@@ -28,10 +28,6 @@ export class Ball {
   }
 
   bounceHorizontal(paddle: Paddle): void {
-    // NOTE: Old implementation!
-    // this.speedX *= -1; // Reverse horizontal direction
-
-    // NOTE: Check how this feels!
     // --- Correctly Calculate Paddle Center Y ---
     const paddleCenterY = paddle.y + paddle.height / 2.0; // Calculate the actual center
 

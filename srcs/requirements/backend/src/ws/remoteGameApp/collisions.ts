@@ -35,40 +35,40 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
 
-function endGame(winningPlayer: Player, GameArea: GameArea): void {
-  GameArea.stop();
+function endGame(winningPlayer: Player, gameArea: GameArea): void {
+  gameArea.stop();
   const gameEndMsg = {
     type: 'game_end',
     winningPlayer: winningPlayer.side,
-    stats: GameArea.stats,
+    stats: gameArea.stats,
   } as ServerMessage;
   // TODO: Separate message to each player?
-  GameArea.broadcastSessionMessage(JSON.stringify(gameEndMsg));
+  gameArea.broadcastSessionMessage(JSON.stringify(gameEndMsg));
 }
 
 // Checks if ball reached vertical canvas limits
-export async function checkGoal(GameArea: GameArea) {
-  if (GameArea.leftPlayer.ball.x - GameArea.leftPlayer.ball.radius <= 0) {
-    GameArea.rightPlayer.increaseScore();
-    GameArea.stats.right.increaseGoals();
-    GameArea.stats.left.increaseSufferedGoals();
+export async function checkGoal(gameArea: GameArea) {
+  if (gameArea.leftPlayer.ball.x - gameArea.leftPlayer.ball.radius <= 0) {
+    gameArea.rightPlayer.increaseScore();
+    gameArea.stats.right.increaseGoals();
+    gameArea.stats.left.increaseSufferedGoals();
     const gameGoal: ServerMessage = { type: 'game_goal', scoringSide: 'right' };
-    GameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
-    await resetRound(GameArea);
-  } else if (GameArea.leftPlayer.ball.x + GameArea.leftPlayer.ball.radius >= CANVAS_WIDTH) {
-    GameArea.leftPlayer.increaseScore();
-    GameArea.stats.left.increaseGoals();
-    GameArea.stats.right.increaseSufferedGoals();
+    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
+    await resetRound(gameArea);
+  } else if (gameArea.leftPlayer.ball.x + gameArea.leftPlayer.ball.radius >= CANVAS_WIDTH) {
+    gameArea.leftPlayer.increaseScore();
+    gameArea.stats.left.increaseGoals();
+    gameArea.stats.right.increaseSufferedGoals();
     const gameGoal: ServerMessage = { type: 'game_goal', scoringSide: 'left' };
-    GameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
-    await resetRound(GameArea);
+    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
+    await resetRound(gameArea);
   }
-  if (eitherPlayerHasWon(GameArea.leftPlayer, GameArea.rightPlayer))
+  if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer))
     endGame(
-      GameArea.leftPlayer.getScore() > GameArea.rightPlayer.getScore()
-        ? GameArea.leftPlayer
-        : GameArea.rightPlayer,
-      GameArea,
+      gameArea.leftPlayer.getScore() > gameArea.rightPlayer.getScore()
+        ? gameArea.leftPlayer
+        : gameArea.rightPlayer,
+      gameArea,
     );
 }
 
@@ -101,50 +101,50 @@ function capMaxSpeed(ball: Ball, maxSpeed: number): void {
 }
 
 // Checks if ball collided with either paddle
-export function checkPaddleCollision(GameArea: GameArea): void {
+export function checkPaddleCollision(gameArea: GameArea): void {
   if (
     // Left paddle collision
-    crossedPaddleHorizontally(GameArea.ball, GameArea.leftPaddle) &&
-    isWithinPaddleHeight(GameArea.ball, GameArea.leftPaddle)
+    crossedPaddleHorizontally(gameArea.ball, gameArea.leftPaddle) &&
+    isWithinPaddleHeight(gameArea.ball, gameArea.leftPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
-    GameArea.ball.bounceHorizontal(GameArea.leftPaddle);
-    GameArea.ball.x = GameArea.leftPaddle.x + GameArea.leftPaddle.width + GameArea.ball.radius;
-    capMaxSpeed(GameArea.ball, MAX_BALL_SPEED);
-    GameArea.stats.maxSpeed = Math.sqrt(GameArea.ball.speedX ** 2 + GameArea.ball.speedY ** 2);
-    GameArea.stats.left.increaseSaves();
+    gameArea.ball.bounceHorizontal(gameArea.leftPaddle);
+    gameArea.ball.x = gameArea.leftPaddle.x + gameArea.leftPaddle.width + gameArea.ball.radius;
+    capMaxSpeed(gameArea.ball, MAX_BALL_SPEED);
+    gameArea.stats.maxSpeed = Math.sqrt(gameArea.ball.speedX ** 2 + gameArea.ball.speedY ** 2);
+    gameArea.stats.left.increaseSaves();
   }
 
   if (
     // Right paddle collision
-    crossedPaddleHorizontally(GameArea.ball, GameArea.rightPaddle) &&
-    isWithinPaddleHeight(GameArea.ball, GameArea.rightPaddle)
+    crossedPaddleHorizontally(gameArea.ball, gameArea.rightPaddle) &&
+    isWithinPaddleHeight(gameArea.ball, gameArea.rightPaddle)
   ) {
     // Adjustment to prevent sticking to paddle
-    GameArea.ball.bounceHorizontal(GameArea.rightPaddle);
-    GameArea.ball.x = GameArea.rightPaddle.x - GameArea.ball.radius;
-    capMaxSpeed(GameArea.ball, MAX_BALL_SPEED);
-    GameArea.stats.maxSpeed = Math.sqrt(GameArea.ball.speedX ** 2 + GameArea.ball.speedY ** 2);
-    GameArea.stats.right.increaseSaves();
+    gameArea.ball.bounceHorizontal(gameArea.rightPaddle);
+    gameArea.ball.x = gameArea.rightPaddle.x - gameArea.ball.radius;
+    capMaxSpeed(gameArea.ball, MAX_BALL_SPEED);
+    gameArea.stats.maxSpeed = Math.sqrt(gameArea.ball.speedX ** 2 + gameArea.ball.speedY ** 2);
+    gameArea.stats.right.increaseSaves();
   }
 }
 
-// Returns ball to center of canvas and starts round at random direction
-async function resetRound(GameArea: GameArea) {
+// Returns ball to center and starts round at random direction
+async function resetRound(gameArea: GameArea) {
   const beforeTime = Date.now();
-  GameArea.leftPlayer.ball.reset();
-  GameArea.leftPlayer.ownPaddle.reset();
-  GameArea.rightPlayer.ownPaddle.reset();
-  GameArea.fakeBalls.splice(0, GameArea.fakeBalls.length);
-  GameArea.runningState = gameRunningState.paused;
-  ballCountdown(GameArea.ball);
+  gameArea.leftPlayer.ball.reset();
+  gameArea.leftPlayer.ownPaddle.reset();
+  gameArea.rightPlayer.ownPaddle.reset();
+  gameArea.fakeBalls.splice(0, gameArea.fakeBalls.length);
+  gameArea.runningState = gameRunningState.paused;
+  ballCountdown(gameArea.ball);
   await wait(3);
   const newTime = Date.now();
-  GameArea.leftAnimation = false;
-  GameArea.rightAnimation = false;
-  GameArea.leftPlayer.attack?.reset(beforeTime, newTime);
-  GameArea.rightPlayer.attack?.reset(beforeTime, newTime);
-  GameArea.runningState = gameRunningState.playing;
-  GameArea.leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
-  GameArea.leftPlayer.ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  gameArea.leftAnimation = false;
+  gameArea.rightAnimation = false;
+  gameArea.leftPlayer.attack?.reset(beforeTime, newTime);
+  gameArea.rightPlayer.attack?.reset(beforeTime, newTime);
+  gameArea.runningState = gameRunningState.playing;
+  gameArea.leftPlayer.ball.speedX = SPEED * (Math.random() > 0.5 ? 1 : -1);
+  gameArea.leftPlayer.ball.speedY = SPEED * (Math.random() > 0.5 ? 1 : -1);
 }
