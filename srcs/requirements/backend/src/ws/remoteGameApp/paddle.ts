@@ -1,4 +1,4 @@
-import { CANVAS_HEIGHT, PADDLE_LEN, PADDLE_START_Y_POS } from './game.js';
+import { CANVAS_HEIGHT, PADDLE_LEN, PADDLE_START_Y_POS } from './gameArea.js';
 
 export class Paddle {
   width: number;

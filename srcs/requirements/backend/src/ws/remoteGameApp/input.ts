@@ -1,43 +1,43 @@
-import { gameArea, gameRunningState, SPEED } from './game.js';
-import { PlayerInput } from './types.js';
+import { GameArea, SPEED } from './gameArea.js';
+import { gameRunningState, PlayerInput } from './types.js';
 
 // Add event listeners for keydown and keyup events
-export function setupInput(gameArea: gameArea) {
-  gameArea.leftPlayer!.socket.on('message', (message) => {
+export function setupInput(GameArea: GameArea) {
+  GameArea.leftPlayer.socket.on('message', (message) => {
     const parsedMessage = JSON.parse(message.toString());
     if (parsedMessage.type === 'movement') {
-      gameArea.leftPlayer!.input = parsedMessage.direction as PlayerInput;
+      GameArea.leftPlayer.input = parsedMessage.direction as PlayerInput;
     } else if (parsedMessage.type === 'power_up') {
-      gameArea.leftPlayer!.attack?.attack();
+      GameArea.leftPlayer.attack?.attack();
     }
   });
-  gameArea.rightPlayer!.socket.on('message', (message) => {
+  GameArea.rightPlayer.socket.on('message', (message) => {
     const parsedMessage = JSON.parse(message.toString());
     if (parsedMessage.type === 'movement') {
-      gameArea.rightPlayer!.input = parsedMessage.direction as PlayerInput;
+      GameArea.rightPlayer.input = parsedMessage.direction as PlayerInput;
     } else if (parsedMessage.type === 'power_up') {
-      gameArea.rightPlayer!.attack?.attack();
+      GameArea.rightPlayer.attack?.attack();
     }
   });
 }
 
 // Update paddle movement based on key input
-export function handleInput(gameArea: gameArea): void {
-  if (gameArea.runningState !== gameRunningState.playing) return;
+export function handleInput(GameArea: GameArea): void {
+  if (GameArea.runningState !== gameRunningState.playing) return;
 
-  if (gameArea.leftPlayer!.input === PlayerInput.up) {
-    gameArea.leftPlayer!.ownPaddle.speedY = -SPEED * gameArea.leftPlayer!.ownPaddle.speedModifier;
-  } else if (gameArea.leftPlayer!.input === PlayerInput.down) {
-    gameArea.leftPlayer!.ownPaddle.speedY = SPEED * gameArea.leftPlayer!.ownPaddle.speedModifier;
+  if (GameArea.leftPlayer.input === PlayerInput.up) {
+    GameArea.leftPlayer.ownPaddle.speedY = -SPEED * GameArea.leftPlayer.ownPaddle.speedModifier;
+  } else if (GameArea.leftPlayer.input === PlayerInput.down) {
+    GameArea.leftPlayer.ownPaddle.speedY = SPEED * GameArea.leftPlayer.ownPaddle.speedModifier;
   } else {
-    gameArea.leftPlayer!.ownPaddle.speedY = 0;
+    GameArea.leftPlayer.ownPaddle.speedY = 0;
   }
 
-  if (gameArea.rightPlayer!.input === PlayerInput.up) {
-    gameArea.rightPlayer!.ownPaddle.speedY = -SPEED * gameArea.rightPlayer!.ownPaddle.speedModifier;
-  } else if (gameArea.rightPlayer!.input === PlayerInput.down) {
-    gameArea.rightPlayer!.ownPaddle.speedY = SPEED * gameArea.rightPlayer!.ownPaddle.speedModifier;
+  if (GameArea.rightPlayer.input === PlayerInput.up) {
+    GameArea.rightPlayer.ownPaddle.speedY = -SPEED * GameArea.rightPlayer.ownPaddle.speedModifier;
+  } else if (GameArea.rightPlayer.input === PlayerInput.down) {
+    GameArea.rightPlayer.ownPaddle.speedY = SPEED * GameArea.rightPlayer.ownPaddle.speedModifier;
   } else {
-    gameArea.rightPlayer!.ownPaddle.speedY = 0;
+    GameArea.rightPlayer.ownPaddle.speedY = 0;
   }
 }
