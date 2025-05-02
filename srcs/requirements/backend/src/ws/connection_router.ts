@@ -10,8 +10,7 @@ import { ClientMessage, ServerMessage } from './remoteGameApp/types';
 import { initializeRemoteGame } from './remoteGameApp/game';
 import { FastifyRequest } from 'fastify';
 
-// TODO: Change name or remove
-export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, message: string) {
+export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, message: string) {
   if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
   if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
 }
@@ -25,7 +24,7 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: s
         console.log(
           `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
         );
-        const errorMessage = { type: 'error', message: '401 Unauthorized'}
+        const errorMessage = { type: 'error', message: '401 Unauthorized' };
         if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
         return;
       }
@@ -39,10 +38,10 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: s
         const matchSettings = playerSession.settings;
         const response = { type: 'game_setup', settings: matchSettings } as ServerMessage;
         const [ws1, ws2] = Array.from(playerSession.players.keys());
-        broadcastMessage(ws1, ws2, JSON.stringify(response));
+        broadcastMessageTo(ws1, ws2, JSON.stringify(response));
         initializeRemoteGame(ws1, ws2, matchSettings);
         const gameStartMsg = { type: 'game_start' } as ServerMessage;
-        broadcastMessage(ws1, ws2, JSON.stringify(gameStartMsg));
+        broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
       }
       break;
     }

@@ -73,7 +73,7 @@ export interface gameArea {
   gameLoop(): void;
   pause(): void;
   stop(): void;
-  broadcastMessage(message: string): void;
+  broadcastSessionMessage(message: string): void;
   clear(): void;
 }
 
@@ -123,7 +123,7 @@ function initializeGameArea(
       this.runningState = gameRunningState.ended;
       this.clear();
     },
-    broadcastMessage: () => {},
+    broadcastSessionMessage: () => {},
     clear() {
       this.intervals.forEach((interval) => clearInterval(interval));
     },
@@ -170,13 +170,13 @@ function initializeGameArea(
       } as GameState;
       // TODO: Filter before sending
       const gameStateMsg = { type: 'game_state', state: gameState } as ServerMessage;
-      this.broadcastMessage(JSON.stringify(gameStateMsg));
+      this.broadcastSessionMessage(JSON.stringify(gameStateMsg));
       return; // Exit early, don't update game yet
     }
 
     await updateGameArea(dt, this);
   };
-  gameArea.broadcastMessage = function broadcastMessage(message: string) {
+  gameArea.broadcastSessionMessage = function broadcastSessionMessage(message: string) {
     if (!this.leftPlayer || !this.rightPlayer) return;
     if (this.leftPlayer.socket.readyState === WebSocket.OPEN) this.leftPlayer.socket.send(message);
     if (this.rightPlayer.socket.readyState === WebSocket.OPEN)
@@ -266,7 +266,7 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
   } as GameState;
   // TODO: Filter before sending
   const gameStateMsg = { type: 'game_state', state: gameState } as ServerMessage;
-  gameArea.broadcastMessage(JSON.stringify(gameStateMsg));
+  gameArea.broadcastSessionMessage(JSON.stringify(gameStateMsg));
 }
 
 export function getGameVersion(gameArea: gameArea): number {
