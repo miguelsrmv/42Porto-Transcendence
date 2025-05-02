@@ -7,7 +7,6 @@ import {
   checkGoal,
   checkFakeBallWallCollision,
 } from './collisions.js';
-
 import { gameStats } from './gameStats.js';
 import { gameSettings } from './settings.js';
 import { ClientMessage, GameState, ServerMessage } from './types.js';
@@ -29,41 +28,29 @@ export enum gameRunningState {
   ended,
 }
 
+function setPlayerPowerBarInterval(player: Player, gameArea: gameArea) {
+  if (player.attack) player.attack.lastUsed = Date.now();
+
+  const interval = setInterval(() => {
+    if (player.attack && gameArea.runningState === gameRunningState.playing) {
+      const lastUsed: number = player.attack.lastUsed;
+      const coolDown: number = player.attack.attackCooldown;
+      const currentTime: number = Date.now();
+
+      const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
+      player.powerBarFill = percentage;
+
+      if (percentage == 100) {
+        player.attack.attackIsAvailable = true;
+      }
+    }
+  }, 20);
+  gameArea.intervals.push(interval);
+}
+
 function setPowerUpBar(gameArea: gameArea): void {
-  if (gameArea.leftPlayer!.attack) gameArea.leftPlayer!.attack.lastUsed = Date.now();
-  if (gameArea.rightPlayer!.attack) gameArea.rightPlayer!.attack.lastUsed = Date.now();
-
-  const leftBarInterval = setInterval(() => {
-    if (gameArea.leftPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
-      const lastUsed: number = gameArea.leftPlayer!.attack.lastUsed;
-      const coolDown: number = gameArea.leftPlayer!.attack.attackCooldown;
-      const currentTime: number = Date.now();
-
-      const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
-      gameArea.leftPowerBarFill = percentage;
-
-      if (percentage == 100) {
-        gameArea.leftPlayer!.attack.attackIsAvailable = true;
-      }
-    }
-  }, 20);
-  gameArea.intervals.push(leftBarInterval);
-
-  const rightBarInterval = setInterval(() => {
-    if (gameArea.rightPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
-      const lastUsed: number = gameArea.rightPlayer!.attack.lastUsed;
-      const coolDown: number = gameArea.rightPlayer!.attack.attackCooldown;
-      const currentTime: number = Date.now();
-
-      const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
-      gameArea.rightPowerBarFill = percentage;
-
-      if (percentage == 100) {
-        gameArea.rightPlayer!.attack.attackIsAvailable = true;
-      }
-    }
-  }, 20);
-  gameArea.intervals.push(rightBarInterval);
+  setPlayerPowerBarInterval(gameArea.leftPlayer!, gameArea);
+  setPlayerPowerBarInterval(gameArea.rightPlayer!, gameArea);
 }
 
 export interface gameArea {
@@ -76,8 +63,6 @@ export interface gameArea {
   lastTime: number;
   fakeBalls: Ball[];
   stats: gameStats;
-  leftPowerBarFill: number;
-  rightPowerBarFill: number;
   leftAnimation: boolean;
   rightAnimation: boolean;
   countdownTimeLeft: number;
@@ -123,8 +108,6 @@ function initializeGameArea(
     lastTime: 0,
     fakeBalls: [],
     stats: stats,
-    leftPowerBarFill: 0,
-    rightPowerBarFill: 0,
     leftAnimation: false,
     rightAnimation: false,
     countdownTimeLeft: 3,
@@ -180,8 +163,8 @@ function initializeGameArea(
         fakeBalls: gameArea.fakeBalls,
         leftPaddle: gameArea.leftPaddle,
         rightPaddle: gameArea.rightPaddle,
-        leftPowerBarFill: gameArea.leftPowerBarFill,
-        rightPowerBarFill: gameArea.rightPowerBarFill,
+        leftPowerBarFill: gameArea.leftPlayer!.powerBarFill,
+        rightPowerBarFill: gameArea.rightPlayer!.powerBarFill,
         leftAnimation: gameArea.leftAnimation,
         rightAnimation: gameArea.rightAnimation,
       } as GameState;
@@ -224,28 +207,22 @@ function initializeGameArea(
   return gameArea;
 }
 
-function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: gameArea) {
+function closeGameHandler(socket1: WebSocket, socket2: WebSocket, gameArea: gameArea) {
   const playerLeft = { type: 'player_left' } as ServerMessage;
-  player1socket.on('message', (message) => {
+  socket1.on('message', (message) => {
     const parsedMessage = JSON.parse(message.toString()) as ClientMessage;
     if (parsedMessage.type === 'stop_game') {
       gameArea.stop();
-      removePlayer(player1socket);
-      if (player2socket.readyState === WebSocket.OPEN)
-        player2socket.send(JSON.stringify(playerLeft));
-      removePlayer(player2socket);
+      removePlayer(socket1);
+      if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
+      removePlayer(socket2);
     }
   });
-  player2socket.on('message', (message) => {
-    const parsedMessage = JSON.parse(message.toString()) as ClientMessage;
-    if (parsedMessage.type === 'stop_game') {
-      gameArea.stop();
-      removePlayer(player2socket);
-      if (player1socket.readyState === WebSocket.OPEN)
-        player1socket.send(JSON.stringify(playerLeft));
-      removePlayer(player1socket);
-    }
-  });
+}
+
+function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: gameArea) {
+  closeGameHandler(player1socket, player2socket, gameArea);
+  closeGameHandler(player2socket, player1socket, gameArea);
 }
 
 export function initializeRemoteGame(
@@ -282,8 +259,8 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     fakeBalls: gameArea.fakeBalls,
     leftPaddle: gameArea.leftPaddle,
     rightPaddle: gameArea.rightPaddle,
-    leftPowerBarFill: gameArea.leftPowerBarFill,
-    rightPowerBarFill: gameArea.rightPowerBarFill,
+    leftPowerBarFill: gameArea.leftPlayer!.powerBarFill,
+    rightPowerBarFill: gameArea.rightPlayer!.powerBarFill,
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;

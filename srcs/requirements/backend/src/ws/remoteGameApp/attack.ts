@@ -117,11 +117,11 @@ export class Attack {
     if (this.side === 'left') {
       this.stats.left.increasePowersUsed();
       this.gameArea.leftAnimation = true;
-      this.gameArea.leftPowerBarFill = 0;
+      this.gameArea.leftPlayer!.powerBarFill = 0;
     } else {
       this.stats.right.increasePowersUsed();
       this.gameArea.rightAnimation = true;
-      this.gameArea.rightPowerBarFill = 0;
+      this.gameArea.rightPlayer!.powerBarFill = 0;
     }
 
     this.activeAttack();
