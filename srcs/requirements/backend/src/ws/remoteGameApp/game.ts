@@ -1,4 +1,3 @@
-import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import WebSocket from 'ws';
 import {
@@ -7,239 +6,53 @@ import {
   checkGoal,
   checkFakeBallWallCollision,
 } from './collisions.js';
-
-import { gameStats } from './gameStats.js';
 import { gameSettings } from './settings.js';
-import { GameState } from './types.js';
-import { Paddle } from './paddle.js';
+import { ClientMessage, gameRunningState, GameState, ServerMessage } from './types.js';
 import { Player } from './player.js';
 import { removePlayer } from './sessionManagement.js';
+import { GameArea } from './gameArea.js';
 
-export const SPEED = 250;
-export const CANVAS_HEIGHT = 720;
-export const CANVAS_WIDTH = 1200;
-export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
-const PADDLE_WID = 12;
-export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
-export const BALL_RADIUS = 10;
+function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
+  if (player.attack) player.attack.lastUsed = Date.now();
 
-export enum gameRunningState {
-  playing,
-  paused,
-  ended,
-}
-
-function setPowerUpBar(gameArea: gameArea): void {
-  if (gameArea.leftPlayer!.attack) gameArea.leftPlayer!.attack.lastUsed = Date.now();
-  if (gameArea.rightPlayer!.attack) gameArea.rightPlayer!.attack.lastUsed = Date.now();
-
-  const leftBarInterval = setInterval(() => {
-    if (gameArea.leftPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
-      const lastUsed: number = gameArea.leftPlayer!.attack.lastUsed;
-      const coolDown: number = gameArea.leftPlayer!.attack.attackCooldown;
+  const interval = setInterval(() => {
+    if (player.attack && gameArea.runningState === gameRunningState.playing) {
+      const lastUsed: number = player.attack.lastUsed;
+      const coolDown: number = player.attack.attackCooldown;
       const currentTime: number = Date.now();
 
       const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
-      gameArea.leftPowerBarFill = percentage;
+      player.powerBarFill = percentage;
 
       if (percentage == 100) {
-        gameArea.leftPlayer!.attack.attackIsAvailable = true;
+        player.attack.attackIsAvailable = true;
       }
     }
   }, 20);
-  gameArea.intervals.push(leftBarInterval);
-
-  const rightBarInterval = setInterval(() => {
-    if (gameArea.rightPlayer!.attack && gameArea.runningState === gameRunningState.playing) {
-      const lastUsed: number = gameArea.rightPlayer!.attack.lastUsed;
-      const coolDown: number = gameArea.rightPlayer!.attack.attackCooldown;
-      const currentTime: number = Date.now();
-
-      const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
-      gameArea.rightPowerBarFill = percentage;
-
-      if (percentage == 100) {
-        gameArea.rightPlayer!.attack.attackIsAvailable = true;
-      }
-    }
-  }, 20);
-  gameArea.intervals.push(rightBarInterval);
+  gameArea.intervals.push(interval);
 }
 
-export interface gameArea {
-  ball: Ball;
-  leftPaddle: Paddle;
-  rightPaddle: Paddle;
-  leftPlayer: Player | null;
-  rightPlayer: Player | null;
-  runningState: gameRunningState;
-  lastTime: number;
-  fakeBalls: Ball[];
-  stats: gameStats;
-  leftPowerBarFill: number;
-  rightPowerBarFill: number;
-  leftAnimation: boolean;
-  rightAnimation: boolean;
-  countdownTimeLeft: number;
-  countdownBlinkTimer: number;
-  countdownVisible: boolean;
-  isInitialCountdownActive: boolean;
-  intervals: NodeJS.Timeout[];
-  gameLoop(): void;
-  pause(): void;
-  stop(): void;
-  broadcastMessage(message: string): void;
-  clear(): void;
+function setPowerUpBar(gameArea: GameArea): void {
+  setPlayerPowerBarInterval(gameArea.leftPlayer, gameArea);
+  setPlayerPowerBarInterval(gameArea.rightPlayer, gameArea);
 }
 
-function initializeGameArea(
-  p1socket: WebSocket,
-  p2socket: WebSocket,
-  gameSettings: gameSettings,
-): gameArea {
-  const ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
-  const leftPaddle = new Paddle(
-    PADDLE_WID,
-    PADDLE_LEN,
-    gameSettings.paddleColour1,
-    PADDLE_WID,
-    PADDLE_START_Y_POS,
-  );
-  const rightPaddle = new Paddle(
-    PADDLE_WID,
-    PADDLE_LEN,
-    gameSettings.paddleColour2,
-    CANVAS_WIDTH - 20,
-    PADDLE_START_Y_POS,
-  );
-  const stats = new gameStats();
-  const gameArea: gameArea = {
-    ball: ball,
-    leftPaddle: leftPaddle,
-    rightPaddle: rightPaddle,
-    leftPlayer: null,
-    rightPlayer: null,
-    runningState: gameRunningState.paused,
-    lastTime: 0,
-    fakeBalls: [],
-    stats: stats,
-    leftPowerBarFill: 0,
-    rightPowerBarFill: 0,
-    leftAnimation: false,
-    rightAnimation: false,
-    countdownTimeLeft: 3,
-    countdownBlinkTimer: 0,
-    countdownVisible: true,
-    isInitialCountdownActive: true,
-    intervals: [],
-    gameLoop: () => {},
-    pause() {
-      this.runningState = gameRunningState.paused;
-    },
-    stop() {
-      this.runningState = gameRunningState.ended;
-      this.clear();
-    },
-    broadcastMessage: () => {},
-    clear() {
-      this.intervals.forEach((interval) => clearInterval(interval));
-    },
-  };
-  gameArea.gameLoop = async function gameLoop() {
-    const currentTime = Date.now() / 1000; // In seconds
-    if (this.lastTime === 0) {
-      this.lastTime = currentTime;
-    }
-    const deltaTime = currentTime - this.lastTime;
-    this.lastTime = currentTime;
-
-    const maxDeltaTime = 0.1;
-    const dt = Math.min(deltaTime, maxDeltaTime);
-
-    if (this.isInitialCountdownActive) {
-      // Handle countdown logic
-      this.countdownTimeLeft -= dt;
-      this.countdownBlinkTimer -= dt;
-
-      if (this.countdownBlinkTimer <= 0) {
-        this.countdownVisible = !this.countdownVisible;
-        this.countdownBlinkTimer = 0.5; // Blink every 0.5s
-      }
-      this.ball.isVisible = false;
-      if (this.countdownVisible) {
-        this.ball.isVisible = true;
-      }
-
-      if (this.countdownTimeLeft <= 0) {
-        this.isInitialCountdownActive = false;
-        this.ball.isVisible = true;
-        this.runningState = gameRunningState.playing;
-      }
-      const gameState = {
-        ball: gameArea.ball,
-        fakeBalls: gameArea.fakeBalls,
-        leftPaddle: gameArea.leftPaddle,
-        rightPaddle: gameArea.rightPaddle,
-        leftPowerBarFill: gameArea.leftPowerBarFill,
-        rightPowerBarFill: gameArea.rightPowerBarFill,
-        leftAnimation: gameArea.leftAnimation,
-        rightAnimation: gameArea.rightAnimation,
-      } as GameState;
-      // TODO: Filter before sending
-      const response = { type: 'game_state', state: gameState };
-      this.broadcastMessage(JSON.stringify(response));
-      return; // Exit early, don't update game yet
-    }
-
-    await updateGameArea(dt, this);
-  };
-  gameArea.broadcastMessage = function broadcastMessage(message: string) {
-    if (!this.leftPlayer || !this.rightPlayer) return;
-    if (this.leftPlayer.socket.readyState === WebSocket.OPEN) this.leftPlayer.socket.send(message);
-    if (this.rightPlayer.socket.readyState === WebSocket.OPEN)
-      this.rightPlayer.socket.send(message);
-  };
-  gameArea.leftPlayer = new Player(
-    leftPaddle,
-    rightPaddle,
-    ball,
-    gameSettings.alias1,
-    gameSettings.character1 ? gameSettings.character1.attack : null,
-    'left',
-    p1socket,
-    stats,
-    gameArea,
-  );
-  gameArea.rightPlayer = new Player(
-    rightPaddle,
-    leftPaddle,
-    ball,
-    gameSettings.alias2,
-    gameSettings.character2 ? gameSettings.character2.attack : null,
-    'right',
-    p2socket,
-    stats,
-    gameArea,
-  );
-  return gameArea;
-}
-
-function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: gameArea) {
-  player1socket.on('message', (message) => {
-    const parsedMessage = JSON.parse(message.toString());
+function closeGameHandler(socket1: WebSocket, socket2: WebSocket, gameArea: GameArea) {
+  const playerLeft: ServerMessage = { type: 'player_left' };
+  socket1.on('message', (message) => {
+    const parsedMessage: ClientMessage = JSON.parse(message.toString());
     if (parsedMessage.type === 'stop_game') {
       gameArea.stop();
-      removePlayer(player1socket);
-      // TODO: Remove both players?
+      removePlayer(socket1);
+      if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
+      removePlayer(socket2);
     }
   });
-  player2socket.on('message', (message) => {
-    const parsedMessage = JSON.parse(message.toString());
-    if (parsedMessage.type === 'stop_game') {
-      gameArea.stop();
-      removePlayer(player2socket);
-    }
-  });
+}
+
+function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: GameArea) {
+  closeGameHandler(player1socket, player2socket, gameArea);
+  closeGameHandler(player2socket, player1socket, gameArea);
 }
 
 export function initializeRemoteGame(
@@ -247,7 +60,7 @@ export function initializeRemoteGame(
   player2socket: WebSocket,
   gameSettings: gameSettings,
 ): void {
-  const gameArea = initializeGameArea(player1socket, player2socket, gameSettings);
+  const gameArea = new GameArea(player1socket, player2socket, gameSettings);
   setupInput(gameArea);
   setPowerUpBar(gameArea);
   setCloseGame(player1socket, player2socket, gameArea);
@@ -257,7 +70,7 @@ export function initializeRemoteGame(
   gameArea.intervals.push(gameInterval);
 }
 
-async function updateGameArea(dt: number, gameArea: gameArea) {
+export async function updateGameArea(dt: number, gameArea: GameArea) {
   handleInput(gameArea);
 
   gameArea.leftPaddle.update(dt);
@@ -276,20 +89,20 @@ async function updateGameArea(dt: number, gameArea: gameArea) {
     fakeBalls: gameArea.fakeBalls,
     leftPaddle: gameArea.leftPaddle,
     rightPaddle: gameArea.rightPaddle,
-    leftPowerBarFill: gameArea.leftPowerBarFill,
-    rightPowerBarFill: gameArea.rightPowerBarFill,
+    leftPowerBarFill: gameArea.leftPlayer.powerBarFill,
+    rightPowerBarFill: gameArea.rightPlayer.powerBarFill,
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
   // TODO: Filter before sending
-  const response = { type: 'game_state', state: gameState };
-  gameArea.broadcastMessage(JSON.stringify(response));
+  const gameStateMsg: ServerMessage = { type: 'game_state', state: gameState };
+  gameArea.broadcastSessionMessage(JSON.stringify(gameStateMsg));
 }
 
-export function getGameVersion(gameArea: gameArea): number {
-  return gameArea.leftPlayer!.getScore() + gameArea.rightPlayer!.getScore();
+export function getGameVersion(gameArea: GameArea): number {
+  return gameArea.leftPlayer.getScore() + gameArea.rightPlayer.getScore();
 }
 
-export function endGameIfRunning(gameArea: gameArea): void {
+export function endGameIfRunning(gameArea: GameArea): void {
   if (gameArea.runningState !== gameRunningState.ended) gameArea.stop();
 }

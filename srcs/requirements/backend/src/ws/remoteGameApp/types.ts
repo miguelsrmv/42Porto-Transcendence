@@ -15,6 +15,12 @@ export interface GameState {
   rightAnimation: boolean;
 }
 
+export enum gameRunningState {
+  playing,
+  paused,
+  ended,
+}
+
 export enum PlayerInput {
   up = 'up',
   down = 'down',
@@ -33,12 +39,12 @@ export type ServerMessage =
   | { type: 'game_state'; state: GameState }
   | { type: 'game_goal'; scoringSide: 'left' | 'right' }
   | { type: 'game_end'; winningPlayer: 'left' | 'right'; stats: gameStats }
+  | { type: 'player_left' }
   | { type: 'error'; message: string };
 
 export interface GameSession {
   players: Map<WebSocket, string>;
   settings: gameSettings;
-  // state: GameSate;
 }
 
 // To be able to print

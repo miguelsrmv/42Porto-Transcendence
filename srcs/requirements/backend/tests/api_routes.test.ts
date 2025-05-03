@@ -2,6 +2,8 @@ import { test, expect, describe, beforeAll, afterAll } from 'vitest';
 import app from '../src/app';
 import { prisma } from '../src/utils/prisma';
 
+let jwtCookie: string;
+
 test("GET / should return 'greetings Welcome to the ft_transcendence API'", async () => {
   const response = await app.inject({
     method: 'GET',
@@ -18,7 +20,7 @@ beforeAll(async () => {
   // Ensure the database is clean and insert test users
   await prisma.user.deleteMany();
   await prisma.player.deleteMany();
-  await prisma.user.create({
+  const testUser = await prisma.user.create({
     data: {
       username: 'alice23',
       email: 'alice@example.com',
@@ -39,6 +41,13 @@ beforeAll(async () => {
       hashedPassword: 'hashed_password_3',
     },
   });
+  await app.ready();
+  const token = app.jwt.sign({
+    id: testUser.id,
+    username: testUser.username,
+    email: testUser.email,
+  });
+  jwtCookie = `access_token=${token}; HttpOnly; Path=/; Secure`;
 });
 
 afterAll(async () => {
@@ -47,29 +56,32 @@ afterAll(async () => {
 
 describe('users routes', () => {
   // TODO: Add protected routes testing logic
-  // test('GET / should return 200 and an array of users', async () => {
-  //   const response = await app.inject({
-  //     method: 'GET',
-  //     url: '/users',
-  //   });
+  test('GET / should return 200 and an array of users', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/users',
+      headers: {
+        cookie: jwtCookie,
+      },
+    });
 
-  //   expect(response.statusCode).toBe(200);
-  //   expect(response.json()).toEqual(
-  //     expect.arrayContaining([
-  //       expect.objectContaining({
-  //         username: expect.any(String),
-  //         email: expect.any(String),
-  //         hashedPassword: expect.any(String),
-  //         salt: expect.any(String),
-  //         player: expect.objectContaining({
-  //           name: expect.any(String),
-  //           bio: expect.any(String),
-  //           avatarUrl: expect.any(String),
-  //         }),
-  //       }),
-  //     ]),
-  //   );
-  // });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          username: expect.any(String),
+          email: expect.any(String),
+          hashedPassword: expect.any(String),
+          salt: expect.any(String),
+          player: expect.objectContaining({
+            name: expect.any(String),
+            bio: expect.any(String),
+            avatarUrl: expect.any(String),
+          }),
+        }),
+      ]),
+    );
+  });
 
   test('POST / should return 200 and a new user', async () => {
     const response = await app.inject({
@@ -131,6 +143,9 @@ describe('users routes', () => {
     const response = await app.inject({
       method: 'GET',
       url: '/users/' + user?.id,
+      headers: {
+        cookie: jwtCookie,
+      },
     });
 
     expect(response.statusCode).toBe(200);
