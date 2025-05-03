@@ -4,7 +4,7 @@ import { Attack } from './attack.js';
 import WebSocket from 'ws';
 import { PlayerInput } from './types.js';
 import { gameStats } from './gameStats.js';
-import { gameArea } from './game.js';
+import { GameArea } from './gameArea.js';
 
 export class Player {
   ownPaddle: Paddle;
@@ -16,6 +16,7 @@ export class Player {
   side: string;
   socket: WebSocket;
   input: PlayerInput;
+  powerBarFill: number;
 
   constructor(
     ownPaddle: Paddle,
@@ -26,7 +27,7 @@ export class Player {
     side: string,
     socket: WebSocket,
     stats: gameStats,
-    gameArea: gameArea,
+    gameArea: GameArea,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -39,6 +40,7 @@ export class Player {
     this.side = side;
     this.socket = socket;
     this.input = PlayerInput.stop;
+    this.powerBarFill = 0;
   }
 
   increaseScore(): void {

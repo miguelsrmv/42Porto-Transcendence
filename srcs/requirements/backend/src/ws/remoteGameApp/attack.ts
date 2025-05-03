@@ -1,16 +1,10 @@
 import { Ball } from './ball.js';
-import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  BALL_RADIUS,
-  PADDLE_LEN,
-  gameArea,
-  getGameVersion,
-} from './game.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, PADDLE_LEN, GameArea } from './gameArea.js';
 import { MAX_BALL_SPEED } from './collisions.js';
 import { wait } from './helpers.js';
 import { gameStats } from './gameStats.js';
 import { Paddle } from './paddle.js';
+import { getGameVersion } from './game.js';
 
 type AttackData = {
   handler: () => Promise<void>; // The attack function
@@ -41,7 +35,7 @@ export class Attack {
   attackDuration: number;
   attackCooldown: number;
   attackMap: { [key in attackIdentifier]: AttackData };
-  gameArea: gameArea;
+  gameArea: GameArea;
 
   constructor(
     attackName: string | undefined,
@@ -50,7 +44,7 @@ export class Attack {
     ball: Ball,
     side: string,
     stats: gameStats,
-    gameArea: gameArea,
+    gameArea: GameArea,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -117,11 +111,11 @@ export class Attack {
     if (this.side === 'left') {
       this.stats.left.increasePowersUsed();
       this.gameArea.leftAnimation = true;
-      this.gameArea.leftPowerBarFill = 0;
+      this.gameArea.leftPlayer.powerBarFill = 0;
     } else {
       this.stats.right.increasePowersUsed();
       this.gameArea.rightAnimation = true;
-      this.gameArea.rightPowerBarFill = 0;
+      this.gameArea.rightPlayer.powerBarFill = 0;
     }
 
     this.activeAttack();

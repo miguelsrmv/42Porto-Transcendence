@@ -22,6 +22,8 @@ const app = fastify({
   },
 });
 
+app.register(jwtPlugin);
+
 app.register(FastifyWebSocket);
 app.register(WSRoutes);
 
@@ -30,7 +32,6 @@ app.register(cookie, {
   hook: 'onRequest',
 } as FastifyCookieOptions);
 
-app.register(jwtPlugin);
 
 app.get('/', async (request, reply) => {
   reply.send({ greetings: 'Welcome to the ft_transcendence API' });

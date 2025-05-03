@@ -8,21 +8,27 @@ import {
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, ServerMessage } from './remoteGameApp/types';
 import { initializeRemoteGame } from './remoteGameApp/game';
+import { FastifyRequest } from 'fastify';
 
-// TODO: Change name or remove
-export function broadcastMessage(p1socket: WebSocket, p2socket: WebSocket, message: string) {
+export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, message: string) {
   if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
   if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
 }
 
-// TODO: send who triggered animation
-
-function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
+// TODO: Rename function
+function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
   switch (message.type) {
     case 'join_game': {
       const playerSettings = message.playerSettings;
+      if (playerSettings.playerID !== userId) {
+        console.log(
+          `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
+        );
+        const errorMessage = { type: 'error', message: '401 Unauthorized' };
+        if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
+        return;
+      }
       if (playerIsInASession(playerSettings.playerID)) {
-        // TODO: send error saying player is in session?
         return;
       }
       attributePlayerToSession(socket, playerSettings);
@@ -30,12 +36,12 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
       if (playerSession && isSessionFull(playerSession)) {
         // TODO: error handling for no game session returned
         const matchSettings = playerSession.settings;
-        const response = { type: 'game_setup', settings: matchSettings } as ServerMessage;
+        const response: ServerMessage = { type: 'game_setup', settings: matchSettings };
         const [ws1, ws2] = Array.from(playerSession.players.keys());
-        broadcastMessage(ws1, ws2, JSON.stringify(response));
+        broadcastMessageTo(ws1, ws2, JSON.stringify(response));
         initializeRemoteGame(ws1, ws2, matchSettings);
-        const gameStartMsg = { type: 'game_start' };
-        broadcastMessage(ws1, ws2, JSON.stringify(gameStartMsg));
+        const gameStartMsg: ServerMessage = { type: 'game_start' };
+        broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
       }
       break;
     }
@@ -44,7 +50,7 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
 
 let pingInterval: NodeJS.Timeout;
 
-export async function handleSocketConnection(socket: WebSocket) {
+export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
   socket.on('open', () => {
     pingInterval = setInterval(() => {
       if (socket.readyState === WebSocket.OPEN) {
@@ -57,7 +63,7 @@ export async function handleSocketConnection(socket: WebSocket) {
 
   socket.on('message', (message) => {
     console.log('Received message:', message.toString());
-    messageTypeHandler(JSON.parse(message.toString()), socket);
+    messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
   });
 
   socket.on('close', () => {

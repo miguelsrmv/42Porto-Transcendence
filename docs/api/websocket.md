@@ -61,6 +61,10 @@ Messages **sent from the server to the client**.
   - **Description:** Notify the client that there was a goal.
   - **Payload:**
     - `scoringSide: string` — Scoring player side (`left` or `right`)
+- `player_left`
+  - **Description:** Inform the client that the other player left the game.
+  - **Payload:**
+    - _(none)_
 - `error`
   - **Description:** Inform the client that an error occurred.
   - **Payload:**
