@@ -1,3 +1,8 @@
+/**
+ * @file game.ts
+ * @brief Main game logic and setup for the Pong game.
+ */
+
 import { Paddle } from './paddle.js';
 import { Ball, ballCountdown } from './ball.js';
 import { setupInput, handleInput } from './input.js';
@@ -18,43 +23,74 @@ import {
 import { gameStats } from './gameStats.js';
 import { wait } from '../../../utils/helpers.js';
 
+/** @brief Speed of the ball in the game. */
 export const SPEED = 250;
+
+/** @brief Height of the game canvas. */
 export const CANVAS_HEIGHT = 720;
+
+/** @brief Width of the game canvas. */
 export const CANVAS_WIDTH = 1200;
+
+/** @brief Length of the paddle. */
 export const PADDLE_LEN = CANVAS_HEIGHT * 0.2;
+
+/** @brief Width of the paddle. */
 const PADDLE_WID = 12;
+
+/** @brief Starting Y position of the paddle. */
 export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
+
+/** @brief Radius of the ball. */
 export const BALL_RADIUS = 10;
 
-let lastTime = 0; // Time of the last frame
-let animationFrameId: number | null = null; // To potentially stop the loop
+/** @brief Time of the last frame. */
+let lastTime = 0;
 
-// For initial countdown
+/** @brief ID of the current animation frame. */
+let animationFrameId: number | null = null;
+
+/** @brief Time left for the initial countdown. */
 let countdownTimeLeft = 3;
+
+/** @brief Timer for blinking during the countdown. */
 let countdownBlinkTimer = 0;
+
+/** @brief Visibility state of the countdown. */
 let countdownVisible = true;
+
+/** @brief Whether the initial countdown is active. */
 let isInitialCountdownActive = true;
 
 let rightPaddle: Paddle;
 let leftPaddle: Paddle;
 let ball: Ball;
+
+/** @brief Array of fake balls in the game. */
 export let fakeBalls: Ball[] = [];
+
 let leftPlayer: Player;
 let rightPlayer: Player;
+
+/** @brief Game statistics. */
 export let stats: gameStats = new gameStats();
 
+/** @brief Input handler type definition. */
 export type InputHandler = {
   enable(): void;
   disable(): void;
 };
 
+/** @brief Enum representing the state of the game. */
 export enum gameState {
   playing,
   paused,
   ended,
 }
 
-// TODO: Call stop() when leaving the page, etc.
+/**
+ * @brief Game area object containing canvas and game state.
+ */
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
@@ -62,6 +98,9 @@ const myGameArea: GameArea = {
   inputHandler: null,
   state: gameState.paused,
 
+  /**
+   * @brief Starts the game area by initializing the canvas and game loop.
+   */
   start() {
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 
@@ -82,25 +121,33 @@ const myGameArea: GameArea = {
     animationFrameId = requestAnimationFrame(updateGameArea);
   },
 
+  /**
+   * @brief Clears the game canvas.
+   */
   clear() {
     if (this.context && this.canvas) {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
   },
 
+  /**
+   * @brief Stops the game loop and disables input.
+   */
   stop() {
-    // Stop the animation frame loop
     if (animationFrameId !== null) {
-      // Check if it's running
       cancelAnimationFrame(animationFrameId);
-      animationFrameId = null; // Reset the ID
+      animationFrameId = null;
     }
 
     this.inputHandler?.disable();
-    this.state = gameState.ended; // Or paused, depending on desired behavior
+    this.state = gameState.ended;
   },
 };
 
+/**
+ * @brief Sets up the paddles for the game.
+ * @param gameSettings Settings for the game, including paddle colors.
+ */
 function setPaddles(gameSettings: gameSettings) {
   if (!gameSettings.paddleColour1 || !gameSettings.paddleColour2) {
     console.error('Paddle color missing.');
@@ -122,6 +169,13 @@ function setPaddles(gameSettings: gameSettings) {
   );
 }
 
+/**
+ * @brief Sets up the players for the game.
+ * @param leftPaddle Paddle for the left player.
+ * @param rightPaddle Paddle for the right player.
+ * @param ball Ball object for the game.
+ * @param gameSettings Settings for the game.
+ */
 function setPlayers(
   leftPaddle: Paddle,
   rightPaddle: Paddle,
@@ -145,6 +199,10 @@ function setPlayers(
     'right',
   );
 
+  /**
+   * @brief Sets up the power-up bar for a player.
+   * @param player Player object.
+   */
   function setPowerUpBar(player: Player): void {
     const PlayerBar = document.getElementById(`${player.side}-character-power-bar-fill`);
 
@@ -186,6 +244,10 @@ function setPlayers(
   setPowerUpBar(rightPlayer);
 }
 
+/**
+ * @brief Initializes a local game with the given settings.
+ * @param gameSettings Settings for the game.
+ */
 export function initializeLocalGame(gameSettings: gameSettings): void {
   const pongPage = document.getElementById('game-container') as HTMLElement | null;
   if (!pongPage) {
@@ -201,6 +263,10 @@ export function initializeLocalGame(gameSettings: gameSettings): void {
   myGameArea.start();
 }
 
+/**
+ * @brief Updates the game area, including game logic and rendering.
+ * @param currentTime Current time in milliseconds.
+ */
 async function updateGameArea(currentTime: number) {
   animationFrameId = requestAnimationFrame(updateGameArea);
 
@@ -223,13 +289,12 @@ async function updateGameArea(currentTime: number) {
   }
 
   if (isInitialCountdownActive) {
-    // Handle countdown logic
     countdownTimeLeft -= dt;
     countdownBlinkTimer -= dt;
 
     if (countdownBlinkTimer <= 0) {
       countdownVisible = !countdownVisible;
-      countdownBlinkTimer = 0.5; // Blink every 0.5s
+      countdownBlinkTimer = 0.5;
     }
 
     if (myGameArea.context) {
@@ -245,10 +310,9 @@ async function updateGameArea(currentTime: number) {
       myGameArea.inputHandler?.enable();
       myGameArea.state = gameState.playing;
     }
-    return; // Exit early, don't update game yet
+    return;
   }
 
-  // Normal game update
   leftPaddle.update(dt);
   rightPaddle.update(dt);
   ball.move(dt);
@@ -268,20 +332,37 @@ async function updateGameArea(currentTime: number) {
   }
 }
 
+/**
+ * @brief Updates the background image of the game.
+ * @param background Background data object.
+ */
 function updateBackground(background: background | null) {
   if (!background) return;
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
   backgroundImg.src = background.imagePath;
 }
 
+/**
+ * @brief Gets the current game version based on player scores.
+ * @return The game version as a number.
+ */
 export function getGameVersion(): number {
   return leftPlayer.getScore() + rightPlayer.getScore();
 }
 
+/**
+ * @brief Gets the game area object.
+ * @return The game area object.
+ */
 export function getGameArea(): GameArea {
   return myGameArea;
 }
 
+/**
+ * @brief Paints the score for a given side.
+ * @param side The side of the player ("left" or "right").
+ * @param score The score to paint.
+ */
 export function paintScore(side: string, score: number): void {
   const emptyScorePoint = document.getElementById(`${side}-score-card-${score}`);
   if (!emptyScorePoint) {
@@ -295,20 +376,9 @@ export function paintScore(side: string, score: number): void {
   emptyScorePoint.classList.add(`bg-${colour}-500`);
 }
 
+/**
+ * @brief Ends the local game if it is currently running.
+ */
 export function endLocalGameIfRunning(): void {
   if (myGameArea.state !== gameState.ended) myGameArea.stop();
 }
-
-/* // Unused but might be useful in the future
-function paintBackground(context : CanvasRenderingContext2D): void {
-
-  const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
-
-  const backgroundImg = new Image();
-  backgroundImg.src = "../../../../static/backgrounds/Backyard.png"; // Replace with your image path
-
-  backgroundImg.onload = () => {
-    context?.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height); // Draw image to fill canvas
-  };
-}
-*/
