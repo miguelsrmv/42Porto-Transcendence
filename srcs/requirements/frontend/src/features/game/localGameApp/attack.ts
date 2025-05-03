@@ -15,12 +15,32 @@ import { powerUpAnimation } from '../animations/animations.js';
 import { MAX_BALL_SPEED } from './collisions.js';
 import { stats } from './game.js';
 
+/**
+ * @file attack.ts
+ * @brief Defines the Attack class for handling various attack actions in the game.
+ *
+ * This file contains the Attack class, which manages different attack actions that can be
+ * performed by players during the game. Each attack has a specific handler, duration, and cooldown.
+ */
+
+/**
+ * @brief Type definition for attack data.
+ *
+ * This type defines the structure for attack data, including the handler function,
+ * duration of the attack, and cooldown period.
+ */
 type AttackData = {
   handler: () => Promise<void>; // The attack function
   duration: number; // How long the effect lasts
   cooldown: number; // How long until the attack can be used again, in miliseconds
 };
 
+/**
+ * @brief Class representing an attack in the game.
+ *
+ * The Attack class manages the execution and timing of various attacks that can be
+ * performed by players. It handles the availability, activation, and effects of each attack.
+ */
 export class Attack {
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
@@ -34,6 +54,17 @@ export class Attack {
   attackCooldown: number;
   attackMap: { [key in attackIdentifier]: AttackData };
 
+  /**
+   * @brief Constructs an Attack object.
+   *
+   * Initializes the attack with the specified parameters and sets up the attack map.
+   *
+   * @param attackName The name of the attack.
+   * @param ownPaddle The player's paddle.
+   * @param enemyPaddle The opponent's paddle.
+   * @param ball The game ball.
+   * @param side The side of the player ('left' or 'right').
+   */
   constructor(
     attackName: string | undefined,
     ownPaddle: Paddle,
@@ -96,6 +127,12 @@ export class Attack {
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
 
+  /**
+   * @brief Executes the attack if it is available.
+   *
+   * This method checks if the attack is available and executes it, updating the last used
+   * timestamp and triggering the power-up animation.
+   */
   attack(): void {
     if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable) return;
 
@@ -110,15 +147,38 @@ export class Attack {
     this.attackIsAvailable = false;
   }
 
+  /**
+   * @brief Resets the attack timing based on the game time.
+   *
+   * This method adjusts the last used timestamp of the attack based on the difference
+   * between the new and previous game times.
+   *
+   * @param beforeTime The previous game time.
+   * @param newTime The new game time.
+   */
   reset(beforeTime: number, newTime: number): void {
     this.lastUsed += newTime - beforeTime;
     //this.attackIsAvailable = false;
   }
 
+  /**
+   * @brief Checks if the game version has changed.
+   *
+   * This method compares the current game version with the provided old version to
+   * determine if a change has occurred.
+   *
+   * @param oldVersion The previous game version.
+   * @return True if the game version has changed, false otherwise.
+   */
   gameVersionHasChanged(oldVersion: number): boolean {
     return oldVersion !== getGameVersion() ? true : false;
   }
 
+  /**
+   * @brief Executes the Super Shroom attack.
+   *
+   * This attack temporarily increases the player's paddle size for the duration of the effect.
+   */
   async superShroom(): Promise<void> {
     console.log(`Super shroom called by ${this.side}`);
     const growth = PADDLE_LEN * 0.25;
@@ -143,6 +203,11 @@ export class Attack {
     }
   }
 
+  /**
+   * @brief Executes the Egg Barrage attack.
+   *
+   * This attack creates multiple fake balls on the game field for the duration of the effect.
+   */
   async eggBarrage(): Promise<void> {
     let fakeEggNumber = 5;
 
@@ -166,6 +231,11 @@ export class Attack {
     }
   }
 
+  /**
+   * @brief Executes the Spin Dash attack.
+   *
+   * This attack temporarily increases the ball's speed for the duration of the effect.
+   */
   async spinDash(): Promise<void> {
     const startingVersion = getGameVersion(); // Check score changes
 
@@ -203,6 +273,11 @@ export class Attack {
     }
   }
 
+  /**
+   * @brief Executes the Thunder Wave attack.
+   *
+   * This attack temporarily reduces the opponent's paddle speed for the duration of the effect.
+   */
   async thunderWave(): Promise<void> {
     const startingVersion = getGameVersion();
 
@@ -217,6 +292,11 @@ export class Attack {
     }
   }
 
+  /**
+   * @brief Executes the Confusion attack.
+   *
+   * This attack temporarily inverts the opponent's paddle controls for the duration of the effect.
+   */
   async confusion(): Promise<void> {
     const startingVersion = getGameVersion();
 
@@ -231,10 +311,20 @@ export class Attack {
     }
   }
 
+  /**
+   * @brief Executes the Magic Mirror attack.
+   *
+   * This attack instantly reverses the ball's vertical direction.
+   */
   async magicMirror(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
+  /**
+   * @brief Executes the Mini attack.
+   *
+   * This attack temporarily reduces the ball's size for the duration of the effect.
+   */
   async mini(): Promise<void> {
     const startingVersion = getGameVersion();
 
@@ -252,6 +342,11 @@ export class Attack {
     }
   }
 
+  /**
+   * @brief Executes the Giant Punch attack.
+   *
+   * This attack temporarily reduces the opponent's paddle size for the duration of the effect.
+   */
   async giantPunch(): Promise<void> {
     console.log('Giant punch called');
     const startingVersion = getGameVersion();

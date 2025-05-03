@@ -7,6 +7,9 @@ import { triggerEndGameMenu } from './gameConclusion.js';
 import { Ball, ballCountdown } from './ball.js';
 import { Paddle } from './paddle.js';
 
+/**
+ * Maximum speed a ball can reach.
+ */
 export const MAX_BALL_SPEED: number = 1000;
 
 //
@@ -30,7 +33,13 @@ export const MAX_BALL_SPEED: number = 1000;
 //   height: number;
 // }
 
-// Checks if ball reached horizontal canvas limits
+/**
+ * Checks if the ball has collided with the horizontal walls of the canvas.
+ * If a collision is detected, the ball's vertical direction is reversed.
+ *
+ * @param ball The ball object to check for collisions.
+ * @param gameArea The game area containing the canvas.
+ */
 export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
   const nudgeAmount = 1;
 
@@ -45,6 +54,13 @@ export function checkWallCollision(ball: Ball, gameArea: GameArea): void {
   }
 }
 
+/**
+ * Checks if a fake ball has collided with the walls of the canvas.
+ * Handles both horizontal and vertical wall collisions.
+ *
+ * @param ball The fake ball object to check for collisions.
+ * @param gameArea The game area containing the canvas.
+ */
 export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void {
   const nudgeAmount = 1;
 
@@ -64,17 +80,37 @@ export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void
   }
 }
 
+/**
+ * Determines if either player has won the game by reaching the score limit.
+ *
+ * @param leftPlayer The left player object.
+ * @param rightPlayer The right player object.
+ * @returns True if either player has won, false otherwise.
+ */
 function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
 
+/**
+ * Ends the game and triggers the end game menu for the winning player.
+ *
+ * @param winningPlayer The player who won the game.
+ * @param gameArea The game area containing the canvas and game state.
+ */
 function endGame(winningPlayer: Player, gameArea: GameArea): void {
   gameArea.stop();
   gameArea.clear();
   triggerEndGameMenu(winningPlayer);
 }
 
-// Checks if ball reached vertical canvas limits
+/**
+ * Checks if a goal has been scored by either player.
+ * Updates scores, triggers animations, and resets the round if necessary.
+ *
+ * @param leftPlayer The left player object.
+ * @param rightPlayer The right player object.
+ * @param gameArea The game area containing the canvas and game state.
+ */
 export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
@@ -102,7 +138,13 @@ export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameAre
     endGame(leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer, gameArea);
 }
 
-// Checks if ball went over paddle x coordinate
+/**
+ * Checks if the ball has crossed the paddle horizontally.
+ *
+ * @param ball The ball object.
+ * @param paddle The paddle object.
+ * @returns True if the ball has crossed the paddle horizontally, false otherwise.
+ */
 function crossedPaddleHorizontally(ball: Ball, paddle: Paddle): boolean {
   const goingLeft = ball.speedX < 0;
   const goingRight = ball.speedX > 0;
@@ -119,18 +161,36 @@ function crossedPaddleHorizontally(ball: Ball, paddle: Paddle): boolean {
   return false;
 }
 
-// Check if ball is within paddle y range
+/**
+ * Checks if the ball is within the vertical range of the paddle.
+ *
+ * @param ball The ball object.
+ * @param paddle The paddle object.
+ * @returns True if the ball is within the paddle's height range, false otherwise.
+ */
 function isWithinPaddleHeight(ball: Ball, paddle: Paddle): boolean {
   return ball.y + ball.radius >= paddle.y && ball.y - ball.radius <= paddle.y + paddle.height;
 }
 
-// Limits ball speed to maxSpeed
+/**
+ * Limits the ball's speed to a specified maximum value.
+ *
+ * @param ball The ball object.
+ * @param maxSpeed The maximum speed to enforce.
+ */
 function capMaxSpeed(ball: Ball, maxSpeed: number): void {
   if (Math.abs(ball.speedX) > maxSpeed) ball.speedX = Math.sign(ball.speedX) * maxSpeed;
   if (Math.abs(ball.speedY) > maxSpeed) ball.speedY = Math.sign(ball.speedY) * maxSpeed;
 }
 
-// Checks if ball collided with either paddle
+/**
+ * Checks if the ball has collided with either paddle.
+ * Adjusts the ball's position and speed if a collision is detected.
+ *
+ * @param ball The ball object.
+ * @param leftPaddle The left paddle object.
+ * @param rightPaddle The right paddle object.
+ */
 export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle: Paddle): void {
   if (
     // Left paddle collision
@@ -159,7 +219,14 @@ export function checkPaddleCollision(ball: Ball, leftPaddle: Paddle, rightPaddle
   }
 }
 
-// Returns ball to center of canvas and starts round at random direction
+/**
+ * Resets the round by returning the ball and paddles to their initial positions.
+ * Pauses the game briefly before resuming.
+ *
+ * @param leftPlayer The left player object.
+ * @param rightPlayer The right player object.
+ * @param gameArea The game area containing the canvas and game state.
+ */
 async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');

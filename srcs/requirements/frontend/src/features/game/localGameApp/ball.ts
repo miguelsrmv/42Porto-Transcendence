@@ -1,10 +1,19 @@
 import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
 import { Paddle } from './paddle.js';
 
+/**
+ * @file ball.ts
+ * @brief Defines the Ball class and related functionality for a game, including movement, bouncing, and resetting.
+ */
+
 let BALL_COLOUR = 'white';
 const BORDER_COLOUR = 'gray';
 let isVisible = true;
 
+/**
+ * @class Ball
+ * @brief Represents a ball in the game, with properties for position, speed, and radius.
+ */
 export class Ball {
   x: number;
   y: number;
@@ -14,6 +23,14 @@ export class Ball {
   speedX: number;
   speedY: number;
 
+  /**
+   * @brief Constructs a new Ball object.
+   * @param x The initial x-coordinate of the ball.
+   * @param y The initial y-coordinate of the ball.
+   * @param radius The radius of the ball.
+   * @param speedX The initial horizontal speed of the ball.
+   * @param speedY The initial vertical speed of the ball.
+   */
   constructor(x: number, y: number, radius: number, speedX: number, speedY: number) {
     this.x = x;
     this.y = y;
@@ -24,6 +41,10 @@ export class Ball {
     this.speedY = speedY;
   }
 
+  /**
+   * @brief Draws the ball on the canvas.
+   * @param ctx The canvas rendering context.
+   */
   draw(ctx: CanvasRenderingContext2D): void {
     if (isVisible) {
       ctx.beginPath();
@@ -36,11 +57,19 @@ export class Ball {
     }
   }
 
+  /**
+   * @brief Moves the ball based on its speed and the elapsed time.
+   * @param dt The time delta in seconds.
+   */
   move(dt: number): void {
     this.x += this.speedX * dt;
     this.y += this.speedY * dt;
   }
 
+  /**
+   * @brief Handles horizontal bouncing when the ball collides with a paddle.
+   * @param paddle The paddle object the ball collides with.
+   */
   bounceHorizontal(paddle: Paddle): void {
     // NOTE: Old implementation!
     // this.speedX *= -1; // Reverse horizontal direction
@@ -72,23 +101,41 @@ export class Ball {
     this.speedY = newSpeed * Math.sin(bounceAngle); // Sign now correctly determined by bounceAngle
   }
 
+  /**
+   * @brief Handles a simple horizontal bounce for a fake ball.
+   */
   bounceHorizontalFakeBall(): void {
     this.speedX *= -1; // Reverse horizontal direction
   }
 
+  /**
+   * @brief Handles vertical bouncing when the ball collides with a horizontal surface.
+   */
   bounceVertical(): void {
     this.speedY *= -1; // Reverse vertical direction
   }
 
+  /**
+   * @brief Sets the speed of the ball.
+   * @param x The new horizontal speed.
+   * @param y The new vertical speed.
+   */
   setSpeed(x: number, y: number): void {
     this.speedX = x;
     this.speedY = y;
   }
 
+  /**
+   * @brief Sets the radius of the ball.
+   * @param radius The new radius of the ball.
+   */
   setRadius(radius: number): void {
     this.radius = radius;
   }
 
+  /**
+   * @brief Resets the ball to its initial position, speed, and radius.
+   */
   reset(): void {
     this.x = CANVAS_WIDTH / 2;
     this.y = CANVAS_HEIGHT / 2;
@@ -98,6 +145,10 @@ export class Ball {
   }
 }
 
+/**
+ * @brief Toggles the visibility of the ball for a countdown effect.
+ *        The ball blinks for 3 seconds (6 toggles) before becoming visible.
+ */
 export function ballCountdown() {
   let count: number = 0;
 

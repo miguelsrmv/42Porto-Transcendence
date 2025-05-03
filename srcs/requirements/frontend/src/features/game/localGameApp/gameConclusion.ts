@@ -1,3 +1,8 @@
+/**
+ * @file endGameMenu.ts
+ * @brief Handles the end game menu logic, including updating stats, hiding game elements, and managing UI transitions.
+ */
+
 import { Player } from './player.js';
 import { stats } from './game.js';
 import { loadView } from './../../../core/viewLoader.js';
@@ -5,6 +10,10 @@ import { getGameSettings } from '../gameSetup.js';
 import { fadeIn, fadeOut } from '../../../ui/animations.js';
 import { forceRouteChange } from '../../../core/router.js';
 
+/**
+ * @brief Triggers the end game menu for the winning player.
+ * @param winningPlayer The player who won the game.
+ */
 export function triggerEndGameMenu(winningPlayer: Player): void {
   const winnerHUD = document.getElementById(`${winningPlayer.side}-hud`);
   if (!winnerHUD) {
@@ -27,6 +36,9 @@ export function triggerEndGameMenu(winningPlayer: Player): void {
   updateButtons();
 }
 
+/**
+ * @brief Hides game elements such as the game container and HUDs.
+ */
 function hideGameElements(): void {
   const gameContainer = document.getElementById('game-container');
   if (!gameContainer) {
@@ -51,6 +63,12 @@ function hideGameElements(): void {
   fadeOut(rightHUD);
 }
 
+/**
+ * @brief Displays the stats menu with the winner's HUD and updates its contents.
+ * @param winnerHUD The cloned HUD of the winning player.
+ * @param side The side of the winning player (e.g., 'left' or 'right').
+ * @param colour The colour associated with the winning player.
+ */
 function showStatsMenu(winnerHUD: Node, side: string, colour: string): void {
   copyHUD(winnerHUD);
 
@@ -66,6 +84,11 @@ function showStatsMenu(winnerHUD: Node, side: string, colour: string): void {
   setTimeout(() => fadeIn(stats), 750);
 }
 
+/**
+ * @brief Updates the colour scheme of the stats menu based on the winning player's colour.
+ * @param colour The colour associated with the winning player.
+ * @param stats The stats menu element.
+ */
 function updateStatsColour(colour: string, stats: HTMLElement): void {
   const colouredText = stats.querySelectorAll('.text-green-400');
   colouredText.forEach((element) => {
@@ -80,6 +103,10 @@ function updateStatsColour(colour: string, stats: HTMLElement): void {
   stats.classList.add(`hover:shadow-${colour}-500/30`);
 }
 
+/**
+ * @brief Updates the contents of the stats menu with the winning player's statistics.
+ * @param side The side of the winning player (e.g., 'left' or 'right').
+ */
 function updateStatsContents(side: string): void {
   const goalScored = document.getElementById('goals-scored-result');
   if (!goalScored) {
@@ -119,6 +146,10 @@ function updateStatsContents(side: string): void {
   maxBallSpeed.innerText = String(Math.trunc(stats.maxSpeed));
 }
 
+/**
+ * @brief Replaces the player identifier element with the winner's HUD.
+ * @param winnerHUD The cloned HUD of the winning player.
+ */
 function copyHUD(winnerHUD: Node): void {
   const playerIdentifier = document.getElementById('player-identifier');
 
@@ -130,6 +161,9 @@ function copyHUD(winnerHUD: Node): void {
   playerIdentifier.replaceWith(winnerHUD);
 }
 
+/**
+ * @brief Updates the buttons in the end game menu, such as the "Play Again" button.
+ */
 function updateButtons(): void {
   const playType = getGameSettings().playType;
 
@@ -147,6 +181,11 @@ function updateButtons(): void {
   } else console.warn('Play Again Button not found');
 }
 
+/**
+ * @brief Retrieves the avatar colour for the given side.
+ * @param side The side of the player (e.g., 'left' or 'right').
+ * @return The colour associated with the player's avatar, or undefined if not found.
+ */
 function getAvatarColour(side: string): string | undefined {
   const classList = document.getElementById(`${side}-score-card-1`)?.className.split(' ');
 

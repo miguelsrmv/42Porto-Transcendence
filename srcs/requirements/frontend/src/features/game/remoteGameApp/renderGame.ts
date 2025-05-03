@@ -1,3 +1,8 @@
+/* //TODO: When win, get game stats screen
+ * @file gameRenderer.ts
+ * @brief This file contains the main rendering logic for the game, including canvas setup, drawing game elements, and handling WebSocket messages.
+ */
+
 import {
   activatePowerBarAnimation,
   deactivatePowerBarAnimation,
@@ -5,14 +10,28 @@ import {
 } from '../animations/animations.js';
 import type { GameArea, GameState, Paddle, Ball } from './remoteGameTypes.js';
 
+/** @brief The color of the ball. */
 const BALL_COLOUR = 'white';
+
+/** @brief The color of the border around the ball. */
 const BORDER_COLOUR = 'gray';
 
+/** @brief Indicates whether the left power bar animation is active. */
 let leftPowerBarAnimation: boolean = false;
+
+/** @brief Indicates whether the right power bar animation is active. */
 let rightPowerBarAnimation: boolean = false;
+
+/** @brief The score for the left side. */
 let leftSideGoal: number = 0;
+
+/** @brief The score for the right side. */
 let rightSideGoal: number = 0;
 
+/**
+ * @brief Updates the background image of the game.
+ * @param backgroundPath The path to the new background image.
+ */
 export function updateBackground(backgroundPath: string): void {
   const backgroundImg = document.getElementById('game-background') as HTMLImageElement;
   if (!backgroundImg) {
@@ -22,14 +41,22 @@ export function updateBackground(backgroundPath: string): void {
   backgroundImg.src = backgroundPath;
 }
 
-// TODO: Change to get true Canvas Height and Width
+/** @brief The height of the canvas. */
 export const CANVAS_HEIGHT = 720;
+
+/** @brief The width of the canvas. */
 export const CANVAS_WIDTH = 1200;
 
+/**
+ * @brief Represents the game area, including the canvas and its context.
+ */
 const myGameArea: GameArea = {
   canvas: null,
   context: null,
 
+  /**
+   * @brief Initializes the game canvas and its context.
+   */
   start() {
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 
@@ -47,15 +74,25 @@ const myGameArea: GameArea = {
     }
   },
 
+  /**
+   * @brief Clears the canvas.
+   */
   clear() {
     if (this.context && this.canvas) {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
   },
 
+  /**
+   * @brief Stops the game area (currently a placeholder).
+   */
   stop() {},
 };
 
+/**
+ * @brief Renders the game and handles WebSocket messages.
+ * @param webSocket The WebSocket connection for receiving game state updates.
+ */
 export function renderGame(webSocket: WebSocket) {
   myGameArea.start();
   let filledAnimationIsOn: boolean = false;
@@ -84,6 +121,11 @@ export function renderGame(webSocket: WebSocket) {
   };
 }
 
+/**
+ * @brief Draws the game board, including paddles, balls, and fake balls.
+ * @param ctx The canvas rendering context.
+ * @param state The current game state.
+ */
 function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {
   drawPaddle(ctx, state.leftPaddle);
   drawPaddle(ctx, state.rightPaddle);
@@ -91,11 +133,21 @@ function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {
   state.fakeBalls.forEach((fakeBall) => drawBall(ctx, fakeBall));
 }
 
+/**
+ * @brief Draws a paddle on the canvas.
+ * @param ctx The canvas rendering context.
+ * @param paddle The paddle to draw.
+ */
 function drawPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
   ctx.fillStyle = paddle.color;
   ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 }
 
+/**
+ * @brief Draws a ball on the canvas.
+ * @param ctx The canvas rendering context.
+ * @param ball The ball to draw.
+ */
 function drawBall(ctx: CanvasRenderingContext2D, ball: Ball) {
   if (ball.isVisible) {
     ctx.beginPath();
@@ -108,6 +160,12 @@ function drawBall(ctx: CanvasRenderingContext2D, ball: Ball) {
   }
 }
 
+/**
+ * @brief Updates the power bar's width and triggers animations if necessary.
+ * @param value The current fill percentage of the power bar.
+ * @param powerBar The HTML element representing the power bar.
+ * @param side The side of the power bar ('left' or 'right').
+ */
 function drawPowerBar(value: number, powerBar: HTMLElement, side: string): void {
   powerBar.style.width = `${value}%`;
 
@@ -124,6 +182,10 @@ function drawPowerBar(value: number, powerBar: HTMLElement, side: string): void 
   }
 }
 
+/**
+ * @brief Renders a goal and updates the score.
+ * @param scoringSide The side that scored ('left' or 'right').
+ */
 function renderGoal(scoringSide: string) {
   let scorePoint: number;
   if (scoringSide === 'left') {
@@ -146,14 +208,24 @@ function renderGoal(scoringSide: string) {
   emptyScorePoint.classList.add(`bg-${colour}-500`);
 }
 
+/**
+ * @brief Triggers animations based on the game state.
+ * @param ctx The canvas rendering context.
+ * @param state The current game state.
+ */
 function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
   if (state.leftAnimation) powerUpAnimation('left');
   if (state.rightAnimation) powerUpAnimation('right');
 }
 
+/**
+ * @brief Triggers sound effects based on the game state.
+ * @param ctx The canvas rendering context.
+ * @param state The current game state.
+ */
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
 
 // FIX: When exit, send stop signal
 // FIX: Score goals
 // TODO: HTML Canvas 4/3
-// TODO: When win, get game stats screen
+// TODO: When game is done, show stats screen

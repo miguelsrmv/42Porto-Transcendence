@@ -1,11 +1,34 @@
+/**
+ * @file remoteGame.ts
+ * @brief Manages the setup and control of remote games using WebSockets.
+ *
+ * This file contains functions to initialize and manage remote games, including sending
+ * and receiving messages via WebSocket to control game flow and player interactions.
+ */
+
 import type { gameSettings, leanGameSettings } from '../gameSettings/gameSettings.types.js';
 import { updateHUD } from '../gameSetup.js';
 import { loadView } from '../../../core/viewLoader.js';
 import { updateBackground, renderGame } from './renderGame.js';
 
+/**
+ * @brief Indicates whether a game is currently running.
+ */
 let gameIsRunning: boolean = false;
+
+/**
+ * @brief WebSocket connection for the remote game.
+ */
 let webSocket: WebSocket;
 
+/**
+ * @brief Initializes a remote game with the given settings.
+ *
+ * This function establishes a WebSocket connection to the game server, sends the initial
+ * game settings, and sets up event handlers for game messages and player input.
+ *
+ * @param leanGameSettings The settings for the game, including player preferences and game type.
+ */
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   webSocket = new WebSocket('wss://padaria.42.pt/ws');
 
@@ -64,6 +87,11 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   };
 }
 
+/**
+ * @brief Ends the remote game if it is currently running.
+ *
+ * This function sends a stop message to the server to terminate the game session.
+ */
 export function endRemoteGameIfRunning(): void {
   const stopMessage = JSON.stringify({ type: 'stop_game' });
   if (gameIsRunning) {
