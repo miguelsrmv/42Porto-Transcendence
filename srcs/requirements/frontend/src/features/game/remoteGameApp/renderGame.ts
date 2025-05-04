@@ -95,7 +95,7 @@ const myGameArea: GameArea = {
  */
 export function renderGame(webSocket: WebSocket) {
   myGameArea.start();
-  let filledAnimationIsOn: boolean = false;
+  let filledAnimationIsOn: boolean = false; // TODO: Remove ??
   const leftPowerBar = document.getElementById('left-character-power-bar-fill');
   if (!leftPowerBar) {
     console.warn('left-character player bar not found');
