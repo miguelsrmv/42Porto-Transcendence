@@ -74,7 +74,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
-    console.log(`Got a message! ${JSON.stringify(messageData)}`);
     if (messageData.type === 'game_setup') {
       const gameSettings = messageData.settings;
       loadView('game-page');

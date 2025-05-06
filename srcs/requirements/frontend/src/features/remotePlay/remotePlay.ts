@@ -19,9 +19,9 @@ import { initializeRemoteGame } from '../game/remoteGameApp/remoteGame.js';
 import { loadView } from '../../core/viewLoader.js';
 
 /**
- * @brief Initializes view for local play
+ * @brief Initializes view for remote play
  *
- * This function sets up the pre-game page for local play
+ * This function sets up the pre-game page for remote play
  */
 export async function initializeView(): Promise<void> {
   // Gets Classic or Crazy Pong
@@ -37,7 +37,7 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
-  // Toggle second player
+  // Untoggle second player
   const player2Settings = document.getElementById('player-2-settings');
   if (player2Settings) player2Settings.classList.add('hidden');
   else console.warn('Player 2 Settings not found.');
@@ -54,13 +54,8 @@ export async function initializeView(): Promise<void> {
     if (characterSelect1) characterSelect1.classList.remove('hidden');
     else console.warn('Character Select 1 not found.');
 
-    const characterSelect2 = document.getElementById('player-2-character');
-    if (characterSelect2) characterSelect2.classList.remove('hidden');
-    else console.warn('Character Select 2 not found.');
-
-    // Creates character loop (for both players)
+    // Creates character loop
     createCharacterLoop();
-    createCharacterLoop(2);
   }
 
   const playButton = document.getElementById('play-button');
@@ -68,8 +63,8 @@ export async function initializeView(): Promise<void> {
     playButton.addEventListener(
       'click',
       () => {
-        setGameSettings(gameType, 'Local Play');
-        //loadView('game-page'); // TODO: Change to "Waiting modal ?"
+        setGameSettings(gameType, 'Remote Play');
+        // TODO: Hide elements, create "Waiting modal"
         initializeRemoteGame(getLeanGameSettings());
       },
       { once: true },
