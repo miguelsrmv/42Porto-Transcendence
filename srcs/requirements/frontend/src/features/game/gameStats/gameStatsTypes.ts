@@ -1,9 +1,65 @@
 /**
- * @file gameStats.ts
+ * @file gameStatsTypes.ts
  * @brief This file contains the implementation of the gameStats and playerStats classes.
  */
 
-import { SPEED } from './game.js';
+import { SPEED } from '../localGameApp/game.js';
+
+/**
+ * @interface GameArea
+ * @brief Represents the game area, including the canvas and its context.
+ */
+export interface GameArea {
+  canvas: HTMLCanvasElement | null;
+  context?: CanvasRenderingContext2D | null;
+  start(): void;
+  clear(): void;
+  stop(): void;
+}
+
+/**
+ * @interface Ball
+ * @brief Represents a ball in the game.
+ */
+export interface Ball {
+  x: number;
+  y: number;
+  previousX: number;
+  previousY: number;
+  radius: number;
+  speedX: number;
+  speedY: number;
+  isVisible: boolean;
+}
+
+/**
+ * @interface Paddle
+ * @brief Represents a paddle in the game.
+ */
+export interface Paddle {
+  width: number;
+  height: number;
+  color: string;
+  x: number;
+  y: number;
+  speedY: number;
+  speedModifier: number;
+}
+
+/**
+ * @interface GameState
+ * @brief Represents the state of the game.
+ */
+export interface GameState {
+  ball: Ball;
+  fakeBalls: Ball[];
+  leftPaddle: Paddle;
+  rightPaddle: Paddle;
+  leftPowerBarFill: number;
+  rightPowerBarFill: number;
+  leftAnimation: boolean;
+  rightAnimation: boolean;
+}
 
 /**
  * @class gameStats
@@ -36,15 +92,12 @@ export class gameStats {
  * @class playerStats
  * @brief Represents the statistics of an individual player.
  */
-class playerStats {
+export class playerStats {
   goals: number; /**< The number of goals scored by the player. */
   sufferedGoals: number; /**< The number of goals suffered by the player. */
   saves: number; /**< The number of saves made by the player. */
   powersUsed: number; /**< The number of powers used by the player. */
 
-  /**
-   * @brief Constructs a new playerStats object and initializes all stats to zero.
-   */
   constructor() {
     this.goals = 0;
     this.sufferedGoals = 0;
@@ -52,30 +105,18 @@ class playerStats {
     this.powersUsed = 0;
   }
 
-  /**
-   * @brief Increases the number of goals scored by the player by one.
-   */
   increaseGoals() {
     ++this.goals;
   }
 
-  /**
-   * @brief Increases the number of goals suffered by the player by one.
-   */
   increaseSufferedGoals() {
     ++this.sufferedGoals;
   }
 
-  /**
-   * @brief Increases the number of saves made by the player by one.
-   */
   increaseSaves() {
     ++this.saves;
   }
 
-  /**
-   * @brief Increases the number of powers used by the player by one.
-   */
   increasePowersUsed() {
     ++this.powersUsed;
   }

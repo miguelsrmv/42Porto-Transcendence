@@ -10,6 +10,7 @@ import type { gameSettings, leanGameSettings } from '../gameSettings/gameSetting
 import { updateHUD } from '../gameSetup.js';
 import { loadView } from '../../../core/viewLoader.js';
 import { updateBackground, renderGame } from './renderGame.js';
+import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
 
 /**
  * @brief Indicates whether a game is currently running.
@@ -54,7 +55,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
     console.log(`Got a message! ${JSON.stringify(messageData)}`);
     if (messageData.type === 'game_setup') {
       const gameSettings = messageData.settings;
-      // TODO: Add in a modal before?
       loadView('game-page');
       updateHUD(gameSettings, gameSettings.gameType);
       updateBackground(gameSettings.background.imagePath);
@@ -83,8 +83,15 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       // TODO: Change to game start??
       gameIsRunning = true;
       renderGame(webSocket);
+    } else if (messageData.type === 'game_end') {
+      gameIsRunning = false;
+      triggerEndGameMenu(
+        messageData.winningPlayer,
+        messageData.ownSide,
+        messageData.stats,
+        'Remote Play', // TODO: replace by messageData.playType
+      );
     }
-    // Else if a mensagem for game terminou e respetivos resultados
   };
 }
 

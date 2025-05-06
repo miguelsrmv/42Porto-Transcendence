@@ -8,7 +8,7 @@ import {
   deactivatePowerBarAnimation,
   powerUpAnimation,
 } from '../animations/animations.js';
-import { showGameStats } from './remoteGameConclusion.js';
+import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
 import type {
   GameArea,
   GameState,
@@ -16,7 +16,7 @@ import type {
   Ball,
   playerStats,
   gameStats,
-} from './remoteGameTypes.js';
+} from '../gameStats/gameStatsTypes.js';
 
 /** @brief The color of the ball. */
 const BALL_COLOUR = 'white';
@@ -126,10 +126,11 @@ export function renderGame(webSocket: WebSocket) {
     } else if (messageData.type === 'game_goal') {
       renderGoal(messageData.scoringSide);
     } else if (messageData.type === 'game_end') {
-      showGameStats(
+      triggerEndGameMenu(
         messageData.winningPlayer as string,
         messageData.playerSide as string,
         messageData.stats as gameStats,
+        'Remote Play',
       );
     }
   };
@@ -238,7 +239,3 @@ function triggerAnimation(state: GameState) {
  * @param state The current game state.
  */
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
-// FIX: When exit, send stop signal
-// FIX: Score goals
-// FIX: HTML Canvas 16/9
-// TODO: When game is done, show stats screen
