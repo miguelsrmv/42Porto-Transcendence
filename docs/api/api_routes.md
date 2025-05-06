@@ -13,6 +13,7 @@
 | `DELETE` | `/users/logout`            |                     |                                              | Logout user                                |
 | `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in                 |
 | `GET`    | `/players`                 |                     |                                              | Get all players                            |
+| `GET`    | `/players/me`              |                     |                                              | Get own player                             |
 | `GET`    | `/players/:id`             |   `id` player id    |                                              | Get a specific player                      |
 | `PATCH`  | `/players/:id`             |   `id` player id    |                data to update                | Update data on a specific player           |
 | `GET`    | `/players/:id/friends`     |   `id` player id    |                                              | Get all friends of that player             |
@@ -94,6 +95,7 @@ Content-Type: application/json
 ## Players
 
 - **Get all players:** `GET /players`
+- **Get own player:** `GET /players/me`
 - **Get a specific player:** `GET /players/:id`
 - **Update a player:** `PATCH /players/:id`
 
