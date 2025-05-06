@@ -8,7 +8,15 @@ import {
   deactivatePowerBarAnimation,
   powerUpAnimation,
 } from '../animations/animations.js';
-import type { GameArea, GameState, Paddle, Ball } from './remoteGameTypes.js';
+import { showGameStats } from './remoteGameConclusion.js';
+import type {
+  GameArea,
+  GameState,
+  Paddle,
+  Ball,
+  playerStats,
+  gameStats,
+} from './remoteGameTypes.js';
 
 /** @brief The color of the ball. */
 const BALL_COLOUR = 'white';
@@ -113,10 +121,16 @@ export function renderGame(webSocket: WebSocket) {
       drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state as GameState);
       drawPowerBar(messageData.state.leftPowerBarFill, leftPowerBar, 'left');
       drawPowerBar(messageData.state.rightPowerBarFill, rightPowerBar, 'right');
-      triggerAnimation(myGameArea.context as CanvasRenderingContext2D, messageData.state);
+      triggerAnimation(messageData.state);
       triggerSound(myGameArea.context as CanvasRenderingContext2D, messageData.state);
     } else if (messageData.type === 'game_goal') {
       renderGoal(messageData.scoringSide);
+    } else if (messageData.type === 'game_end') {
+      showGameStats(
+        messageData.winningPlayer as string,
+        messageData.playerSide as string,
+        messageData.stats as gameStats,
+      );
     }
   };
 }
@@ -213,7 +227,7 @@ function renderGoal(scoringSide: string) {
  * @param ctx The canvas rendering context.
  * @param state The current game state.
  */
-function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
+function triggerAnimation(state: GameState) {
   if (state.leftAnimation) powerUpAnimation('left');
   if (state.rightAnimation) powerUpAnimation('right');
 }
@@ -224,8 +238,7 @@ function triggerAnimation(ctx: CanvasRenderingContext2D, state: GameState) {
  * @param state The current game state.
  */
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
-
 // FIX: When exit, send stop signal
 // FIX: Score goals
-// TODO: HTML Canvas 4/3
+// FIX: HTML Canvas 16/9
 // TODO: When game is done, show stats screen
