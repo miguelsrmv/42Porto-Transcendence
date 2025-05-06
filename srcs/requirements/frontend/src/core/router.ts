@@ -14,7 +14,7 @@ import * as friendModule from '../features/friends/friends.js';
 import * as rankingsModule from '../features/rankings/rankings.js';
 //import * as gameModule from '../features/game/gamePage.js';
 import { endLocalGameIfRunning } from '../features/game/localGameApp/game.js';
-import { endRemoteGameIfRunning } from '../features/game/remoteGameApp/remoteGame.js';
+//import { endRemoteGameIfRunning } from '../features/game/remoteGameApp/remoteGame.js';
 
 type FeatureModule = {
   initializeView: () => void;
@@ -41,8 +41,9 @@ function handleRouteChange(): void {
   // If a local game is running, stop it
   endLocalGameIfRunning();
 
+  // TODO: Check if it's necessary. I don't think it is?...
   // If a remote game is running, stop it
-  endRemoteGameIfRunning();
+  //endRemoteGameIfRunning();
 
   // Get the view name from the URL hash, trim the first #
   const viewName = window.location.hash.substring(1) || 'landing-page';
