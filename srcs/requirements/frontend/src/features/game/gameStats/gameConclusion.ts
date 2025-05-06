@@ -1,3 +1,8 @@
+/**
+ * @file gameConclusion.ts
+ * @brief Handles the end game menu and statistics display for the game.
+ */
+
 import type { gameStats } from './gameStatsTypes.js';
 import type { playType } from '../gameSettings/gameSettings.types.js';
 import { fadeOut, fadeIn } from '../../../ui/animations.js';
@@ -6,7 +11,10 @@ import { forceRouteChange } from '../../../core/router.js';
 
 /**
  * @brief Triggers the end game menu for the winning player.
- * @param winningPlayer The player who won the game.
+ * @param winningPlayerSide The side of the player who won the game.
+ * @param playerSide The side of the current player.
+ * @param stats The game statistics.
+ * @param playType The type of play (e.g., Local Play, Remote Play).
  */
 export function triggerEndGameMenu(
   winningPlayerSide: string,
@@ -81,6 +89,14 @@ function hideGameElements(): void {
   fadeOut(rightHUD);
 }
 
+/**
+ * @brief Displays the statistics menu for the game.
+ * @param HUDSideToShow The side of the HUD to show.
+ * @param stats The game statistics.
+ * @param playerHUDCopy A copy of the player's HUD.
+ * @param colour The colour associated with the winning player.
+ * @param loseMessage Whether to display a losing message.
+ */
 function showStatsMenu(
   HUDSideToShow: string,
   stats: gameStats,
@@ -124,6 +140,7 @@ function updateStatsColour(colour: string, stats: HTMLElement): void {
 
 /**
  * @brief Updates the contents of the stats menu with the winning player's statistics.
+ * @param stats The game statistics.
  * @param side The side of the winning player (e.g., 'left' or 'right').
  */
 function updateStatsContents(stats: gameStats, side: string): void {
@@ -182,6 +199,7 @@ function copyHUD(winnerHUD: Node): void {
 
 /**
  * @brief Updates the buttons in the end game menu, such as the "Play Again" button.
+ * @param playType The type of play (e.g., Local Play, Remote Play).
  */
 function updateButtons(playType: playType): void {
   let targetPage: string;
@@ -198,6 +216,10 @@ function updateButtons(playType: playType): void {
   } else console.warn('Play Again Button not found');
 }
 
+/**
+ * @brief Updates the top message in the stats menu.
+ * @param loseMessage Whether to display a losing message.
+ */
 function updateTopMessage(loseMessage: boolean): void {
   const messageDiv = document.getElementById('winner');
   if (!messageDiv) {

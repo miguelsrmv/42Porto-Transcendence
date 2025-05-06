@@ -70,28 +70,17 @@ export class gameStats {
   right: playerStats; /**< Statistics for the right player. */
   maxSpeed: number; /**< The maximum speed calculated or updated for the game. */
 
-  /**
-   * @brief Constructs a new gameStats object and initializes player stats and max speed.
-   */
   constructor() {
     this.left = new playerStats();
     this.right = new playerStats();
     this.maxSpeed = Math.sqrt(SPEED ** 2 + SPEED ** 2); // Done
   }
 
-  /**
-   * @brief Updates the maximum speed of the game.
-   * @param newSpeed The new maximum speed to set.
-   */
   updateMaxSpeed(newSpeed: number) {
     this.maxSpeed = newSpeed;
   }
 }
 
-/**
- * @class playerStats
- * @brief Represents the statistics of an individual player.
- */
 export class playerStats {
   goals: number; /**< The number of goals scored by the player. */
   sufferedGoals: number; /**< The number of goals suffered by the player. */

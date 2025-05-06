@@ -1,5 +1,5 @@
-/* //TODO: When win, get game stats screen
- * @file gameRenderer.ts
+/*
+ * * @file gameRenderer.ts
  * @brief This file contains the main rendering logic for the game, including canvas setup, drawing game elements, and handling WebSocket messages.
  */
 
@@ -103,7 +103,6 @@ const myGameArea: GameArea = {
  */
 export function renderGame(webSocket: WebSocket) {
   myGameArea.start();
-  let filledAnimationIsOn: boolean = false; // TODO: Remove ??
   const leftPowerBar = document.getElementById('left-character-power-bar-fill');
   if (!leftPowerBar) {
     console.warn('left-character player bar not found');
