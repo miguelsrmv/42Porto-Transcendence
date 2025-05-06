@@ -51,6 +51,7 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
     // If message was the first type of message, load the view and update the HUD and background
+    console.log(`Got a message! ${JSON.stringify(messageData)}`);
     if (messageData.type === 'game_setup') {
       const gameSettings = messageData.settings;
       // TODO: Add in a modal before?

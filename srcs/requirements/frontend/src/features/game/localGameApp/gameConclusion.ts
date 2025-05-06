@@ -21,7 +21,7 @@ export function triggerEndGameMenu(winningPlayer: Player): void {
     return;
   }
 
-  const colour = getAvatarColour(winningPlayer.side);
+  const colour = getPlayerAvatarColour(winningPlayer.side);
   if (!colour) {
     console.warn("Couldn't find correct colour");
     return;
@@ -61,6 +61,23 @@ function hideGameElements(): void {
   fadeOut(gameContainer);
   fadeOut(leftHUD);
   fadeOut(rightHUD);
+}
+
+/**
+ * @brief Retrieves the avatar colour for the given side.
+ * @param side The side of the player (e.g., 'left' or 'right').
+ * @return The colour associated with the player's avatar, or undefined if not found.
+ */ //TODO: Refactor??
+function getPlayerAvatarColour(side: string): string | undefined {
+  const classList = document.getElementById(`${side}-score-card-1`)?.className.split(' ');
+
+  if (!classList) {
+    console.warn("Couldn't find score card");
+    return undefined;
+  }
+
+  const regExp = /bg-(\w+)-(\d+)/;
+  return classList.find((className) => regExp.test(className))?.match(regExp)?.[1];
 }
 
 /**
@@ -186,7 +203,7 @@ function updateButtons(): void {
  * @param side The side of the player (e.g., 'left' or 'right').
  * @return The colour associated with the player's avatar, or undefined if not found.
  */
-function getAvatarColour(side: string): string | undefined {
+function getColour(side: string): string | undefined {
   const classList = document.getElementById(`${side}-score-card-1`)?.className.split(' ');
 
   if (!classList) {

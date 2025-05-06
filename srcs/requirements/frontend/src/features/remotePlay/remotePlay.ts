@@ -67,7 +67,7 @@ export async function initializeView(): Promise<void> {
   if (playButton) {
     playButton.addEventListener('click', () => {
       setGameSettings(gameType, 'Local Play');
-      loadView('game-page');
+      loadView('game-page'); // TODO: Change to "Waiting modal ?"
       initializeRemoteGame(getLeanGameSettings());
     });
   } else console.warn('Play Button not found');
