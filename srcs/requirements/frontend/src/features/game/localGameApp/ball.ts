@@ -71,11 +71,6 @@ export class Ball {
    * @param paddle The paddle object the ball collides with.
    */
   bounceHorizontal(paddle: Paddle): void {
-    // NOTE: Old implementation!
-    // this.speedX *= -1; // Reverse horizontal direction
-
-    // NOTE: Check how this feels!
-    // --- Correctly Calculate Paddle Center Y ---
     const paddleCenterY = paddle.y + paddle.height / 2.0; // Calculate the actual center
 
     // --- 1. Calculate Relative Intersection & Normalize (Use paddleCenterY) ---

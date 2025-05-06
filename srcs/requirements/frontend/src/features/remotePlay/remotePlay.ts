@@ -65,10 +65,14 @@ export async function initializeView(): Promise<void> {
 
   const playButton = document.getElementById('play-button');
   if (playButton) {
-    playButton.addEventListener('click', () => {
-      setGameSettings(gameType, 'Local Play');
-      //loadView('game-page'); // TODO: Change to "Waiting modal ?"
-      initializeRemoteGame(getLeanGameSettings());
-    });
+    playButton.addEventListener(
+      'click',
+      () => {
+        setGameSettings(gameType, 'Local Play');
+        //loadView('game-page'); // TODO: Change to "Waiting modal ?"
+        initializeRemoteGame(getLeanGameSettings());
+      },
+      { once: true },
+    );
   } else console.warn('Play Button not found');
 }
