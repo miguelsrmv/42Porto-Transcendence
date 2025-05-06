@@ -1,39 +1,57 @@
-/**
- * @file endGameMenu.ts
- * @brief Handles the end game menu logic, including updating stats, hiding game elements, and managing UI transitions.
- */
-
-import { Player } from './player.js';
-import { stats } from './game.js';
-import { loadView } from './../../../core/viewLoader.js';
-import { getGameSettings } from '../gameSetup.js';
-import { fadeIn, fadeOut } from '../../../ui/animations.js';
+import type { gameStats } from './gameStatsTypes.js';
+import type { playType } from '../gameSettings/gameSettings.types.js';
+import { fadeOut, fadeIn } from '../../../ui/animations.js';
+import { loadView } from '../../../core/viewLoader.js';
 import { forceRouteChange } from '../../../core/router.js';
 
 /**
  * @brief Triggers the end game menu for the winning player.
  * @param winningPlayer The player who won the game.
  */
-export function triggerEndGameMenu(winningPlayer: Player): void {
-  const winnerHUD = document.getElementById(`${winningPlayer.side}-hud`);
-  if (!winnerHUD) {
+export function triggerEndGameMenu(
+  winningPlayerSide: string,
+  playerSide: string,
+  stats: gameStats,
+  playType: playType,
+): void {
+  const HUDSideToShow = playType === 'Local Play' ? winningPlayerSide : playerSide;
+
+  const playerHUD = document.getElementById(`${HUDSideToShow}-hud`);
+  if (!playerHUD) {
     console.warn('No winner HUD');
     return;
   }
 
-  const colour = getPlayerAvatarColour(winningPlayer.side);
+  const colour = getAvatarColour(winningPlayerSide);
   if (!colour) {
     console.warn("Couldn't find correct colour");
     return;
   }
 
-  winnerHUD.classList.remove('w-1/6');
-  winnerHUD.classList.add('ml-6');
-  const winnerHUDcopy = winnerHUD.cloneNode(true);
+  playerHUD.classList.remove('w-1/6');
+  playerHUD.classList.add('ml-6');
+  const playerHUDcopy = playerHUD.cloneNode(true);
 
   hideGameElements();
-  showStatsMenu(winnerHUDcopy, winningPlayer.side, colour);
-  updateButtons();
+  showStatsMenu(HUDSideToShow, stats, playerHUDcopy, colour, HUDSideToShow === winningPlayerSide);
+  updateButtons(playType);
+}
+
+/**
+ * @brief Retrieves the avatar colour for the given side.
+ * @param side The side of the player (e.g., 'left' or 'right').
+ * @return The colour associated with the player's avatar, or undefined if not found.
+ */
+function getAvatarColour(side: string): string | undefined {
+  const classList = document.getElementById(`${side}-score-card-1`)?.className.split(' ');
+
+  if (!classList) {
+    console.warn("Couldn't find score card");
+    return undefined;
+  }
+
+  const regExp = /bg-(\w+)-(\d+)/;
+  return classList.find((className) => regExp.test(className))?.match(regExp)?.[1];
 }
 
 /**
@@ -63,42 +81,26 @@ function hideGameElements(): void {
   fadeOut(rightHUD);
 }
 
-/**
- * @brief Retrieves the avatar colour for the given side.
- * @param side The side of the player (e.g., 'left' or 'right').
- * @return The colour associated with the player's avatar, or undefined if not found.
- */ //TODO: Refactor??
-function getPlayerAvatarColour(side: string): string | undefined {
-  const classList = document.getElementById(`${side}-score-card-1`)?.className.split(' ');
+function showStatsMenu(
+  HUDSideToShow: string,
+  stats: gameStats,
+  playerHUDCopy: Node,
+  colour: string,
+  loseMessage: boolean,
+): void {
+  copyHUD(playerHUDCopy);
 
-  if (!classList) {
-    console.warn("Couldn't find score card");
-    return undefined;
-  }
-
-  const regExp = /bg-(\w+)-(\d+)/;
-  return classList.find((className) => regExp.test(className))?.match(regExp)?.[1];
-}
-
-/**
- * @brief Displays the stats menu with the winner's HUD and updates its contents.
- * @param winnerHUD The cloned HUD of the winning player.
- * @param side The side of the winning player (e.g., 'left' or 'right').
- * @param colour The colour associated with the winning player.
- */
-function showStatsMenu(winnerHUD: Node, side: string, colour: string): void {
-  copyHUD(winnerHUD);
-
-  const stats = document.getElementById('game-stats');
+  const statsElement = document.getElementById('game-stats');
   if (!stats) {
     console.warn("Couldn't find game stats");
     return;
   }
 
-  updateStatsColour(colour, stats);
-  updateStatsContents(side);
+  updateStatsColour(colour, statsElement as HTMLElement);
+  updateStatsContents(stats, HUDSideToShow);
+  updateTopMessage(loseMessage);
 
-  setTimeout(() => fadeIn(stats), 750);
+  setTimeout(() => fadeIn(statsElement as HTMLElement), 750);
 }
 
 /**
@@ -124,7 +126,7 @@ function updateStatsColour(colour: string, stats: HTMLElement): void {
  * @brief Updates the contents of the stats menu with the winning player's statistics.
  * @param side The side of the winning player (e.g., 'left' or 'right').
  */
-function updateStatsContents(side: string): void {
+function updateStatsContents(stats: gameStats, side: string): void {
   const goalScored = document.getElementById('goals-scored-result');
   if (!goalScored) {
     console.warn('No goals scored element found');
@@ -181,9 +183,7 @@ function copyHUD(winnerHUD: Node): void {
 /**
  * @brief Updates the buttons in the end game menu, such as the "Play Again" button.
  */
-function updateButtons(): void {
-  const playType = getGameSettings().playType;
-
+function updateButtons(playType: playType): void {
   let targetPage: string;
   if (playType === 'Local Play') targetPage = 'local-play-page';
   else if (playType === 'Remote Play') targetPage = 'remote-play-page';
@@ -198,19 +198,11 @@ function updateButtons(): void {
   } else console.warn('Play Again Button not found');
 }
 
-/**
- * @brief Retrieves the avatar colour for the given side.
- * @param side The side of the player (e.g., 'left' or 'right').
- * @return The colour associated with the player's avatar, or undefined if not found.
- */
-function getColour(side: string): string | undefined {
-  const classList = document.getElementById(`${side}-score-card-1`)?.className.split(' ');
-
-  if (!classList) {
-    console.warn("Couldn't find score card");
-    return undefined;
+function updateTopMessage(loseMessage: boolean): void {
+  const messageDiv = document.getElementById('winner');
+  if (!messageDiv) {
+    console.warn('No message div found');
+    return;
   }
-
-  const regExp = /bg-(\w+)-(\d+)/;
-  return classList.find((className) => regExp.test(className))?.match(regExp)?.[1];
+  if (loseMessage) messageDiv.innerText = 'You lost...';
 }

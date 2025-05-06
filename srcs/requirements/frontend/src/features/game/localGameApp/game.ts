@@ -20,7 +20,7 @@ import {
   activatePowerBarAnimation,
   deactivatePowerBarAnimation,
 } from '../animations/animations.js';
-import { gameStats } from './gameStats.js';
+import { gameStats } from '../gameStats/gameStatsTypes.js';
 import { wait } from '../../../utils/helpers.js';
 
 /** @brief Speed of the ball in the game. */

@@ -3,7 +3,7 @@ import { gameState, SPEED, paintScore, fakeBalls, stats } from './game.js';
 import { Player } from './player.js';
 import { GameArea } from './types.js';
 import { scoreAnimation } from '../animations/animations.js';
-import { triggerEndGameMenu } from './gameConclusion.js';
+import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
 import { Ball, ballCountdown } from './ball.js';
 import { Paddle } from './paddle.js';
 
@@ -100,7 +100,7 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
 function endGame(winningPlayer: Player, gameArea: GameArea): void {
   gameArea.stop();
   gameArea.clear();
-  triggerEndGameMenu(winningPlayer);
+  triggerEndGameMenu(winningPlayer.side, winningPlayer.side, stats, 'Local Play');
 }
 
 /**
