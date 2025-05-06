@@ -73,3 +73,16 @@ export async function getPlayerStats(
     handleError(error, reply);
   }
 }
+
+export async function getOwnPlayer(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const userId = request.user.id;
+    const player = await prisma.player.findUniqueOrThrow({
+      where: { userId: userId },
+    });
+
+    reply.send(player);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
