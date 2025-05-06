@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2FA Setup</title>
+</head>
+
+<body>
+  <h1>Create User and Set Up 2FA</h1>
+
+  <!-- Create User Form -->
+  <div>
+    <h3>Create a new user</h3>
+    <form id="createUserForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      <button type="submit">Create User</button>
+    </form>
+  </div>
+
+  <!-- 2FA Setup -->
+  <div id="setup2FA" style="display: none;">
+    <h3>2FA Setup for <span id="currentUsername"></span></h3>
+    <div id="qrCodeContainer">
+      <!-- QR Code will be displayed here -->
+    </div>
+    <p>Scan the QR code with your authenticator app, then enter the code below.</p>
+    <label for="token">Token:</label>
+    <input type="text" id="token" name="token" required>
+    <button onclick="verifyToken()">Verify Token</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    // Create User Form Submission
+    document.getElementById('createUserForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        alert("Username and password are required");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('User created successfully!');
+          setup2FA(username);
+        } else {
+          alert('Error creating user: ' + data.error);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert('Error creating user');
+      }
+    });
+
+
+    // Set up 2FA for the created user
+    async function setup2FA(username) {
+      document.getElementById('setup2FA').style.display = 'block';
+      document.getElementById('currentUsername').textContent = username;
+
+      try {
+        const response = await fetch(`http://localhost:3000/2fa/setup/${username}`);
+        const data = await response.json();
+
+        if (data.qrCode) {
+          const qrCodeImage = document.createElement('img');
+          qrCodeImage.src = data.qrCode;
+          document.getElementById('qrCodeContainer').appendChild(qrCodeImage);
+        } else {
+          alert('Failed to generate QR Code');
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert('Error setting up 2FA');
+      }
+    }
+
+    // Verify the entered token for 2FA
+    async function verifyToken() {
+      const username = document.getElementById('currentUsername').textContent;
+      const token = document.getElementById('token').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/2fa/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, token })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('status').textContent = 'Token verified successfully! JWT: ' + data.jwt;
+        } else {
+          document.getElementById('status').textContent = 'Invalid token!';
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById('status').textContent = 'Error verifying token';
+      }
+    }
+  </script>
+</body>
+
+</html>
