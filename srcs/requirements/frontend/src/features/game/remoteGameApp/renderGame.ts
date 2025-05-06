@@ -126,11 +126,13 @@ export function renderGame(webSocket: WebSocket) {
       renderGoal(messageData.scoringSide);
     } else if (messageData.type === 'game_end') {
       triggerEndGameMenu(
-        messageData.winningPlayer as string,
-        messageData.playerSide as string,
-        messageData.stats as gameStats,
-        'Remote Play',
+        messageData.winningPlayer,
+        messageData.ownSide,
+        messageData.stats,
+        'Remote Play', // TODO: replace by messageData.playType
       );
+      resetVariables();
+      webSocket.close();
     }
   };
 }
@@ -238,3 +240,13 @@ function triggerAnimation(state: GameState) {
  * @param state The current game state.
  */
 function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
+
+/**
+ * @brief Resets game-related variables to their initial state.
+ */
+function resetVariables(): void {
+  leftSideGoal = 0;
+  rightSideGoal = 0;
+  leftPowerBarAnimation = false;
+  rightPowerBarAnimation = false;
+}

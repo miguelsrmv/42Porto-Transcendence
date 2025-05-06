@@ -84,18 +84,18 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
     } else if (messageData.type === 'game_start') {
       gameIsRunning = true;
       renderGame(webSocket);
-    } else if (messageData.type === 'game_end') {
-      gameIsRunning = false;
-      triggerEndGameMenu(
-        messageData.winningPlayer,
-        messageData.ownSide,
-        messageData.stats,
-        'Remote Play', // TODO: replace by messageData.playType
-      );
     }
   };
 }
 
+/**
+ * @brief Adds event listeners for keyboard input during the game.
+ *
+ * This function sets up handlers for keydown and keyup events to send
+ * movement and action commands to the server based on the player's input.
+ *
+ * @param gameType The type of the game, which determines specific key actions.
+ */
 function addKeyEventListeners(gameType: gameType): void {
   const keyDownHandler = (e: KeyboardEvent) => {
     if (e.key === ' ' && gameType === 'Crazy Pong') {
