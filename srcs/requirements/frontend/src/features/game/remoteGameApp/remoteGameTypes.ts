@@ -166,3 +166,16 @@ export interface GameState {
    */
   rightAnimation: boolean;
 }
+
+export interface gameStats {
+  left: playerStats;
+  right: playerStats;
+  maxSpeed: number;
+}
+
+export interface playerStats {
+  goals: number;
+  sufferedGoals: number;
+  saves: number;
+  powersUsed: number;
+}
