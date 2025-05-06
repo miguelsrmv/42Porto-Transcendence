@@ -30,7 +30,7 @@ export function triggerEndGameMenu(
     return;
   }
 
-  const colour = getAvatarColour(winningPlayerSide);
+  const colour = getAvatarColour(playerSide);
   if (!colour) {
     console.warn("Couldn't find correct colour");
     return;
@@ -58,8 +58,8 @@ function getAvatarColour(side: string): string | undefined {
     return undefined;
   }
 
-  const regExp = /bg-(\w+)-(\d+)/;
-  return classList.find((className) => regExp.test(className))?.match(regExp)?.[1];
+  const regExp = /(\w+)-(\w+)-(\d+)/;
+  return classList.find((className) => regExp.test(className))?.match(regExp)?.[2];
 }
 
 /**
@@ -102,7 +102,7 @@ function showStatsMenu(
   stats: gameStats,
   playerHUDCopy: Node,
   colour: string,
-  loseMessage: boolean,
+  winMessage: boolean,
 ): void {
   copyHUD(playerHUDCopy);
 
@@ -114,7 +114,7 @@ function showStatsMenu(
 
   updateStatsColour(colour, statsElement as HTMLElement);
   updateStatsContents(stats, HUDSideToShow);
-  updateTopMessage(loseMessage);
+  updateTopMessage(winMessage);
 
   setTimeout(() => fadeIn(statsElement as HTMLElement), 750);
 }
@@ -125,16 +125,13 @@ function showStatsMenu(
  * @param stats The stats menu element.
  */
 function updateStatsColour(colour: string, stats: HTMLElement): void {
-  const colouredText = stats.querySelectorAll('.text-green-400');
+  const colouredText = stats.querySelectorAll('.text-colour-placeholder');
   colouredText.forEach((element) => {
-    element.classList.remove('text-green-400');
     element.classList.add(`text-${colour}-400`);
   });
 
-  stats.classList.remove('border-green-500');
   stats.classList.add(`border-${colour}-500`);
 
-  stats.classList.remove('hover:shadow-green-500/30');
   stats.classList.add(`hover:shadow-${colour}-500/30`);
 }
 
@@ -207,9 +204,11 @@ function updateButtons(playType: playType): void {
   else if (playType === 'Remote Play') targetPage = 'remote-play-page';
   // TODO: What if tournament?
   //
+
   const playAgainButton = document.getElementById('play-again-button');
   if (playAgainButton) {
     playAgainButton.addEventListener('click', () => {
+      restoreGameElements();
       loadView(targetPage);
       forceRouteChange(targetPage);
     });
@@ -220,11 +219,35 @@ function updateButtons(playType: playType): void {
  * @brief Updates the top message in the stats menu.
  * @param loseMessage Whether to display a losing message.
  */
-function updateTopMessage(loseMessage: boolean): void {
+function updateTopMessage(winMessage: boolean): void {
   const messageDiv = document.getElementById('winner');
   if (!messageDiv) {
     console.warn('No message div found');
     return;
   }
-  if (loseMessage) messageDiv.innerText = 'You lost...';
+  if (!winMessage) messageDiv.innerText = 'You lost...';
+}
+
+/**
+ * @brief Restores the game elements to their initial state by resetting the score cards' styles.
+ */
+function restoreGameElements(): void {
+  for (let scorePoint = 1; scorePoint <= 5; scorePoint++) {
+    const leftScorePoint = document.getElementById(`left-score-card-${scorePoint}`);
+    if (leftScorePoint) {
+      const colour = leftScorePoint.className.match(/([a-z]+)-([a-z]+)-500/)?.[2];
+      if (colour) {
+        leftScorePoint.classList.remove(`bg-${colour}-500`);
+        leftScorePoint.classList.add('border-2', `border-red-500`);
+      }
+    }
+    const rightScorePoint = document.getElementById(`right-score-card-${scorePoint}`);
+    if (rightScorePoint) {
+      const colour = rightScorePoint.className.match(/([a-z]+)-([a-z]+)-500/)?.[2];
+      if (colour) {
+        rightScorePoint.classList.remove(`bg-${colour}-500`);
+        rightScorePoint.classList.add('border-2', `border-red-500`);
+      }
+    }
+  }
 }
