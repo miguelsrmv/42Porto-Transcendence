@@ -40,10 +40,14 @@ function endGame(winningPlayer: Player, gameArea: GameArea): void {
   const gameEndMsg = {
     type: 'game_end',
     winningPlayer: winningPlayer.side,
+    ownSide: 'left',
     stats: gameArea.stats,
-  } as ServerMessage;
-  // TODO: Separate message to each player?
-  gameArea.broadcastSessionMessage(JSON.stringify(gameEndMsg));
+  };
+  if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
+    gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
+  gameEndMsg.ownSide = 'right';
+  if (gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
+    gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
 }
 
 // Checks if ball reached vertical canvas limits

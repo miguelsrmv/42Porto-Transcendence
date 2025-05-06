@@ -55,12 +55,13 @@ Messages **sent from the server to the client**.
 - `game_end`
   - **Description:** Notify the client that the game has ended.
   - **Payload:**
-    - `winningPlayer: string` — Winning player side (`left` or `right`)
+    - `winningPlayer: string` — Winning player side (`left` or `right`).
+    - `ownSide: string` — Own player side (`left` or `right`).
     - `stats: gameStats` — Scores and stats of the game.
 - `game_goal`
   - **Description:** Notify the client that there was a goal.
   - **Payload:**
-    - `scoringSide: string` — Scoring player side (`left` or `right`)
+    - `scoringSide: string` — Scoring player side (`left` or `right`).
 - `player_left`
   - **Description:** Inform the client that the other player left the game.
   - **Payload:**
