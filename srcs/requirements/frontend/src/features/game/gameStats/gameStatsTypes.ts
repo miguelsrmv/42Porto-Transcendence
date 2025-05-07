@@ -79,6 +79,18 @@ export class gameStats {
   updateMaxSpeed(newSpeed: number) {
     this.maxSpeed = newSpeed;
   }
+
+  reset() {
+    this.left.goals = 0;
+    this.left.sufferedGoals = 0;
+    this.left.saves = 0;
+    this.left.powersUsed = 0;
+    this.right.goals = 0;
+    this.right.sufferedGoals = 0;
+    this.right.saves = 0;
+    this.right.powersUsed = 0;
+    this.maxSpeed = Math.sqrt(SPEED ** 2 + SPEED ** 2);
+  }
 }
 
 export class playerStats {

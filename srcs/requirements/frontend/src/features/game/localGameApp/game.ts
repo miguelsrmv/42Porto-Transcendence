@@ -259,6 +259,7 @@ export function initializeLocalGame(gameSettings: gameSettings): void {
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
+  stats.reset();
   myGameArea.inputHandler = setupInput(leftPlayer, rightPlayer, gameSettings.gameType);
   myGameArea.start();
 }
