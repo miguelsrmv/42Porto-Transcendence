@@ -10,6 +10,10 @@ const USERNAME = 'ana123';
 const EMAIL = 'ana123@example.com';
 const TEST_PASSWORD = '123456789';
 
+const USERNAME2 = 'chris123';
+const EMAIL2 = 'chris123@example.com';
+const TEST_PASSWORD2 = '123456789';
+
 async function seedUsers() {
   await prisma.user.deleteMany();
   for (let index = 0; index < NUMBER_OF_USERS; index++) {
@@ -82,7 +86,7 @@ async function createMatches(players: Player[]) {
   }
 }
 
-async function createTestUser(players: Player[]) {
+async function createTestUsers(players: Player[]) {
   const testUser = await prisma.user.create({
     data: {
       username: USERNAME,
@@ -93,11 +97,27 @@ async function createTestUser(players: Player[]) {
       player: true,
     },
   });
+  const testUser2 = await prisma.user.create({
+    data: {
+      username: USERNAME2,
+      email: EMAIL2,
+      hashedPassword: TEST_PASSWORD2,
+    },
+    include: {
+      player: true,
+    },
+  });
   for (let index = 0; index < players.length / 2; index++) {
     const friendId = players[(index + 1) % players.length].id;
     await prisma.friendship.create({
       data: {
         playerId: testUser.player!.id,
+        friendId: friendId,
+      },
+    });
+    await prisma.friendship.create({
+      data: {
+        playerId: testUser2.player!.id,
         friendId: friendId,
       },
     });
@@ -136,7 +156,7 @@ async function main() {
     await createFriends(players);
     await createTournaments(players);
     await createMatches(players);
-    await createTestUser(players);
+    await createTestUsers(players);
     if (await prisma.user.findMany({ include: { player: true } }))
       console.log('Database populated successfully.');
   } catch (e) {

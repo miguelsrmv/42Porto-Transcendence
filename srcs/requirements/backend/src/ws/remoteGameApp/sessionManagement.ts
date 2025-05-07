@@ -6,7 +6,6 @@ import { GameSession, GameSessionSerializable } from './types';
 const classicPongSessions: GameSession[] = [];
 const crazyPongSessions: GameSession[] = [];
 
-// TODO: generate just a random background name?
 function getRandomBackground(): background {
   const backgroundList = getBackgroundList();
   return backgroundList[Math.floor(Math.random() * backgroundList.length)];
@@ -24,21 +23,22 @@ function mergePlayer2IntoGameSettings(
   };
 }
 
+// TODO: Remove placeholders
 function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings): gameSettings {
   return {
     playType: playerSettings.playType,
     gameType: playerSettings.gameType,
     alias1: playerSettings.alias,
-    alias2: '',
+    alias2: 'playerPlaceholder',
     paddleColour1: playerSettings.paddleColour,
-    paddleColour2: '',
+    paddleColour2: '#ff0000',
     character1: playerSettings.character,
-    character2: null,
+    character2: playerSettings.character,
     background: getRandomBackground(),
   };
 }
 
-// TODO: clean up code, smaller function to add player to session
+// TODO: remove repeated code (pass respective array of sessions)
 function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean {
   if (playerSettings.gameType === 'Classic Pong') {
     for (const session of classicPongSessions) {
@@ -128,13 +128,20 @@ export function getGameSession(playerSocket: WebSocket): GameSession | null {
   return null;
 }
 
-export function playerIsInASession(playerSocket: WebSocket): boolean {
+export function isSessionFull(session: GameSession): boolean {
+  if (session.players.size === 2) return true;
+  return false;
+}
+
+export function playerIsInASession(playerId: string): boolean {
   const gameSessions = classicPongSessions.concat(crazyPongSessions);
-  gameSessions.forEach((session) => {
-    if (session.players.get(playerSocket)) {
-      return true;
+  for (const session of gameSessions) {
+    for (const value of session.players.values()) {
+      if (value === playerId) {
+        return true;
+      }
     }
-  });
+  }
   return false;
 }
 
