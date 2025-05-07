@@ -3,7 +3,6 @@ import cookie, { FastifyCookieOptions } from '@fastify/cookie';
 import { userRoutes } from './api/routes/user.routes';
 import jwtPlugin from './api/middlewares/auth';
 import dotenv from 'dotenv';
-import { playerRoutes } from './api/routes/player.routes';
 import { friendRoutes } from './api/routes/friendship.routes';
 import { matchRoutes } from './api/routes/match.routes';
 import { tournamentRoutes } from './api/routes/tournament.routes';
@@ -40,7 +39,6 @@ app.get('/', async (request, reply) => {
 app.addHook('preHandler', setLastActiveAt);
 
 app.register(userRoutes, { prefix: '/users' });
-app.register(playerRoutes, { prefix: '/players' });
 app.register(friendRoutes, { prefix: '/friends' });
 app.register(matchRoutes, { prefix: '/matches' });
 app.register(tournamentRoutes, { prefix: '/tournaments' });

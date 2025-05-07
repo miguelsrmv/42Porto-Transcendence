@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
+import { getUserClassicStats, getUserCrazyStats } from '../services/user.services';
 
 export type UserCreate = {
   username: string;
@@ -22,11 +23,7 @@ export type UserUpdate = {
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const users = await prisma.user.findMany({
-      include: {
-        player: true,
-      },
-    });
+    const users = await prisma.user.findMany();
     reply.send(users);
   } catch (error) {
     handleError(error, reply);
@@ -153,6 +150,25 @@ export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
     });
 
     reply.send(user);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function getPlayerStats(
+  request: FastifyRequest<{ Params: IParams }>,
+  reply: FastifyReply,
+) {
+  try {
+    const userMatches = await prisma.match.findMany({
+      where: { OR: [{ user1Id: request.params.id }, { user2Id: request.params.id }] },
+    });
+    const stats = {
+      classic: getUserClassicStats(userMatches, request.params.id),
+      crazy: getUserCrazyStats(userMatches, request.params.id),
+    };
+
+    reply.send({ stats });
   } catch (error) {
     handleError(error, reply);
   }

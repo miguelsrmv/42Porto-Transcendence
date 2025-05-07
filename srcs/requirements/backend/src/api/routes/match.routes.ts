@@ -14,7 +14,7 @@ import { validateGameSettings } from '../schemas/settingsValidation';
 export async function matchRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllMatches);
   fastify.get('/:id', { schema: getByIdSchema }, getMatchById);
-  fastify.get('/player/:id', getPlayerMatches);
+  fastify.get('/user/:id', getPlayerMatches);
   fastify.post(
     '/',
     { schema: createMatchSchema, preValidation: validateGameSettings },

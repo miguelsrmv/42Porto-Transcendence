@@ -3,7 +3,7 @@ import { getByIdSchema } from './global.schema';
 export const createFriendSchema = {
   body: {
     type: 'object',
-    required: ['playerId', 'friendId'],
+    required: ['userId', 'friendId'],
     properties: {
       friendId: { type: 'string', format: 'uuid' },
       playerId: { type: 'string', format: 'uuid' },

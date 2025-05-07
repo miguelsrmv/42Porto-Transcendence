@@ -10,6 +10,7 @@ import {
   logout,
   getOwnUser,
   UserUpdate,
+  getPlayerStats,
 } from '../controllers/user.controller';
 import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
@@ -38,4 +39,5 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     deleteUser,
   );
+  fastify.get('/:id/stats', { schema: getByIdSchema }, getPlayerStats);
 }
