@@ -38,41 +38,30 @@ contract TournamentsStorage {
         return tournaments;
     }
 
-    function getTournament(
-        uint256 _id
-    ) public view returns (Tournament memory) {
+    function getTournament(uint256 _id) public view returns (Tournament memory) {
         return tournaments[_id];
     }
 
-    function getParticipants(
-        uint256 _id
-    ) public view returns (string[MAX_PARTICIPANTS] memory) {
+    function getParticipants(uint256 _id) public view returns (string[MAX_PARTICIPANTS] memory) {
         return tournaments[_id].participants;
     }
 
-    function getMatchedParticipants(
-        uint256 _id
-    ) public view returns (string[MAX_PARTICIPANTS * 2 - 1] memory) {
+    function getMatchedParticipants(uint256 _id) public view returns (string[MAX_PARTICIPANTS * 2 - 1] memory) {
         return tournaments[_id].matchedParticipants;
     }
 
-    function getScores(
-        uint256 _id
-    ) public view returns (uint8[(MAX_PARTICIPANTS - 1) * 2] memory) {
+    function getScores(uint256 _id) public view returns (uint8[(MAX_PARTICIPANTS - 1) * 2] memory) {
         return tournaments[_id].scores;
     }
 
-    function getNumberOfTournamentsParticipatedByPlayer(
-        string memory _playerName
-    ) public view returns (uint256) {
+    function getNumberOfTournamentsParticipatedByPlayer(string memory _playerName) public view returns (uint256) {
         uint256 tournamentsParticipated = 0;
 
         for (uint8 i = 0; i < tournaments.length; i++) {
             for (uint8 j = 0; j < MAX_PARTICIPANTS; j++) {
                 if (
-                    keccak256(
-                        abi.encodePacked(tournaments[i].matchedParticipants[j])
-                    ) == keccak256(abi.encodePacked(_playerName))
+                    keccak256(abi.encodePacked(tournaments[i].matchedParticipants[j]))
+                        == keccak256(abi.encodePacked(_playerName))
                 ) {
                     tournamentsParticipated++;
                     break;
@@ -83,19 +72,14 @@ contract TournamentsStorage {
         return tournamentsParticipated;
     }
 
-    function getTournamentsWonByPlayer(
-        string memory _playerName
-    ) public view returns (uint256) {
+    function getTournamentsWonByPlayer(string memory _playerName) public view returns (uint256) {
         uint256 tournamentsWon = 0;
         uint256 winnersIndex = (MAX_PARTICIPANTS - 1) * 2;
 
         for (uint8 i = 0; i < tournaments.length; i++) {
             if (
-                keccak256(
-                    abi.encodePacked(
-                        tournaments[i].matchedParticipants[winnersIndex]
-                    )
-                ) == keccak256(abi.encodePacked(_playerName))
+                keccak256(abi.encodePacked(tournaments[i].matchedParticipants[winnersIndex]))
+                    == keccak256(abi.encodePacked(_playerName))
             ) {
                 tournamentsWon++;
             }
@@ -105,7 +89,8 @@ contract TournamentsStorage {
     }
 
     // ACTION FUNCTIONS *********************************************************
-    function createTournament() public onlyOwner {
+
+    function createTournament() public {
         string[MAX_PARTICIPANTS] memory emptyParticipants;
         for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
             emptyParticipants[i] = "";
@@ -134,10 +119,7 @@ contract TournamentsStorage {
         );
     }
 
-    function joinTournament (
-        uint256 _tournamentId,
-        string memory _participantName
-    ) public onlyOwner {
+    function joinTournament(uint256 _tournamentId, string memory _participantName) public onlyOwner {
         uint8 tournamentLength = 0;
 
         if (isTournamentFull(_tournamentId)) {
@@ -146,39 +128,20 @@ contract TournamentsStorage {
         }
 
         while (
-            keccak256(
-                abi.encodePacked(
-                    tournaments[_tournamentId].participants[tournamentLength]
-                )
-            ) != keccak256(abi.encodePacked(""))
+            keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength]))
+                != keccak256(abi.encodePacked(""))
         ) tournamentLength++;
 
-        tournaments[_tournamentId].participants[
-            tournamentLength
-        ] = _participantName;
-        tournaments[_tournamentId].matchedParticipants[
-            tournamentLength
-        ] = _participantName;
+        tournaments[_tournamentId].participants[tournamentLength] = _participantName;
+        tournaments[_tournamentId].matchedParticipants[tournamentLength] = _participantName;
         console.log(_participantName, "joined tournament", _tournamentId);
     }
 
     function addWinner(uint8 _tournamentId, string memory _winnerName) public onlyOwner {
-        uint8 winnerNextIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _winnerName
-        ) /
-            2 +
-            MAX_PARTICIPANTS;
+        uint8 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winnerName) / 2 + MAX_PARTICIPANTS;
 
-        tournaments[_tournamentId].matchedParticipants[
-            winnerNextIndex
-        ] = _winnerName;
-        console.log(
-            "Added winner",
-            _winnerName,
-            "to tournament",
-            _tournamentId
-        );
+        tournaments[_tournamentId].matchedParticipants[winnerNextIndex] = _winnerName;
+        console.log("Added winner", _winnerName, "to tournament", _tournamentId);
     }
 
     function saveScore(
@@ -188,22 +151,12 @@ contract TournamentsStorage {
         string memory _playerTwoName,
         uint8 _playerTwoScore
     ) public onlyOwner {
-        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _playerOneName
-        );
+        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _playerOneName);
 
-        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _playerTwoName
-        );
+        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _playerTwoName);
 
-        tournaments[_tournamentId].scores[
-            updatedPlayerOneIndex
-        ] = _playerOneScore;
-        tournaments[_tournamentId].scores[
-            updatedPlayerTwoIndex
-        ] = _playerTwoScore;
+        tournaments[_tournamentId].scores[updatedPlayerOneIndex] = _playerOneScore;
+        tournaments[_tournamentId].scores[updatedPlayerTwoIndex] = _playerTwoScore;
         console.log("Scores saved for Tournament");
         console.logUint(_tournamentId);
         console.log("Player One:");
@@ -216,19 +169,13 @@ contract TournamentsStorage {
 
     //HELPER FUNCTIONS **********************************************************
     /* Check if a tournament is full */
-    function isTournamentFull(
-        uint256 _tournamentId
-    ) public view returns (bool) {
+    function isTournamentFull(uint256 _tournamentId) public view returns (bool) {
         uint8 tournamentLength = 0;
 
         while (
-            tournamentLength < MAX_PARTICIPANTS &&
-            keccak256(
-                abi.encodePacked(
-                    tournaments[_tournamentId].participants[tournamentLength]
-                )
-            ) !=
-            keccak256(abi.encodePacked(""))
+            tournamentLength < MAX_PARTICIPANTS
+                && keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength]))
+                    != keccak256(abi.encodePacked(""))
         ) tournamentLength++;
 
         return tournamentLength >= MAX_PARTICIPANTS;
@@ -236,35 +183,25 @@ contract TournamentsStorage {
 
     /* Find last index of a player in a tournament */
     function isEmptyString(string memory str) internal pure returns (bool) {
-        return
-            keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
+        return keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
     }
 
-    function findLastIndexOfPlayer(
-        uint8 _tournamentId,
-        string memory _playerName
-    ) public view returns (uint8) {
+    function findLastIndexOfPlayer(uint8 _tournamentId, string memory _playerName) public view returns (uint8) {
         uint8 lastIndex = 0;
         uint8 tournamentLength = MAX_PARTICIPANTS * 2 - 1;
 
         for (uint8 i = 0; i < tournamentLength; i++) {
             if (
-                keccak256(
-                    abi.encodePacked(
-                        tournaments[_tournamentId].matchedParticipants[i]
-                    )
-                ) == keccak256(abi.encodePacked(_playerName))
+                keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[i]))
+                    == keccak256(abi.encodePacked(_playerName))
             ) {
                 lastIndex = i;
             }
         }
 
         require(
-            keccak256(
-                abi.encodePacked(
-                    tournaments[_tournamentId].matchedParticipants[lastIndex]
-                )
-            ) == keccak256(abi.encodePacked(_playerName)),
+            keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[lastIndex]))
+                == keccak256(abi.encodePacked(_playerName)),
             "Player not found"
         );
 
@@ -276,9 +213,7 @@ contract TournamentsStorage {
         return block.timestamp; // Avalanche timestamp in UTC
     }
 
-    function _daysToDate(
-        uint256 _days
-    ) internal pure returns (uint256 year, uint256 month, uint256 day) {
+    function _daysToDate(uint256 _days) internal pure returns (uint256 year, uint256 month, uint256 day) {
         int256 OFFSET19700101 = 2440588;
         int256 L = int256(_days) + 68569 + OFFSET19700101;
         int256 N = (4 * L) / 146097;
@@ -297,14 +232,7 @@ contract TournamentsStorage {
     function getCurrentDateTimeUTC()
         internal
         view
-        returns (
-            uint256 year,
-            uint256 month,
-            uint256 day,
-            uint256 hour,
-            uint256 minute,
-            uint256 second
-        )
+        returns (uint256 year, uint256 month, uint256 day, uint256 hour, uint256 minute, uint256 second)
     {
         uint256 timestamp = block.timestamp;
         uint256 SECONDS_PER_DAY = 86400;
@@ -324,14 +252,7 @@ contract TournamentsStorage {
     }
 
     function getCurrentDate() internal view returns (uint16[3] memory date) {
-        (
-            uint256 year,
-            uint256 month,
-            uint256 day,
-            ,
-            ,
-
-        ) = getCurrentDateTimeUTC();
+        (uint256 year, uint256 month, uint256 day,,,) = getCurrentDateTimeUTC();
 
         date[0] = uint16(day);
         date[1] = uint16(month);
@@ -341,14 +262,7 @@ contract TournamentsStorage {
     }
 
     function getCurrentTime() internal view returns (uint8[3] memory time) {
-        (
-            ,
-            ,
-            ,
-            uint256 hour,
-            uint256 minute,
-            uint256 second
-        ) = getCurrentDateTimeUTC();
+        (,,, uint256 hour, uint256 minute, uint256 second) = getCurrentDateTimeUTC();
 
         time[0] = uint8(hour);
         time[1] = uint8(minute);
