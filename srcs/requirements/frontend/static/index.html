@@ -617,13 +617,19 @@
         </div>
 
         <!-- Play Button -->
-        <div class="flex justify-center mt-4">
+        <div id="play-button-container" class="flex justify-center mt-4">
           <button
             id="play-button"
             class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider hidden"
           >
             Play Game!
           </button>
+        </div>
+        <div
+          id="waiting-game-modal"
+          class="flex flex-grow justify-center items-center text-center p-4 hidden font-serpentine text-9xl text-white"
+        >
+          Waiting for game
         </div>
       </div>
     </div>
