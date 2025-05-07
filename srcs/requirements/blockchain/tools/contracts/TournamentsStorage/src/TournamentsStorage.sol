@@ -4,6 +4,8 @@ pragma solidity ^0.8.19;
 import {console} from "forge-std/Script.sol";
 
 contract TournamentsStorage {
+    address private immutable _owner;
+
     uint8 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
     struct Tournament {
@@ -21,6 +23,14 @@ contract TournamentsStorage {
     // CONSTRUCTOR **************************************************************
     constructor() {
         createTournament();
+        _owner = msg.sender;
+    }
+
+    // MODIFIERS ****************************************************************
+
+    modifier onlyOwner() {
+        require(_owner == msg.sender, "Ownership Assertion: Caller of the function is not the owner.");
+        _;
     }
 
     // GETTER FUNCTIONS *********************************************************
@@ -95,7 +105,7 @@ contract TournamentsStorage {
     }
 
     // ACTION FUNCTIONS *********************************************************
-    function createTournament() public {
+    function createTournament() public onlyOwner {
         string[MAX_PARTICIPANTS] memory emptyParticipants;
         for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
             emptyParticipants[i] = "";
@@ -124,10 +134,10 @@ contract TournamentsStorage {
         );
     }
 
-    function joinTournament(
+    function joinTournament (
         uint256 _tournamentId,
         string memory _participantName
-    ) public {
+    ) public onlyOwner {
         uint8 tournamentLength = 0;
 
         if (isTournamentFull(_tournamentId)) {
@@ -152,7 +162,7 @@ contract TournamentsStorage {
         console.log(_participantName, "joined tournament", _tournamentId);
     }
 
-    function addWinner(uint8 _tournamentId, string memory _winnerName) public {
+    function addWinner(uint8 _tournamentId, string memory _winnerName) public onlyOwner {
         uint8 winnerNextIndex = findLastIndexOfPlayer(
             _tournamentId,
             _winnerName
@@ -177,7 +187,7 @@ contract TournamentsStorage {
         uint8 _playerOneScore,
         string memory _playerTwoName,
         uint8 _playerTwoScore
-    ) public {
+    ) public onlyOwner {
         uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(
             _tournamentId,
             _playerOneName
