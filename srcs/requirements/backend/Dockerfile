@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install speakeasy qrcode jsonwebtoken
+RUN npm install
 
 COPY . .
 
