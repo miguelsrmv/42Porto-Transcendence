@@ -4,7 +4,7 @@ import app from '../../app';
 import { handleError } from '../../utils/errorHandler';
 
 export async function setLastActiveAt(request: FastifyRequest, reply: FastifyReply) {
-  if (!request.user) {
+  if (!request.user || !request.user.id) {
     app.log.info('This route is not protected');
     return;
   }
