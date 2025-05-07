@@ -1,3 +1,4 @@
+```markdown
 . 📂 blockchain
 ├── 📄 Dockerfile                                       # Dockerfile defining containerized environment for deploying/testing smart contracts
 ├── 📄 NOTES.md                                         # Developer notes and miscellaneous information related to project setup or usage
@@ -69,6 +70,7 @@
 │        ├── 📄 TournamentsStorage.sol                  # Main contract source that stores tournament data
 │      └── 📂 test/
 │        ├── 📄 TestTournamentsStorage.t.sol            # Unit tests for the `TournamentsStorage` contract
+```
 
 ## Notes
 - The command 'npm install ethers' will be needed to install the ethers.js library
