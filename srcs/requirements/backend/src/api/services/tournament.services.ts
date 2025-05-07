@@ -11,9 +11,9 @@ export async function createTournamentParticipant(participant: TournamentPlayer)
 
   const registeredPlayer = await prisma.tournamentParticipant.findUnique({
     where: {
-      tournamentId_playerId: {
+      tournamentId_userId: {
         tournamentId: participant.tournamentId!,
-        playerId: participant.playerId,
+        userId: participant.userId,
       },
     },
   });
@@ -21,7 +21,7 @@ export async function createTournamentParticipant(participant: TournamentPlayer)
 
   return await prisma.tournamentParticipant.create({
     data: {
-      playerId: participant.playerId,
+      userId: participant.userId,
       tournamentId: participant.tournamentId!,
       alias: participant.alias,
       character: participant.character,

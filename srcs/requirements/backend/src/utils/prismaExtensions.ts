@@ -9,19 +9,14 @@ export const userExtension = Prisma.defineExtension({
         const { hash, salt } = hashPassword(args.data.hashedPassword);
         args.data.hashedPassword = hash;
         args.data.salt = salt;
-        args.data.player = {
-          create: {
-            name: args.data.username,
-            bio: `Hello, I am ${args.data.username}!`,
-            avatarUrl: 'static/avatar/default/1.png',
-          },
-        };
+        args.data.avatarUrl = 'static/avatar/default/1.png';
         return query(args);
       },
     },
   },
 });
 
+// TODO: Delete?
 export const settingsExtension = Prisma.defineExtension({
   query: {
     match: {

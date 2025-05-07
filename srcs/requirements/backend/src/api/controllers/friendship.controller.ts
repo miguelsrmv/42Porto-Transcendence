@@ -4,19 +4,19 @@ import { handleError } from '../../utils/errorHandler';
 import { FriendshipStatus } from '@prisma/client';
 
 type FriendCreate = {
-  playerId: string;
+  userId: string;
   friendId: string;
 };
 
-export async function getPlayerFriends(request: FastifyRequest, reply: FastifyReply) {
+export async function getUserFriends(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const player = await prisma.player.findUniqueOrThrow({
-      where: { userId: request.user.id },
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: request.user.id },
       select: { id: true },
     });
     const friends = await prisma.friendship.findMany({
       where: {
-        OR: [{ playerId: player.id }, { friendId: player.id }],
+        OR: [{ userId: user.id }, { friendId: user.id }],
       },
     });
     reply.send(friends);
@@ -30,12 +30,12 @@ export async function createFriend(
   reply: FastifyReply,
 ) {
   try {
-    const { playerId } = request.body;
+    const { userId } = request.body;
     const { friendId } = request.body;
 
     const friendship = await prisma.friendship.create({
       data: {
-        playerId: playerId,
+        userId: userId,
         friendId: friendId,
       },
     });

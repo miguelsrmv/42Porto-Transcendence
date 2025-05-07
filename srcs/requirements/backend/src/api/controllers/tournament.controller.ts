@@ -22,7 +22,7 @@ type TournamentUpdate = {
 
 export type TournamentPlayer = {
   tournamentId?: string;
-  playerId: string;
+  userId: string;
   alias: string;
   character: Character;
 };
@@ -53,7 +53,7 @@ export async function getPlayerTournaments(
       where: {
         participants: {
           some: {
-            playerId: request.params.id,
+            userId: request.params.id,
           },
         },
       },
@@ -168,7 +168,7 @@ export async function addPlayerToTournament(
 ) {
   try {
     if (!request.body.tournamentId) {
-      const newTournament = await createTournamentByPlayer(request.body.playerId);
+      const newTournament = await createTournamentByPlayer(request.body.userId);
       request.body.tournamentId = newTournament.id;
     }
     const newParticipant = await createTournamentParticipant(request.body);
