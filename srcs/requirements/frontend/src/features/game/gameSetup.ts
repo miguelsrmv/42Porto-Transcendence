@@ -235,7 +235,7 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   const player1InputAlias = document.getElementById('player-1-alias') as HTMLInputElement;
   if (player1InputAlias) {
     const inputValue = player1InputAlias.value.trim();
-    settings.alias1 = inputValue !== '' ? inputValue : 'Player 1';
+    settings.alias1 = inputValue !== '' ? inputValue : getPlayer1Alias();
   } else console.warn('Player 1 alias input form not found');
 
   const player1PaddleColour = document.getElementById(
@@ -256,7 +256,7 @@ export function setGameSettings(gameType: gameType, playType: playType) {
     const player2InputAlias = document.getElementById('player-2-alias') as HTMLInputElement;
     if (player2InputAlias) {
       const inputValue2 = player2InputAlias.value.trim();
-      settings.alias2 = inputValue2 !== '' ? inputValue2 : 'Player 2';
+      settings.alias2 = inputValue2 !== '' ? inputValue2 : 'Opponent';
     } else console.warn('Player 2 alias input form not found');
 
     const player2PaddleColour = document.getElementById(
@@ -271,6 +271,14 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   }
 
   settings.background = backgroundList[backgroundIndex];
+}
+
+function getPlayer1Alias(): string {
+  const aliasName = window.localStorage.getItem('Username');
+
+  if (!aliasName) return 'Player';
+
+  return aliasName;
 }
 
 /**
