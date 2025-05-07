@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 import {console} from "forge-std/Script.sol";
 
 contract TournamentsStorage {
-    address private immutable _owner;
+    address private immutable i_owner;
 
     uint8 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
@@ -23,13 +23,13 @@ contract TournamentsStorage {
     // CONSTRUCTOR **************************************************************
     constructor() {
         createTournament();
-        _owner = msg.sender;
+        i_owner = msg.sender;
     }
 
     // MODIFIERS ****************************************************************
 
     modifier onlyOwner() {
-        require(_owner == msg.sender, "Ownership Assertion: Caller of the function is not the owner.");
+        require(i_owner == msg.sender, "Ownership Assertion: Caller of the function is not the owner.");
         _;
     }
 
