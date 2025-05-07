@@ -41,7 +41,7 @@ let webSocket: WebSocket;
  * @param leanGameSettings The settings for the game, including player preferences and game type.
  */
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
-  webSocket = new WebSocket('wss://padaria.42.pt/ws');
+  webSocket = new WebSocket(`wss:/${window.location.host}/ws`);
 
   const joinGameMsg = { type: 'join_game', playerSettings: leanGameSettings };
 
