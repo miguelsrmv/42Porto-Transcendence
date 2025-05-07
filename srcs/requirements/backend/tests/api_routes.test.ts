@@ -166,7 +166,7 @@ describe('users routes', () => {
     const response = await app.inject({
       method: 'PATCH',
       url: '/users/' + user?.id,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', cookie: jwtCookie },
       body: { username: 'modified', email: 'modified@gmail.com' },
     });
 
@@ -184,10 +184,13 @@ describe('users routes', () => {
   });
 
   test('DELETE /:id should return 200 and the deleted user', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'bob45' } });
+    const user = await prisma.user.findFirst({ where: { username: 'modified' } });
     const response = await app.inject({
       method: 'DELETE',
       url: '/users/' + user?.id,
+      headers: {
+        cookie: jwtCookie,
+      },
     });
 
     expect(response.statusCode).toBe(200);
