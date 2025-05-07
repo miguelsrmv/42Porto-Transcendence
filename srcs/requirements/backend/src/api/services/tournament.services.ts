@@ -29,12 +29,12 @@ export async function createTournamentParticipant(participant: TournamentPlayer)
   });
 }
 
-export async function createTournamentByPlayer(playerId: string) {
+export async function createTournamentByUser(userId: string) {
   return await prisma.tournament.create({
     data: {
       settings: '',
       createdBy: {
-        connect: { id: playerId },
+        connect: { id: userId },
       },
     },
   });

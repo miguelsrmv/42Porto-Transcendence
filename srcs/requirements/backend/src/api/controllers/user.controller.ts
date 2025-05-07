@@ -155,7 +155,7 @@ export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
   }
 }
 
-export async function getPlayerStats(
+export async function getUserStats(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {

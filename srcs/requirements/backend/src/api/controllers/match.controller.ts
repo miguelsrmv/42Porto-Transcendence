@@ -27,7 +27,7 @@ export async function getAllMatches(request: FastifyRequest, reply: FastifyReply
   }
 }
 
-export async function getPlayerMatches(
+export async function getUserMatches(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
