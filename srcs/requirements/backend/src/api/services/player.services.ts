@@ -15,10 +15,10 @@ export function getPlayerClassicStats(matches: Match[], playerId: string) {
   };
 }
 
-export function getPlayerCustomStats(matches: Match[], playerId: string) {
-  const customMatches = matches.filter((match) => match.mode === MatchMode.CUSTOM);
-  const totalMatches = customMatches.length;
-  const wins = customMatches.filter((match) => match.winnerId === playerId).length;
+export function getPlayerCrazyStats(matches: Match[], playerId: string) {
+  const crazyMatches = matches.filter((match) => match.mode === MatchMode.CRAZY);
+  const totalMatches = crazyMatches.length;
+  const wins = crazyMatches.filter((match) => match.winnerId === playerId).length;
   const losses = totalMatches - wins;
 
   return {

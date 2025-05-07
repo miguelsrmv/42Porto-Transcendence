@@ -30,7 +30,7 @@ export const settingsExtension = Prisma.defineExtension({
           ...defaultGameSettings,
           ...(args.data.settings ? JSON.parse(args.data.settings) : {}),
         });
-        if (args.data.settings !== JSON.stringify(defaultGameSettings)) args.data.mode = 'CUSTOM';
+        if (args.data.settings !== JSON.stringify(defaultGameSettings)) args.data.mode = 'CRAZY';
         return query(args);
       },
     },
