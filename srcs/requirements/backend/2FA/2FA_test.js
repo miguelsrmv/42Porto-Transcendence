@@ -100,13 +100,12 @@ app.get('/protected', { preValidation: [app.authenticate] }, async (request, rep
 
 // Serve static files (HTML, CSS, JS)
 app.register(fastifyStatic, {
-  root: path.join(__dirname, 'public'), // Path to your static files
-  prefix: '/', // URL path where static files are served
+  root: path.join(__dirname, 'public'),
+  prefix: '/',
 });
 
-// Define a route for the root `/` to serve the index.html
 app.get('/', async (request, reply) => {
-  return reply.sendFile('index.html'); // This assumes the file is located in the 'public' folder
+  return reply.sendFile('index.html');
 });
 
 // Start server
