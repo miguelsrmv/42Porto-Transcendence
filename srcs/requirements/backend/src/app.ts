@@ -9,6 +9,7 @@ import { matchRoutes } from './api/routes/match.routes';
 import { tournamentRoutes } from './api/routes/tournament.routes';
 import { WSRoutes } from './ws/websocket.routes';
 import FastifyWebSocket from '@fastify/websocket';
+import { setLastActiveAt } from './api/middlewares/activeStatus';
 
 dotenv.config();
 
@@ -32,10 +33,11 @@ app.register(cookie, {
   hook: 'onRequest',
 } as FastifyCookieOptions);
 
-
 app.get('/', async (request, reply) => {
   reply.send({ greetings: 'Welcome to the ft_transcendence API' });
 });
+
+app.addHook('preHandler', setLastActiveAt);
 
 app.register(userRoutes, { prefix: '/users' });
 app.register(playerRoutes, { prefix: '/players' });

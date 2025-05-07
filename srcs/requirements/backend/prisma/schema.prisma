@@ -15,6 +15,7 @@ model User {
   hashedPassword String
   salt           String   @default("")
   createdAt      DateTime @default(now())
+  lastActiveAt   DateTime @default(now())
   player         Player?
 }
 
