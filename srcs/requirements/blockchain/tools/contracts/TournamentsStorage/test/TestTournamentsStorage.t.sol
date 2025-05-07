@@ -28,8 +28,6 @@ contract TournamentsStorageTest is Test {
         tournamentsStorage = new TournamentsStorage();
     }
 
-    function testDeployTournamentsStorageScript() public {}
-
     function testCreateTournament() public view {
         TournamentsStorage.Tournament[] memory tournaments = tournamentsStorage.getTournaments();
         assertEq(tournaments.length, 1);
@@ -43,9 +41,11 @@ contract TournamentsStorageTest is Test {
         }
         for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             assertEq(tournamentsStorage.getParticipants(0)[i], "Bob");
+            assertEq(tournamentsStorage.getMatchedParticipants(0)[i], "Bob");
         }
         tournamentsStorage.joinTournament(0, "Eve");
         assertEq(tournamentsStorage.getParticipants(1)[0], "Eve");
+        assertEq(tournamentsStorage.getMatchedParticipants(1)[0], "Eve");
     }
 
     function testAddWinner() public {
@@ -115,6 +115,7 @@ contract TournamentsStorageTest is Test {
 
     function testIsTournamentFull() public {
         uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        assertFalse(tournamentsStorage.isTournamentFull(0));
 
         // 1. Join all players
         for (uint8 i = 0; i < n; i++) {
@@ -144,6 +145,8 @@ contract TournamentsStorageTest is Test {
                 assertEq(winner, tournamentsStorage.getMatchedParticipants(0)[winnerLastKnownIndex]);
             }
         }
+        vm.expectRevert();
+        tournamentsStorage.findLastIndexOfPlayer(0, "Non_participant");
     }
 
     function testGetTournamentsWonByPlayer() public {
