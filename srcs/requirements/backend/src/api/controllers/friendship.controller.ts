@@ -8,14 +8,15 @@ type FriendCreate = {
   friendId: string;
 };
 
-export async function getAllFriends(
-  request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply,
-) {
+export async function getPlayerFriends(request: FastifyRequest, reply: FastifyReply) {
   try {
+    const player = await prisma.player.findUniqueOrThrow({
+      where: { userId: request.user.id },
+      select: { id: true },
+    });
     const friends = await prisma.friendship.findMany({
       where: {
-        OR: [{ playerId: request.params.id }, { friendId: request.params.id }],
+        OR: [{ playerId: player.id }, { friendId: player.id }],
       },
     });
     reply.send(friends);
