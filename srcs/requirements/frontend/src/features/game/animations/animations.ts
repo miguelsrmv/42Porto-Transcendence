@@ -97,15 +97,7 @@ export function powerUpAnimation(side: string) {
 
   // Handle power bar animation if it exists
   if (powerBar) {
-    // Get current power or use default
-    const currentPower = parseFloat(powerBar.style.width) || 45;
-
-    // Calculate new power (increase by 25%, cap at 100%)
-    const newPower = Math.min(currentPower + 25, 100);
-
-    // Apply animation class and set new width
     powerBar.classList.add('power-increase');
-    powerBar.style.width = newPower + '%';
   }
 
   // Temporarily increase border width for emphasis
