@@ -142,7 +142,7 @@ async function createTestUsers(players: Player[]) {
       await prisma.match.update({
         where: { id: match.id },
         data: {
-          mode: MatchMode.CUSTOM,
+          mode: MatchMode.CRAZY,
         },
       });
     }

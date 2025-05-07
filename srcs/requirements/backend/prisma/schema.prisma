@@ -88,14 +88,13 @@ enum Character {
   SONIC
   KIRBY
   YOSHI
-  SAMUS
   DK
   MEWTWO
 }
 
 enum MatchMode {
   CLASSIC
-  CUSTOM
+  CRAZY
 }
 
 model Leaderboard {
@@ -103,7 +102,7 @@ model Leaderboard {
   player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
   playerId String
   classic  Int    @default(0)
-  custom   Int    @default(0)
+  crazy   Int    @default(0)
 }
 
 model Tournament {

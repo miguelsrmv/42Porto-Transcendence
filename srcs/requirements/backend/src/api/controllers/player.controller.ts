@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
-import { getPlayerClassicStats, getPlayerCustomStats } from '../services/player.services';
+import { getPlayerClassicStats, getPlayerCrazyStats } from '../services/player.services';
 
 type PlayerUpdate = {
   name?: string;
@@ -63,7 +63,7 @@ export async function getPlayerStats(
     });
     const stats = {
       classic: getPlayerClassicStats(playerMatches, request.params.id),
-      custom: getPlayerCustomStats(playerMatches, request.params.id),
+      crazy: getPlayerCrazyStats(playerMatches, request.params.id),
     };
 
     reply.send({ stats });

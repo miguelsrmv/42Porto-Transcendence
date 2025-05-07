@@ -5,7 +5,7 @@ export const createMatchSchema = {
     type: 'object',
     required: ['player1Id', 'player2Id'],
     properties: {
-      mode: { type: 'string', enum: ['CLASSIC', 'CUSTOM'] },
+      mode: { type: 'string', enum: ['CLASSIC', 'CRAZY'] },
       player1Id: { type: 'string', format: 'uuid' },
       player2Id: { type: 'string', format: 'uuid' },
       settings: { type: 'string' },
