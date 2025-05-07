@@ -21,8 +21,6 @@ export async function getAllPlayers(request: FastifyRequest, reply: FastifyReply
   }
 }
 
-// TODO:Implement getMyPlayer?
-
 export async function getPlayerById(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,

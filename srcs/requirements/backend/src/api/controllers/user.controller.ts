@@ -15,7 +15,7 @@ type UserLogin = {
   password: string;
 };
 
-type UserUpdate = {
+export type UserUpdate = {
   username?: string;
   email?: string;
 };
@@ -73,6 +73,7 @@ export async function updateUser(
   reply: FastifyReply,
 ) {
   try {
+    if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.update({
       where: { id: request.params.id },
       data: request.body,
@@ -88,6 +89,7 @@ export async function deleteUser(
   reply: FastifyReply,
 ) {
   try {
+    if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.delete({
       where: { id: request.params.id },
     });

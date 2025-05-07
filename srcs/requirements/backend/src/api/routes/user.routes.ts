@@ -9,6 +9,7 @@ import {
   checkLoginStatus,
   logout,
   getOwnUser,
+  UserUpdate,
 } from '../controllers/user.controller';
 import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
@@ -27,6 +28,14 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     getUserById,
   );
-  fastify.patch('/:id', { schema: updateUserSchema }, updateUser);
-  fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
+  fastify.patch<{ Params: IParams; Body: UserUpdate }>(
+    '/:id',
+    { schema: updateUserSchema, onRequest: [fastify.jwtAuth] },
+    updateUser,
+  );
+  fastify.delete<{ Params: IParams }>(
+    '/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    deleteUser,
+  );
 }
