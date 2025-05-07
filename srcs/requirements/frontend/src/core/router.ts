@@ -12,6 +12,7 @@ import * as remotePlayModule from '../features/remotePlay/remotePlay.js';
 import * as tournamentPlayModule from '../features/tournamentPlay/tournamentPlay.js';
 import * as friendModule from '../features/friends/friends.js';
 import * as rankingsModule from '../features/rankings/rankings.js';
+import * as settingsModule from '../features/settings/settings.js';
 //import * as gameModule from '../features/game/gamePage.js';
 import { endLocalGameIfRunning } from '../features/game/localGameApp/game.js';
 //import { endRemoteGameIfRunning } from '../features/game/remoteGameApp/remoteGame.js';
@@ -28,6 +29,7 @@ export const routes: { [key: string]: FeatureModule } = {
   'tournament-play-page': tournamentPlayModule as FeatureModule,
   'friends-page': friendModule as FeatureModule,
   'rankings-page': rankingsModule as FeatureModule,
+  'settings-page': settingsModule as FeatureModule,
   //  'game-page': gameModule as FeatureModule,
 };
 
