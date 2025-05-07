@@ -16,8 +16,8 @@
 | `GET`    | `/players/me`              |                     |                                              | Get own player                             |
 | `GET`    | `/players/:id`             |   `id` player id    |                                              | Get a specific player                      |
 | `PATCH`  | `/players/:id`             |   `id` player id    |                data to update                | Update data on a specific player           |
-| `GET`    | `/players/:id/friends`     |   `id` player id    |                                              | Get all friends of that player             |
 | `GET`    | `/players/:id/stats`       |   `id` player id    |                                              | Get match stats of that player             |
+| `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user          |
 | `POST`   | `/friends`                 |                     |            playerId and friendId             | Create a friendship between two players    |
 | `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                   |
 | `DELETE` | `/friends/:id`             | `id` friendship id  |                                              | Delete a friendship                        |
@@ -110,7 +110,7 @@ Content-Type: application/json
 
 ## Friendships
 
-- **Get all friendships for a player:** `GET /players/:id/friends`
+- **Get all friendships for logged in player:** `GET /friends`
 - **Create a new friendship:** `POST /friends`
 
 ```json

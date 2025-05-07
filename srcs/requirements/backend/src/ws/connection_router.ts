@@ -51,7 +51,6 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: s
 let pingInterval: NodeJS.Timeout;
 
 export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
-  console.log('A new request has been done');
   socket.on('open', () => {
     pingInterval = setInterval(() => {
       if (socket.readyState === WebSocket.OPEN) {
