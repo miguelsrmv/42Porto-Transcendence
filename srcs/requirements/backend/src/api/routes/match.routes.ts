@@ -3,7 +3,7 @@ import {
   createMatch,
   getAllMatches,
   getMatchById,
-  getPlayerMatches,
+  getUserMatches,
   updateMatch,
 } from '../controllers/match.controller';
 import { createMatchSchema, updateMatchSchema } from '../schemas/match.schema';
@@ -14,7 +14,7 @@ import { validateGameSettings } from '../schemas/settingsValidation';
 export async function matchRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllMatches);
   fastify.get('/:id', { schema: getByIdSchema }, getMatchById);
-  fastify.get('/user/:id', getPlayerMatches);
+  fastify.get('/user/:id', getUserMatches);
   fastify.post(
     '/',
     { schema: createMatchSchema, preValidation: validateGameSettings },

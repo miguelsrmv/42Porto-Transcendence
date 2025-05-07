@@ -5,7 +5,7 @@ import { Character, TournamentStatus } from '@prisma/client';
 import { defaultGameSettings } from '../../utils/defaults';
 import {
   createTournamentParticipant,
-  createTournamentByPlayer,
+  createTournamentByUser,
 } from '../services/tournament.services';
 
 export type TournamentCreate = {
@@ -41,7 +41,7 @@ export async function getAllTournaments(request: FastifyRequest, reply: FastifyR
   }
 }
 
-export async function getPlayerTournaments(
+export async function getUserTournaments(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
@@ -168,7 +168,7 @@ export async function addPlayerToTournament(
 ) {
   try {
     if (!request.body.tournamentId) {
-      const newTournament = await createTournamentByPlayer(request.body.userId);
+      const newTournament = await createTournamentByUser(request.body.userId);
       request.body.tournamentId = newTournament.id;
     }
     const newParticipant = await createTournamentParticipant(request.body);

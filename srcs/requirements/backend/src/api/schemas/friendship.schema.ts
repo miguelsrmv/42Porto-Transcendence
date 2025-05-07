@@ -5,8 +5,8 @@ export const createFriendSchema = {
     type: 'object',
     required: ['userId', 'friendId'],
     properties: {
+      userId: { type: 'string', format: 'uuid' },
       friendId: { type: 'string', format: 'uuid' },
-      playerId: { type: 'string', format: 'uuid' },
     },
     additionalProperties: false,
   },
