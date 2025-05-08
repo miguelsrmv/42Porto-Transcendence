@@ -19,7 +19,7 @@ type attackIdentifier =
   | 'Thunder Wave'
   | 'Confusion'
   | 'Magic Mirror'
-  | 'Mini'
+  | 'The Amazing Mirror'
   | 'Giant Punch';
 
 export class Attack {
@@ -27,6 +27,7 @@ export class Attack {
   enemyPaddle: Paddle;
   ball: Ball;
   attackName: string | undefined;
+  enemyAttackName: string | null;
   side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
@@ -39,6 +40,7 @@ export class Attack {
 
   constructor(
     attackName: string | undefined,
+    enemyAttackName: string | null,
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
@@ -50,6 +52,7 @@ export class Attack {
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.attackName = attackName;
+    this.enemyAttackName = enemyAttackName;
     this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
@@ -86,10 +89,10 @@ export class Attack {
         duration: 0,
         cooldown: 7500,
       },
-      Mini: {
-        handler: async () => this.mini(),
-        duration: 5,
-        cooldown: 5000,
+      'The Amazing Mirror': {
+        handler: async () => this.theAmazingMirror(),
+        duration: 4,
+        cooldown: 10000,
       },
       'Giant Punch': {
         handler: async () => this.giantPunch(),
@@ -98,6 +101,8 @@ export class Attack {
       },
     };
 
+    if (attackName !== 'The Amazing Mirror')
+      this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
     this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
     this.attackDuration = this.attackMap[attackName as attackIdentifier].duration;
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
@@ -248,22 +253,7 @@ export class Attack {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
-  async mini(): Promise<void> {
-    const startingVersion = getGameVersion(this.gameArea);
-
-    const shrinkFactor = 0.5;
-
-    const oldRadius = this.ball.radius;
-    const newRadius = oldRadius * shrinkFactor;
-
-    this.ball.setRadius(newRadius);
-
-    await wait(this.attackDuration);
-
-    if (!this.gameVersionHasChanged(startingVersion)) {
-      this.ball.setRadius(oldRadius);
-    }
-  }
+  async theAmazingMirror(): Promise<void> {}
 
   async giantPunch(): Promise<void> {
     console.log('Giant punch called');
