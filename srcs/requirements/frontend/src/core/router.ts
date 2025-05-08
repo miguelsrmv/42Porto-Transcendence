@@ -156,13 +156,14 @@ export function navigate(viewName: string, replace: boolean = false): void {
  * @brief Initializes the router by setting up event listeners and handling the initial route.
  */
 export function initializeRouter() {
+  // TODO: Uncomment, currently commented just for quick dev
   // If reload, send to main page
-  const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-  if (navEntry?.type === 'reload') {
-    // Send them to main menu instead
-    window.location.replace('/');
-    return;
-  }
+  // const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+  // if (navEntry?.type === 'reload') {
+  //   // Send them to main menu instead
+  //   window.location.replace('/');
+  //   return;
+  // }
 
   // Listen for clicks on potential navigation links
   document.addEventListener('click', handleLinkClick);

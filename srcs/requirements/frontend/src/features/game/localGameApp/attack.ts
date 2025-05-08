@@ -125,7 +125,7 @@ export class Attack {
       },
     };
 
-    if (attackName !== 'The Amazing Mirro')
+    if (attackName !== 'The Amazing Mirror')
       this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
     else this.activeAttack = this.attackMap[enemyAttackName as attackIdentifier].handler;
     this.attackDuration = this.attackMap[attackName as attackIdentifier].duration;
@@ -317,18 +317,18 @@ export class Attack {
   /**
    * @brief Executes the Magic Mirror attack.
    *
-   * This attack does nothing on its own (used for mirror Kirby matches)
+   * This attack instantly reverses the ball's vertical direction.
    */
-  async magicMirror(): Promise<void> {}
+  async magicMirror(): Promise<void> {
+    this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
+  }
 
   /**
    * @brief Uses the enemy's attack.
    *
-   * This attack mirror's the opponent's power
+   * This attack does nothing for cases of mirror Kirby matches
    */
-  async theAmazingMirror(): Promise<void> {
-    this.attackMap[this.enemyAttackName as attackIdentifier].handler();
-  }
+  async theAmazingMirror(): Promise<void> {}
 
   /**
    * @brief Executes the Giant Punch attack.
