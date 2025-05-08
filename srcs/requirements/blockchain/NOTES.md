@@ -1,4 +1,4 @@
-```markdown
+```
 . 📂 blockchain
 ├── 📄 Dockerfile                                  # Dockerfile defining containerized environment for deploying/testing smart contracts
 ├── 📄 NOTES.md                                    # Developer notes and miscellaneous information related to project setup or usage
