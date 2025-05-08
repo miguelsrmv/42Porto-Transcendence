@@ -33,10 +33,10 @@ export const updateTournamentSchema = {
 export const tournamentParticipantSchema = {
   body: {
     type: 'object',
-    required: ['playerId'],
+    required: ['userId'],
     properties: {
       tournamentId: { type: 'string', format: 'uuid' },
-      playerId: { type: 'string', format: 'uuid' },
+      userId: { type: 'string', format: 'uuid' },
       alias: { type: 'string' },
       character: { type: 'string', enum: Object.values(Character) },
     },

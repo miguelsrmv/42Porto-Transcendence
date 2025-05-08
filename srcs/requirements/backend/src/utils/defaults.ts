@@ -1,3 +1,4 @@
+// TODO: Delete
 export const defaultGameSettings = {
   map: 'default',
   rounds: 5,

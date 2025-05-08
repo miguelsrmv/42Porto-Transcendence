@@ -41,8 +41,8 @@ export function getTemplateId(templateHost: string): string | undefined {
     case 'remote-play-page':
     case 'tournament-play-page':
       return 'game-menu-template';
-    case 'profile-page':
-      return 'profile-template';
+    case 'settings-page':
+      return 'settings-template';
     case 'friends-page':
       return 'friends-template';
     case 'rankings-page':

@@ -16,7 +16,7 @@ export type attackIdentifier =
   | 'Thunder Wave'
   | 'Confusion'
   | 'Magic Mirror'
-  | 'Mini'
+  | 'The Amazing Mirror'
   | 'Giant Punch';
 
 /**

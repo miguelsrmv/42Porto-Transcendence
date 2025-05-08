@@ -75,6 +75,13 @@ export async function adjustHeader(view: string) {
 }
 
 async function fetchUserData() {
+  const isLoggedIn = await fetch('/api/users/checkLoginStatus', {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  let isLoggedInJson = await isLoggedIn.json();
+
   const response = await fetch('/api/users/me', {
     method: 'GET',
     credentials: 'include',

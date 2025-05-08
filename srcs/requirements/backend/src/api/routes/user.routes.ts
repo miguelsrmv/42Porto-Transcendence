@@ -9,10 +9,12 @@ import {
   checkLoginStatus,
   logout,
   getOwnUser,
+  UserUpdate,
+  getUserStats,
 } from '../controllers/user.controller';
 import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
-import { userCreateValidation } from '../validation/users.validation';
+import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
@@ -27,6 +29,16 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     getUserById,
   );
-  fastify.patch('/:id', { schema: updateUserSchema }, updateUser);
-  fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
+  // TODO: Add preValidation for UserCreate
+  fastify.patch<{ Body: UserUpdate }>(
+    '/',
+    { schema: updateUserSchema, onRequest: [fastify.jwtAuth], preValidation: userUpdateValidation },
+    updateUser,
+  );
+  fastify.delete<{ Params: IParams }>(
+    '/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    deleteUser,
+  );
+  fastify.get('/:id/stats', { schema: getByIdSchema }, getUserStats);
 }
