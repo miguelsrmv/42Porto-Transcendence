@@ -52,14 +52,9 @@ export async function adjustHeader(view: string) {
         .join(' ');
     }
 
-    if (!window.localStorage.getItem('Username')) await fetchUserData();
-
-    const headerUserName = header.querySelector('#player-name') as HTMLElement;
-    if (headerUserName) {
-      headerUserName.innerText = window.localStorage.getItem('Username') as string;
-    } else {
-      console.error('Acquiring username failed');
-    }
+    let headerUserName = header.querySelector('#player-name') as HTMLElement;
+    headerUserName.innerText = window.localStorage.getItem('Username') as string;
+    if (!headerUserName.innerText) headerUserName.innerText = 'Guest';
 
     // Shows back button if not on main page
     if (!isMainPage) {
@@ -72,24 +67,4 @@ export async function adjustHeader(view: string) {
       };
     }
   }
-}
-
-async function fetchUserData() {
-  const isLoggedIn = await fetch('/api/users/checkLoginStatus', {
-    method: 'GET',
-    credentials: 'include',
-  });
-
-  let isLoggedInJson = await isLoggedIn.json();
-
-  const response = await fetch('/api/users/me', {
-    method: 'GET',
-    credentials: 'include',
-  });
-
-  let responsejson = await response.json();
-
-  window.localStorage.setItem('Username', responsejson.username);
-  window.localStorage.setItem('Email', responsejson.email);
-  window.localStorage.setItem('ID', responsejson.id);
 }
