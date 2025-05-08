@@ -5,35 +5,27 @@
 
 import { avatarList } from '../../ui/avatarData/avatarData.js';
 
-let avatarIndex: number = 0;
-
 type UserData = {
-  username: string | null;
-  email: string | null;
-  password: string | null;
-  repeatPassword: string | null;
-  twoFA: boolean;
+  username: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
 };
 
-let userData = {
-  username: null,
-  email: null,
-  password: null,
-  repeatPassword: null,
-  twoFA: false,
-};
+let avatarIndex: number;
+let userData: UserData;
 
 /**
  * @brief Initializes view for settings
  *
  * This function sets up the view for rankings
  */
-
 export async function initializeView(): Promise<void> {
-  avatarIndex = 0;
+  await resetFormData();
   createAvatarLoop();
   handleSubmitAvatar();
   handleUserDataChange();
+  handle2FA();
 }
 
 function createAvatarLoop(): void {
@@ -161,6 +153,24 @@ function handleUserDataChange(): void {
   }
 
   userDataSubmitButton.addEventListener('click', () => {
+    fillUserData();
+    submitUserData();
+    // TODO: How to handle 2FA activation ?
+  });
+
+  async function submitUserData(): Promise<void> {
+    try {
+      const response = await fetch('/api/users/', {
+        method: 'PATCH',
+        credentials: 'include',
+        body: JSON.stringify(userData),
+      });
+    } catch (error) {
+      console.log(`User Data change error`);
+    }
+  }
+
+  function fillUserData(): void {
     const usernameDataInput = document.getElementById(
       'username-settings-container',
     ) as HTMLInputElement;
@@ -191,18 +201,83 @@ function handleUserDataChange(): void {
       return;
     }
 
-    const twoFADataInput = document.getElementById('2FA-toggle-input') as HTMLInputElement;
-    if (!twoFADataInput) {
-      console.log('No twoFA data input field found');
-      return;
-    }
-
     userData.username = usernameDataInput.value;
+    userData.email = emailDataInput.value;
+    userData.password = passwordDataInput.value;
+    userData.repeatPassword = retypePasswordDataInput.value;
+  }
+}
+
+function handle2FA(): void {
+  const twoFAToggle = document.getElementById('2fa-toggle-input') as HTMLInputElement;
+  if (!twoFAToggle) {
+    console.log('No 2 Factor Auth toggle found');
+    return;
+  }
+
+  twoFAToggle.addEventListener('click', () => {
+    const twoFAIsChecked = twoFAtoggle.checked;
+
+    if (twoFAIsChecked) {
+      disable2FA(twoFAToggle);
+    } else enable2FA(twoFAToggle);
   });
 }
 
-// TODO: Change email
-// TODO: Change avatar
-// TODO: Change password
-// TODO: Change username
-// TODO: Enable/Disable 2FA
+async function disable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
+  try {
+    const response = await fetch('/api/users/disableTwoFA', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    twoFAtoggle.checked = false;
+  } catch (error) {
+    console.log(`User Data change error`);
+    return;
+  }
+}
+
+async function enable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
+  try {
+    const response = await fetch('/api/users/enableTwoFA', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    twoFAtoggle.checked = true;
+    // TODO: 2FA Setup logic
+  } catch (error) {
+    console.log(`User Data change error`);
+    return;
+  }
+}
+
+async function resetFormData(): Promise<void> {
+  avatarIndex = 0;
+  userData = {
+    username: '',
+    email: '',
+    password: '',
+    repeatPassword: '',
+  };
+
+  let twoFAstatus;
+  try {
+    const response = await fetch('/api/users/checkTwoFAStatus', {
+      method: 'GET',
+      credentials: 'include',
+    });
+    twoFAstatus = await response.json();
+  } catch (error) {
+    console.log(`User Data change error`);
+    return;
+  }
+
+  const twoFAtoggle = document.getElementById('2fa-toggle-input') as HTMLInputElement;
+  if (!twoFAtoggle) {
+    console.log('No 2 Factor Auth toggle found');
+    return;
+  }
+
+  if (twoFAstatus) twoFAtoggle.checked = true;
+  else twoFAtoggle.checked = false;
+}
