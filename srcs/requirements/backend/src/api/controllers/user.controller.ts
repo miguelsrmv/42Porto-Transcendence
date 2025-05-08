@@ -222,6 +222,7 @@ export async function uploadDefaultAvatar(request: FastifyRequest, reply: Fastif
 
 export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
   try {
+    // TODO: allow reset secret in case of error?
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
     if (user.secret2FA) throw new Error('2FA already setup for this user.');
 
@@ -279,6 +280,15 @@ export async function verify2FA(
       maxAge: 2 * 60 * 60, // Valid for 2h
     });
     reply.send({ token: finalToken });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function check2FAstatus(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+    reply.send(user.secret2FA != null);
   } catch (error) {
     handleError(error, reply);
   }
