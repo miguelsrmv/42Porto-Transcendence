@@ -1688,6 +1688,47 @@
         </div>
       </div>
       <div
+        id="twoFA-modal"
+        class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
+      >
+        <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
+          <h2 class="text-2xl font-bold text-center text-gray-800">
+            Please scan this QR code with your AUthenticator app
+          </h2>
+          <img
+            id="QR-code"
+            src="./static/images/supersmash_titlescreen_white.png"
+            class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto"
+            alt="QR-code"
+          />
+          <form
+            id="QRCode-form"
+            class="flex flex-col p-6 sm:p-8 space-y-6"
+            action="#"
+            method="post"
+          >
+            <div class="space-y-1">
+              <label for="QRcode" class="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                type="text"
+                id="QRcode"
+                name="QRcode"
+                required
+                autocomplete="QRcode"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+            <button
+              id="QRcode-button"
+              type="button"
+              class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold"
+            >
+              Send Code
+            </button>
+          </form>
+        </div>
+      </div>
+      <div
         id="password-modal"
         class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
       >

@@ -59,7 +59,7 @@ async function enable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
       credentials: 'include',
     });
     twoFAtoggle.checked = true;
-    // TODO: 2FA Setup logic
+    console.log(`${response}`);
   } catch (error) {
     console.log(`User Data change error`);
     return;
