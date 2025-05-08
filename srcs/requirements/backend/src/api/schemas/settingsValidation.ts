@@ -3,6 +3,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { TournamentCreate } from '../controllers/tournament.controller';
 import { MatchCreate } from '../controllers/match.controller';
 
+// TODO: check if necessary, change to Typebox?
 export const GameSettingsSchema = z.object({
   map: z.string(),
   rounds: z.number().int().min(1),

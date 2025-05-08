@@ -1,46 +1,27 @@
 import { Ball } from './ball.js';
-import { Paddle } from './paddle.js';
-import { wait } from '../../../utils/helpers.js';
-import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  BALL_RADIUS,
-  PADDLE_LEN,
-  SPEED,
-  getGameVersion,
-  fakeBalls,
-} from './game.js';
-import type { attackIdentifier } from '../characterData/characterData.types.js';
-import { powerUpAnimation } from '../animations/animations.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, PADDLE_LEN, GameArea } from './gameArea.js';
 import { MAX_BALL_SPEED } from './collisions.js';
-import { stats } from './game.js';
+import { wait } from './helpers.js';
+import { gameStats } from './gameStats.js';
+import { Paddle } from './paddle.js';
+import { getGameVersion } from './game.js';
 
-/**
- * @file attack.ts
- * @brief Defines the Attack class for handling various attack actions in the game.
- *
- * This file contains the Attack class, which manages different attack actions that can be
- * performed by players during the game. Each attack has a specific handler, duration, and cooldown.
- */
-
-/**
- * @brief Type definition for attack data.
- *
- * This type defines the structure for attack data, including the handler function,
- * duration of the attack, and cooldown period.
- */
 type AttackData = {
   handler: () => Promise<void>; // The attack function
   duration: number; // How long the effect lasts
   cooldown: number; // How long until the attack can be used again, in miliseconds
 };
 
-/**
- * @brief Class representing an attack in the game.
- *
- * The Attack class manages the execution and timing of various attacks that can be
- * performed by players. It handles the availability, activation, and effects of each attack.
- */
+type attackIdentifier =
+  | 'Super Shroom'
+  | 'Egg Barrage'
+  | 'Spin Dash'
+  | 'Thunder Wave'
+  | 'Confusion'
+  | 'Magic Mirror'
+  | 'Mini'
+  | 'Giant Punch';
+
 export class Attack {
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
@@ -49,28 +30,21 @@ export class Attack {
   side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
+  stats: gameStats;
   activeAttack: () => Promise<void>;
   attackDuration: number;
   attackCooldown: number;
   attackMap: { [key in attackIdentifier]: AttackData };
+  gameArea: GameArea;
 
-  /**
-   * @brief Constructs an Attack object.
-   *
-   * Initializes the attack with the specified parameters and sets up the attack map.
-   *
-   * @param attackName The name of the attack.
-   * @param ownPaddle The player's paddle.
-   * @param enemyPaddle The opponent's paddle.
-   * @param ball The game ball.
-   * @param side The side of the player ('left' or 'right').
-   */
   constructor(
     attackName: string | undefined,
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
     side: string,
+    stats: gameStats,
+    gameArea: GameArea,
   ) {
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
@@ -79,6 +53,8 @@ export class Attack {
     this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
+    this.stats = stats;
+    this.gameArea = gameArea;
     this.attackMap = {
       'Super Shroom': {
         handler: async () => this.superShroom(),
@@ -127,63 +103,40 @@ export class Attack {
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
 
-  /**
-   * @brief Executes the attack if it is available.
-   *
-   * This method checks if the attack is available and executes it, updating the last used
-   * timestamp and triggering the power-up animation.
-   */
   attack(): void {
     if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable) return;
 
     this.lastUsed = Date.now();
 
-    this.side === 'left' ? stats.left.increasePowersUsed() : stats.right.increasePowersUsed();
-
-    powerUpAnimation(this.side);
+    if (this.side === 'left') {
+      this.stats.left.increasePowersUsed();
+      this.gameArea.leftAnimation = true;
+      this.gameArea.leftPlayer.powerBarFill = 0;
+    } else {
+      this.stats.right.increasePowersUsed();
+      this.gameArea.rightAnimation = true;
+      this.gameArea.rightPlayer.powerBarFill = 0;
+    }
 
     this.activeAttack();
 
     this.attackIsAvailable = false;
   }
 
-  /**
-   * @brief Resets the attack timing based on the game time.
-   *
-   * This method adjusts the last used timestamp of the attack based on the difference
-   * between the new and previous game times.
-   *
-   * @param beforeTime The previous game time.
-   * @param newTime The new game time.
-   */
   reset(beforeTime: number, newTime: number): void {
     this.lastUsed += newTime - beforeTime;
     //this.attackIsAvailable = false;
   }
 
-  /**
-   * @brief Checks if the game version has changed.
-   *
-   * This method compares the current game version with the provided old version to
-   * determine if a change has occurred.
-   *
-   * @param oldVersion The previous game version.
-   * @return True if the game version has changed, false otherwise.
-   */
   gameVersionHasChanged(oldVersion: number): boolean {
-    return oldVersion !== getGameVersion() ? true : false;
+    return oldVersion !== getGameVersion(this.gameArea) ? true : false;
   }
 
-  /**
-   * @brief Executes the Super Shroom attack.
-   *
-   * This attack temporarily increases the player's paddle size for the duration of the effect.
-   */
   async superShroom(): Promise<void> {
     console.log(`Super shroom called by ${this.side}`);
     const growth = PADDLE_LEN * 0.25;
 
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const originalHeight = this.ownPaddle.height;
     const originalY = this.ownPaddle.y;
@@ -203,41 +156,31 @@ export class Attack {
     }
   }
 
-  /**
-   * @brief Executes the Egg Barrage attack.
-   *
-   * This attack creates multiple fake balls on the game field for the duration of the effect.
-   */
   async eggBarrage(): Promise<void> {
-    let fakeEggNumber = 5;
+    const fakeEggNumber = 5;
 
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     for (let i = 0; i < fakeEggNumber; i++) {
-      let fakeBall = new Ball(
+      const fakeBall = new Ball(
         Math.random() * 0.5 * CANVAS_WIDTH + 0.25 * CANVAS_WIDTH,
         Math.random() * 0.5 * CANVAS_HEIGHT + 0.25 * CANVAS_HEIGHT,
         BALL_RADIUS,
         this.ball.speedX * (Math.random() > 0.5 ? 1 : -1),
         this.ball.speedY * (Math.random() > 0.5 ? 1 : -1),
       );
-      fakeBalls.push(fakeBall);
+      this.gameArea.fakeBalls.push(fakeBall);
     }
 
     await wait(this.attackDuration);
 
     if (!this.gameVersionHasChanged(startingVersion)) {
-      for (let i = 0; i < fakeEggNumber; i++) fakeBalls.shift();
+      for (let i = 0; i < fakeEggNumber; i++) this.gameArea.fakeBalls.shift();
     }
   }
 
-  /**
-   * @brief Executes the Spin Dash attack.
-   *
-   * This attack temporarily increases the ball's speed for the duration of the effect.
-   */
   async spinDash(): Promise<void> {
-    const startingVersion = getGameVersion(); // Check score changes
+    const startingVersion = getGameVersion(this.gameArea); // Check score changes
 
     const growthFactor = 1.25; // Speed multiplier
 
@@ -273,13 +216,8 @@ export class Attack {
     }
   }
 
-  /**
-   * @brief Executes the Thunder Wave attack.
-   *
-   * This attack temporarily reduces the opponent's paddle speed for the duration of the effect.
-   */
   async thunderWave(): Promise<void> {
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const slowdownFactor = 0.5;
 
@@ -292,13 +230,8 @@ export class Attack {
     }
   }
 
-  /**
-   * @brief Executes the Confusion attack.
-   *
-   * This attack temporarily inverts the opponent's paddle controls for the duration of the effect.
-   */
   async confusion(): Promise<void> {
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const inversionFactor = -1;
 
@@ -311,22 +244,12 @@ export class Attack {
     }
   }
 
-  /**
-   * @brief Executes the Magic Mirror attack.
-   *
-   * This attack instantly reverses the ball's vertical direction.
-   */
   async magicMirror(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
-  /**
-   * @brief Executes the Mini attack.
-   *
-   * This attack temporarily reduces the ball's size for the duration of the effect.
-   */
   async mini(): Promise<void> {
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const shrinkFactor = 0.5;
 
@@ -342,14 +265,9 @@ export class Attack {
     }
   }
 
-  /**
-   * @brief Executes the Giant Punch attack.
-   *
-   * This attack temporarily reduces the opponent's paddle size for the duration of the effect.
-   */
   async giantPunch(): Promise<void> {
     console.log('Giant punch called');
-    const startingVersion = getGameVersion();
+    const startingVersion = getGameVersion(this.gameArea);
 
     const shrink = PADDLE_LEN * 0.4;
 
