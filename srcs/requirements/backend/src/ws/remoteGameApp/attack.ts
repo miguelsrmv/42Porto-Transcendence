@@ -103,7 +103,7 @@ export class Attack {
 
     if (attackName !== 'The Amazing Mirror')
       this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
-    this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    else this.activeAttack = this.attackMap[enemyAttackName as attackIdentifier].handler;
     this.attackDuration = this.attackMap[attackName as attackIdentifier].duration;
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
