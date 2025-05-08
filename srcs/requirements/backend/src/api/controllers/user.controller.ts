@@ -24,6 +24,10 @@ export type UserUpdate = {
   repeatPassword?: string;
 };
 
+type DefaultAvatar = {
+  path: string;
+};
+
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
     const users = await prisma.user.findMany();
@@ -171,6 +175,14 @@ export async function getUserStats(
     };
 
     reply.send({ stats });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function uploadDefaultAvatar(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    reply.send();
   } catch (error) {
     handleError(error, reply);
   }
