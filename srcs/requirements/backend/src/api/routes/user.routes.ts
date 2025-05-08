@@ -11,6 +11,7 @@ import {
   getOwnUser,
   UserUpdate,
   getUserStats,
+  uploadDefaultAvatar,
 } from '../controllers/user.controller';
 import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
@@ -24,6 +25,7 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.post('/login', { schema: loginSchema }, login);
   fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
+  fastify.put('/users/defaultAvatar', uploadDefaultAvatar);
   fastify.get<{ Params: IParams }>(
     '/:id',
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
