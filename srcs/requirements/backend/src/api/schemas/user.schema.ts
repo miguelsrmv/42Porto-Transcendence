@@ -1,5 +1,3 @@
-import { getByIdSchema } from './global.schema';
-
 export const createUserSchema = {
   body: {
     type: 'object',
@@ -15,13 +13,13 @@ export const createUserSchema = {
 };
 
 export const updateUserSchema = {
-  params: getByIdSchema.params,
   body: {
     type: 'object',
     properties: {
       username: { type: 'string', minLength: 3 },
       email: { type: 'string', format: 'email' },
-      password: { type: 'string', minLength: 6 },
+      newPassword: { type: 'string', minLength: 6 },
+      repeatPassword: { type: 'string', minLength: 6 },
     },
     additionalProperties: false,
   },
