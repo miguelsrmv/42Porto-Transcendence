@@ -7,7 +7,7 @@
 | `GET`    | `/users/me`                |                     |                                              | Get own user                             |
 | `GET`    | `/users/:id`               |    `id` user id     |                                              | Get a specific user                      |
 | `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                        |
-| `PATCH`  | `/users/:id`               |    `id` user id     |                data to update                | Update data on a specific user           |
+| `PATCH`  | `/users`                   |                     |                data to update                | Update own user data                     |
 | `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                            |
 | `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)               |
 | `DELETE` | `/users/logout`            |                     |                                              | Logout user                              |
@@ -52,12 +52,15 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Update a user:** `PATCH /users/:id`
+- **Update own user:** `PATCH /users`
 
 ```json
 {
   "username": "new_user_name", // optional
-  "email": "new_user@email.com" // optional
+  "email": "new_user@email.com", // optional
+  "newPassword": "newPassword", // optional
+  "repeatPassword": "newPassword", // optional
+  "avatarUrl": "static/avatar/custom/uv-tj8474gh984yuc" // optional
 }
 ```
 
