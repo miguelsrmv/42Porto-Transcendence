@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
-import { getUserClassicStats, getUserCrazyStats } from '../services/user.services';
+import { finish2FAsetup, getUserClassicStats, getUserCrazyStats } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
@@ -31,8 +31,9 @@ type DefaultAvatar = {
   path: string;
 };
 
-type VerifyToken = {
+export type VerifyToken = {
   token: string;
+  password?: string;
 };
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
@@ -254,14 +255,24 @@ export async function verify2FA(
   try {
     if (!request.cookies.access_token)
       return reply.status(400).send({ message: 'Access token not set.' });
-    if (!request.user.twoFactorPending) {
-      return reply.status(400).send({ message: '2FA not pending' });
-    }
-    const token = request.body.token;
+    // if (!request.user.twoFactorPending) {
+    //   return reply.status(400).send({ message: '2FA not pending' });
+    // }
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
     if (!user.secret2FA) {
       return reply.status(401).send('2FA required but not setup.');
     }
+    if (!user.enabled2FA) {
+      if (!request.body.password) return reply.status(401).send('Password required.');
+      const isMatch = verifyPassword({
+        candidatePassword: request.body.password,
+        hash: user.hashedPassword,
+        salt: user.salt,
+      });
+      if (!isMatch) return reply.status(401).send('Password incorrect.');
+    }
+
+    const token = request.body.token;
 
     const verified = speakeasy.totp.verify({
       secret: user.secret2FA,
@@ -283,6 +294,9 @@ export async function verify2FA(
       secure: true,
       maxAge: 2 * 60 * 60, // Valid for 2h
     });
+    if (!user.enabled2FA) {
+      await prisma.user.update({ where: { id: request.user.id }, data: { enabled2FA: true } });
+    }
     reply.send({ token: finalToken });
   } catch (error) {
     handleError(error, reply);
