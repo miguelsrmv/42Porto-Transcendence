@@ -43,12 +43,26 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
         return;
       }
     }
+    await fetchUserData();
     window.location.hash = 'main-menu-page';
     // Handle success (e.g., redirect or store token)
   } catch (error) {
     console.error('Login failed:', error);
     // Handle errors (e.g., show error message to user)
   }
+}
+
+async function fetchUserData() {
+  const response = await fetch('/api/users/me', {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  let responsejson = await response.json();
+
+  window.localStorage.setItem('Username', responsejson.username);
+  window.localStorage.setItem('Email', responsejson.email);
+  window.localStorage.setItem('ID', responsejson.id);
 }
 
 /**
