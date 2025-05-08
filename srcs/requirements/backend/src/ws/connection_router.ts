@@ -1,37 +1,74 @@
 import WebSocket from 'ws';
-import { attributePlayerToSession, removePlayer } from './remoteGameApp/sessionManagement';
-import { ClientMessage } from './remoteGameApp/types';
+import {
+  attributePlayerToSession,
+  getGameSession,
+  isSessionFull,
+  playerIsInASession,
+  removePlayer,
+} from './remoteGameApp/sessionManagement';
+import { ClientMessage, ServerMessage } from './remoteGameApp/types';
+import { initializeRemoteGame } from './remoteGameApp/game';
+import { FastifyRequest } from 'fastify';
 
-function messageTypeHandler(message: ClientMessage, socket: WebSocket) {
+export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, message: string) {
+  if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
+  if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
+}
+
+// TODO: Rename function
+function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
   switch (message.type) {
     case 'join_game': {
       const playerSettings = message.playerSettings;
+      if (playerSettings.playerID !== userId) {
+        console.log(
+          `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
+        );
+        const errorMessage = { type: 'error', message: '401 Unauthorized' };
+        if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
+        return;
+      }
+      if (playerIsInASession(playerSettings.playerID)) {
+        return;
+      }
       attributePlayerToSession(socket, playerSettings);
-      break;
-    }
-    case 'movement': {
-      break;
-    }
-    case 'power_up': {
+      const playerSession = getGameSession(socket);
+      if (playerSession && isSessionFull(playerSession)) {
+        // TODO: error handling for no game session returned
+        const matchSettings = playerSession.settings;
+        const response: ServerMessage = { type: 'game_setup', settings: matchSettings };
+        const [ws1, ws2] = Array.from(playerSession.players.keys());
+        broadcastMessageTo(ws1, ws2, JSON.stringify(response));
+        initializeRemoteGame(ws1, ws2, matchSettings);
+        const gameStartMsg: ServerMessage = { type: 'game_start' };
+        broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
+      }
       break;
     }
   }
 }
 
-export async function handleSocketConnection(socket: WebSocket) {
+let pingInterval: NodeJS.Timeout;
+
+export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
   socket.on('open', () => {
+    pingInterval = setInterval(() => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.ping(); // send a ping frame
+      }
+    }, 30000); // every 30 seconds
     console.log('New client connection on /ws');
     socket.send('You have connected to the ft_transcendence server');
   });
 
   socket.on('message', (message) => {
     console.log('Received message:', message.toString());
-    messageTypeHandler(JSON.parse(message.toString()), socket);
-    socket.send('Hi from server');
+    messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
   });
 
   socket.on('close', () => {
     removePlayer(socket);
+    clearInterval(pingInterval);
     console.log('Client disconnected');
   });
 

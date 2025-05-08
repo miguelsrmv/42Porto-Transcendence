@@ -1,18 +1,14 @@
-import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './game.js';
+import { BALL_RADIUS, CANVAS_HEIGHT, CANVAS_WIDTH } from './gameArea.js';
 import { Paddle } from './paddle.js';
 
 /**
  * @file ball.ts
- * @brief Defines the Ball class and related functionality for a game, including movement, bouncing, and resetting.
+ * @brief This file contains the Ball class which represents a ball in the game.
  */
-
-let BALL_COLOUR = 'white';
-const BORDER_COLOUR = 'gray';
-let isVisible = true;
 
 /**
  * @class Ball
- * @brief Represents a ball in the game, with properties for position, speed, and radius.
+ * @brief Represents a ball in the game.
  */
 export class Ball {
   x: number;
@@ -22,14 +18,15 @@ export class Ball {
   radius: number;
   speedX: number;
   speedY: number;
+  isVisible: boolean;
 
   /**
    * @brief Constructs a new Ball object.
-   * @param x The initial x-coordinate of the ball.
-   * @param y The initial y-coordinate of the ball.
-   * @param radius The radius of the ball.
-   * @param speedX The initial horizontal speed of the ball.
-   * @param speedY The initial vertical speed of the ball.
+   * @param x Initial x position.
+   * @param y Initial y position.
+   * @param radius Radius of the ball.
+   * @param speedX Initial horizontal speed.
+   * @param speedY Initial vertical speed.
    */
   constructor(x: number, y: number, radius: number, speedX: number, speedY: number) {
     this.x = x;
@@ -39,27 +36,12 @@ export class Ball {
     this.radius = radius;
     this.speedX = speedX;
     this.speedY = speedY;
+    this.isVisible = true;
   }
 
   /**
-   * @brief Draws the ball on the canvas.
-   * @param ctx The canvas rendering context.
-   */
-  draw(ctx: CanvasRenderingContext2D): void {
-    if (isVisible) {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = BALL_COLOUR;
-      ctx.fill();
-      ctx.strokeStyle = BORDER_COLOUR;
-      ctx.stroke();
-      ctx.closePath();
-    }
-  }
-
-  /**
-   * @brief Moves the ball based on its speed and the elapsed time.
-   * @param dt The time delta in seconds.
+   * @brief Moves the ball based on its speed and the time delta.
+   * @param dt Time delta for movement calculation.
    */
   move(dt: number): void {
     this.x += this.speedX * dt;
@@ -67,10 +49,11 @@ export class Ball {
   }
 
   /**
-   * @brief Handles horizontal bouncing when the ball collides with a paddle.
-   * @param paddle The paddle object the ball collides with.
+   * @brief Handles the horizontal bounce of the ball when it hits a paddle.
+   * @param paddle The paddle that the ball collides with.
    */
   bounceHorizontal(paddle: Paddle): void {
+    // --- Correctly Calculate Paddle Center Y ---
     const paddleCenterY = paddle.y + paddle.height / 2.0; // Calculate the actual center
 
     // --- 1. Calculate Relative Intersection & Normalize (Use paddleCenterY) ---
@@ -97,14 +80,14 @@ export class Ball {
   }
 
   /**
-   * @brief Handles a simple horizontal bounce for a fake ball.
+   * @brief Simulates a horizontal bounce for a fake ball.
    */
   bounceHorizontalFakeBall(): void {
     this.speedX *= -1; // Reverse horizontal direction
   }
 
   /**
-   * @brief Handles vertical bouncing when the ball collides with a horizontal surface.
+   * @brief Reverses the vertical direction of the ball.
    */
   bounceVertical(): void {
     this.speedY *= -1; // Reverse vertical direction
@@ -112,8 +95,8 @@ export class Ball {
 
   /**
    * @brief Sets the speed of the ball.
-   * @param x The new horizontal speed.
-   * @param y The new vertical speed.
+   * @param x New horizontal speed.
+   * @param y New vertical speed.
    */
   setSpeed(x: number, y: number): void {
     this.speedX = x;
@@ -122,14 +105,14 @@ export class Ball {
 
   /**
    * @brief Sets the radius of the ball.
-   * @param radius The new radius of the ball.
+   * @param radius New radius.
    */
   setRadius(radius: number): void {
     this.radius = radius;
   }
 
   /**
-   * @brief Resets the ball to its initial position, speed, and radius.
+   * @brief Resets the ball to the center of the canvas with default speed and radius.
    */
   reset(): void {
     this.x = CANVAS_WIDTH / 2;
@@ -142,13 +125,13 @@ export class Ball {
 
 /**
  * @brief Toggles the visibility of the ball for a countdown effect.
- *        The ball blinks for 3 seconds (6 toggles) before becoming visible.
+ * @param ball The ball whose visibility is toggled.
  */
-export function ballCountdown() {
+export function ballCountdown(ball: Ball) {
   let count: number = 0;
 
   const interval = setInterval(() => {
-    isVisible = !isVisible;
+    ball.isVisible = !ball.isVisible;
     count++;
 
     if (count >= 6) {

@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { updatePlayerSchema } from '../schemas/player.schema';
 import {
   getAllPlayers,
+  getOwnPlayer,
   getPlayerById,
   getPlayerStats,
   updatePlayer,
@@ -12,6 +13,7 @@ import { getAllFriends } from '../controllers/friendship.controller';
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function playerRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllPlayers);
+  fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnPlayer);
   fastify.get('/:id/friends', { schema: getByIdSchema }, getAllFriends);
   fastify.get('/:id', { schema: getByIdSchema }, getPlayerById);
   fastify.patch('/:id', { schema: updatePlayerSchema }, updatePlayer);

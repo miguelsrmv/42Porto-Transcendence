@@ -242,7 +242,6 @@ export function setGameSettings(gameType: gameType, playType: playType) {
     'player-1-paddle-colour-input',
   ) as HTMLInputElement;
   if (player1PaddleColour) {
-    console.log(player1PaddleColour.value);
     settings.paddleColour1 = player1PaddleColour.value;
   } else console.warn('Player 1 paddle colour input form not found');
 
