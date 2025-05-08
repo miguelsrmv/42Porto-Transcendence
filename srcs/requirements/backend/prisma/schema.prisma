@@ -9,27 +9,18 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  email          String   @unique
-  username       String   @unique
-  hashedPassword String
-  salt           String   @default("")
-  createdAt      DateTime @default(now())
-  player         Player?
-}
-
-// TODO: Manage user online status somewhere else
-model Player {
   id                 String                  @id @default(uuid())
-  name               String?
-  bio                String?
+  email              String                  @unique
+  username           String                  @unique
+  hashedPassword     String
+  salt               String                  @default("")
+  createdAt          DateTime                @default(now())
+  lastActiveAt       DateTime                @default(now())
   avatarUrl          String?
-  user               User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             String                  @unique
-  friends            Friendship[]            @relation("PlayerToFriends")
-  friendOf           Friendship[]            @relation("FriendsToPlayer")
-  matches1           Match[]                 @relation("MatchPlayer1")
-  matches2           Match[]                 @relation("MatchPlayer2")
+  friends            Friendship[]            @relation("UserToFriends")
+  friendOf           Friendship[]            @relation("FriendsToUser")
+  matches1           Match[]                 @relation("MatchUser1")
+  matches2           Match[]                 @relation("MatchUser2")
   matchesWon         Match[]                 @relation("MatchWinner")
   tournamentsCreated Tournament[]
   leaderboard        Leaderboard[]
@@ -38,15 +29,15 @@ model Player {
 
 model Friendship {
   id        String           @id @default(uuid())
-  player    Player           @relation("PlayerToFriends", fields: [playerId], references: [id], onDelete: Cascade)
-  playerId  String
-  friendOf  Player           @relation("FriendsToPlayer", fields: [friendId], references: [id], onDelete: Cascade)
+  user      User             @relation("UserToFriends", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  friendOf  User             @relation("FriendsToUser", fields: [friendId], references: [id], onDelete: Cascade)
   friendId  String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @default(now()) @updatedAt
   status    FriendshipStatus @default(PENDING)
 
-  @@unique([playerId, friendId])
+  @@unique([userId, friendId])
 }
 
 enum FriendshipStatus {
@@ -56,27 +47,27 @@ enum FriendshipStatus {
 }
 
 model Match {
-  id               String      @id @default(uuid())
-  mode             MatchMode   @default(CLASSIC)
-  duration         Int         @default(0)
-  player1Id        String
-  player1          Player      @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
-  player2Id        String
-  player2          Player      @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
-  player1Score     Int         @default(0)
-  player2Score     Int         @default(0)
-  player1Character Character?
-  player2Character Character?
-  winnerId         String?
-  winner           Player?     @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
-  tournamentId     String?
-  tournament       Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  roundNumber      Int?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @default(now()) @updatedAt
-  settings         String
+  id             String      @id @default(uuid())
+  mode           MatchMode   @default(CLASSIC)
+  duration       Int         @default(0)
+  user1Id        String
+  user1          User        @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2Id        String
+  user2          User        @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  user1Score     Int         @default(0)
+  user2Score     Int         @default(0)
+  user1Character Character?
+  user2Character Character?
+  winnerId       String?
+  winner         User?       @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
+  tournamentId   String?
+  tournament     Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  roundNumber    Int?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @default(now()) @updatedAt
+  settings       String
 
-  @@unique([player1Id, player2Id, tournamentId])
+  @@unique([user1Id, user2Id, tournamentId])
 }
 
 enum Character {
@@ -87,22 +78,21 @@ enum Character {
   SONIC
   KIRBY
   YOSHI
-  SAMUS
   DK
   MEWTWO
 }
 
 enum MatchMode {
   CLASSIC
-  CUSTOM
+  CRAZY
 }
 
 model Leaderboard {
-  id       String @id @default(uuid())
-  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId String
-  classic  Int    @default(0)
-  custom   Int    @default(0)
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+  classic Int    @default(0)
+  crazy   Int    @default(0)
 }
 
 model Tournament {
@@ -111,7 +101,7 @@ model Tournament {
   createdAt       DateTime                @default(now())
   updatedAt       DateTime                @default(now()) @updatedAt
   matches         Match[]
-  createdBy       Player                  @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdBy       User                    @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById     String
   settings        String
   maxParticipants Int                     @default(8)
@@ -130,11 +120,11 @@ model TournamentParticipant {
   id           String     @id @default(uuid())
   tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
   tournamentId String
-  player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId     String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
   alias        String
   character    Character?
 
-  @@unique([tournamentId, playerId])
+  @@unique([tournamentId, userId])
   @@unique([tournamentId, alias])
 }

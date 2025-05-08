@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
+import { getUserClassicStats, getUserCrazyStats } from '../services/user.services';
 
 export type UserCreate = {
   username: string;
@@ -15,18 +16,14 @@ type UserLogin = {
   password: string;
 };
 
-type UserUpdate = {
+export type UserUpdate = {
   username?: string;
   email?: string;
 };
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const users = await prisma.user.findMany({
-      include: {
-        player: true,
-      },
-    });
+    const users = await prisma.user.findMany();
     reply.send(users);
   } catch (error) {
     handleError(error, reply);
@@ -73,6 +70,7 @@ export async function updateUser(
   reply: FastifyReply,
 ) {
   try {
+    if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.update({
       where: { id: request.params.id },
       data: request.body,
@@ -88,6 +86,7 @@ export async function deleteUser(
   reply: FastifyReply,
 ) {
   try {
+    if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.delete({
       where: { id: request.params.id },
     });
@@ -151,6 +150,25 @@ export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
     });
 
     reply.send(user);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function getUserStats(
+  request: FastifyRequest<{ Params: IParams }>,
+  reply: FastifyReply,
+) {
+  try {
+    const userMatches = await prisma.match.findMany({
+      where: { OR: [{ user1Id: request.params.id }, { user2Id: request.params.id }] },
+    });
+    const stats = {
+      classic: getUserClassicStats(userMatches, request.params.id),
+      crazy: getUserCrazyStats(userMatches, request.params.id),
+    };
+
+    reply.send({ stats });
   } catch (error) {
     handleError(error, reply);
   }
