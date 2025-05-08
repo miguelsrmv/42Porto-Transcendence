@@ -2,7 +2,7 @@ let twoFAstatus;
 
 export async function reset2FAData(): Promise<void> {
   try {
-    const response = await fetch('/api/users/checkTwoFAStatus', {
+    const response = await fetch('/api/users/2FA/check', {
       method: 'GET',
       credentials: 'include',
     });
@@ -31,17 +31,18 @@ export function handle2FA(): void {
 
   twoFAToggle.addEventListener('click', () => {
     const twoFAIsChecked = twoFAToggle.checked;
-
     if (twoFAIsChecked) {
+      enable2FA(twoFAToggle);
+    } else {
       disable2FA(twoFAToggle);
-    } else enable2FA(twoFAToggle);
+    }
   });
 }
 
 async function disable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
   try {
-    const response = await fetch('/api/users/disableTwoFA', {
-      method: 'POST',
+    const response = await fetch('/api/users/2FA/disable', {
+      method: 'GET',
       credentials: 'include',
     });
     twoFAtoggle.checked = false;
@@ -53,8 +54,8 @@ async function disable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
 
 async function enable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
   try {
-    const response = await fetch('/api/users/enableTwoFA', {
-      method: 'POST',
+    const response = await fetch('/api/users/2FA/setup', {
+      method: 'GET',
       credentials: 'include',
     });
     twoFAtoggle.checked = true;

@@ -26,6 +26,7 @@ function resetPageData(): void {
   resetFormData();
   reset2FAData();
 }
+
 function updateFormPlaceholder(): void {
   const changeUsernameField = document.getElementById(
     'username-settings-container',
