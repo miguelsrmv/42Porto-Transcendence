@@ -74,11 +74,11 @@ const characterList: character[] = [
   },
   {
     name: 'Kirby',
-    attack: 'Mini',
+    attack: 'The Amazing Mirror',
     characterSelectPicturePath: `${characterSelectPicturePath}kirby.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}kirby.png`,
     accentColour: 'pink',
-    selectHelpMessage: 'Minify the ball!',
+    selectHelpMessage: "Use your enemy's powers!",
   },
   {
     name: 'Donkey Kong',
