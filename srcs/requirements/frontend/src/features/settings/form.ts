@@ -1,4 +1,4 @@
-import { triggerPasswordModal, getPasswordModalValue } from './passwordModal.js';
+import { confirmChanges } from './passwordModal.js';
 
 type UserData = {
   username: string;
@@ -29,10 +29,11 @@ export function handleUserDataChange(): void {
   }
 
   if (!userDataSubmitButtonListenerAttached) {
-    userDataSubmitButton.addEventListener('click', () => {
+    userDataSubmitButton.addEventListener('click', async () => {
       userDataSubmitButtonListenerAttached = true;
       fillUserData();
-      if (confirmChanges()) submitUserData();
+      userData.oldPassword = (await confirmChanges()) as string;
+      if (userData.oldPassword) submitUserData();
     });
   }
 
@@ -87,14 +88,4 @@ export function handleUserDataChange(): void {
     userData.newPassword = passwordDataInput.value;
     userData.repeatPassword = retypePasswordDataInput.value;
   }
-}
-
-function confirmChanges(): boolean {
-  triggerPasswordModal();
-  let oldPassword = getPasswordModalValue();
-
-  if (!oldPassword) return false;
-
-  userData.oldPassword = oldPassword;
-  return true;
 }

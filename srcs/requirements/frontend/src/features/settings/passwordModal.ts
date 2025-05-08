@@ -1,83 +1,64 @@
-let passwordModalListenerAttached: boolean = false;
-let passwordModalButtonListenerAttached: boolean = false;
-let oldPassword: string;
-
-export function triggerPasswordModal(): void {
-  const passwordModal = document.getElementById('password-modal');
-  if (!passwordModal) return;
-
-  passwordModal.classList.remove('hidden');
-
-  void passwordModal.offsetWidth;
-
-  passwordModal.classList.remove('exiting');
-  passwordModal.classList.add('entering');
-}
-
-export function getPasswordModalValue(): string {
-  const passwordModal = document.getElementById('password-modal');
-  if (!passwordModal) {
-    console.log("Couldn't find password modal element");
-    return '';
-  }
-
-  const passwordModalButton = document.getElementById('change-confirm-button');
-  if (!passwordModalButton) {
-    console.log("Couldn't find change confirm button");
-    return '';
-  }
-
-  if (!passwordModalListenerAttached) {
-    passwordModal.addEventListener('click', handleModalOutsideClick);
-    passwordModalListenerAttached = true;
-  }
-
-  if (!passwordModalButtonListenerAttached) {
-    passwordModalButton.addEventListener('click', handleModalButtonClick);
-    passwordModalButtonListenerAttached = true;
-  }
-  return oldPassword;
-}
-
-function handleModalOutsideClick(event: MouseEvent): void {
-  const passwordModal = document.getElementById('password-modal');
-  if (!passwordModal) return;
-
-  if (event.target === passwordModal) {
-    closePasswordModal();
-    oldPassword = '';
+export async function confirmChanges(): Promise<string | null> {
+  try {
+    const password: string = await waitForPasswordModal();
+    return password;
+  } catch {
+    return null;
   }
 }
 
-function handleModalButtonClick(): void {
-  const passwordContent = document.getElementById('confirm-password') as HTMLInputElement;
-  oldPassword = passwordContent.value;
-}
+async function waitForPasswordModal(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const passwordModal = document.getElementById('password-modal');
+    const confirmButton = document.getElementById('change-confirm-button') as HTMLButtonElement;
+    const passwordInput = document.getElementById('confirm-password') as HTMLInputElement;
 
-function closePasswordModal(): void {
-  // No need for another console warn (already done on triggerLoginModal)
-  const passwordModal = document.getElementById('password-modal');
-  if (!passwordModal) return;
+    if (!passwordModal || !confirmButton || !passwordInput) {
+      console.error('Missing modal elements');
+      reject();
+      return;
+    }
 
-  // Trigger the exit transition
-  passwordModal.classList.add('exiting');
-  passwordModal.classList.remove('entering');
+    // Show modal
+    passwordModal.classList.remove('hidden');
+    void passwordModal.offsetWidth;
+    passwordModal.classList.remove('exiting');
+    passwordModal.classList.add('entering');
 
-  // Remove the existing transition listener if any
-  passwordModal.removeEventListener('transitionend', handleModalTransitionEnd);
+    // Handle transition and hide logic
+    const close = () => {
+      passwordModal.classList.add('exiting');
+      passwordModal.classList.remove('entering');
 
-  // Wait for transition to end, then hide the passwordModal
-  passwordModal.addEventListener('transitionend', handleModalTransitionEnd);
-}
+      const onTransitionEnd = () => {
+        passwordModal.classList.add('hidden');
+        passwordModal.removeEventListener('transitionend', onTransitionEnd);
+      };
 
-function handleModalTransitionEnd(event: TransitionEvent): void {
-  const passwordModal = document.getElementById('password-modal');
-  if (!passwordModal) return;
+      passwordModal.addEventListener('transitionend', onTransitionEnd, { once: true });
+    };
 
-  if (passwordModal.classList.contains('exiting')) {
-    // Remove the 'exiting' class and hide the passwordModal
-    passwordModal.classList.add('hidden');
-    // Remove the event listener to prevent memory leaks
-    passwordModal.removeEventListener('transitionend', handleModalTransitionEnd);
-  }
+    // Clicking outside the modal (backdrop)
+    const onBackdropClick = (event: MouseEvent) => {
+      if (event.target === passwordModal) {
+        close();
+        reject();
+      }
+    };
+
+    // Clicking confirm button
+    const onConfirmClick = () => {
+      const password = passwordInput.value;
+      if (!password) {
+        console.warn('No password entered');
+        return;
+      }
+      close();
+      resolve(password);
+    };
+
+    // Add one-time listeners
+    passwordModal.addEventListener('click', onBackdropClick, { once: true });
+    confirmButton.addEventListener('click', onConfirmClick, { once: true });
+  });
 }
