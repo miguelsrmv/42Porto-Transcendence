@@ -297,3 +297,16 @@ export async function check2FAstatus(request: FastifyRequest, reply: FastifyRepl
     handleError(error, reply);
   }
 }
+
+export async function disable2FA(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    // TODO: Check if already null?
+    await prisma.user.update({
+      where: { id: request.user.id },
+      data: { secret2FA: null },
+    });
+    return reply.send('Success');
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
