@@ -188,6 +188,7 @@ function setPlayers(
     ball,
     gameSettings.alias1,
     gameSettings.character1 ? gameSettings.character1.attack : null,
+    gameSettings.character2 ? gameSettings.character2.attack : null,
     'left',
   );
   rightPlayer = new Player(
@@ -196,6 +197,7 @@ function setPlayers(
     ball,
     gameSettings.alias2,
     gameSettings.character2 ? gameSettings.character2.attack : null,
+    gameSettings.character1 ? gameSettings.character1.attack : null,
     'right',
   );
 
