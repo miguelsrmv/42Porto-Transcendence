@@ -61,9 +61,9 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 {
   "username": "new_user_name", // optional
   "email": "new_user@email.com", // optional
+  "oldPassword": "newPassword",
   "newPassword": "newPassword", // optional
   "repeatPassword": "newPassword", // optional
-  "avatarUrl": "static/avatar/custom/uv-tj8474gh984yuc" // optional
 }
 ```
 
