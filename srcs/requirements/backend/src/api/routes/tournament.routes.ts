@@ -5,7 +5,7 @@ import {
   createTournament,
   deleteTournament,
   getAllTournaments,
-  getPlayerTournaments,
+  getUserTournaments,
   getTournamentById,
   updateTournament,
 } from '../controllers/tournament.controller';
@@ -19,7 +19,7 @@ import { validateGameSettings } from '../schemas/settingsValidation';
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function tournamentRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllTournaments);
-  fastify.get('/player/:id', { schema: getByIdSchema }, getPlayerTournaments);
+  fastify.get('/user/:id', { schema: getByIdSchema }, getUserTournaments);
   fastify.get('/:id', { schema: getByIdSchema }, getTournamentById);
   fastify.post(
     '/',
