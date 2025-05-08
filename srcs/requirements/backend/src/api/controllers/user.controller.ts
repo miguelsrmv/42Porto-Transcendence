@@ -27,7 +27,7 @@ export type UserUpdate = {
   repeatPassword?: string;
 };
 
-type DefaultAvatar = {
+export type DefaultAvatar = {
   path: string;
 };
 
@@ -217,9 +217,26 @@ export async function getUserStats(
   }
 }
 
-export async function uploadDefaultAvatar(request: FastifyRequest, reply: FastifyReply) {
+export async function setDefaultAvatar(
+  request: FastifyRequest<{ Body: DefaultAvatar }>,
+  reply: FastifyReply,
+) {
   try {
-    reply.send();
+    if (!request.body.path) return reply.status(400).send({ message: 'Path to avatar required.' });
+    await prisma.user.update({
+      where: { id: request.user.id },
+      data: { avatarUrl: request.body.path },
+    });
+    reply.send({ message: 'Path to avatar updated successfully.' });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+    reply.send({ path: user.avatarUrl });
   } catch (error) {
     handleError(error, reply);
   }
@@ -229,13 +246,14 @@ export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
   try {
     // TODO: allow reset secret in case of error?
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
-    if (user.secret2FA) throw new Error('2FA already setup for this user.');
+    if (user.secret2FA)
+      return reply.status(400).send({ message: '2FA already setup for this user.' });
 
     const secret = speakeasy.generateSecret({
       name: `ft_transcendence(${request.user.username})`,
     });
     if (!secret.otpauth_url) {
-      throw new Error('No otpauth_url in secret.');
+      return reply.status(500).send({ message: 'No otpauth_url in secret.' });
     }
     const qrCode = await qrcode.toDataURL(secret.otpauth_url);
     await prisma.user.update({
