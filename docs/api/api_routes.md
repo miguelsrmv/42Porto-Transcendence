@@ -13,9 +13,10 @@
 | `DELETE` | `/users/logout`            |                     |                                              | Logout user                               |
 | `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in                |
 | `GET`    | `/users/:id/stats`         |    `id` user id     |                                              | Get match stats of that user              |
-| `POST`   | `/users/2FA/verify`        |                     |                    token                     | Checks if user enters valid token for 2FA |
-| `GET`    | `/users/2FA/check`         |                     |                                              | CHecks if user has 2FA enabled            |
-| `GET`    | `/users/2FA/setup`         |                     |                                              | Sets up 2FA for that user                 |
+| `POST`   | `/users/2FA/verify`        |                     |             token (and password)             | Checks if user enters valid token for 2FA |
+| `GET`    | `/users/2FA/check`         |                     |                                              | Checks if user has 2FA enabled            |
+| `GET`    | `/users/2FA/setup`         |                     |                                              | Sets up 2FA for the user                  |
+| `GET`    | `/users/2FA/disable`       |                     |                                              | Disables 2FA for the user                 |
 | `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user         |
 | `POST`   | `/friends`                 |                     |             userId and friendId              | Create a friendship between two users     |
 | `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                  |
@@ -63,7 +64,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
   "email": "new_user@email.com", // optional
   "oldPassword": "newPassword",
   "newPassword": "newPassword", // optional
-  "repeatPassword": "newPassword", // optional
+  "repeatPassword": "newPassword" // optional
 }
 ```
 
