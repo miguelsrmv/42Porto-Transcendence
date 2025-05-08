@@ -5,6 +5,7 @@ import { handleError } from '../../utils/errorHandler';
 import { getUserClassicStats, getUserCrazyStats } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
+import { transformUserUpdate } from '../../utils/helpers';
 
 export type UserCreate = {
   username: string;
@@ -21,7 +22,7 @@ type UserLogin = {
 export type UserUpdate = {
   username?: string;
   email?: string;
-  avatarUrl?: string;
+  oldPassword?: string;
   newPassword?: string;
   repeatPassword?: string;
 };
@@ -83,6 +84,9 @@ export async function updateUser(
   reply: FastifyReply,
 ) {
   try {
+    if (request.body.newPassword) {
+      request.body = transformUserUpdate(request.body);
+    }
     const user = await prisma.user.update({
       where: { id: request.user.id },
       data: request.body,
@@ -289,6 +293,19 @@ export async function check2FAstatus(request: FastifyRequest, reply: FastifyRepl
   try {
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
     reply.send(user.secret2FA != null);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function disable2FA(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    // TODO: Check if already null?
+    await prisma.user.update({
+      where: { id: request.user.id },
+      data: { secret2FA: null },
+    });
+    return reply.send('Success');
   } catch (error) {
     handleError(error, reply);
   }
