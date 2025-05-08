@@ -19,6 +19,9 @@ type UserLogin = {
 export type UserUpdate = {
   username?: string;
   email?: string;
+  avatarUrl?: string;
+  newPassword?: string;
+  repeatPassword?: string;
 };
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
@@ -66,13 +69,12 @@ export async function createUser(
 }
 
 export async function updateUser(
-  request: FastifyRequest<{ Params: IParams; Body: UserUpdate }>,
+  request: FastifyRequest<{ Body: UserUpdate }>,
   reply: FastifyReply,
 ) {
   try {
-    if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.update({
-      where: { id: request.params.id },
+      where: { id: request.user.id },
       data: request.body,
     });
     reply.send(user);
