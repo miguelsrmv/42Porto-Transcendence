@@ -7,6 +7,22 @@ import { avatarList } from '../../ui/avatarData/avatarData.js';
 
 let avatarIndex: number = 0;
 
+type UserData = {
+  username: string | null;
+  email: string | null;
+  password: string | null;
+  repeatPassword: string | null;
+  twoFA: boolean;
+};
+
+let userData = {
+  username: null,
+  email: null,
+  password: null,
+  repeatPassword: null,
+  twoFA: false,
+};
+
 /**
  * @brief Initializes view for settings
  *
@@ -17,6 +33,7 @@ export async function initializeView(): Promise<void> {
   avatarIndex = 0;
   createAvatarLoop();
   handleSubmitAvatar();
+  handleUserDataChange();
 }
 
 function createAvatarLoop(): void {
@@ -134,6 +151,54 @@ function handleSubmitAvatar(): void {
       console.log(`Error fetching avatar path: ${error}`);
     }
   }
+}
+
+function handleUserDataChange(): void {
+  const userDataSubmitButton = document.getElementById('settings-submit-button');
+  if (!userDataSubmitButton) {
+    console.log('No button to submit user data found');
+    return;
+  }
+
+  userDataSubmitButton.addEventListener('click', () => {
+    const usernameDataInput = document.getElementById(
+      'username-settings-container',
+    ) as HTMLInputElement;
+    if (!usernameDataInput) {
+      console.log('No username data input field found');
+      return;
+    }
+
+    const emailDataInput = document.getElementById('email-settings-container') as HTMLInputElement;
+    if (!emailDataInput) {
+      console.log('No email data input field found');
+      return;
+    }
+
+    const passwordDataInput = document.getElementById(
+      'password-settings-container',
+    ) as HTMLInputElement;
+    if (!passwordDataInput) {
+      console.log('No password data input field found');
+      return;
+    }
+
+    const retypePasswordDataInput = document.getElementById(
+      'retype-password-settings-container',
+    ) as HTMLInputElement;
+    if (!retypePasswordDataInput) {
+      console.log('No retypePassword data input field found');
+      return;
+    }
+
+    const twoFADataInput = document.getElementById('2FA-toggle-input') as HTMLInputElement;
+    if (!twoFADataInput) {
+      console.log('No twoFA data input field found');
+      return;
+    }
+
+    userData.username = usernameDataInput.value;
+  });
 }
 
 // TODO: Change email
