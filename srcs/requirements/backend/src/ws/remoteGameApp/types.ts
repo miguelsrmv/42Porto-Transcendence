@@ -1,42 +1,55 @@
+import { Ball } from './ball';
+import { gameStats } from './gameStats';
+import { Paddle } from './paddle';
 import { gameSettings, leanGameSettings } from './settings';
 import WebSocket from 'ws';
 
-export interface GameSate {
-  ball: { x: number; y: number; radius: number; speedY: number; speedX: number };
-  leftPaddle: {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    color: string;
-    speedY: number;
-    speedModifier: number;
-  };
-  rightPaddle: {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    color: string;
-    speedY: number;
-    speedModifier: number;
-  };
+export interface GameState {
+  ball: Ball;
+  fakeBalls: Ball[];
+  leftPaddle: Paddle;
+  rightPaddle: Paddle;
+  leftPowerBarFill: number;
+  rightPowerBarFill: number;
+  leftAnimation: boolean;
+  rightAnimation: boolean;
+}
+
+export enum gameRunningState {
+  playing,
+  paused,
+  ended,
+}
+
+export enum PlayerInput {
+  up = 'up',
+  down = 'down',
+  stop = 'stop',
 }
 
 export type ClientMessage =
   | { type: 'join_game'; playerSettings: leanGameSettings }
-  | { type: 'movement'; direction: 'up' | 'down' | 'stop' }
-  | { type: 'power_up' };
+  | { type: 'movement'; direction: PlayerInput }
+  | { type: 'power_up' }
+  | { type: 'stop_game' };
 
 export type ServerMessage =
-  | { type: 'game_state'; state: GameSate }
-  | { type: 'game_start'; players: [string, string]; settings: gameSettings }
+  | { type: 'game_setup'; settings: gameSettings }
+  | { type: 'game_start' }
+  | { type: 'game_state'; state: GameState }
+  | { type: 'game_goal'; scoringSide: 'left' | 'right' }
+  | {
+      type: 'game_end';
+      winningPlayer: 'left' | 'right';
+      ownSide: 'left' | 'right';
+      stats: gameStats;
+    }
+  | { type: 'player_left' }
   | { type: 'error'; message: string };
 
 export interface GameSession {
   players: Map<WebSocket, string>;
   settings: gameSettings;
-  // state: GameSate;
 }
 
 // To be able to print

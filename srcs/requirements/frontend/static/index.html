@@ -1283,10 +1283,13 @@
   </template>
 
   <template id="game-template">
-    <div id="gaming-page" class="w-screen h-[720px] flex flex-row">
+    <div
+      id="gaming-page"
+      class="w-screen h-[90%] flex flex-row justify-center items-center p-6 space-x-6"
+    >
       <div
         id="left-hud"
-        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl ml-6 transition-opacity duration-500 opacity-100"
+        class="w-1/6 max-w-[250px] h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl transition-opacity duration-500 opacity-100"
       >
         <div
           id="left-player-hud"
@@ -1319,7 +1322,7 @@
             <div
               id="left-character-power-bar-fill"
               class="bg-red-500 h-2.5 rounded-full"
-              style="width: 45%"
+              style="width: 0%"
             ></div>
           </div>
         </div>
@@ -1327,18 +1330,18 @@
       </div>
       <div
         id="game-container"
-        class="h-full min-w-[1240px] flex justify-center mx-auto relative transition-opacity duration-500 opacity-100"
+        class="h-full aspect-[16/9] flex justify-center items-center relative transition-opacity duration-500 opacity-100 overflow-hidden"
       >
         <img
           src="./static/backgrounds/Backyard.png"
           id="game-background"
-          class="h-[740px] min-w-[1240px] z-0 absolute inset-0 m-auto"
+          class="absolute inset-0 w-full h-full object-fill z-0"
         />
-        <canvas id="game-canvas" class="h-full min-w-[1200px] absolute inset-0 m-auto z-5"></canvas>
+        <canvas id="game-canvas" class="absolute inset-0 w-full h-full z-10"></canvas>
       </div>
       <div
         id="right-hud"
-        class="w-1/6 h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl mr-6 transition-opacity duration-500 opacity-100"
+        class="w-1/6 max-w-[250px] h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl transition-opacity duration-500 opacity-100"
       >
         <div
           id="right-player-hud"
@@ -1386,14 +1389,14 @@
             <div
               id="right-character-power-bar-fill"
               class="bg-blue-500 h-2.5 rounded-full"
-              style="width: 45%"
+              style="width: 0%"
             ></div>
           </div>
         </div>
       </div>
       <div
         id="game-stats"
-        class="hidden flex gap-4 bg-gray-700 items-center mx-auto w-3/4 opacity-0"
+        class="hidden flex gap-4 bg-gray-700 items-center mx-auto w-3/4 h-full opacity-0 rounded-lg border-l-4 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
       >
         <div id="player-identifier" class="flex"></div>
         <div id="stats" class="flex flex-col gap-4 w-2/3 mr-6">
@@ -1404,30 +1407,41 @@
             Winner!
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p id="goals-scored-title" class="font-serpentine text-green-400 text-2xl mr-4">
+            <p
+              id="goals-scored-title"
+              class="font-serpentine text-colour-placeholder text-2xl mr-4"
+            >
               Goals Scored
             </p>
             <p id="goals-scored-result" class="font-serpentine text-white text-3xl font-bold" d></p>
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p id="goals-suffered-title" class="font-serpentine text-green-400 text-2xl mr-4">
+            <p
+              id="goals-suffered-title"
+              class="font-serpentine text-colour-placeholder text-2xl mr-4"
+            >
               Goals Suffered
             </p>
             <p id="goals-suffered-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p id="saves-title" class="font-serpentine text-green-400 text-2xl mr-4">Goals Saved</p>
+            <p id="saves-title" class="font-serpentine text-colour-placeholder text-2xl mr-4">
+              Goals Saved
+            </p>
             <p id="saves-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
 
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p id="powers-used-title" class="font-serpentine text-green-400 text-2xl mr-4">
+            <p id="powers-used-title" class="font-serpentine text-colour-placeholder text-2xl mr-4">
               Powers Used
             </p>
             <p id="powers-used-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p id="max-ball-speed-title" class="font-serpentine text-green-400 text-2xl mr-4">
+            <p
+              id="max-ball-speed-title"
+              class="font-serpentine text-colour-placeholder text-2xl mr-4"
+            >
               Max Ball Speed
             </p>
             <p id="max-ball-speed-result" class="font-serpentine text-white text-3xl font-bold"></p>

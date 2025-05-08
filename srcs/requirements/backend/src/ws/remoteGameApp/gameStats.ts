@@ -1,4 +1,4 @@
-import { SPEED } from './game.js';
+import { SPEED } from './gameArea.js';
 
 export class gameStats {
   left: playerStats;

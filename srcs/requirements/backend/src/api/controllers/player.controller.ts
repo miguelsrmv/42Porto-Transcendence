@@ -21,6 +21,8 @@ export async function getAllPlayers(request: FastifyRequest, reply: FastifyReply
   }
 }
 
+// TODO:Implement getMyPlayer?
+
 export async function getPlayerById(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
@@ -67,6 +69,19 @@ export async function getPlayerStats(
     };
 
     reply.send({ stats });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function getOwnPlayer(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const userId = request.user.id;
+    const player = await prisma.player.findUniqueOrThrow({
+      where: { userId: userId },
+    });
+
+    reply.send(player);
   } catch (error) {
     handleError(error, reply);
   }
