@@ -1532,128 +1532,156 @@
   </template>
 
   <template id="settings-template">
-    <div
-      id="player-global-settings"
-      class="flex flex-row w-[80%] h-[90%] justify-center items-center mx-auto">
-     
-    >
-      <div
-        id="player-avatar-settings"
-        class="flex flex-col w-1/3 h-full bg-gray-700 rounded-lg p-6 mb-6 shadow-xl border-l-4 border-orange-500 gap-6 transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-hidden""
-      >
-        <h2 id="current-avatar-settings" class="text-4xl font-bold text-white mb-8">Avatar</h2>
-        <div id="temp-container" class="flex flex-row justify-center items-center">
-          <button
-            id="previous-avatar"
-            class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 mr-2 text-4xl"
+    <div id="player-global-settings" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
+      <div class="flex flex-row gap-6 h-full">
+        <div class="flex flex-col w-1/3 h-full">
+          <div
+            id="player-avatar-settings"
+            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
           >
-            &lt
-          </button>
-          <div class="h-46 w-46 rounded-full overflow-hidden border-4 border-orange-400 mt-4 mb-4">
-            <img
-              id="user-avatar"
-              src="./static/avatar/default/mario.png"
-              alt="User Avatar"
-              class="h-full w-full object-cover"
-            />
-          </div>
-          <button
-            id="next-avatar"
-            class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 ml-2 text-4xl"
-          >
-            &gt
-          </button>
-        </div>
-        <div class="p-4 justify-center items-center mx-auto mt-6">
-          <button
-            id="avatar-submit-button"
-            class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
-          >
-            Change Avatar
-          </button>
-        </div>
-      </div>
-      <div
-        id="player-account-settings"
-        class="flex flex-col w-full h-full bg-gray-700 rounded-lg p-6 mb-6 shadow-md gap-6 justify-center"
-      >
-        <div class="bg-gray-800 rounded-lg p-4 text-center">
-          <label
-            for="username-settings-container"
-            class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
-            >Username</label
-          >
-          <input
-            id="username-settings-container"
-            type="text"
-            class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
-            placeholder="UsernamePlaceholder"
-          />
-        </div>
-
-        <div class="bg-gray-800 rounded-lg p-4 text-center">
-          <label
-            for="email-settings-container"
-            class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
-            >Email</label
-          >
-          <input
-            id="email-settings-container"
-            type="text"
-            class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
-            placeholder="EmailPlaceholder"
-          />
-        </div>
-
-        <div class="bg-gray-800 rounded-lg p-4 text-center">
-          <label
-            for="password-settings-container"
-            class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
-            >Password</label
-          >
-          <input
-            id="password-settings-container"
-            type="text"
-            class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold mb-6 text-center"
-            placeholder="**************"
-          />
-          <label
-            for="password-settings-container"
-            class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
-            >Retype Password</label
-          >
-          <input
-            id="password-settings-container"
-            type="text"
-            class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
-            placeholder="*************"
-          />
-        </div>
-
-        <div class="bg-gray-800 rounded-lg p-4">
-          <div class="flex flex-col items-center space-y-3">
-            <label
-              for="2fa-toggle-input"
-              class="block font-serpentine text-orange-400 text-lg font-bold"
-              >2-Factor Authentication</label
+            <h2 id="current-avatar-settings" class="text-4xl font-bold text-white mb-8 text-center">
+              Avatar Settings
+            </h2>
+            <div
+              id="avatar-container"
+              class="flex flex-row h-1/2 flex-grow justify-center items-center bg-gray-700 rounded-lg mt-40"
             >
-
-            <label for="2fa-toggle-input" class="relative inline-flex items-center cursor-pointer">
-              <input id="2fa-toggle-input" type="checkbox" value="" class="sr-only peer" />
+              <button
+                id="previous-avatar"
+                class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 mr-2 text-4xl"
+              >
+                &lt
+              </button>
               <div
-                class="w-20 h-10 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-[2.5rem] rtl:peer-checked:after:-translate-x-[2.5rem] peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-8 after:w-8 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-orange-600"
-              ></div>
-              <span class="sr-only">Enable 2-Factor Authentication</span>
-            </label>
+                class="h-64 w-64 rounded-full overflow-hidden border-4 border-orange-400 mt-4 mb-4"
+              >
+                <img
+                  id="user-avatar"
+                  src="./static/avatar/default/mario.png"
+                  alt="User Avatar"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <button
+                id="next-avatar"
+                class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 ml-2 text-4xl"
+              >
+                &gt
+              </button>
+            </div>
+            <div class="flex p-4 justify-center items-center mt-6">
+              <button
+                id="avatar-submit-button"
+                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+              >
+                Change Avatar
+              </button>
+            </div>
           </div>
         </div>
-        <div class="p-4 justify-center items-center mx-auto mt-6">
-          <button
-            id="settings-submit-button"
-            class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+        <div class="flex flex-col w-full h-full">
+          <div
+            id="user-account-settings"
+            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
           >
-            Submit
-          </button>
+            <h2 id="current-user-settings" class="text-4xl font-bold text-white mb-8 text-center">
+              User Settings
+            </h2>
+
+            <div
+              id="settings-container"
+              class="flex flex-col h-4/5 justify-center items-center bg-gray-700 rounded-lg gap-6"
+            >
+              <div class="bg-gray-800 rounded-lg p-4 text-center w-4/5">
+                <label
+                  for="username-settings-container"
+                  class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                  >Username</label
+                >
+                <input
+                  id="username-settings-container"
+                  type="text"
+                  class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
+                  placeholder="UsernamePlaceholder"
+                />
+              </div>
+
+              <div class="bg-gray-800 rounded-lg p-4 text-center w-4/5">
+                <label
+                  for="email-settings-container"
+                  class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                  >Email</label
+                >
+                <input
+                  id="email-settings-container"
+                  type="text"
+                  class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
+                  placeholder="EmailPlaceholder"
+                />
+              </div>
+
+              <div
+                class="flex bg-gray-800 rounded-lg p-4 text-center items-center justify-center w-4/5"
+              >
+                <div class="flex flex-row">
+                  <div class="flex flex-col">
+                    <label
+                      for="password-settings-container"
+                      class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                      >Password</label
+                    >
+                    <input
+                      id="password-settings-container"
+                      type="text"
+                      class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold mb-6 text-center"
+                      placeholder="**************"
+                    />
+                  </div>
+                  <div class="flex flex-col">
+                    <label
+                      for="password-settings-container"
+                      class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                      >Retype Password</label
+                    >
+                    <input
+                      id="password-settings-container"
+                      type="text"
+                      class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
+                      placeholder="*************"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="bg-gray-800 rounded-lg p-4 w-4/5">
+                <div class="flex flex-col items-center space-y-3">
+                  <label
+                    for="2fa-toggle-input"
+                    class="block font-serpentine text-orange-400 text-lg font-bold"
+                    >2-Factor Authentication</label
+                  >
+
+                  <label
+                    for="2fa-toggle-input"
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input id="2fa-toggle-input" type="checkbox" value="" class="sr-only peer" />
+                    <div
+                      class="w-20 h-10 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-[2.5rem] rtl:peer-checked:after:-translate-x-[2.5rem] peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-8 after:w-8 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-orange-600"
+                    ></div>
+                    <span class="sr-only">Enable 2-Factor Authentication</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="flex p-4 justify-center items-center mt-6">
+              <button
+                id="settings-submit-button"
+                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
