@@ -15,6 +15,7 @@ import {
   setup2FA,
   verify2FA,
   check2FAstatus,
+  disable2FA,
 } from '../controllers/user.controller';
 import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
@@ -32,6 +33,7 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/2FA/setup', { onRequest: [fastify.jwtAuth] }, setup2FA);
   fastify.post('/2FA/verify', verify2FA);
   fastify.get('/2FA/check', { onRequest: [fastify.jwtAuth] }, check2FAstatus);
+  fastify.get('/2FA/disable', disable2FA);
   fastify.get<{ Params: IParams }>(
     '/:id',
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
