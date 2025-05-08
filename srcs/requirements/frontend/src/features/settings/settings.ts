@@ -8,7 +8,7 @@ import { avatarList } from '../../ui/avatarData/avatarData.js';
 type UserData = {
   username: string;
   email: string;
-  password: string;
+  newPassword: string;
   repeatPassword: string;
 };
 
@@ -22,6 +22,7 @@ let userData: UserData;
  */
 export async function initializeView(): Promise<void> {
   await resetFormData();
+  updateFormPlaceholder();
   createAvatarLoop();
   handleSubmitAvatar();
   handleUserDataChange();
@@ -203,7 +204,7 @@ function handleUserDataChange(): void {
 
     userData.username = usernameDataInput.value;
     userData.email = emailDataInput.value;
-    userData.password = passwordDataInput.value;
+    userData.newPassword = passwordDataInput.value;
     userData.repeatPassword = retypePasswordDataInput.value;
   }
 }
@@ -216,7 +217,7 @@ function handle2FA(): void {
   }
 
   twoFAToggle.addEventListener('click', () => {
-    const twoFAIsChecked = twoFAtoggle.checked;
+    const twoFAIsChecked = twoFAToggle.checked;
 
     if (twoFAIsChecked) {
       disable2FA(twoFAToggle);
@@ -251,12 +252,34 @@ async function enable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
   }
 }
 
+function updateFormPlaceholder(): void {
+  const changeUsernameField = document.getElementById(
+    'username-settings-container',
+  ) as HTMLInputElement;
+  if (!changeUsernameField) {
+    console.log('Could not find username field');
+    return;
+  }
+
+  const changeEmailField = document.getElementById('email-settings-container') as HTMLInputElement;
+  if (!changeUsernameField) {
+    console.log('Could not find username field');
+    return;
+  }
+
+  const storedUsername = window.localStorage.getItem('Username');
+  if (storedUsername) changeUsernameField.placeholder = storedUsername;
+
+  const storedEmail = window.localStorage.getItem('Email');
+  if (storedEmail) changeEmailField.placeholder = storedEmail;
+}
+
 async function resetFormData(): Promise<void> {
   avatarIndex = 0;
   userData = {
     username: '',
     email: '',
-    password: '',
+    newPassword: '',
     repeatPassword: '',
   };
 
@@ -278,6 +301,6 @@ async function resetFormData(): Promise<void> {
     return;
   }
 
-  if (twoFAstatus) twoFAtoggle.checked = true;
-  else twoFAtoggle.checked = false;
+  if (twoFAstatus) twoFAtoggle.checked = false;
+  else twoFAtoggle.checked = true;
 }
