@@ -3,7 +3,6 @@ FROM ghcr.io/foundry-rs/foundry:stable
 WORKDIR /home/foundry/blockchain
 
 COPY ./tools/contracts/ .
-COPY ./conf/keystores/tournamentKey /home/foundry/.foundry/keystores/tournamentKey
 COPY ./deploy.sh .
 
 USER root

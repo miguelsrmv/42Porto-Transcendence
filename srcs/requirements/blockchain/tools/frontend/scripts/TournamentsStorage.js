@@ -1,5 +1,5 @@
-// Avalanche C-Chain RPC URL
-const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
+// // Avalanche C-Chain RPC URL
+// const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
 
 // Detect multiple wallet providers
 async function connectWallet() {
