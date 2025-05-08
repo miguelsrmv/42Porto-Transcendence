@@ -46,6 +46,7 @@ export class Attack {
   enemyPaddle: Paddle;
   ball: Ball;
   attackName: string | undefined;
+  enemyAttackName: string | null;
   side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
@@ -67,6 +68,7 @@ export class Attack {
    */
   constructor(
     attackName: string | undefined,
+    enemyAttackName: string | null,
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
@@ -76,6 +78,7 @@ export class Attack {
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.attackName = attackName;
+    this.enemyAttackName = enemyAttackName;
     this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
@@ -83,17 +86,17 @@ export class Attack {
       'Super Shroom': {
         handler: async () => this.superShroom(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Egg Barrage': {
         handler: async () => this.eggBarrage(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Spin Dash': {
         handler: async () => this.spinDash(),
-        duration: 2,
-        cooldown: 10000,
+        duration: 3,
+        cooldown: 8000,
       },
       'Thunder Wave': {
         handler: async () => this.thunderWave(),
@@ -103,26 +106,28 @@ export class Attack {
       Confusion: {
         handler: async () => this.confusion(),
         duration: 4,
-        cooldown: 7500,
+        cooldown: 10000,
       },
       'Magic Mirror': {
         handler: async () => this.magicMirror(),
         duration: 0,
-        cooldown: 7500,
+        cooldown: 14000,
       },
-      Mini: {
-        handler: async () => this.mini(),
-        duration: 5,
-        cooldown: 5000,
+      'The Amazing Mirror': {
+        handler: async () => this.theAmazingMirror(),
+        duration: 4,
+        cooldown: 10000,
       },
       'Giant Punch': {
         handler: async () => this.giantPunch(),
         duration: 4,
-        cooldown: 10000,
+        cooldown: 8000,
       },
     };
 
-    this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    if (attackName !== 'The Amazing Mirror')
+      this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    else this.activeAttack = this.attackMap[enemyAttackName as attackIdentifier].handler;
     this.attackDuration = this.attackMap[attackName as attackIdentifier].duration;
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
@@ -246,13 +251,11 @@ export class Attack {
 
     const currentSpeedXMag = Math.abs(startingSpeedX);
     const boostedSpeedXMag = currentSpeedXMag * growthFactor;
-    const cappedSpeedXMag = Math.min(boostedSpeedXMag, MAX_BALL_SPEED);
-    const newSpeedX = cappedSpeedXMag * Math.sign(startingSpeedX);
+    const newSpeedX = boostedSpeedXMag * Math.sign(startingSpeedX);
 
     const currentSpeedYMag = Math.abs(startingSpeedY);
     const boostedSpeedYMag = currentSpeedYMag * growthFactor;
-    const cappedSpeedYMag = Math.min(boostedSpeedYMag, MAX_BALL_SPEED);
-    const newSpeedY = cappedSpeedYMag * Math.sign(startingSpeedY);
+    const newSpeedY = boostedSpeedYMag * Math.sign(startingSpeedY);
 
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
@@ -321,26 +324,11 @@ export class Attack {
   }
 
   /**
-   * @brief Executes the Mini attack.
+   * @brief Uses the enemy's attack.
    *
-   * This attack temporarily reduces the ball's size for the duration of the effect.
+   * This attack does nothing for cases of mirror Kirby matches
    */
-  async mini(): Promise<void> {
-    const startingVersion = getGameVersion();
-
-    const shrinkFactor = 0.5;
-
-    const oldRadius = this.ball.radius;
-    const newRadius = oldRadius * shrinkFactor;
-
-    this.ball.setRadius(newRadius);
-
-    await wait(this.attackDuration);
-
-    if (!this.gameVersionHasChanged(startingVersion)) {
-      this.ball.setRadius(oldRadius);
-    }
-  }
+  async theAmazingMirror(): Promise<void> {}
 
   /**
    * @brief Executes the Giant Punch attack.
