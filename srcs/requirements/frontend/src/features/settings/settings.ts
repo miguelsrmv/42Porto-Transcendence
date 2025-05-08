@@ -216,7 +216,7 @@ function handle2FA(): void {
   }
 
   twoFAToggle.addEventListener('click', () => {
-    const twoFAIsChecked = twoFAtoggle.checked;
+    const twoFAIsChecked = twoFAToggle.checked;
 
     if (twoFAIsChecked) {
       disable2FA(twoFAToggle);
