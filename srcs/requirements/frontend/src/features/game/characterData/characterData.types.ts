@@ -15,7 +15,7 @@ export type attackIdentifier =
   | 'Spin Dash'
   | 'Thunder Wave'
   | 'Confusion'
-  | 'Magic Mirror'
+  | 'Gale Boomerang'
   | 'The Amazing Mirror'
   | 'Giant Punch'
   | 'Morph Ball'

@@ -41,6 +41,22 @@ const characterList: character[] = [
     selectHelpMessage: 'Fill the field with fake targets!',
   },
   {
+    name: 'Donkey Kong',
+    attack: 'Giant Punch',
+    characterSelectPicturePath: `${characterSelectPicturePath}donkey_kong.png`,
+    characterAvatarPicturePath: `${characterAvatarPicturePath}donkey_kong.png`,
+    accentColour: 'orange',
+    selectHelpMessage: "Smash your opponent's paddle!",
+  },
+  {
+    name: 'Bowser',
+    attack: 'Shell Decoy',
+    characterSelectPicturePath: `${characterSelectPicturePath}bowser.png`,
+    characterAvatarPicturePath: `${characterAvatarPicturePath}bowser.png`,
+    accentColour: 'lime',
+    selectHelpMessage: 'Hide the ball in your shell!',
+  },
+  {
     name: 'Sonic',
     attack: 'Spin Dash',
     characterSelectPicturePath: `${characterSelectPicturePath}sonic.png`,
@@ -66,11 +82,11 @@ const characterList: character[] = [
   },
   {
     name: 'Link',
-    attack: 'Magic Mirror',
+    attack: 'Gale Boomerang',
     characterSelectPicturePath: `${characterSelectPicturePath}link.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}link.png`,
     accentColour: 'cyan',
-    selectHelpMessage: "Reflect the ball's trajectory!",
+    selectHelpMessage: "Invert the ball's trajectory!",
   },
   {
     name: 'Kirby',
@@ -97,28 +113,12 @@ const characterList: character[] = [
     selectHelpMessage: 'Speed up your paddle!',
   },
   {
-    name: 'Bowser',
-    attack: 'Shell Decoy',
-    characterSelectPicturePath: `${characterSelectPicturePath}bowser.png`,
-    characterAvatarPicturePath: `${characterAvatarPicturePath}bowser.png`,
-    accentColour: 'lime',
-    selectHelpMessage: 'Hide the ball in your shell!',
-  },
-  {
     name: 'Snake',
     attack: 'Sabotage',
     characterSelectPicturePath: `${characterSelectPicturePath}snake.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}snake.png`,
     accentColour: 'zinc',
     selectHelpMessage: "Hide your opponent's paddle!",
-  },
-  {
-    name: 'Donkey Kong',
-    attack: 'Giant Punch',
-    characterSelectPicturePath: `${characterSelectPicturePath}donkey_kong.png`,
-    characterAvatarPicturePath: `${characterAvatarPicturePath}donkey_kong.png`,
-    accentColour: 'orange',
-    selectHelpMessage: "Smash your opponent's paddle!",
   },
 ] as const;
 

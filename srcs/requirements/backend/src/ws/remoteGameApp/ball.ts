@@ -120,6 +120,11 @@ export class Ball {
     this.speedX = 0;
     this.speedY = 0;
     this.radius = BALL_RADIUS;
+    this.isVisible = true;
+  }
+
+  setIsVisible(visibility: boolean) {
+    this.isVisible = visibility;
   }
 }
 
