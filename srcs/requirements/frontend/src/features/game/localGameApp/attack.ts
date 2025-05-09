@@ -123,6 +123,26 @@ export class Attack {
         duration: 4,
         cooldown: 8000,
       },
+      'Morph Ball': {
+        handler: async () => this.morphBall(),
+        duration: 4,
+        cooldown: 8000,
+      },
+      'Falcon Dive': {
+        handler: async () => this.falconDive(),
+        duration: 4,
+        cooldown: 6000,
+      },
+      'Shell Decoy': {
+        handler: async () => this.shellDecoy(),
+        duration: 6,
+        cooldown: 8000,
+      },
+      Sabotage: {
+        handler: async () => this.sabotage(),
+        duration: 6,
+        cooldown: 10000,
+      },
     };
 
     if (attackName !== 'The Amazing Mirror')
@@ -336,7 +356,6 @@ export class Attack {
    * This attack temporarily reduces the opponent's paddle size for the duration of the effect.
    */
   async giantPunch(): Promise<void> {
-    console.log('Giant punch called');
     const startingVersion = getGameVersion();
 
     const shrink = PADDLE_LEN * 0.4;
@@ -356,6 +375,99 @@ export class Attack {
       const newOriginalY = this.enemyPaddle.y;
       this.enemyPaddle.setHeight(this.enemyPaddle.height + shrink);
       this.enemyPaddle.setY(newOriginalY + yOffset);
+    }
+  }
+
+  /**
+   * @brief Executes the Morph Ball attack.
+   *
+   * This attack temporarily reduces the ball's speed
+   */
+  async morphBall(): Promise<void> {
+    const startingVersion = getGameVersion(); // Check score changes
+
+    const decreaseFactor = 0.6; // Speed multiplier
+
+    const startingSpeedX = this.ball.speedX;
+    const startingSpeedY = this.ball.speedY;
+
+    const currentSpeedXMag = Math.abs(startingSpeedX);
+    const boostedSpeedXMag = currentSpeedXMag * decreaseFactor;
+    const newSpeedX = boostedSpeedXMag * Math.sign(startingSpeedX);
+
+    const currentSpeedYMag = Math.abs(startingSpeedY);
+    const boostedSpeedYMag = currentSpeedYMag * decreaseFactor;
+    const newSpeedY = boostedSpeedYMag * Math.sign(startingSpeedY);
+
+    this.ball.setSpeed(newSpeedX, newSpeedY);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      const currentSpeedX = this.ball.speedX;
+      const currentSpeedY = this.ball.speedY;
+
+      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
+      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
+
+      const scaleFactor = originalMagnitude / currentMagnitude;
+      const revertedSpeedX = currentSpeedX * scaleFactor;
+      const revertedSpeedY = currentSpeedY * scaleFactor;
+
+      this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
+    }
+  }
+
+  /**
+   * @brief Executes the Falcon Dive attack.
+   *
+   * This attack temporarily increases the users' paddle speed for the duration of the effect.
+   */
+  async falconDive(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    const growthFactor = 2;
+
+    this.ownPaddle.setSpeedModifier(growthFactor);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setSpeedModifier(1);
+    }
+  }
+
+  /**
+   * @brief Executes the Hide in Shell attack.
+   *
+   * This attack temporarily makes the ball invisible.
+   */
+  async shellDecoy(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    this.ball.setIsVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.ball.setIsVisible(true);
+    }
+  }
+
+  /**
+   * @brief Executes the sabotage attack.
+   *
+   * This attack temporarily makes the opponent's paddle invisible.
+   */
+  async sabotage(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    this.enemyPaddle.setIsPaddleVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setIsPaddleVisible(true);
     }
   }
 }
