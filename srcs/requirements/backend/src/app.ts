@@ -9,6 +9,7 @@ import { tournamentRoutes } from './api/routes/tournament.routes';
 import { WSRoutes } from './ws/websocket.routes';
 import FastifyWebSocket from '@fastify/websocket';
 import { setLastActiveAt } from './api/middlewares/activeStatus';
+import multipart from '@fastify/multipart';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ const app = fastify({
   },
 });
 
+app.register(multipart);
 app.register(jwtPlugin);
 
 app.register(FastifyWebSocket);
