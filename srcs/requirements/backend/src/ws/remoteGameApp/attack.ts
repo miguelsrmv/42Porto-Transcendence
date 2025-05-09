@@ -215,17 +215,8 @@ export class Attack {
 
     const startingSpeedX = this.ball.speedX;
     const startingSpeedY = this.ball.speedY;
-
-    const currentSpeedXMag = Math.abs(startingSpeedX);
-    const boostedSpeedXMag = currentSpeedXMag * growthFactor;
-    const cappedSpeedXMag = Math.min(boostedSpeedXMag, MAX_BALL_SPEED);
-    const newSpeedX = cappedSpeedXMag * Math.sign(startingSpeedX);
-
-    const currentSpeedYMag = Math.abs(startingSpeedY);
-    const boostedSpeedYMag = currentSpeedYMag * growthFactor;
-    const cappedSpeedYMag = Math.min(boostedSpeedYMag, MAX_BALL_SPEED);
-    const newSpeedY = cappedSpeedYMag * Math.sign(startingSpeedY);
-
+    const newSpeedX = startingSpeedX * growthFactor;
+    const newSpeedY = startingSpeedY * growthFactor;
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
     await wait(this.attackDuration);
@@ -233,13 +224,8 @@ export class Attack {
     if (!this.gameVersionHasChanged(startingVersion)) {
       const currentSpeedX = this.ball.speedX;
       const currentSpeedY = this.ball.speedY;
-
-      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
-      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
-
-      const scaleFactor = originalMagnitude / currentMagnitude;
-      const revertedSpeedX = currentSpeedX * scaleFactor;
-      const revertedSpeedY = currentSpeedY * scaleFactor;
+      const revertedSpeedX = currentSpeedX * (1 / growthFactor);
+      const revertedSpeedY = currentSpeedY * (1 / growthFactor);
 
       this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
     }
@@ -305,19 +291,12 @@ export class Attack {
   async morphBall(): Promise<void> {
     const startingVersion = getGameVersion(this.gameArea); // Check score changes
 
-    const decreaseFactor = 0.6; // Speed multiplier
+    const slowFactor = 0.75; // Speed multiplier
 
     const startingSpeedX = this.ball.speedX;
     const startingSpeedY = this.ball.speedY;
-
-    const currentSpeedXMag = Math.abs(startingSpeedX);
-    const boostedSpeedXMag = currentSpeedXMag * decreaseFactor;
-    const newSpeedX = boostedSpeedXMag * Math.sign(startingSpeedX);
-
-    const currentSpeedYMag = Math.abs(startingSpeedY);
-    const boostedSpeedYMag = currentSpeedYMag * decreaseFactor;
-    const newSpeedY = boostedSpeedYMag * Math.sign(startingSpeedY);
-
+    const newSpeedX = startingSpeedX * slowFactor;
+    const newSpeedY = startingSpeedY * slowFactor;
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
     await wait(this.attackDuration);
@@ -325,17 +304,13 @@ export class Attack {
     if (!this.gameVersionHasChanged(startingVersion)) {
       const currentSpeedX = this.ball.speedX;
       const currentSpeedY = this.ball.speedY;
-
-      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
-      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
-
-      const scaleFactor = originalMagnitude / currentMagnitude;
-      const revertedSpeedX = currentSpeedX * scaleFactor;
-      const revertedSpeedY = currentSpeedY * scaleFactor;
+      const revertedSpeedX = currentSpeedX * (1 / slowFactor);
+      const revertedSpeedY = currentSpeedY * (1 / slowFactor);
 
       this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
     }
   }
+
   async falconDive(): Promise<void> {
     const startingVersion = getGameVersion(this.gameArea);
 
