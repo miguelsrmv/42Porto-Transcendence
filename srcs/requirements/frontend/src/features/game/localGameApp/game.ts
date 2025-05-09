@@ -4,7 +4,7 @@
  */
 
 import { Paddle } from './paddle.js';
-import { Ball, ballCountdown } from './ball.js';
+import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import {
   checkWallCollision,

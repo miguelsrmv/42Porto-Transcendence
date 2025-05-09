@@ -8,7 +8,6 @@ import { Paddle } from './paddle.js';
 
 let BALL_COLOUR = 'white';
 const BORDER_COLOUR = 'gray';
-let isVisible = true;
 
 /**
  * @class Ball
@@ -22,6 +21,7 @@ export class Ball {
   radius: number;
   speedX: number;
   speedY: number;
+  isVisible : boolean;
 
   /**
    * @brief Constructs a new Ball object.
@@ -39,6 +39,7 @@ export class Ball {
     this.radius = radius;
     this.speedX = speedX;
     this.speedY = speedY;
+    this.isVisible = true;
   }
 
   /**
@@ -46,7 +47,7 @@ export class Ball {
    * @param ctx The canvas rendering context.
    */
   draw(ctx: CanvasRenderingContext2D): void {
-    if (isVisible) {
+    if (this.isVisible) {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
       ctx.fillStyle = BALL_COLOUR;
@@ -137,27 +138,24 @@ export class Ball {
     this.speedX = 0;
     this.speedY = 0;
     this.radius = BALL_RADIUS;
-    isVisible = true;
+    this.isVisible = true;
   }
 
   setIsVisible(visibility: boolean): void {
-    isVisible = visibility;
+    this.isVisible = visibility;
+  }
+
+  countdown() {
+    let count: number = 0;
+
+    const interval = setInterval(() => {
+      this.isVisible = !this.isVisible;
+      count++;
+
+      if (count >= 6) {
+        clearInterval(interval);
+      }
+    }, 500);
   }
 }
 
-/**
- * @brief Toggles the visibility of the ball for a countdown effect.
- *        The ball blinks for 3 seconds (6 toggles) before becoming visible.
- */
-export function ballCountdown() {
-  let count: number = 0;
-
-  const interval = setInterval(() => {
-    isVisible = !isVisible;
-    count++;
-
-    if (count >= 6) {
-      clearInterval(interval);
-    }
-  }, 500);
-}

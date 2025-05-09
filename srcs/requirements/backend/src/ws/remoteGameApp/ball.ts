@@ -123,24 +123,26 @@ export class Ball {
     this.isVisible = true;
   }
 
+  /**
+   * @brief Changes the ball's visibility
+   */
   setIsVisible(visibility: boolean) {
     this.isVisible = visibility;
   }
-}
 
-/**
- * @brief Toggles the visibility of the ball for a countdown effect.
- * @param ball The ball whose visibility is toggled.
- */
-export function ballCountdown(ball: Ball) {
-  let count: number = 0;
+  /**
+   * @brief Creates ball countdown
+   */
+  countdown() {
+    let count: number = 0;
 
-  const interval = setInterval(() => {
-    ball.isVisible = !ball.isVisible;
-    count++;
+    const interval = setInterval(() => {
+      this.isVisible = !this.isVisible;
+      count++;
 
-    if (count >= 6) {
-      clearInterval(interval);
-    }
-  }, 500);
+      if (count >= 6) {
+        clearInterval(interval);
+      }
+    }, 500);
+  }
 }
