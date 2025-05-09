@@ -21,6 +21,7 @@
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^9.0.4",
+    "@fastify/multipart": "^9.0.3",
     "@fastify/websocket": "^11.0.2",
     "@prisma/client": "^6.5.0",
     "dotenv": "^16.4.7",

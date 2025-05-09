@@ -18,7 +18,8 @@
 | `GET`    | `/users/2FA/setup`         |                     |                                              | Sets up 2FA for the user                  |
 | `GET`    | `/users/2FA/disable`       |                     |                                              | Disables 2FA for the user                 |
 | `GET`    | `/users/getAvatarPath`     |                     |                                              | Get user's avatar image path              |
-| `PUT`    | `/users/defaultAvatar`     |                     |                                              | Updates avatar image path to a default    |
+| `PUT`    | `/users/defaultAvatar`     |                     |                     path                     | Updates avatar image path to a default    |
+| `PUT`    | `/users/customAvatar`      |                     |                 avatar data                  | Uploads custom avatar image               |
 | `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user         |
 | `POST`   | `/friends`                 |                     |             userId and friendId              | Create a friendship between two users     |
 | `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                  |

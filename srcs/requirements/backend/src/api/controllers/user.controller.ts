@@ -2,10 +2,13 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
-import { finish2FAsetup, getUserClassicStats, getUserCrazyStats } from '../services/user.services';
+import { getUserClassicStats, getUserCrazyStats } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
+import fs from 'fs';
+import util from 'util';
+import { pipeline } from 'stream';
 
 export type UserCreate = {
   username: string;
@@ -25,6 +28,10 @@ export type UserUpdate = {
   oldPassword?: string;
   newPassword?: string;
   repeatPassword?: string;
+};
+
+export type AvatarData = {
+  data: string;
 };
 
 export type DefaultAvatar = {
@@ -231,6 +238,23 @@ export async function setDefaultAvatar(
   } catch (error) {
     handleError(error, reply);
   }
+}
+
+export async function uploadCustomAvatar(
+  request: FastifyRequest<{ Body: AvatarData }>,
+  reply: FastifyReply,
+) {
+  const pump = util.promisify(pipeline);
+  const parts = request.files();
+  const userId = request.user.id;
+  for await (const part of parts) {
+    await pump(part.file, fs.createWriteStream(`../avatar/${userId}`));
+  }
+  await prisma.user.update({
+    where: { id: userId },
+    data: { avatarUrl: `static/avatar/${userId}` },
+  });
+  reply.send({ message: 'Avatar uploaded.' });
 }
 
 export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply) {

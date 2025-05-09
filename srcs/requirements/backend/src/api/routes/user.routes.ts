@@ -18,6 +18,8 @@ import {
   VerifyToken,
   getAvatarPath,
   setDefaultAvatar,
+  AvatarData,
+  uploadCustomAvatar,
   DefaultAvatar,
 } from '../controllers/user.controller';
 import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
@@ -36,6 +38,11 @@ export async function userRoutes(fastify: FastifyInstance) {
     '/defaultAvatar',
     { onRequest: [fastify.jwtAuth] },
     setDefaultAvatar,
+  );
+  fastify.put<{ Body: AvatarData }>(
+    '/customAvatar',
+    { onRequest: [fastify.jwtAuth] },
+    uploadCustomAvatar,
   );
   fastify.get('/getAvatarPath', { onRequest: [fastify.jwtAuth] }, getAvatarPath);
   fastify.get('/2FA/setup', { onRequest: [fastify.jwtAuth] }, setup2FA);
