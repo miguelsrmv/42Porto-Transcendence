@@ -17,7 +17,11 @@ export type attackIdentifier =
   | 'Confusion'
   | 'Magic Mirror'
   | 'The Amazing Mirror'
-  | 'Giant Punch';
+  | 'Giant Punch'
+  | 'Morph Ball'
+  | 'Falcon Dive'
+  | 'Shell Decoy'
+  | 'Sabotage';
 
 /**
  * @brief Interface for character data.
