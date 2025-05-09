@@ -1,4 +1,4 @@
-import { Ball, ballCountdown } from './ball.js';
+import { Ball } from './ball.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, GameArea, SPEED } from './gameArea.js';
 import { wait } from './helpers.js';
 import { Paddle } from './paddle.js';
@@ -141,7 +141,7 @@ async function resetRound(gameArea: GameArea) {
   gameArea.rightPlayer.ownPaddle.reset();
   gameArea.fakeBalls.splice(0, gameArea.fakeBalls.length);
   gameArea.runningState = gameRunningState.paused;
-  ballCountdown(gameArea.ball);
+  gameArea.leftPlayer.ball.countdown();
   await wait(3);
   const newTime = Date.now();
   gameArea.leftAnimation = false;

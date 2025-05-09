@@ -4,7 +4,7 @@
  */
 
 import { Paddle } from './paddle.js';
-import { Ball, ballCountdown } from './ball.js';
+import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import {
   checkWallCollision,
@@ -383,5 +383,13 @@ export function paintScore(side: string, score: number): void {
  * @brief Ends the local game if it is currently running.
  */
 export function endLocalGameIfRunning(): void {
-  if (myGameArea.state !== gameState.ended) myGameArea.stop();
+  if (myGameArea.state !== gameState.ended) {
+    lastTime = 0;
+    countdownTimeLeft = 3;
+    countdownBlinkTimer = 0;
+    countdownVisible = true;
+    isInitialCountdownActive = true;
+    stats.reset();
+    myGameArea.stop();
+  }
 }
