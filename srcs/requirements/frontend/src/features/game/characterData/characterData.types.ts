@@ -15,9 +15,13 @@ export type attackIdentifier =
   | 'Spin Dash'
   | 'Thunder Wave'
   | 'Confusion'
-  | 'Magic Mirror'
+  | 'Gale Boomerang'
   | 'The Amazing Mirror'
-  | 'Giant Punch';
+  | 'Giant Punch'
+  | 'Morph Ball'
+  | 'Falcon Dive'
+  | 'Shell Decoy'
+  | 'Sabotage';
 
 /**
  * @brief Interface for character data.

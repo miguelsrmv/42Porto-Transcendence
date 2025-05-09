@@ -18,9 +18,13 @@ type attackIdentifier =
   | 'Spin Dash'
   | 'Thunder Wave'
   | 'Confusion'
-  | 'Magic Mirror'
+  | 'Gale Boomerang'
   | 'The Amazing Mirror'
-  | 'Giant Punch';
+  | 'Giant Punch'
+  | 'Morph Ball'
+  | 'Falcon Dive'
+  | 'Shell Decoy'
+  | 'Sabotage';
 
 export class Attack {
   ownPaddle: Paddle;
@@ -62,17 +66,17 @@ export class Attack {
       'Super Shroom': {
         handler: async () => this.superShroom(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Egg Barrage': {
         handler: async () => this.eggBarrage(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Spin Dash': {
         handler: async () => this.spinDash(),
-        duration: 2,
-        cooldown: 10000,
+        duration: 3,
+        cooldown: 8000,
       },
       'Thunder Wave': {
         handler: async () => this.thunderWave(),
@@ -82,12 +86,12 @@ export class Attack {
       Confusion: {
         handler: async () => this.confusion(),
         duration: 4,
-        cooldown: 7500,
+        cooldown: 10000,
       },
-      'Magic Mirror': {
-        handler: async () => this.magicMirror(),
+      'Gale Boomerang': {
+        handler: async () => this.galeBoomerang(),
         duration: 0,
-        cooldown: 7500,
+        cooldown: 14000,
       },
       'The Amazing Mirror': {
         handler: async () => this.theAmazingMirror(),
@@ -97,6 +101,26 @@ export class Attack {
       'Giant Punch': {
         handler: async () => this.giantPunch(),
         duration: 4,
+        cooldown: 8000,
+      },
+      'Morph Ball': {
+        handler: async () => this.morphBall(),
+        duration: 4,
+        cooldown: 8000,
+      },
+      'Falcon Dive': {
+        handler: async () => this.falconDive(),
+        duration: 4,
+        cooldown: 6000,
+      },
+      'Shell Decoy': {
+        handler: async () => this.shellDecoy(),
+        duration: 6,
+        cooldown: 8000,
+      },
+      Sabotage: {
+        handler: async () => this.sabotage(),
+        duration: 6,
         cooldown: 10000,
       },
     };
@@ -191,17 +215,8 @@ export class Attack {
 
     const startingSpeedX = this.ball.speedX;
     const startingSpeedY = this.ball.speedY;
-
-    const currentSpeedXMag = Math.abs(startingSpeedX);
-    const boostedSpeedXMag = currentSpeedXMag * growthFactor;
-    const cappedSpeedXMag = Math.min(boostedSpeedXMag, MAX_BALL_SPEED);
-    const newSpeedX = cappedSpeedXMag * Math.sign(startingSpeedX);
-
-    const currentSpeedYMag = Math.abs(startingSpeedY);
-    const boostedSpeedYMag = currentSpeedYMag * growthFactor;
-    const cappedSpeedYMag = Math.min(boostedSpeedYMag, MAX_BALL_SPEED);
-    const newSpeedY = cappedSpeedYMag * Math.sign(startingSpeedY);
-
+    const newSpeedX = startingSpeedX * growthFactor;
+    const newSpeedY = startingSpeedY * growthFactor;
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
     await wait(this.attackDuration);
@@ -209,13 +224,8 @@ export class Attack {
     if (!this.gameVersionHasChanged(startingVersion)) {
       const currentSpeedX = this.ball.speedX;
       const currentSpeedY = this.ball.speedY;
-
-      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
-      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
-
-      const scaleFactor = originalMagnitude / currentMagnitude;
-      const revertedSpeedX = currentSpeedX * scaleFactor;
-      const revertedSpeedY = currentSpeedY * scaleFactor;
+      const revertedSpeedX = currentSpeedX * (1 / growthFactor);
+      const revertedSpeedY = currentSpeedY * (1 / growthFactor);
 
       this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
     }
@@ -249,14 +259,13 @@ export class Attack {
     }
   }
 
-  async magicMirror(): Promise<void> {
+  async galeBoomerang(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
   async theAmazingMirror(): Promise<void> {}
 
   async giantPunch(): Promise<void> {
-    console.log('Giant punch called');
     const startingVersion = getGameVersion(this.gameArea);
 
     const shrink = PADDLE_LEN * 0.4;
@@ -276,6 +285,65 @@ export class Attack {
       const newOriginalY = this.enemyPaddle.y;
       this.enemyPaddle.setHeight(this.enemyPaddle.height + shrink);
       this.enemyPaddle.setY(newOriginalY + yOffset);
+    }
+  }
+
+  async morphBall(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea); // Check score changes
+
+    const slowFactor = 0.75; // Speed multiplier
+
+    const startingSpeedX = this.ball.speedX;
+    const startingSpeedY = this.ball.speedY;
+    const newSpeedX = startingSpeedX * slowFactor;
+    const newSpeedY = startingSpeedY * slowFactor;
+    this.ball.setSpeed(newSpeedX, newSpeedY);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      const currentSpeedX = this.ball.speedX;
+      const currentSpeedY = this.ball.speedY;
+      const revertedSpeedX = currentSpeedX * (1 / slowFactor);
+      const revertedSpeedY = currentSpeedY * (1 / slowFactor);
+
+      this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
+    }
+  }
+
+  async falconDive(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea);
+
+    const growthFactor = 2;
+
+    this.ownPaddle.setSpeedModifier(growthFactor);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setSpeedModifier(1);
+    }
+  }
+  async shellDecoy(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea);
+
+    this.ball.setIsVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.ball.setIsVisible(true);
+    }
+  }
+  async sabotage(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea);
+
+    this.enemyPaddle.setIsPaddleVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setIsPaddleVisible(true);
     }
   }
 }
