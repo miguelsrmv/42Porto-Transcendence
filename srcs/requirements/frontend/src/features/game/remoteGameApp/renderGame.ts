@@ -155,8 +155,10 @@ function drawBoard(ctx: CanvasRenderingContext2D, state: GameState) {
  * @param paddle The paddle to draw.
  */
 function drawPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
-  ctx.fillStyle = paddle.color;
-  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+  if (paddle.isVisible) {
+    ctx.fillStyle = paddle.color;
+    ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+  }
 }
 
 /**

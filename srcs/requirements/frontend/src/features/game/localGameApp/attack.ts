@@ -108,8 +108,8 @@ export class Attack {
         duration: 4,
         cooldown: 10000,
       },
-      'Magic Mirror': {
-        handler: async () => this.magicMirror(),
+      'Gale Boomerang': {
+        handler: async () => this.galeBoomerang(),
         duration: 0,
         cooldown: 14000,
       },
@@ -335,11 +335,11 @@ export class Attack {
   }
 
   /**
-   * @brief Executes the Magic Mirror attack.
+   * @brief Executes the Gale Boomerang attack.
    *
    * This attack instantly reverses the ball's vertical direction.
    */
-  async magicMirror(): Promise<void> {
+  async galeBoomerang(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
@@ -433,7 +433,7 @@ export class Attack {
     await wait(this.attackDuration);
 
     if (!this.gameVersionHasChanged(startingVersion)) {
-      this.enemyPaddle.setSpeedModifier(1);
+      this.ownPaddle.setSpeedModifier(1);
     }
   }
 

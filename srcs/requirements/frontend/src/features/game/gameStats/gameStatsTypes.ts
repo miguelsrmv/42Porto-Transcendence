@@ -44,6 +44,7 @@ export interface Paddle {
   y: number;
   speedY: number;
   speedModifier: number;
+  isVisible: boolean;
 }
 
 /**
