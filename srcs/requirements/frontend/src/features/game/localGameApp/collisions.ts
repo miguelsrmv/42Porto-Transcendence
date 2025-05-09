@@ -4,7 +4,7 @@ import { Player } from './player.js';
 import { GameArea } from './types.js';
 import { scoreAnimation } from '../animations/animations.js';
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
-import { Ball, ballCountdown } from './ball.js';
+import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 
 /**
@@ -242,7 +242,7 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
   gameArea.inputHandler?.disable();
   window.dispatchEvent(pauseEvent);
   gameArea.state = gameState.paused;
-  ballCountdown();
+  leftPlayer.ball.countdown();
   await wait(3);
   const newTime = Date.now();
   leftPlayer.attack?.reset(beforeTime, newTime);
