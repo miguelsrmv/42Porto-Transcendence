@@ -56,6 +56,10 @@ export async function adjustHeader(view: string) {
     headerUserName.innerText = window.localStorage.getItem('Username') as string;
     if (!headerUserName.innerText) headerUserName.innerText = 'Guest';
 
+    let headerAvatar = header.querySelector('#nav-settings-avatar') as HTMLImageElement;
+    let headerAvatarPath = window.localStorage.getItem('AvatarPath');
+    if (headerAvatar && headerAvatarPath) headerAvatar.src = headerAvatarPath;
+
     // Shows back button if not on main page
     if (!isMainPage) {
       const headerBackButton = document.getElementById('header-back-button');

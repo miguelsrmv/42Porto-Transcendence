@@ -7,7 +7,7 @@ async function fetch2FAStatus(): Promise<boolean | undefined> {
     const twoFAstatus = await response.json();
     return twoFAstatus;
   } catch (error) {
-    console.log(`2FA status fetch error`);
+    alert('Error fetching 2FA status: please try again!');
     return undefined;
   }
 }

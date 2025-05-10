@@ -66,8 +66,6 @@ export function handleSubmitAvatar(): void {
     else sendCustomAvatar();
   });
 
-  updateLocalStorageAvatar();
-
   async function sendImagePath(): Promise<void> {
     try {
       const response = await fetch('/api/users/defaultAvatar', {
@@ -78,6 +76,7 @@ export function handleSubmitAvatar(): void {
         },
         body: JSON.stringify({ path: avatarList[avatarIndex].imagePath }),
       });
+      updateLocalStorageAvatar();
     } catch (error) {
       console.log(`Default avatar upload error: ${error}`);
     }
@@ -104,7 +103,7 @@ export function handleSubmitAvatar(): void {
           credentials: 'include',
           body: formData,
         });
-
+        updateLocalStorageAvatar();
         if (!response.ok) {
           console.error(`Upload failed with status ${response.status}`);
         } else {
@@ -125,7 +124,8 @@ export function handleSubmitAvatar(): void {
         credentials: 'include',
       });
       const responseJson = await response.json();
-      window.localStorage.setItem('AvatarPath', responseJson.imagePath);
+      window.localStorage.setItem('AvatarPath', responseJson.path);
+      refreshHeader();
     } catch (error) {
       console.log(`Error fetching avatar path: ${error}`);
     }
@@ -134,4 +134,11 @@ export function handleSubmitAvatar(): void {
 
 export function resetAvatarIndex(): void {
   avatarIndex = 0;
+}
+
+function refreshHeader(): void {
+  let headerAvatar = document.getElementById('nav-settings-avatar') as HTMLImageElement;
+  let headerAvatarPath = window.localStorage.getItem('AvatarPath');
+  if (headerAvatar && headerAvatarPath) headerAvatar.src = headerAvatarPath;
+  console.log('Refreshed!');
 }
