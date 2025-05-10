@@ -1692,12 +1692,12 @@
         class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
       >
         <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
-          <h2 class="text-2xl font-bold text-center text-gray-800">
-            Please scan this QR code with your AUthenticator app
+          <h2 id="qr-modal-header" class="text-2xl font-bold text-center text-gray-800">
+            Scan this QR code with your Authenticator app
           </h2>
           <img
             id="QR-code"
-            src="./static/images/supersmash_titlescreen_white.png"
+            src=""
             class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto"
             alt="QR-code"
           />
@@ -1708,7 +1708,9 @@
             method="post"
           >
             <div class="space-y-1">
-              <label for="QRcode" class="block text-sm font-medium text-gray-700">Password</label>
+              <label for="QRcode" class="block text-sm font-medium text-gray-700"
+                >Authentication Code</label
+              >
               <input
                 type="text"
                 id="QRcode"
@@ -1718,10 +1720,21 @@
                 class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
               />
             </div>
+            <div class="space-y-1">
+              <label for="QRcode" class="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                type="password"
+                id="QRCode-password"
+                name="QRcode-password"
+                required
+                autocomplete="QRcode-password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
             <button
-              id="QRcode-button"
+              id="twoFA-button"
               type="button"
-              class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold"
+              class="w-full text-white py-2.5 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out font-semibold"
             >
               Send Code
             </button>
@@ -1733,7 +1746,12 @@
         class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
       >
         <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
-          <form id="login-form" class="flex flex-col p-6 sm:p-8 space-y-6" action="#" method="post">
+          <form
+            id="password-confirm-form"
+            class="flex flex-col p-6 sm:p-8 space-y-6"
+            action="#"
+            method="post"
+          >
             <h2 class="text-2xl font-bold text-center text-gray-800">
               Please confirm changes with your (old) password
             </h2>
