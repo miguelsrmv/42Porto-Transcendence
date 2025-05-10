@@ -18,8 +18,8 @@ export async function reset2FAData(): Promise<void> {
     return;
   }
 
-  if (twoFAstatus) twoFAtoggle.checked = false;
-  else twoFAtoggle.checked = true;
+  if (twoFAstatus) twoFAtoggle.checked = true;
+  else twoFAtoggle.checked = false;
 }
 
 export function handle2FA(): void {
@@ -28,40 +28,174 @@ export function handle2FA(): void {
     console.log('No 2 Factor Auth toggle found');
     return;
   }
+  const twoFAmodal = document.getElementById('twoFA-modal');
+  if (!twoFAmodal) {
+    console.log('No 2 Factor Auth modal found');
+    return;
+  }
+
+  const confirmButton = document.getElementById('twoFA-button') as HTMLButtonElement;
+
+  if (!confirmButton) {
+    console.error('Missing QR modal confirm button');
+    return;
+  }
 
   twoFAToggle.addEventListener('click', () => {
-    const twoFAIsChecked = twoFAToggle.checked;
-    if (twoFAIsChecked) {
-      enable2FA(twoFAToggle);
-    } else {
-      disable2FA(twoFAToggle);
-    }
+    // Show modal
+    twoFAmodal.classList.remove('hidden');
+    void twoFAmodal.offsetWidth;
+    twoFAmodal.classList.remove('exiting');
+    twoFAmodal.classList.add('entering');
+
+    // Edit modal contents depending on 2FA status
+    toggleQRModalView(twoFAToggle);
+
+    // Handle transition and hide logic
+    const close = () => {
+      twoFAmodal.classList.add('exiting');
+      twoFAmodal.classList.remove('entering');
+
+      const onTransitionEnd = () => {
+        twoFAmodal.classList.add('hidden');
+        twoFAmodal.removeEventListener('transitionend', onTransitionEnd);
+      };
+
+      twoFAmodal.addEventListener('transitionend', onTransitionEnd, { once: true });
+    };
+
+    // Clicking outside the modal (backdrop)
+    const onBackdropClick = (event: MouseEvent) => {
+      if (event.target === twoFAmodal) {
+        close();
+      }
+    };
+
+    // Clicking confirm button
+    const onConfirmClick = () => {
+      if (twoFAToggle.checked == false) {
+        enable2FA(twoFAToggle);
+      } else {
+        disable2FA(twoFAToggle);
+      }
+      close();
+    };
+
+    // Add one-time listeners
+    twoFAmodal.addEventListener('click', onBackdropClick, { once: true });
+    confirmButton.addEventListener('click', onConfirmClick, { once: true });
   });
 }
 
-async function disable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
+async function toggleQRModalView(twoFAToggle: HTMLInputElement): Promise<void> {
+  const headerText = document.getElementById('qr-modal-header');
+  if (!headerText) {
+    console.log('QR header text not found');
+    return;
+  }
+
+  const qrCode = document.getElementById('QR-code');
+  if (!qrCode) {
+    console.log('QR-code element not found');
+    return;
+  }
+
+  const QRplaceholder = document.getElementById('QR-code') as HTMLImageElement;
+  if (!QRplaceholder) {
+    console.log("Couldn't find QR-code placeholder");
+    return;
+  }
+
+  const submitButton = document.getElementById('twoFA-button') as HTMLButtonElement;
+  if (!submitButton) {
+    console.log("Couldn't find submit button");
+    return;
+  }
+
+  if (twoFAToggle.checked) {
+    try {
+      const response = await fetch('/api/users/2FA/setup', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const URI = await response.text();
+      QRplaceholder.src = URI;
+    } catch (error) {
+      console.log(`QR Code get error: ${error}`);
+      return;
+    }
+    headerText.innerText = 'Scan this QR code with your Authenticator app';
+    qrCode.classList.remove('hidden');
+    submitButton.innerText = 'Send Code';
+    submitButton.classList.add('bg-blue-600', 'hover-bg-blue-700', 'focus:ring-blue-500');
+    submitButton.classList.remove('bg-red-600', 'hover-bg-red-700', 'focus:ring-red-500');
+  } else {
+    headerText.innerText = 'Enter authenticator code and password to disable 2FA';
+    qrCode.classList.add('hidden');
+    submitButton.innerText = 'Disable 2FA';
+    submitButton.classList.add('bg-red-600', 'hover-bg-red-700', 'focus:ring-red-500');
+    submitButton.classList.remove('bg-blue-600', 'hover-bg-blue-700', 'focus:ring-blue-500');
+  }
+}
+
+async function disable2FA(twoFAToggle: HTMLInputElement): Promise<void> {
+  const tokenElement = document.getElementById('QRcode') as HTMLInputElement;
+  if (!tokenElement) {
+    console.log('No input field for QR token code');
+    return;
+  }
+
+  const passwordElement = document.getElementById('QRcode-password') as HTMLInputElement;
+  if (!passwordElement) {
+    console.log('No input field for QR token code');
+    return;
+  }
+
+  const twoFAObject = {
+    code: tokenElement.value,
+    password: passwordElement.value,
+  };
+
   try {
     const response = await fetch('/api/users/2FA/disable', {
-      method: 'GET',
+      method: 'POST',
       credentials: 'include',
+      body: JSON.stringify(twoFAObject),
     });
-    twoFAtoggle.checked = false;
+    if (response.ok) twoFAToggle.checked = false;
   } catch (error) {
-    console.log(`User Data change error`);
+    console.log(`2FA disable error: ${error}`);
     return;
   }
 }
 
-async function enable2FA(twoFAtoggle: HTMLInputElement): Promise<void> {
+async function enable2FA(twoFAToggle: HTMLInputElement): Promise<void> {
+  const tokenElement = document.getElementById('QRcode') as HTMLInputElement;
+  if (!tokenElement) {
+    console.log('No input field for QR token code');
+    return;
+  }
+
+  const passwordElement = document.getElementById('QRcode-password') as HTMLInputElement;
+  if (!passwordElement) {
+    console.log('No input field for QR token code');
+    return;
+  }
+
+  const twoFAObject = {
+    code: tokenElement.value,
+    password: passwordElement.value,
+  };
+
   try {
-    const response = await fetch('/api/users/2FA/setup', {
-      method: 'GET',
+    const response = await fetch('/api/users/2FA/verify', {
+      method: 'POST',
       credentials: 'include',
+      body: JSON.stringify(twoFAObject),
     });
-    twoFAtoggle.checked = true;
-    console.log(`${response}`);
+    if (response.ok) twoFAToggle.checked = true;
   } catch (error) {
-    console.log(`User Data change error`);
+    console.log(`2FA enable error: ${error}`);
     return;
   }
 }
