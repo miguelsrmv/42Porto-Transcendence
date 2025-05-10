@@ -17,10 +17,10 @@ import { loginErrorMessages, registerErrorMessages } from '../../constants/error
  *
  * @param event The form submission event.
  */
-export async function attemptLogin(this: HTMLFormElement, event: Event) {
+export async function attemptLogin(form: HTMLFormElement, event: Event) {
   event.preventDefault(); // Prevent default form submission
 
-  const data = formToJSON(this);
+  const data = formToJSON(form);
 
   try {
     const response = await fetch('/api/users/login', {
