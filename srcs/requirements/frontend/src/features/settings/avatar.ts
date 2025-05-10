@@ -73,7 +73,10 @@ export function handleSubmitAvatar(): void {
       const response = await fetch('/api/users/defaultAvatar', {
         method: 'PUT',
         credentials: 'include',
-        body: JSON.stringify(avatarList[avatarIndex].imagePath),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ path: avatarList[avatarIndex].imagePath }),
       });
     } catch (error) {
       console.log(`Default avatar upload error: ${error}`);
@@ -86,22 +89,33 @@ export function handleSubmitAvatar(): void {
       console.log("Couldn't find custom avatar input");
       return;
     }
+
+    // Listen once to the 'change' event
+    customAvatar.addEventListener('change', async () => {
+      if (!customAvatar.files || customAvatar.files.length === 0) return;
+
+      const file = customAvatar.files[0];
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      try {
+        const response = await fetch('/api/users/customAvatar', {
+          method: 'PUT',
+          credentials: 'include',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          console.error(`Upload failed with status ${response.status}`);
+        } else {
+          console.log('Custom avatar uploaded successfully');
+        }
+      } catch (error) {
+        console.log(`Custom avatar upload error: ${error}`);
+      }
+    });
+
     customAvatar.click();
-    if (!customAvatar.files || customAvatar.files.length === 0) return;
-    const file = customAvatar.files[0];
-
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-    try {
-      const response = await fetch('/api/users/customAvatar', {
-        method: 'PUT',
-        credentials: 'include',
-        body: formData,
-      });
-    } catch (error) {
-      console.log(`Custom avatar upload error: ${error}`);
-    }
   }
 
   async function updateLocalStorageAvatar(): Promise<void> {
