@@ -69,6 +69,7 @@ export function handle2FA(): void {
     const is2FAenabled = await fetch2FAStatus();
     // NOTE: Don't use pure else because of "undefined" return value!!
     console.log(`Status is ${is2FAenabled}`);
+    // HACK: inverted bool cause of fetch2FAstatus??
     if (!is2FAenabled == false) {
       enable2FA(twoFAToggle);
     } else if (!is2FAenabled == true) {
@@ -209,3 +210,9 @@ async function enable2FA(twoFAToggle: HTMLInputElement): Promise<void> {
     return;
   }
 }
+
+//TODO: Display error messages on modal
+//NOTE: David, issues I found:
+/// Should the opposite of /api/users/2fa/disable be /api/users/2fa/enable instead of verify?
+/// Both should be Post requests and take this object? { code: tokenElement.value, password: passwordElement.value };
+/// Am I getting the correct bool from fetch2FAstatus()? (see line 72)
