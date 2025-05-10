@@ -11,7 +11,9 @@
     "start-dev": "npx nodemon --signal SIGTERM dist/src/server.js",
     "build-dev": "tsc --watch",
     "test": "vitest",
-    "test-db": "npx tsx scripts/test_db.ts"
+    "test-db": "npx tsx scripts/test_db.ts",
+    "migrate": "npx prisma migrate dev",
+    "db-reset": "npx prisma migrate reset"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^9.0.4",
+    "@fastify/multipart": "^9.0.3",
     "@fastify/websocket": "^11.0.2",
     "@prisma/client": "^6.5.0",
     "dotenv": "^16.4.7",

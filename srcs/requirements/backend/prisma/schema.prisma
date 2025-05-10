@@ -18,6 +18,7 @@ model User {
   lastActiveAt       DateTime                @default(now())
   avatarUrl          String?
   secret2FA          String?
+  enabled2FA         Boolean                 @default(false)
   friends            Friendship[]            @relation("UserToFriends")
   friendOf           Friendship[]            @relation("FriendsToUser")
   matches1           Match[]                 @relation("MatchUser1")
