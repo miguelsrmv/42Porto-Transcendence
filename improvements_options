@@ -1,10 +1,8 @@
 #1 Define default avatar on backend (Mario?)
 #1.1 Change default avatar index to reflect this
-#1.2 Save avatar on local storage to lessen amount of server requests
 
 #2 Update avatars on games
-#2.1 On local game, fetch avatar from local storage
-#2.2 On remote games, get avatars from backend
+#2.1 On remote games, get avatars from backend
 
 #3 Clear settings modal (and errors) on modal close
 
