@@ -1,22 +1,25 @@
-let twoFAstatus;
-
-export async function reset2FAData(): Promise<void> {
+async function fetch2FAStatus(): Promise<boolean | undefined> {
   try {
     const response = await fetch('/api/users/2FA/check', {
       method: 'GET',
       credentials: 'include',
     });
-    twoFAstatus = await response.json();
+    const twoFAstatus = await response.json();
+    return twoFAstatus;
   } catch (error) {
-    console.log(`User Data change error`);
-    return;
+    console.log(`2FA status fetch error`);
+    return undefined;
   }
+}
 
+export async function reset2FAData(): Promise<void> {
   const twoFAtoggle = document.getElementById('2fa-toggle-input') as HTMLInputElement;
   if (!twoFAtoggle) {
     console.log('No 2 Factor Auth toggle found');
     return;
   }
+
+  let twoFAstatus = await fetch2FAStatus();
 
   if (twoFAstatus) twoFAtoggle.checked = true;
   else twoFAtoggle.checked = false;
@@ -35,55 +38,62 @@ export function handle2FA(): void {
   }
 
   const confirmButton = document.getElementById('twoFA-button') as HTMLButtonElement;
-
   if (!confirmButton) {
     console.error('Missing QR modal confirm button');
     return;
   }
 
-  twoFAToggle.addEventListener('click', () => {
+  // Handle transition and hide logic
+  const close = () => {
+    twoFAmodal.classList.add('exiting');
+    twoFAmodal.classList.remove('entering');
+
+    const onTransitionEnd = () => {
+      twoFAmodal.classList.add('hidden');
+      twoFAmodal.removeEventListener('transitionend', onTransitionEnd);
+    };
+
+    twoFAmodal.addEventListener('transitionend', onTransitionEnd, { once: true });
+  };
+
+  // Clicking outside the modal (backdrop)
+  const onBackdropClick = async (event: MouseEvent) => {
+    if (event.target === twoFAmodal) {
+      await reset2FAData();
+      close();
+    }
+  };
+
+  // Clicking confirm button
+  const onConfirmClick = async () => {
+    const is2FAenabled = await fetch2FAStatus();
+    // NOTE: Don't use pure else because of "undefined" return value!!
+    console.log(`Status is ${is2FAenabled}`);
+    if (!is2FAenabled == false) {
+      enable2FA(twoFAToggle);
+    } else if (!is2FAenabled == true) {
+      disable2FA(twoFAToggle);
+    }
+    close();
+  };
+
+  // Clean-up any previous listeners (safety)
+  twoFAmodal.removeEventListener('click', onBackdropClick);
+  confirmButton.removeEventListener('click', onConfirmClick);
+
+  // Register one-time listeners
+  twoFAmodal.addEventListener('click', onBackdropClick);
+  confirmButton.addEventListener('click', onConfirmClick);
+
+  twoFAToggle.addEventListener('click', async () => {
     // Show modal
     twoFAmodal.classList.remove('hidden');
     void twoFAmodal.offsetWidth;
     twoFAmodal.classList.remove('exiting');
     twoFAmodal.classList.add('entering');
 
-    // Edit modal contents depending on 2FA status
-    toggleQRModalView(twoFAToggle);
-
-    // Handle transition and hide logic
-    const close = () => {
-      twoFAmodal.classList.add('exiting');
-      twoFAmodal.classList.remove('entering');
-
-      const onTransitionEnd = () => {
-        twoFAmodal.classList.add('hidden');
-        twoFAmodal.removeEventListener('transitionend', onTransitionEnd);
-      };
-
-      twoFAmodal.addEventListener('transitionend', onTransitionEnd, { once: true });
-    };
-
-    // Clicking outside the modal (backdrop)
-    const onBackdropClick = (event: MouseEvent) => {
-      if (event.target === twoFAmodal) {
-        close();
-      }
-    };
-
-    // Clicking confirm button
-    const onConfirmClick = () => {
-      if (twoFAToggle.checked == false) {
-        enable2FA(twoFAToggle);
-      } else {
-        disable2FA(twoFAToggle);
-      }
-      close();
-    };
-
-    // Add one-time listeners
-    twoFAmodal.addEventListener('click', onBackdropClick, { once: true });
-    confirmButton.addEventListener('click', onConfirmClick, { once: true });
+    // Update modal content
+    await toggleQRModalView(twoFAToggle);
   });
 }
 
@@ -139,15 +149,15 @@ async function toggleQRModalView(twoFAToggle: HTMLInputElement): Promise<void> {
 }
 
 async function disable2FA(twoFAToggle: HTMLInputElement): Promise<void> {
-  const tokenElement = document.getElementById('QRcode') as HTMLInputElement;
+  const tokenElement = document.getElementById('auth-code') as HTMLInputElement;
   if (!tokenElement) {
-    console.log('No input field for QR token code');
+    console.log('No input field for auth code');
     return;
   }
 
-  const passwordElement = document.getElementById('QRcode-password') as HTMLInputElement;
+  const passwordElement = document.getElementById('QRCode-password') as HTMLInputElement;
   if (!passwordElement) {
-    console.log('No input field for QR token code');
+    console.log('No input field for QR password confirmation');
     return;
   }
 
@@ -170,15 +180,15 @@ async function disable2FA(twoFAToggle: HTMLInputElement): Promise<void> {
 }
 
 async function enable2FA(twoFAToggle: HTMLInputElement): Promise<void> {
-  const tokenElement = document.getElementById('QRcode') as HTMLInputElement;
+  const tokenElement = document.getElementById('auth-code') as HTMLInputElement;
   if (!tokenElement) {
-    console.log('No input field for QR token code');
+    console.log('No input field for auth code');
     return;
   }
 
-  const passwordElement = document.getElementById('QRcode-password') as HTMLInputElement;
+  const passwordElement = document.getElementById('QRCode-password') as HTMLInputElement;
   if (!passwordElement) {
-    console.log('No input field for QR token code');
+    console.log('No input field for QR password confirmation');
     return;
   }
 
