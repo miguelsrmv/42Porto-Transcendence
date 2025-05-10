@@ -1,13 +1,10 @@
 #1 Define default avatar on backend (Mario?)
-#1.1 Change default avatar index to reflect this
 
 #2 Update avatars on games
 #2.1 On remote games, get avatars from backend
 
-#3 Clear settings modal (and errors) on modal close
+#3 Show error messages on settings modal
 
-#4 Show error messages on modal
+#4 Deal with errors (logout and go to main page?)
 
-#5 Deal with errors (logout and go to main page?)
-
-#6 If not logged in & trying to access restricted page -> back to main menu
+#5 If not logged in & trying to access restricted page -> back to main menu

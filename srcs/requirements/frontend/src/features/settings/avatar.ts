@@ -133,7 +133,8 @@ export function handleSubmitAvatar(): void {
 }
 
 export function resetAvatarIndex(): void {
-  avatarIndex = 0;
+  avatarIndex = 54;
+  // NOTE: Mario's index on the Avatar list
 }
 
 function refreshHeader(): void {
