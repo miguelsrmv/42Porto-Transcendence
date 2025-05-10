@@ -6,6 +6,9 @@ import { getUserClassicStats, getUserCrazyStats } from '../services/user.service
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
+import fs from 'fs';
+import util from 'util';
+import { pipeline } from 'stream';
 
 export type UserCreate = {
   username: string;
@@ -27,12 +30,17 @@ export type UserUpdate = {
   repeatPassword?: string;
 };
 
-type DefaultAvatar = {
+export type AvatarData = {
+  data: string;
+};
+
+export type DefaultAvatar = {
   path: string;
 };
 
-type VerifyToken = {
+export type VerifyToken = {
   token: string;
+  password?: string;
 };
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
@@ -216,9 +224,43 @@ export async function getUserStats(
   }
 }
 
-export async function uploadDefaultAvatar(request: FastifyRequest, reply: FastifyReply) {
+export async function setDefaultAvatar(
+  request: FastifyRequest<{ Body: DefaultAvatar }>,
+  reply: FastifyReply,
+) {
   try {
-    reply.send();
+    if (!request.body.path) return reply.status(400).send({ message: 'Path to avatar required.' });
+    await prisma.user.update({
+      where: { id: request.user.id },
+      data: { avatarUrl: request.body.path },
+    });
+    reply.send({ message: 'Path to avatar updated successfully.' });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function uploadCustomAvatar(
+  request: FastifyRequest<{ Body: AvatarData }>,
+  reply: FastifyReply,
+) {
+  const pump = util.promisify(pipeline);
+  const parts = request.files();
+  const userId = request.user.id;
+  for await (const part of parts) {
+    await pump(part.file, fs.createWriteStream(`../avatar/${userId}`));
+  }
+  await prisma.user.update({
+    where: { id: userId },
+    data: { avatarUrl: `static/avatar/${userId}` },
+  });
+  reply.send({ message: 'Avatar uploaded.' });
+}
+
+export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+    reply.send({ path: user.avatarUrl });
   } catch (error) {
     handleError(error, reply);
   }
@@ -228,13 +270,14 @@ export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
   try {
     // TODO: allow reset secret in case of error?
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
-    if (user.secret2FA) throw new Error('2FA already setup for this user.');
+    if (user.enabled2FA)
+      return reply.status(400).send({ message: '2FA already setup for this user.' });
 
     const secret = speakeasy.generateSecret({
       name: `ft_transcendence(${request.user.username})`,
     });
     if (!secret.otpauth_url) {
-      throw new Error('No otpauth_url in secret.');
+      return reply.status(500).send({ message: 'No otpauth_url in secret.' });
     }
     const qrCode = await qrcode.toDataURL(secret.otpauth_url);
     await prisma.user.update({
@@ -254,14 +297,24 @@ export async function verify2FA(
   try {
     if (!request.cookies.access_token)
       return reply.status(400).send({ message: 'Access token not set.' });
-    if (!request.user.twoFactorPending) {
-      return reply.status(400).send({ message: '2FA not pending' });
-    }
-    const token = request.body.token;
+    // if (!request.user.twoFactorPending) {
+    //   return reply.status(400).send({ message: '2FA not pending' });
+    // }
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
     if (!user.secret2FA) {
       return reply.status(401).send('2FA required but not setup.');
     }
+    if (!user.enabled2FA) {
+      if (!request.body.password) return reply.status(401).send('Password required.');
+      const isMatch = verifyPassword({
+        candidatePassword: request.body.password,
+        hash: user.hashedPassword,
+        salt: user.salt,
+      });
+      if (!isMatch) return reply.status(401).send('Password incorrect.');
+    }
+
+    const token = request.body.token;
 
     const verified = speakeasy.totp.verify({
       secret: user.secret2FA,
@@ -283,6 +336,9 @@ export async function verify2FA(
       secure: true,
       maxAge: 2 * 60 * 60, // Valid for 2h
     });
+    if (!user.enabled2FA) {
+      await prisma.user.update({ where: { id: request.user.id }, data: { enabled2FA: true } });
+    }
     reply.send({ token: finalToken });
   } catch (error) {
     handleError(error, reply);
@@ -303,7 +359,7 @@ export async function disable2FA(request: FastifyRequest, reply: FastifyReply) {
     // TODO: Check if already null?
     await prisma.user.update({
       where: { id: request.user.id },
-      data: { secret2FA: null },
+      data: { secret2FA: null, enabled2FA: false },
     });
     return reply.send('Success');
   } catch (error) {
