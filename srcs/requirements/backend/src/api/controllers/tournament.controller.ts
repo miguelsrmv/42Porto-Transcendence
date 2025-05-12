@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { Character, TournamentStatus } from '@prisma/client';
-import { defaultGameSettings } from '../../utils/defaults';
+// import { ethers } from 'ethers';
 import {
   createTournamentParticipant,
   createTournamentByUser,
@@ -82,28 +82,9 @@ export async function getTournamentById(
 }
 
 // Unused for business logic
-export async function createTournament(
-  request: FastifyRequest<{ Body: TournamentCreate }>,
-  reply: FastifyReply,
-) {
+export async function createTournament(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const { name, maxParticipants, createdBy } = request.body;
-    const { settings } = request.body;
-
-    const finalSettings = { ...defaultGameSettings, ...(settings ? JSON.parse(settings) : {}) };
-
-    const tournament = await prisma.tournament.create({
-      data: {
-        name: name,
-        maxParticipants: maxParticipants ?? 8,
-        settings: JSON.stringify(finalSettings),
-        createdBy: {
-          connect: { id: createdBy },
-        },
-      },
-    });
-
-    reply.send(tournament);
+    reply.send();
   } catch (error) {
     handleError(error, reply);
   }
@@ -187,4 +168,16 @@ export async function addPlayerToTournament(
   } catch (error) {
     handleError(error, reply);
   }
+}
+
+export async function tournamentBlockchain(request: FastifyRequest, reply: FastifyReply) {
+  // try {
+  //   // Avalanche C-Chain RPC URL
+  //   const providerUrl = 'https://api.avax-test.network/ext/bc/C/rpc';
+  //   const provider = new ethers.JsonRpcProvider(providerUrl);
+  //   await provider.request({ method: 'eth_requestAccounts' });
+  //   reply.send();
+  // } catch (error) {
+  //   handleError(error, reply);
+  // }
 }

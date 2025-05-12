@@ -39,13 +39,10 @@ let currentView = '';
  * @brief Handles changes in the route based on the URL hash.
  * @returns A promise that resolves when the view is loaded.
  */
+// TODO: Handle non-logged-in direct access to restricted pages!
 function handleRouteChange(): void {
   // If a local game is running, stop it
   endLocalGameIfRunning();
-
-  // TODO: Check if it's necessary. I don't think it is?...
-  // If a remote game is running, stop it
-  //endRemoteGameIfRunning();
 
   // Get the view name from the URL hash, trim the first #
   const viewName = window.location.hash.substring(1) || 'landing-page';

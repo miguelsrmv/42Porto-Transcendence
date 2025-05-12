@@ -1,3 +1,5 @@
+// TODO: Revert set speed modifiers to *= previous modifier
+
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';
@@ -108,8 +110,8 @@ export class Attack {
         duration: 4,
         cooldown: 10000,
       },
-      'Magic Mirror': {
-        handler: async () => this.magicMirror(),
+      'Gale Boomerang': {
+        handler: async () => this.galeBoomerang(),
         duration: 0,
         cooldown: 14000,
       },
@@ -122,6 +124,26 @@ export class Attack {
         handler: async () => this.giantPunch(),
         duration: 4,
         cooldown: 8000,
+      },
+      'Morph Ball': {
+        handler: async () => this.morphBall(),
+        duration: 4,
+        cooldown: 8000,
+      },
+      'Falcon Dive': {
+        handler: async () => this.falconDive(),
+        duration: 4,
+        cooldown: 6000,
+      },
+      'Shell Decoy': {
+        handler: async () => this.shellDecoy(),
+        duration: 6,
+        cooldown: 8000,
+      },
+      Sabotage: {
+        handler: async () => this.sabotage(),
+        duration: 6,
+        cooldown: 10000,
       },
     };
 
@@ -248,15 +270,8 @@ export class Attack {
 
     const startingSpeedX = this.ball.speedX;
     const startingSpeedY = this.ball.speedY;
-
-    const currentSpeedXMag = Math.abs(startingSpeedX);
-    const boostedSpeedXMag = currentSpeedXMag * growthFactor;
-    const newSpeedX = boostedSpeedXMag * Math.sign(startingSpeedX);
-
-    const currentSpeedYMag = Math.abs(startingSpeedY);
-    const boostedSpeedYMag = currentSpeedYMag * growthFactor;
-    const newSpeedY = boostedSpeedYMag * Math.sign(startingSpeedY);
-
+    const newSpeedX = startingSpeedX * growthFactor;
+    const newSpeedY = startingSpeedY * growthFactor;
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
     await wait(this.attackDuration);
@@ -264,13 +279,8 @@ export class Attack {
     if (!this.gameVersionHasChanged(startingVersion)) {
       const currentSpeedX = this.ball.speedX;
       const currentSpeedY = this.ball.speedY;
-
-      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
-      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
-
-      const scaleFactor = originalMagnitude / currentMagnitude;
-      const revertedSpeedX = currentSpeedX * scaleFactor;
-      const revertedSpeedY = currentSpeedY * scaleFactor;
+      const revertedSpeedX = currentSpeedX * (1 / growthFactor);
+      const revertedSpeedY = currentSpeedY * (1 / growthFactor);
 
       this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
     }
@@ -315,11 +325,11 @@ export class Attack {
   }
 
   /**
-   * @brief Executes the Magic Mirror attack.
+   * @brief Executes the Gale Boomerang attack.
    *
    * This attack instantly reverses the ball's vertical direction.
    */
-  async magicMirror(): Promise<void> {
+  async galeBoomerang(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
@@ -336,7 +346,6 @@ export class Attack {
    * This attack temporarily reduces the opponent's paddle size for the duration of the effect.
    */
   async giantPunch(): Promise<void> {
-    console.log('Giant punch called');
     const startingVersion = getGameVersion();
 
     const shrink = PADDLE_LEN * 0.4;
@@ -356,6 +365,87 @@ export class Attack {
       const newOriginalY = this.enemyPaddle.y;
       this.enemyPaddle.setHeight(this.enemyPaddle.height + shrink);
       this.enemyPaddle.setY(newOriginalY + yOffset);
+    }
+  }
+
+  /**
+   * @brief Executes the Morph Ball attack.
+   *
+   * This attack temporarily reduces the ball's speed
+   */
+  async morphBall(): Promise<void> {
+    const startingVersion = getGameVersion(); // Check score changes
+
+    const slowFactor = 0.75; // Speed multiplier
+
+    const startingSpeedX = this.ball.speedX;
+    const startingSpeedY = this.ball.speedY;
+    const newSpeedX = startingSpeedX * slowFactor;
+    const newSpeedY = startingSpeedY * slowFactor;
+    this.ball.setSpeed(newSpeedX, newSpeedY);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      const currentSpeedX = this.ball.speedX;
+      const currentSpeedY = this.ball.speedY;
+      const revertedSpeedX = currentSpeedX * (1 / slowFactor);
+      const revertedSpeedY = currentSpeedY * (1 / slowFactor);
+
+      this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
+    }
+  }
+
+  /**
+   * @brief Executes the Falcon Dive attack.
+   *
+   * This attack temporarily increases the users' paddle speed for the duration of the effect.
+   */
+  async falconDive(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    const growthFactor = 2;
+
+    this.ownPaddle.setSpeedModifier(growthFactor);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.ownPaddle.setSpeedModifier(1);
+    }
+  }
+
+  /**
+   * @brief Executes the Hide in Shell attack.
+   *
+   * This attack temporarily makes the ball invisible.
+   */
+  async shellDecoy(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    this.ball.setIsVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.ball.setIsVisible(true);
+    }
+  }
+
+  /**
+   * @brief Executes the sabotage attack.
+   *
+   * This attack temporarily makes the opponent's paddle invisible.
+   */
+  async sabotage(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    this.enemyPaddle.setIsPaddleVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setIsPaddleVisible(true);
     }
   }
 }

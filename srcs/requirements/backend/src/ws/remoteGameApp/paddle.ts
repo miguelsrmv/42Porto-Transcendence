@@ -19,6 +19,8 @@ export class Paddle {
     this.speedModifier = 1;
   }
 
+  isVisible: boolean = true;
+
   // Updates paddle position
   update(dt: number): void {
     this.y += this.speedY * dt;
@@ -47,5 +49,10 @@ export class Paddle {
     this.speedY = 0;
     this.speedModifier = 1;
     this.height = PADDLE_LEN;
+    this.isVisible = true;
+  }
+
+  setIsPaddleVisible(visibility: boolean) {
+    this.isVisible = visibility;
   }
 }
