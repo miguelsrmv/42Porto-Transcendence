@@ -50,10 +50,6 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
     } else {
       await loginWithout2FA(data);
     }
-
-    await fetchUserData();
-    window.location.hash = 'main-menu-page';
-    // Handle success (e.g., redirect or store token)
   } catch (error) {
     console.error('Login failed:', error);
     // Handle errors (e.g., show error message to user)
