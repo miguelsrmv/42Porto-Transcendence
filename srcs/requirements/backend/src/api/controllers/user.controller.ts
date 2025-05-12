@@ -354,9 +354,35 @@ export async function check2FAstatus(request: FastifyRequest, reply: FastifyRepl
   }
 }
 
-export async function disable2FA(request: FastifyRequest, reply: FastifyReply) {
+export async function disable2FA(
+  request: FastifyRequest<{ Body: VerifyToken }>,
+  reply: FastifyReply,
+) {
   try {
-    // TODO: Check if already null?
+    // TODO: refactor, divide into smaller functions
+    if (!request.cookies.access_token)
+      return reply.status(400).send({ message: 'Access token not set.' });
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+    if (!user.enabled2FA) return reply.status(401).send('2FA not setup.');
+    if (!user.secret2FA) return reply.status(401).send('2FA required but not setup.');
+
+    if (!request.body.password) return reply.status(401).send('Password required.');
+    const isMatch = verifyPassword({
+      candidatePassword: request.body.password,
+      hash: user.hashedPassword,
+      salt: user.salt,
+    });
+    if (!isMatch) return reply.status(401).send('Password incorrect.');
+
+    const token = request.body.code;
+
+    const verified = speakeasy.totp.verify({
+      secret: user.secret2FA,
+      encoding: 'base32',
+      token,
+    });
+    if (!verified)
+      reply.status(401).send('The two-factor authentication token is invalid or expired.');
     await prisma.user.update({
       where: { id: request.user.id },
       data: { secret2FA: null, enabled2FA: false },

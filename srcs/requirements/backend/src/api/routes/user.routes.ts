@@ -26,6 +26,7 @@ import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user
 import { getByIdSchema } from '../schemas/global.schema';
 import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
 
+// TODO: review request methods
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/', { onRequest: [fastify.jwtAuth] }, getAllUsers);
@@ -48,7 +49,7 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/2FA/setup', { onRequest: [fastify.jwtAuth] }, setup2FA);
   fastify.post<{ Body: VerifyToken }>('/2FA/verify', { onRequest: [fastify.jwtAuth] }, verify2FA);
   fastify.get('/2FA/check', { onRequest: [fastify.jwtAuth] }, check2FAstatus);
-  fastify.get('/2FA/disable', { onRequest: [fastify.jwtAuth] }, disable2FA);
+  fastify.post<{ Body: VerifyToken }>('/2FA/disable', { onRequest: [fastify.jwtAuth] }, disable2FA);
   fastify.get<{ Params: IParams }>(
     '/:id',
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
