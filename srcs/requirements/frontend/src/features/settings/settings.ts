@@ -5,7 +5,7 @@
 
 import { createAvatarLoop, handleSubmitAvatar, resetAvatarIndex } from './avatar.js';
 import { handleUserDataChange, resetFormData } from './form.js';
-import { handle2FA, reset2FAData } from './2fa.js';
+import { handle2FA } from './2fa.js';
 
 /**
  * @>brief Initializes view for settings
@@ -24,7 +24,6 @@ export async function initializeView(): Promise<void> {
 function resetPageData(): void {
   resetAvatarIndex();
   resetFormData();
-  reset2FAData();
 }
 
 function updateFormPlaceholder(): void {
