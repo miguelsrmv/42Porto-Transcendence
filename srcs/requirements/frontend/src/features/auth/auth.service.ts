@@ -17,10 +17,10 @@ import { loginErrorMessages, registerErrorMessages } from '../../constants/error
  *
  * @param event The form submission event.
  */
-export async function attemptLogin(this: HTMLFormElement, event: Event) {
+export async function attemptLogin(form: HTMLFormElement, event: Event) {
   event.preventDefault(); // Prevent default form submission
 
-  const data = formToJSON(this);
+  const data = formToJSON(form);
 
   try {
     const response = await fetch('/api/users/login', {
@@ -43,12 +43,31 @@ export async function attemptLogin(this: HTMLFormElement, event: Event) {
         return;
       }
     }
+    await fetchUserData();
     window.location.hash = 'main-menu-page';
     // Handle success (e.g., redirect or store token)
   } catch (error) {
     console.error('Login failed:', error);
     // Handle errors (e.g., show error message to user)
   }
+}
+
+async function fetchUserData() {
+  const response = await fetch('/api/users/me', {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  let responsejson = await response.json();
+
+  window.localStorage.setItem('Username', responsejson.username);
+  window.localStorage.setItem('Email', responsejson.email);
+  window.localStorage.setItem('ID', responsejson.id);
+  // TODO: Fix when I get it from user data!
+  window.localStorage.setItem(
+    'AvatarPath',
+    '../../../../static/avatar/default/pokemon_trainer.png',
+  );
 }
 
 /**

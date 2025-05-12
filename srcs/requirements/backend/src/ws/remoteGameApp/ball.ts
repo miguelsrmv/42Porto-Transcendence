@@ -120,22 +120,29 @@ export class Ball {
     this.speedX = 0;
     this.speedY = 0;
     this.radius = BALL_RADIUS;
+    this.isVisible = true;
   }
-}
 
-/**
- * @brief Toggles the visibility of the ball for a countdown effect.
- * @param ball The ball whose visibility is toggled.
- */
-export function ballCountdown(ball: Ball) {
-  let count: number = 0;
+  /**
+   * @brief Changes the ball's visibility
+   */
+  setIsVisible(visibility: boolean) {
+    this.isVisible = visibility;
+  }
 
-  const interval = setInterval(() => {
-    ball.isVisible = !ball.isVisible;
-    count++;
+  /**
+   * @brief Creates ball countdown
+   */
+  countdown() {
+    let count: number = 0;
 
-    if (count >= 6) {
-      clearInterval(interval);
-    }
-  }, 500);
+    const interval = setInterval(() => {
+      this.isVisible = !this.isVisible;
+      count++;
+
+      if (count >= 6) {
+        clearInterval(interval);
+      }
+    }, 500);
+  }
 }

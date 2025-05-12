@@ -11,7 +11,9 @@
     "start-dev": "npx nodemon --signal SIGTERM dist/src/server.js",
     "build-dev": "tsc --watch",
     "test": "vitest",
-    "test-db": "npx tsx scripts/test_db.ts"
+    "test-db": "npx tsx scripts/test_db.ts",
+    "migrate": "npx prisma migrate dev",
+    "db-reset": "npx prisma migrate reset"
   },
   "keywords": [],
   "author": "",
@@ -19,17 +21,23 @@
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/jwt": "^9.0.4",
+    "@fastify/multipart": "^9.0.3",
     "@fastify/websocket": "^11.0.2",
     "@prisma/client": "^6.5.0",
     "dotenv": "^16.4.7",
+    "ethers": "^6.14.0",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@faker-js/faker": "^9.5.1",
     "@types/node": "^22.13.9",
+    "@types/qrcode": "^1.5.5",
+    "@types/speakeasy": "^2.0.10",
     "@types/ws": "^8.18.1",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",

@@ -16,7 +16,7 @@ export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, mes
 }
 
 // TODO: Rename function
-function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
+async function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
   switch (message.type) {
     case 'join_game': {
       const playerSettings = message.playerSettings;
@@ -31,7 +31,7 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: s
       if (playerIsInASession(playerSettings.playerID)) {
         return;
       }
-      attributePlayerToSession(socket, playerSettings);
+      await attributePlayerToSession(socket, playerSettings);
       const playerSession = getGameSession(socket);
       if (playerSession && isSessionFull(playerSession)) {
         // TODO: error handling for no game session returned
@@ -61,9 +61,9 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
     socket.send('You have connected to the ft_transcendence server');
   });
 
-  socket.on('message', (message) => {
+  socket.on('message', async (message) => {
     console.log('Received message:', message.toString());
-    messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
+    await messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
   });
 
   socket.on('close', () => {

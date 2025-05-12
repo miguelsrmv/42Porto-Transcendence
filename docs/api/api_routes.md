@@ -1,34 +1,41 @@
 # API Endpoints
 
-| Method   | Route                      |   URL parameters    |                     Body                     | Description                              |
-| -------- | -------------------------- | :-----------------: | :------------------------------------------: | ---------------------------------------- |
-| `GET`    | `/`                        |                     |                                              | Base route for test                      |
-| `GET`    | `/users`                   |                     |                                              | Get all users                            |
-| `GET`    | `/users/me`                |                     |                                              | Get own user                             |
-| `GET`    | `/users/:id`               |    `id` user id     |                                              | Get a specific user                      |
-| `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                        |
-| `PATCH`  | `/users`                   |                     |                data to update                | Update own user data                     |
-| `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                            |
-| `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)               |
-| `DELETE` | `/users/logout`            |                     |                                              | Logout user                              |
-| `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in               |
-| `GET`    | `/users/:id/stats`         |    `id` user id     |                                              | Get match stats of that user             |
-| `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user        |
-| `POST`   | `/friends`                 |                     |             userId and friendId              | Create a friendship between two users    |
-| `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                 |
-| `DELETE` | `/friends/:id`             | `id` friendship id  |                                              | Delete a friendship                      |
-| `GET`    | `/matches`                 |                     |                                              | Get all matches                          |
-| `GET`    | `/matches/user/:id`        |    `id` user id     |                                              | Get all matches from a specific user     |
-| `GET`    | `/matches/:id`             |    `id` match id    |                                              | Get a specific match                     |
-| `POST`   | `/matches`                 |                     |             user1Id and user2Id              | Create a match                           |
-| `PATCH`  | `/matches/:id`             |    `id` match id    |                data to update                | Update data on a specific match          |
-| `GET`    | `/tournaments`             |                     |                                              | Get all tournaments                      |
-| `GET`    | `/tournaments/user/:id`    |    `id` user id     |                                              | Get all tournaments from a specific user |
-| `GET`    | `/tournaments/:id`         | `id` tournaments id |                                              | Get a specific tournament                |
-| `POST`   | `/tournaments`             |                     |        maxParticipants and createdBy         | Create a tournament                      |
-| `PATCH`  | `/tournaments/:id`         | `id` tournaments id |                data to update                | Update data on a specific tournament     |
-| `DELETE` | `/tournaments/:id`         | `id` tournaments id |                                              | Delete a tournament                      |
-| `POST`   | `/tournaments/participant` |                     |         userId, alias and character          | Create a tournamentParticipant entry     |
+| Method   | Route                      |   URL parameters    |                     Body                     | Description                               |
+| -------- | -------------------------- | :-----------------: | :------------------------------------------: | ----------------------------------------- |
+| `GET`    | `/`                        |                     |                                              | Base route for test                       |
+| `GET`    | `/users`                   |                     |                                              | Get all users                             |
+| `GET`    | `/users/me`                |                     |                                              | Get own user                              |
+| `GET`    | `/users/:id`               |    `id` user id     |                                              | Get a specific user                       |
+| `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                         |
+| `PATCH`  | `/users`                   |                     |                data to update                | Update own user data                      |
+| `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                             |
+| `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)                |
+| `DELETE` | `/users/logout`            |                     |                                              | Logout user                               |
+| `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in                |
+| `GET`    | `/users/:id/stats`         |    `id` user id     |                                              | Get match stats of that user              |
+| `POST`   | `/users/2FA/verify`        |                     |             token (and password)             | Checks if user enters valid token for 2FA |
+| `GET`    | `/users/2FA/check`         |                     |                                              | Checks if user has 2FA enabled            |
+| `GET`    | `/users/2FA/setup`         |                     |                                              | Sets up 2FA for the user                  |
+| `GET`    | `/users/2FA/disable`       |                     |                                              | Disables 2FA for the user                 |
+| `GET`    | `/users/getAvatarPath`     |                     |                                              | Get user's avatar image path              |
+| `PUT`    | `/users/defaultAvatar`     |                     |                     path                     | Updates avatar image path to a default    |
+| `PUT`    | `/users/customAvatar`      |                     |                 avatar data                  | Uploads custom avatar image               |
+| `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user         |
+| `POST`   | `/friends`                 |                     |             userId and friendId              | Create a friendship between two users     |
+| `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                  |
+| `DELETE` | `/friends/:id`             | `id` friendship id  |                                              | Delete a friendship                       |
+| `GET`    | `/matches`                 |                     |                                              | Get all matches                           |
+| `GET`    | `/matches/user/:id`        |    `id` user id     |                                              | Get all matches from a specific user      |
+| `GET`    | `/matches/:id`             |    `id` match id    |                                              | Get a specific match                      |
+| `POST`   | `/matches`                 |                     |             user1Id and user2Id              | Create a match                            |
+| `PATCH`  | `/matches/:id`             |    `id` match id    |                data to update                | Update data on a specific match           |
+| `GET`    | `/tournaments`             |                     |                                              | Get all tournaments                       |
+| `GET`    | `/tournaments/user/:id`    |    `id` user id     |                                              | Get all tournaments from a specific user  |
+| `GET`    | `/tournaments/:id`         | `id` tournaments id |                                              | Get a specific tournament                 |
+| `POST`   | `/tournaments`             |                     |        maxParticipants and createdBy         | Create a tournament                       |
+| `PATCH`  | `/tournaments/:id`         | `id` tournaments id |                data to update                | Update data on a specific tournament      |
+| `DELETE` | `/tournaments/:id`         | `id` tournaments id |                                              | Delete a tournament                       |
+| `POST`   | `/tournaments/participant` |                     |         userId, alias and character          | Create a tournamentParticipant entry      |
 
 ## Base
 
@@ -58,9 +65,9 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 {
   "username": "new_user_name", // optional
   "email": "new_user@email.com", // optional
+  "oldPassword": "newPassword",
   "newPassword": "newPassword", // optional
-  "repeatPassword": "newPassword", // optional
-  "avatarUrl": "static/avatar/custom/uv-tj8474gh984yuc" // optional
+  "repeatPassword": "newPassword" // optional
 }
 ```
 
@@ -92,6 +99,20 @@ Content-Type: application/json
 - **Logout a user:** `DELETE /users/logout`
 
 - **Get a user's match stats:** `GET /users/:id/stats`
+- **Checks if user enters valid token for 2FA:** `POST /users/2FA/verify`
+
+```http
+POST http://localhost:3000/users/2FA/verify HTTP/1.1
+Content-Type: application/json
+
+{
+	"token": "2FAtoken",
+}
+
+```
+
+- **Checks if user has 2FA enabled:** `GET /users/2FA/check`
+- **Sets up 2FA for that user:** `GET /users/2FA/setup`
 
 ## Friendships
 

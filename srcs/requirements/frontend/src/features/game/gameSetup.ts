@@ -19,9 +19,11 @@ export type gameSettingKey =
   | 'playType'
   | 'gameType'
   | 'player1Alias'
+  | 'player1Avatar'
   | 'player1PaddleColour'
   | 'player1Character'
   | 'player2Alias'
+  | 'player2Avatar'
   | 'player2PaddleColour'
   | 'player2Character'
   | 'background'
@@ -253,6 +255,10 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   }
 
   if (settings.playType === 'Local Play') {
+    const player1AvatarPath = window.localStorage.getItem('AvatarPath');
+    if (player1AvatarPath) settings.avatar1 = player1AvatarPath;
+    if (player1AvatarPath) settings.avatar2 = player1AvatarPath;
+
     const player2InputAlias = document.getElementById('player-2-alias') as HTMLInputElement;
     if (player2InputAlias) {
       const inputValue2 = player2InputAlias.value.trim();
@@ -309,6 +315,7 @@ export function getLeanGameSettings(): leanGameSettings {
     playType: fullSettings.playType,
     gameType: fullSettings.gameType,
     alias: fullSettings.alias1,
+    avatar: window.localStorage.getItem('AvatarPath') as string, // NOTE: Tirar? Vai deixar de ser preciso?? Atualizar resto do código para deixar de implementar isto no lean game settings?
     paddleColour: fullSettings.paddleColour1,
     character: fullSettings.character1,
   };
@@ -322,6 +329,12 @@ export function updateHUD(gameSettings: gameSettings, gameType: gameType): void 
 
   const rightAlias = document.getElementById('right-alias');
   if (rightAlias) rightAlias.innerText = gameSettings.alias2;
+
+  const leftAvatar = document.getElementById('left-player-avatar') as HTMLImageElement;
+  leftAvatar.src = gameSettings.avatar1;
+
+  const rightAvatar = document.getElementById('right-player-avatar') as HTMLImageElement;
+  rightAvatar.src = gameSettings.avatar2;
 
   if (gameType == 'Crazy Pong') {
     const leftCharacter = gameSettings.character1;
