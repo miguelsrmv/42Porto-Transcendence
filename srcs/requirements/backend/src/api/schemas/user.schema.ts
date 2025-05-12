@@ -45,7 +45,7 @@ export const login2FASchema = {
     properties: {
       email: { type: 'string', format: 'email' },
       password: { type: 'string', minLength: 6 },
-      code: { type: 'integer', minLength: 6 },
+      code: { type: 'integer' },
     },
     additionalProperties: false,
   },
