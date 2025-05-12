@@ -9,6 +9,7 @@ import { transformUserUpdate } from '../../utils/helpers';
 import fs from 'fs';
 import util from 'util';
 import { pipeline } from 'stream';
+import path from 'path';
 
 export type UserCreate = {
   username: string;
@@ -248,12 +249,14 @@ export async function uploadCustomAvatar(
   const pump = util.promisify(pipeline);
   const parts = request.files();
   const userId = request.user.id;
+  const avatarDir = path.resolve(__dirname, '../../../../avatar');
+  const filePath = path.join(avatarDir, `${userId}.png`);
   for await (const part of parts) {
-    await pump(part.file, fs.createWriteStream(`../avatar/${userId}`));
+    await pump(part.file, fs.createWriteStream(filePath));
   }
   await prisma.user.update({
     where: { id: userId },
-    data: { avatarUrl: `static/avatar/${userId}` },
+    data: { avatarUrl: `../../../../static/avatar/custom/${userId}.png` },
   });
   reply.send({ message: 'Avatar uploaded.' });
 }
