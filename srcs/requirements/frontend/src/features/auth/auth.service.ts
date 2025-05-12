@@ -127,45 +127,38 @@ async function loginWithout2FA(data: Record<string, string>): Promise<void> {
     console.log("Error, couldn't find login form");
     return;
   }
-
-  // Prevent multiple listener bindings
-  if (loginForm.dataset.listenerAttached === 'true') return;
   loginForm.dataset.listenerAttached = 'true';
 
-  loginForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent the default form submission
+  const formData = new FormData(loginForm);
+  formData.forEach((value, key) => {
+    data[key] = value as string; // Populate the data object with form values
+  });
 
-    const formData = new FormData(loginForm);
-    formData.forEach((value, key) => {
-      data[key] = value as string; // Populate the data object with form values
+  try {
+    const response = await fetch('/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
     });
 
-    try {
-      const response = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        console.error(`HTTP error: ${response.status}`);
-        const errorLoginMessageContainer = document.getElementById('error-login-message');
-        if (errorLoginMessageContainer) {
-          errorLoginMessageContainer.classList.remove('hidden');
-          const errorMessage = await response.json();
-          errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
-        }
-        return;
+    if (!response.ok) {
+      console.error(`HTTP error: ${response.status}`);
+      const errorLoginMessageContainer = document.getElementById('error-login-message');
+      if (errorLoginMessageContainer) {
+        errorLoginMessageContainer.classList.remove('hidden');
+        const errorMessage = await response.json();
+        errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
       }
-
-      await fetchUserData();
-      window.location.hash = 'main-menu-page'; // Handle success (e.g., redirect)
-    } catch (error) {
-      console.error('Login failed:', error);
+      return;
     }
-  });
+
+    await fetchUserData();
+    window.location.hash = 'main-menu-page'; // Handle success (e.g., redirect)
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
 }
 
 async function fetchUserData() {
