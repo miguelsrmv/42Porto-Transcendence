@@ -77,7 +77,7 @@ async function fetchNormalised2FAStatus(): Promise<boolean | undefined> {
       return undefined;
     }
     const apiResponseIs2FAOff = await response.json();
-    return !apiResponseIs2FAOff; // Invert to get actual enabled status
+    return apiResponseIs2FAOff; // Invert to get actual enabled status
   } catch (error) {
     console.error('Network error fetching 2FA status:', error);
     alert('Network error fetching 2FA status. Please check your connection.');
@@ -221,7 +221,7 @@ async function handleConfirmClick(): Promise<void> {
 
   // The toggle's `checked` state reflects the user's intended action
   let success = false;
-  const twoFAstatus = !fetchNormalised2FAStatus();
+  const twoFAstatus = await fetchNormalised2FAStatus();
   if (!twoFAstatus) {
     // User intends to enable 2FA
     success = await enable2FA();
