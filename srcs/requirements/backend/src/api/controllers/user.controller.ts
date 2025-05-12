@@ -39,7 +39,7 @@ export type DefaultAvatar = {
 };
 
 export type VerifyToken = {
-  token: string;
+  code: string;
   password?: string;
 };
 
@@ -314,7 +314,7 @@ export async function verify2FA(
       if (!isMatch) return reply.status(401).send('Password incorrect.');
     }
 
-    const token = request.body.token;
+    const token = request.body.code;
 
     const verified = speakeasy.totp.verify({
       secret: user.secret2FA,
@@ -348,7 +348,7 @@ export async function verify2FA(
 export async function check2FAstatus(request: FastifyRequest, reply: FastifyReply) {
   try {
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
-    reply.send(user.secret2FA != null);
+    reply.send(user.enabled2FA);
   } catch (error) {
     handleError(error, reply);
   }
