@@ -275,8 +275,9 @@ export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
       return reply.status(400).send({ message: '2FA already setup for this user.' });
 
     const secret = speakeasy.generateSecret({
-      name: `ft_transcendence(${request.user.username})`,
+      name: `ft_transcendence(${user.username})`,
     });
+    console.log(`Username: ${user.username}`);
     if (!secret.otpauth_url) {
       return reply.status(500).send({ message: 'No otpauth_url in secret.' });
     }
