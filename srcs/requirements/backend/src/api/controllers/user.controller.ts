@@ -131,6 +131,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
         hashedPassword: true,
         salt: true,
         secret2FA: true,
+        avatarUrl: true,
       },
     });
 
@@ -175,7 +176,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
       secure: true,
       maxAge: 2 * 60 * 60, // Valid for 2h
     });
-    reply.send({ token });
+    reply.send({ avatar: user.avatarUrl });
   } catch (error) {
     handleError(error, reply);
   }
