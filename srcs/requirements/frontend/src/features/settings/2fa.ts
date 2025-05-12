@@ -73,14 +73,12 @@ async function fetchNormalised2FAStatus(): Promise<boolean | undefined> {
     });
     if (!response.ok) {
       console.error('Error fetching 2FA status:', response.status);
-      alert('Error fetching 2FA status: please try again later!');
       return undefined;
     }
     const apiResponseIs2FAOff = await response.json();
-    return apiResponseIs2FAOff; // Invert to get actual enabled status
+    return apiResponseIs2FAOff;
   } catch (error) {
     console.error('Network error fetching 2FA status:', error);
-    alert('Network error fetching 2FA status. Please check your connection.');
     return undefined;
   }
 }
