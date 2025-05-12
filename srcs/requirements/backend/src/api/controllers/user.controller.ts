@@ -322,7 +322,7 @@ export async function verify2FA(
       token,
     });
     if (!verified)
-      reply.status(401).send('The two-factor authentication token is invalid or expired.');
+      return reply.status(401).send('The two-factor authentication token is invalid or expired.');
 
     const finalToken = request.server.jwt.sign({
       id: user.id,
@@ -382,7 +382,7 @@ export async function disable2FA(
       token,
     });
     if (!verified)
-      reply.status(401).send('The two-factor authentication token is invalid or expired.');
+      return reply.status(401).send('The two-factor authentication token is invalid or expired.');
     await prisma.user.update({
       where: { id: request.user.id },
       data: { secret2FA: null, enabled2FA: false },
