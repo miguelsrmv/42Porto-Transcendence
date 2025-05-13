@@ -32,8 +32,18 @@ export class GameArea {
   countdownVisible = true;
   isInitialCountdownActive = true;
   intervals: NodeJS.Timeout[] = [];
+  settings: gameSettings;
+  isEnding: boolean;
 
-  constructor(p1socket: WebSocket, p2socket: WebSocket, gameSettings: gameSettings) {
+  constructor(
+    p1id: string,
+    p2id: string,
+    p1socket: WebSocket,
+    p2socket: WebSocket,
+    gameSettings: gameSettings,
+  ) {
+    this.settings = gameSettings;
+    this.isEnding = false;
     this.ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
     this.leftPaddle = new Paddle(
       PADDLE_WID,
@@ -51,6 +61,7 @@ export class GameArea {
     );
 
     this.leftPlayer = new Player(
+      p1id,
       this.leftPaddle,
       this.rightPaddle,
       this.ball,
@@ -63,6 +74,7 @@ export class GameArea {
       this,
     );
     this.rightPlayer = new Player(
+      p2id,
       this.rightPaddle,
       this.leftPaddle,
       this.ball,
