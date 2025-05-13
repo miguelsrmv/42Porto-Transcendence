@@ -49,7 +49,7 @@ function filterGameSettings(settings: gameSettings) {
     alias2: settings.alias2,
     paddleColour1: settings.paddleColour1,
     paddleColour2: settings.paddleColour2,
-    background: settings.background,
+    background: settings.background.name,
   });
 }
 
