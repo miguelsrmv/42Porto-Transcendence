@@ -51,6 +51,7 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
 
 let pingInterval: NodeJS.Timeout;
 
+// TODO: Review on message event handling
 export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
   socket.on('open', () => {
     pingInterval = setInterval(() => {

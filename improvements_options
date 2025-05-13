@@ -8,3 +8,5 @@
 #4 Deal with errors (logout and go to main page?)
 
 #5 If not logged in & trying to access restricted page -> back to main menu
+
+#6 Send stop_game when page is refreshed during remote game
