@@ -273,7 +273,7 @@ export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
     const userId = request.user.id;
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { id: true, username: true, email: true },
+      select: { id: true, username: true, email: true, avatarUrl: true },
     });
 
     reply.send(user);
