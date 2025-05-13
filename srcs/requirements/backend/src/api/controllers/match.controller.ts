@@ -2,7 +2,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { MatchMode } from '@prisma/client';
-import { defaultGameSettings } from '../../utils/defaults';
 
 export type MatchCreate = {
   mode: MatchMode;
@@ -65,14 +64,12 @@ export async function createMatch(
     const { user1Id, user2Id, mode } = request.body;
     const { settings } = request.body;
 
-    const finalSettings = { ...defaultGameSettings, ...(settings ? JSON.parse(settings) : {}) };
-
     const match = await prisma.match.create({
       data: {
         mode: mode,
         user1Id: user1Id,
         user2Id: user2Id,
-        settings: JSON.stringify(finalSettings),
+        settings: JSON.stringify(settings),
       },
     });
     reply.send(match);

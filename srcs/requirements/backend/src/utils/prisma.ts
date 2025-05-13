@@ -1,4 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { settingsExtension, userExtension } from './prismaExtensions';
+import { userExtension } from './prismaExtensions';
 
-export const prisma = new PrismaClient().$extends(userExtension).$extends(settingsExtension);
+export const prisma = new PrismaClient().$extends(userExtension);
