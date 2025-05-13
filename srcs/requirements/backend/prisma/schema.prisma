@@ -82,6 +82,10 @@ enum Character {
   YOSHI
   DK
   MEWTWO
+  BOWSER
+  SAMUS
+  CAPFALCON
+  SNAKE
 }
 
 enum MatchMode {
