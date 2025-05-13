@@ -9,9 +9,9 @@
 | `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                         |
 | `PATCH`  | `/users`                   |                     |                data to update                | Update own user data                      |
 | `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                             |
-| `POST`   | `/users/login`             |                     |              email and password              | Check if user has 2FA enabled             |
-| `POST`   | `/users/preLogin`          |                     |              email and password              | Get JWT (if user is valid)                |
-| `POST`   | `/users/login2FA`          |                     |          email, password and token           | Get JWT (if user and token are valid)     |
+| `POST`   | `/users/preLogin`          |                     |              email and password              | Check if user has 2FA enabled             |
+| `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)                |
+| `POST`   | `/users/login2FA`          |                     |          email, password and token           | Get JWT (if user and 2FA token are valid) |
 | `DELETE` | `/users/logout`            |                     |                                              | Logout user                               |
 | `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in                |
 | `GET`    | `/users/:id/stats`         |    `id` user id     |                                              | Get match stats of that user              |
