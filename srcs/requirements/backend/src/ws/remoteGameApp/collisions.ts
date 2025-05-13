@@ -1,5 +1,6 @@
 import { Ball } from './ball.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, GameArea, SPEED } from './gameArea.js';
+import { endGame } from './gameEnd.js';
 import { wait } from './helpers.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
@@ -35,21 +36,6 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
 
-function endGame(winningPlayer: Player, gameArea: GameArea): void {
-  gameArea.stop();
-  const gameEndMsg = {
-    type: 'game_end',
-    winningPlayer: winningPlayer.side,
-    ownSide: 'left',
-    stats: gameArea.stats,
-  };
-  if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
-  gameEndMsg.ownSide = 'right';
-  if (gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
-}
-
 // Checks if ball reached vertical canvas limits
 export async function checkGoal(gameArea: GameArea) {
   if (gameArea.leftPlayer.ball.x - gameArea.leftPlayer.ball.radius <= 0) {
@@ -67,13 +53,14 @@ export async function checkGoal(gameArea: GameArea) {
     gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   }
-  if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer))
-    endGame(
+  if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer)) {
+    await endGame(
       gameArea.leftPlayer.getScore() > gameArea.rightPlayer.getScore()
         ? gameArea.leftPlayer
         : gameArea.rightPlayer,
       gameArea,
     );
+  }
 }
 
 // Checks if ball went over paddle x coordinate

@@ -38,8 +38,9 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
         const matchSettings = playerSession.settings;
         const response: ServerMessage = { type: 'game_setup', settings: matchSettings };
         const [ws1, ws2] = Array.from(playerSession.players.keys());
+        const [id1, id2] = Array.from(playerSession.players.values());
         broadcastMessageTo(ws1, ws2, JSON.stringify(response));
-        initializeRemoteGame(ws1, ws2, matchSettings);
+        initializeRemoteGame(id1, id2, ws1, ws2, matchSettings);
         const gameStartMsg: ServerMessage = { type: 'game_start' };
         broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
       }
