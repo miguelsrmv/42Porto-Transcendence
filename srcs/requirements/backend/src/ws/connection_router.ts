@@ -53,15 +53,12 @@ let pingInterval: NodeJS.Timeout;
 
 // TODO: Review on message event handling
 export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
-  socket.on('open', () => {
-    pingInterval = setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.ping(); // send a ping frame
-      }
-    }, 30000); // every 30 seconds
-    console.log('New client connection on /ws');
-    socket.send('You have connected to the ft_transcendence server');
-  });
+  pingInterval = setInterval(() => {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.ping(); // send a ping frame
+    }
+  }, 30000); // every 30 seconds
+  console.log('New client connection on /ws');
 
   socket.on('message', async (message) => {
     console.log('Received message:', message.toString());
