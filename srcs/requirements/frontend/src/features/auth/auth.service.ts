@@ -172,7 +172,6 @@ async function fetchUserData() {
   window.localStorage.setItem('Username', responsejson.username);
   window.localStorage.setItem('Email', responsejson.email);
   window.localStorage.setItem('ID', responsejson.id);
-  // TODO: Fix when I get it from user data!
   window.localStorage.setItem('AvatarPath', responsejson.avatarUrl);
 }
 
