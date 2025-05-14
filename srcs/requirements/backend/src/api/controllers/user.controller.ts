@@ -64,11 +64,9 @@ export async function getUserById(
   reply: FastifyReply,
 ) {
   try {
-    const loggedInUserId = request.user.id;
-
-    if (loggedInUserId !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: request.params.id },
+      select: { id: true, username: true, lastActiveAt: true, avatarUrl: true },
     });
     reply.send(user);
   } catch (error) {
