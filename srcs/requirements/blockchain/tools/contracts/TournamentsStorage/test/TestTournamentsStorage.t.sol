@@ -64,7 +64,7 @@ contract TournamentsStorageTest is Test {
     }
 
     function testAddWinner() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS(); // Must be power of 2
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
         uint256 totalNodes = n * 2 - 1;
 
         // 1. Join all players
@@ -97,7 +97,7 @@ contract TournamentsStorageTest is Test {
     }
 
     function testSaveScore() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS(); // Must be power of 2
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
 
         // 1. Join all players
         for (uint8 i = 0; i < n; i++) {
@@ -130,6 +130,27 @@ contract TournamentsStorageTest is Test {
                 tournamentsStorage.getScores(0)[i], i + 1, "Final score should be ((MAX_PARTICIPANTS - 1) * 2) - 1"
             );
         }
+    }
+
+    function testSaveScoreAndAddWinner() public {
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+
+        for (uint8 i = 0; i < n; i++) {
+            string memory name = string(abi.encodePacked("P", vm.toString(i)));
+            TournamentsStorage.Participant memory player =
+                TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
+            tournamentsStorage.joinTournament(0, player);
+        }
+
+        string memory p0 = string(abi.encodePacked("P0"));
+        string memory p1 = string(abi.encodePacked("P1"));
+
+        tournamentsStorage.saveScoreAndAddWinner(0, p0, 5, p1, 2);
+
+        uint256 winnerIndex = n;
+        assertEq(tournamentsStorage.getMatchedParticipants(0)[winnerIndex].uniqueId, p0);
+        assertEq(tournamentsStorage.getScores(0)[0], 5);
+        assertEq(tournamentsStorage.getScores(0)[1], 2);
     }
 
     function testIsTournamentFull() public {
@@ -173,7 +194,7 @@ contract TournamentsStorageTest is Test {
     }
 
     function testGetTournamentsWonByPlayer() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS(); // Must be power of 2
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
 
         // Create 10 equal tournaments
         for (uint8 i = 0; i < 10; i++) {
@@ -208,7 +229,7 @@ contract TournamentsStorageTest is Test {
     }
 
     function testGetNumberOfTournamentsParticipatedByPlayer() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS(); // Must be power of 2
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
 
         // Create 10 equal tournaments
         for (uint8 i = 0; i < 10; i++) {
