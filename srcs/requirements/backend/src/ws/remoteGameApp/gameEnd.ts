@@ -52,7 +52,6 @@ function filterGameSettings(settings: gameSettings) {
   });
 }
 
-// TODO: Deal with function being called twice
 async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   const gameMode = gameTypeToMatchMode[gameArea.settings.gameType] ?? MatchMode.CLASSIC;
   const [character1, character2] = getCharacters(gameArea.settings);

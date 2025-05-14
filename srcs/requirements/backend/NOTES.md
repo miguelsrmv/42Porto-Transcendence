@@ -77,6 +77,7 @@ backend/
 - If running locally for the first time, first run `npm install` to install all the project's dependencies
 
 ## TODOs
+- Organize functions in each file
 - Test edge cases
 - Add match creation logic in tournaments
 - Add more tests
