@@ -18,7 +18,7 @@ export const updateFriendSchema = {
     type: 'object',
     required: ['status'],
     properties: {
-      status: { type: 'string', enum: ['PENDING', 'ACCEPTED', 'BLOCKED'] },
+      status: { type: 'string', enum: ['PENDING', 'ACCEPTED', 'REJECTED'] },
     },
     additionalProperties: false,
   },
