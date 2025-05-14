@@ -20,6 +20,7 @@ export function initializeView(): void {
   }
 
   fillFriendList();
+  fillFriendRequests();
 }
 
 async function fillFriendList(): Promise<void> {
