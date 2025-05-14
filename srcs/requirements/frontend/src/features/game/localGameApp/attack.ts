@@ -1,3 +1,5 @@
+// TODO: Revert set speed modifiers to *= previous modifier
+
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { wait } from '../../../utils/helpers.js';

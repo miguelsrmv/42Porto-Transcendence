@@ -2,34 +2,46 @@ import WebSocket from 'ws';
 import { background, gameSettings, leanGameSettings } from './settings';
 import { getBackgroundList } from './backgroundData';
 import { GameSession, GameSessionSerializable } from './types';
+import { prisma } from '../../utils/prisma';
+import app from '../../app';
 
 const classicPongSessions: GameSession[] = [];
 const crazyPongSessions: GameSession[] = [];
 
+const DEFAULT_AVATAR_PATH = '../../../../static/avatar/default/mario.png';
 function getRandomBackground(): background {
   const backgroundList = getBackgroundList();
   return backgroundList[Math.floor(Math.random() * backgroundList.length)];
 }
 
-function mergePlayer2IntoGameSettings(
+async function mergePlayer2IntoGameSettings(
   matchSettings: gameSettings,
   playerSettings: leanGameSettings,
-): gameSettings {
+) {
   return {
     ...matchSettings,
     alias2: playerSettings.alias,
+    avatar2: (await getAvatarFromPlayer(playerSettings.playerID)) || DEFAULT_AVATAR_PATH,
     paddleColour2: playerSettings.paddleColour,
     character2: playerSettings.character,
   };
 }
 
+async function getAvatarFromPlayer(playerID: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: playerID } });
+  if (!user) app.log.error('User not found in getAvatarFromPlayer');
+  return user.avatarUrl;
+}
+
 // TODO: Remove placeholders
-function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings): gameSettings {
+async function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings) {
   return {
     playType: playerSettings.playType,
     gameType: playerSettings.gameType,
     alias1: playerSettings.alias,
     alias2: 'playerPlaceholder',
+    avatar1: (await getAvatarFromPlayer(playerSettings.playerID)) || DEFAULT_AVATAR_PATH,
+    avatar2: DEFAULT_AVATAR_PATH,
     paddleColour1: playerSettings.paddleColour,
     paddleColour2: '#ff0000',
     character1: playerSettings.character,
@@ -39,12 +51,12 @@ function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings): gameSet
 }
 
 // TODO: remove repeated code (pass respective array of sessions)
-function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean {
+async function foundSession(ws: WebSocket, playerSettings: leanGameSettings) {
   if (playerSettings.gameType === 'Classic Pong') {
     for (const session of classicPongSessions) {
       if (session.players.size === 1) {
         session.players.set(ws, playerSettings.playerID);
-        session.settings = mergePlayer2IntoGameSettings(session.settings, playerSettings);
+        session.settings = await mergePlayer2IntoGameSettings(session.settings, playerSettings);
 
         // For testing purposes
         const serializableSession: GameSessionSerializable = {
@@ -63,7 +75,7 @@ function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean 
     for (const session of crazyPongSessions) {
       if (session.players.size === 1) {
         session.players.set(ws, playerSettings.playerID);
-        session.settings = mergePlayer2IntoGameSettings(session.settings, playerSettings);
+        session.settings = await mergePlayer2IntoGameSettings(session.settings, playerSettings);
 
         // For testing purposes
         const serializableSession: GameSessionSerializable = {
@@ -82,10 +94,10 @@ function foundSession(ws: WebSocket, playerSettings: leanGameSettings): boolean 
   return false;
 }
 
-function createSession(ws: WebSocket, playerSettings: leanGameSettings) {
+async function createSession(ws: WebSocket, playerSettings: leanGameSettings) {
   const newSession: GameSession = {
     players: new Map<WebSocket, string>([[ws, playerSettings.playerID]]),
-    settings: mergePlayer1IntoGameSettings(playerSettings),
+    settings: await mergePlayer1IntoGameSettings(playerSettings),
   };
 
   // For testing purposes
@@ -103,9 +115,9 @@ function createSession(ws: WebSocket, playerSettings: leanGameSettings) {
   }
 }
 
-export function attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
-  if (!foundSession(ws, playerSettings)) {
-    createSession(ws, playerSettings);
+export async function attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
+  if (!(await foundSession(ws, playerSettings))) {
+    await createSession(ws, playerSettings);
   }
 }
 

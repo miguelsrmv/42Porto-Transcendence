@@ -7,6 +7,7 @@ import { gameStats } from './gameStats.js';
 import { GameArea } from './gameArea.js';
 
 export class Player {
+  id: string;
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
   ball: Ball;
@@ -19,6 +20,7 @@ export class Player {
   powerBarFill: number;
 
   constructor(
+    id: string,
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
@@ -30,6 +32,7 @@ export class Player {
     stats: gameStats,
     gameArea: GameArea,
   ) {
+    this.id = id;
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;

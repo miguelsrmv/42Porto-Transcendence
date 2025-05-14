@@ -77,9 +77,6 @@ backend/
 - If running locally for the first time, first run `npm install` to install all the project's dependencies
 
 ## TODOs
-
-- Install fastify-type-provider-typebox and remove zod (change logic)
-
 - Test edge cases
 - Add match creation logic in tournaments
 - Add more tests

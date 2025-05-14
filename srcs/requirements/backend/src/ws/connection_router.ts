@@ -16,7 +16,7 @@ export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, mes
 }
 
 // TODO: Rename function
-function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
+async function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
   switch (message.type) {
     case 'join_game': {
       const playerSettings = message.playerSettings;
@@ -31,15 +31,16 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: s
       if (playerIsInASession(playerSettings.playerID)) {
         return;
       }
-      attributePlayerToSession(socket, playerSettings);
+      await attributePlayerToSession(socket, playerSettings);
       const playerSession = getGameSession(socket);
       if (playerSession && isSessionFull(playerSession)) {
         // TODO: error handling for no game session returned
         const matchSettings = playerSession.settings;
         const response: ServerMessage = { type: 'game_setup', settings: matchSettings };
         const [ws1, ws2] = Array.from(playerSession.players.keys());
+        const [id1, id2] = Array.from(playerSession.players.values());
         broadcastMessageTo(ws1, ws2, JSON.stringify(response));
-        initializeRemoteGame(ws1, ws2, matchSettings);
+        initializeRemoteGame(id1, id2, ws1, ws2, matchSettings);
         const gameStartMsg: ServerMessage = { type: 'game_start' };
         broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
       }
@@ -50,20 +51,18 @@ function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: s
 
 let pingInterval: NodeJS.Timeout;
 
+// TODO: Review on message event handling
 export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
-  socket.on('open', () => {
-    pingInterval = setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.ping(); // send a ping frame
-      }
-    }, 30000); // every 30 seconds
-    console.log('New client connection on /ws');
-    socket.send('You have connected to the ft_transcendence server');
-  });
+  pingInterval = setInterval(() => {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.ping(); // send a ping frame
+    }
+  }, 30000); // every 30 seconds
+  console.log('New client connection on /ws');
 
-  socket.on('message', (message) => {
+  socket.on('message', async (message) => {
     console.log('Received message:', message.toString());
-    messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
+    await messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
   });
 
   socket.on('close', () => {

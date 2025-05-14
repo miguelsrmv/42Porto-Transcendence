@@ -22,3 +22,5 @@ export const registerErrorMessages: ErrorMessages = {
   'Unique constraint failed on the fields: (`username`)': 'Username already in use',
   'Unique constraint failed on the fields: (`email`)': 'Email already in use',
 };
+
+export const twoFAErrorMessages: ErrorMessages = {};
