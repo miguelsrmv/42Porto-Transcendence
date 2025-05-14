@@ -8,6 +8,7 @@
   "devDependencies": {
     "@types/node": "^22.15.16",
     "@types/web3": "^1.0.20",
+    "ethers-types": "^3.18.1",
     "typescript": "^5.8.3"
   }
 }
