@@ -33,13 +33,12 @@ async function getAvatarFromPlayer(playerID: string) {
   return user.avatarUrl;
 }
 
-// TODO: Remove placeholders
 async function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings) {
   return {
     playType: playerSettings.playType,
     gameType: playerSettings.gameType,
     alias1: playerSettings.alias,
-    alias2: 'playerPlaceholder',
+    alias2: 'player2',
     avatar1: (await getAvatarFromPlayer(playerSettings.playerID)) || DEFAULT_AVATAR_PATH,
     avatar2: DEFAULT_AVATAR_PATH,
     paddleColour1: playerSettings.paddleColour,
@@ -50,45 +49,28 @@ async function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings) {
   };
 }
 
-// TODO: remove repeated code (pass respective array of sessions)
+function gameTypeToSessions(type: string) {
+  if (type === 'Classic Pong') return classicPongSessions;
+  else return crazyPongSessions;
+}
+
 async function foundSession(ws: WebSocket, playerSettings: leanGameSettings) {
-  if (playerSettings.gameType === 'Classic Pong') {
-    for (const session of classicPongSessions) {
-      if (session.players.size === 1) {
-        session.players.set(ws, playerSettings.playerID);
-        session.settings = await mergePlayer2IntoGameSettings(session.settings, playerSettings);
+  for (const session of gameTypeToSessions(playerSettings.gameType)) {
+    if (session.players.size === 1) {
+      session.players.set(ws, playerSettings.playerID);
+      session.settings = await mergePlayer2IntoGameSettings(session.settings, playerSettings);
 
-        // For testing purposes
-        const serializableSession: GameSessionSerializable = {
-          players: [...session.players.values()], // only the IDs
-          settings: session.settings,
-        };
+      // For testing purposes
+      const serializableSession: GameSessionSerializable = {
+        players: [...session.players.values()], // only the IDs
+        settings: session.settings,
+      };
 
-        console.log(
-          'Player matched to a Classic Pong GameSession: ',
-          JSON.stringify(serializableSession),
-        );
-        return true;
-      }
-    }
-  } else if (playerSettings.gameType === 'Crazy Pong') {
-    for (const session of crazyPongSessions) {
-      if (session.players.size === 1) {
-        session.players.set(ws, playerSettings.playerID);
-        session.settings = await mergePlayer2IntoGameSettings(session.settings, playerSettings);
-
-        // For testing purposes
-        const serializableSession: GameSessionSerializable = {
-          players: [...session.players.values()], // only the IDs
-          settings: session.settings,
-        };
-
-        console.log(
-          'Player matched to a Crazy Pong GameSession: ',
-          JSON.stringify(serializableSession),
-        );
-        return true;
-      }
+      console.log(
+        `Player matched to a ${playerSettings.gameType} GameSession: `,
+        JSON.stringify(serializableSession),
+      );
+      return true;
     }
   }
   return false;
@@ -107,13 +89,11 @@ async function createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     settings: newSession.settings,
   };
 
-  if (playerSettings.gameType === 'Classic Pong') {
-    classicPongSessions.push(newSession);
-    console.log('New Classic GameSession created: ', JSON.stringify(serializableSession));
-  } else if (playerSettings.gameType === 'Crazy Pong') {
-    crazyPongSessions.push(newSession);
-    console.log('New Crazy GameSession created: ', JSON.stringify(serializableSession));
-  }
+  gameTypeToSessions(playerSettings.gameType).push(newSession);
+  console.log(
+    `New ${playerSettings.gameType} GameSession created: `,
+    JSON.stringify(serializableSession),
+  );
 }
 
 export async function attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
@@ -130,7 +110,6 @@ export function getCrazyPongSessions(): GameSession[] {
   return crazyPongSessions;
 }
 
-// TODO: Cover case where multiple instances of a WS?
 export function getGameSession(playerSocket: WebSocket): GameSession | null {
   const gameSessions = classicPongSessions.concat(crazyPongSessions);
   for (const session of gameSessions) {
