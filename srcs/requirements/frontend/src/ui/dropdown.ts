@@ -6,6 +6,7 @@
  * user interaction by allowing elements to be shown or hidden based on user actions.
  */
 
+import { userIsLoggedIn } from '../features/auth/auth.service.js';
 import { logoutUser } from '../features/auth/logout.js';
 
 /**
@@ -15,8 +16,7 @@ import { logoutUser } from '../features/auth/logout.js';
  * It toggles the dropdown's visibility when the button is clicked and hides the dropdown
  * when clicking outside of it.
  */
-// TODO: If guest login, don't show Profile option!! And change "Log out" to "Exit"
-export function toggleDropdown(): void {
+export async function toggleDropdown(): Promise<void> {
   const button = document.getElementById('nav-settings-button');
   const dropdown = document.getElementById('settings-dropdown');
 
@@ -35,9 +35,24 @@ export function toggleDropdown(): void {
   });
 
   const logoutButton = document.getElementById('logout-button');
+  const settingsButton = document.getElementById('settings-dropdown-button');
+  const loginStatus = await userIsLoggedIn();
+
+  if (logoutButton && settingsButton) {
+    if (loginStatus) {
+      logoutButton.innerText = 'Log Out';
+      settingsButton.classList.remove('hidden');
+    } else {
+      logoutButton.innerText = 'Exit';
+      settingsButton.classList.add('hidden');
+    }
+  }
+
   if (logoutButton) {
     logoutButton.addEventListener('click', async () => {
-      await logoutUser();
+      if (loginStatus) {
+        await logoutUser();
+      }
       window.location.hash = '#';
     });
   }

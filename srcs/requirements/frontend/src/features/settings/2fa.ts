@@ -454,7 +454,4 @@ async function enable2FA(): Promise<boolean> {
 }
 
 //TODO: Display error messages on modal
-//NOTE: David, issues I found:
-/// Should the opposite of /api/users/2fa/disable be /api/users/2fa/enable instead of verify?
-/// Both should be Post requests and take this object? { code: tokenElement.value, password: passwordElement.value };
-/// Am I getting the correct bool from fetch2FAstatus()? (see line 72)
+

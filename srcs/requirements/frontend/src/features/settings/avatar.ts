@@ -1,5 +1,6 @@
 import { avatarList } from '../../ui/avatarData/avatarData.js';
 let avatarIndex: number;
+let isCustomAvatarListenerAdded = false;
 
 export function createAvatarLoop(): void {
   const prevButton: HTMLButtonElement | null = document.getElementById(
@@ -89,30 +90,33 @@ export function handleSubmitAvatar(): void {
       return;
     }
 
-    // Listen once to the 'change' event
-    customAvatar.addEventListener('change', async () => {
-      if (!customAvatar.files || customAvatar.files.length === 0) return;
+    if (!isCustomAvatarListenerAdded) {
+      customAvatar.addEventListener('change', async () => {
+        if (!customAvatar.files || customAvatar.files.length === 0) return;
 
-      const file = customAvatar.files[0];
-      const formData = new FormData();
-      formData.append('avatar', file);
+        const file = customAvatar.files[0];
+        const formData = new FormData();
+        formData.append('avatar', file);
 
-      try {
-        const response = await fetch('/api/users/customAvatar', {
-          method: 'PUT',
-          credentials: 'include',
-          body: formData,
-        });
-        updateLocalStorageAvatar();
-        if (!response.ok) {
-          console.error(`Upload failed with status ${response.status}`);
-        } else {
-          console.log('Custom avatar uploaded successfully');
+        try {
+          const response = await fetch('/api/users/customAvatar', {
+            method: 'PUT',
+            credentials: 'include',
+            body: formData,
+          });
+          updateLocalStorageAvatar();
+          if (!response.ok) {
+            console.error(`Upload failed with status ${response.status}`);
+          } else {
+            console.log('Custom avatar uploaded successfully');
+          }
+        } catch (error) {
+          console.log(`Custom avatar upload error: ${error}`);
         }
-      } catch (error) {
-        console.log(`Custom avatar upload error: ${error}`);
-      }
-    });
+      });
+
+      isCustomAvatarListenerAdded = true;
+    }
 
     customAvatar.click();
   }
@@ -140,6 +144,6 @@ export function resetAvatarIndex(): void {
 function refreshHeader(): void {
   let headerAvatar = document.getElementById('nav-settings-avatar') as HTMLImageElement;
   let headerAvatarPath = window.localStorage.getItem('AvatarPath');
-  if (headerAvatar && headerAvatarPath) headerAvatar.src = headerAvatarPath;
-  console.log('Refreshed!');
+  if (headerAvatar && headerAvatarPath) headerAvatar.src = `${headerAvatarPath}?t=${Date.now()}`;
+  // NOTE: Dummy string appended to prevent cache issues
 }
