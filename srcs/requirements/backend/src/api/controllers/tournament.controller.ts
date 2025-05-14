@@ -2,7 +2,8 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { Character, TournamentStatus } from '@prisma/client';
-// import { ethers } from 'ethers';
+import { contract } from '../../../../blockchain/tools/frontend/blockchain'
+
 import {
   createTournamentParticipant,
   createTournamentByUser,
@@ -82,13 +83,13 @@ export async function getTournamentById(
 }
 
 // Unused for business logic
-export async function createTournament(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    reply.send();
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
+// export async function createTournament(request: FastifyRequest, reply: FastifyReply) {
+//   try {
+//     reply.send();
+//   } catch (error) {
+//     handleError(error, reply);
+//   }
+// }
 
 // Unused for business logic
 // TODO: create function updateTournamentMatches
@@ -129,29 +130,29 @@ export async function startTournament(
   }
 }
 
-export async function deleteTournament(
-  request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply,
-) {
-  try {
-    const tournament = await prisma.tournament.delete({
-      where: { id: request.params.id },
-    });
-    reply.send(tournament);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
+// export async function deleteTournament(
+//   request: FastifyRequest<{ Params: IParams }>,
+//   reply: FastifyReply,
+// ) {
+//   try {
+//     const tournament = await prisma.tournament.delete({
+//       where: { id: request.params.id },
+//     });
+//     reply.send(tournament);
+//   } catch (error) {
+//     handleError(error, reply);
+//   }
+// }
 
 export async function addPlayerToTournament(
   request: FastifyRequest<{ Body: TournamentPlayer }>,
   reply: FastifyReply,
 ) {
   try {
-    if (!request.body.tournamentId) {
-      const newTournament = await createTournamentByUser(request.body.userId);
-      request.body.tournamentId = newTournament.id;
-    }
+    // if (!request.body.tournamentId) {
+    //   const newTournament = await createTournamentByUser(request.body.userId);
+    //   request.body.tournamentId = newTournament.id;
+    // }
     const newParticipant = await createTournamentParticipant(request.body);
 
     const updatedTournament = await prisma.tournament.update({
@@ -180,4 +181,10 @@ export async function tournamentBlockchain(request: FastifyRequest, reply: Fasti
   // } catch (error) {
   //   handleError(error, reply);
   // }
+
+  try {
+    
+  } catch (error) {
+    handleError(error, reply);
+  }
 }
