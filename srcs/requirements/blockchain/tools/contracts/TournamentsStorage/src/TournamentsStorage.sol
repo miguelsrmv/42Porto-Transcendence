@@ -122,7 +122,7 @@ contract TournamentsStorage {
         }
     }
 
-    function joinTournament(uint256 _tournamentId, string memory _participantName) public onlyOwner {
+    function joinTournament(uint256 _tournamentId, Participant memory participant) public onlyOwner {
         uint8 tournamentLength = 0;
 
         if (isTournamentFull(_tournamentId)) {
@@ -136,15 +136,21 @@ contract TournamentsStorage {
         ) {
             require(
                 keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
-                    != keccak256(abi.encodePacked(_participantName)),
+                    != keccak256(abi.encodePacked(participant.uniqueId)),
                 "The player is already registered in the tournament"
             );
             tournamentLength++;
         }
 
-        tournaments[_tournamentId].participants[tournamentLength].uniqueId = _participantName;
-        tournaments[_tournamentId].matchedParticipants[tournamentLength].uniqueId = _participantName;
-        console.log(_participantName, "joined tournament", _tournamentId);
+        tournaments[_tournamentId].participants[tournamentLength].uniqueId = participant.uniqueId;
+        tournaments[_tournamentId].participants[tournamentLength].userAlias = participant.userAlias;
+        tournaments[_tournamentId].participants[tournamentLength].character = participant.character;
+
+        tournaments[_tournamentId].matchedParticipants[tournamentLength].uniqueId = participant.uniqueId;
+        tournaments[_tournamentId].matchedParticipants[tournamentLength].userAlias = participant.userAlias;
+        tournaments[_tournamentId].matchedParticipants[tournamentLength].character = participant.character;
+
+        console.log(participant.uniqueId, "joined tournament", _tournamentId);
     }
 
     function addWinner(uint8 _tournamentId, string memory _winnerName) public onlyOwner {
