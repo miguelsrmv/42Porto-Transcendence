@@ -25,18 +25,16 @@ async function joinGameHandler(
     console.log(
       `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
     );
-    const errorMessage = { type: 'error', message: '401 Unauthorized' };
+    const errorMessage: ServerMessage = { type: 'error', message: '401 Unauthorized' };
     if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
+    socket.close();
     return;
   }
-  if (playerIsInASession(playerSettings.playerID)) {
-    return;
-  }
+  if (playerIsInASession(playerSettings.playerID)) return;
   await attributePlayerToSession(socket, playerSettings);
   const playerSession = getGameSession(socket);
   if (playerSession && isSessionFull(playerSession)) {
-    const matchSettings = playerSession.settings;
-    const response: ServerMessage = { type: 'game_setup', settings: matchSettings };
+    const response: ServerMessage = { type: 'game_setup', settings: playerSession.settings };
     const [ws1, ws2] = Array.from(playerSession.players.keys());
     broadcastMessageTo(ws1, ws2, JSON.stringify(response));
     initializeRemoteGame(playerSession);
@@ -100,16 +98,8 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
   }
 }
 
-// TODO: review ping logic
 export async function handleSocketConnection(socket: WebSocket, request: FastifyRequest) {
-  // NOTE: necessary?
-  // const pingInterval = setInterval(() => {
-  //   if (socket.readyState === WebSocket.OPEN) {
-  //     socket.ping(); // send a ping frame
-  //   }
-  // }, 30000); // every 30 seconds
   console.log('New client connection on /ws');
-
   let clientLastActive = Date.now() / 1000;
   const keepAlive = setInterval(() => {
     const currentTime = Date.now() / 1000;

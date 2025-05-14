@@ -10,13 +10,9 @@ type FriendCreate = {
 
 export async function getUserFriends(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: request.user.id },
-      select: { id: true },
-    });
     const friends = await prisma.friendship.findMany({
       where: {
-        OR: [{ userId: user.id }, { friendId: user.id }],
+        OR: [{ userId: request.user.id }, { friendId: request.user.id }],
       },
     });
     reply.send(friends);
