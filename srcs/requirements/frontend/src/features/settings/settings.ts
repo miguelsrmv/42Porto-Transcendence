@@ -29,11 +29,23 @@ export async function initializeView(): Promise<void> {
   handle2FA();
 }
 
+/**
+ * @brief Resets the data on the settings page.
+ *
+ * This function resets the avatar index and form data to their initial states.
+ */
 function resetPageData(): void {
   resetAvatarIndex();
   resetFormData();
 }
 
+/**
+ * @brief Updates the placeholders for the username and email fields.
+ *
+ * This function retrieves the stored username and email from local storage
+ * and sets them as placeholders in the respective input fields on the settings page.
+ * If the fields are not found, it logs an error message to the console.
+ */
 function updateFormPlaceholder(): void {
   const changeUsernameField = document.getElementById(
     'username-settings-container',

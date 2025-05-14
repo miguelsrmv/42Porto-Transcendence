@@ -3,8 +3,8 @@
  * @brief Handles the setup of the friends page.
  */
 
-import { checkLoginStatus } from '../../utils/helpers';
-import { navigate } from '../../core/router';
+import { checkLoginStatus } from '../../utils/helpers.js';
+import { navigate } from '../../core/router.js';
 
 /**
  * @brief Initializes view for friends
