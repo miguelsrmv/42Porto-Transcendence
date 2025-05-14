@@ -5,7 +5,7 @@
 | `GET`    | `/`                        |                     |                                              | Base route for test                       |
 | `GET`    | `/users`                   |                     |                                              | Get all users                             |
 | `GET`    | `/users/me`                |                     |                                              | Get own user                              |
-| `GET`    | `/users/:id`               |    `id` user id     |                                              | Get a specific user                       |
+| `GET`    | `/users/:id`               |    `id` user id     |                                              | Get a specific user public data           |
 | `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                         |
 | `PATCH`  | `/users`                   |                     |                data to update                | Update own user data                      |
 | `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                             |
@@ -22,6 +22,7 @@
 | `GET`    | `/users/getAvatarPath`     |                     |                                              | Get user's avatar image path              |
 | `PUT`    | `/users/defaultAvatar`     |                     |                     path                     | Updates avatar image path to a default    |
 | `PUT`    | `/users/customAvatar`      |                     |                 avatar data                  | Uploads custom avatar image               |
+| `GET`    | `/leaderboard`             |                     |                                              | Get leaderboard                           |
 | `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user         |
 | `POST`   | `/friends`                 |                     |             userId and friendId              | Create a friendship between two users     |
 | `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                  |
@@ -146,6 +147,10 @@ Content-Type: application/json
   "status": "PENDING" // or "ACCEPTED", "BLOCKED"
 }
 ```
+
+## Leaderboard
+
+- **Get leaderboard:** `GET /leaderboard`
 
 ## Matches
 
