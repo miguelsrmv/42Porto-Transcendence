@@ -42,33 +42,33 @@ async function createFriends(users: User[]) {
   }
 }
 
-async function createTournaments(users: User[]) {
-  const tournamentSize = 4;
-  for (let i = 0; i < users.length; i += tournamentSize) {
-    const participants = users.slice(i, i + tournamentSize);
-    if (participants.length === tournamentSize) {
-      const tournament = await prisma.tournament.create({
-        data: {
-          name: `Tournament ${Math.floor(i / tournamentSize) + 1}`,
-          maxParticipants: tournamentSize,
-          settings: '',
-          createdBy: {
-            connect: { id: users[i].id },
-          },
-        },
-      });
-      for (let j = 0; j < tournamentSize; j += 1) {
-        await prisma.tournamentParticipant.create({
-          data: {
-            alias: faker.internet.username(),
-            tournamentId: tournament.id,
-            userId: users[j].id,
-          },
-        });
-      }
-    }
-  }
-}
+// async function createTournaments(users: User[]) {
+//   const tournamentSize = 4;
+//   for (let i = 0; i < users.length; i += tournamentSize) {
+//     const participants = users.slice(i, i + tournamentSize);
+//     if (participants.length === tournamentSize) {
+//       const tournament = await prisma.tournament.create({
+//         data: {
+//           name: `Tournament ${Math.floor(i / tournamentSize) + 1}`,
+//           maxParticipants: tournamentSize,
+//           settings: '',
+//           createdBy: {
+//             connect: { id: users[i].id },
+//           },
+//         },
+//       });
+//       for (let j = 0; j < tournamentSize; j += 1) {
+//         await prisma.tournamentParticipant.create({
+//           data: {
+//             alias: faker.internet.username(),
+//             tournamentId: tournament.id,
+//             userId: users[j].id,
+//           },
+//         });
+//       }
+//     }
+//   }
+// }
 
 async function createMatches(users: User[]) {
   const matchSize = 2;
@@ -148,7 +148,7 @@ async function main() {
     await seedUsers();
     const users = await prisma.user.findMany();
     await createFriends(users);
-    await createTournaments(users);
+    // await createTournaments(users);
     await createMatches(users);
     await createTestUsers(users);
     if (await prisma.user.findMany()) console.log('Database populated successfully.');
