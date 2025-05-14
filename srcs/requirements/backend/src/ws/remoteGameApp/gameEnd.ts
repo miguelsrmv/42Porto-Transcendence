@@ -3,7 +3,6 @@ import { GameArea } from './gameArea';
 import { Player } from './player';
 import { MatchMode, Character } from '@prisma/client';
 import { gameSettings } from './settings';
-import { gameRunningState } from './types';
 
 const gameTypeToMatchMode: Record<string, MatchMode> = {
   'Classic Pong': MatchMode.CLASSIC,
