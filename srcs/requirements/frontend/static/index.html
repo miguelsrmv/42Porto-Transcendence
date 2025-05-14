@@ -709,63 +709,7 @@
 
             <div class="bg-gray-700 rounded-lg p-4 shadow-md max-h-[25vh] overflow-y-auto">
               <div id="friend-requests">
-                <!-- Pending requests -->
-                <div class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg">
-                  <div class="flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Request 1"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">SuperPlayer</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button
-                      class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
-                  <div class="flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Request 2"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">BounceKing</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button
-                      class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Empty state (hidden by default) -->
-                <div class="hidden text-center py-6">
+                <div id="empty-friend-request-section" class="hidden text-center py-6">
                   <div class="text-gray-400 mb-2">No pending friend requests</div>
                   <div class="text-sm text-gray-500">Friend requests will appear here</div>
                 </div>
@@ -804,22 +748,23 @@
   </template>
 
   <template id="friend-request-template">
-    <div class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg">
+    <div id="friend-request-container" class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg">
       <div class="flex items-center">
         <div class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
           <img
+            id="friend-request-avatar"
             src="./static/avatar/default/mario.png"
             alt="Request 1"
             class="h-full w-full object-cover"
           />
         </div>
-        <span class="text-white">SuperPlayer</span>
+        <span id="friend-request-name" class="text-white">SuperPlayer</span>
       </div>
       <div class="flex space-x-2">
-        <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+        <button id="friend-request-accept-button" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
           Accept
         </button>
-        <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+        <button id="friend-request-decline-button" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
           Decline
         </button>
       </div>
