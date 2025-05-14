@@ -173,14 +173,27 @@ contract TournamentsStorage {
 
         tournaments[_tournamentId].scores[updatedPlayerOneIndex] = _playerOneScore;
         tournaments[_tournamentId].scores[updatedPlayerTwoIndex] = _playerTwoScore;
-        console.log("Scores saved for Tournament");
-        console.logUint(_tournamentId);
-        console.log("Player One:");
-        console.log(_playerOneName);
+        console.log("Scores saved for Tournament:", _tournamentId);
+        console.log("Player One:", _playerOneName);
         console.logUint(_playerOneScore);
-        console.log("Player Two:");
-        console.log(_playerTwoName);
+        console.log("Player Two:", _playerTwoName);
         console.logUint(_playerTwoScore);
+    }
+
+    function saveScoreAndAddWinner(
+        uint8 _tournamentId,
+        string memory _playerOneName,
+        uint8 _playerOneScore,
+        string memory _playerTwoName,
+        uint8 _playerTwoScore
+    ) public onlyOwner {
+        saveScore(_tournamentId, _playerOneName, _playerOneScore, _playerTwoName, _playerTwoScore);
+
+        if (_playerOneScore > _playerTwoScore) {
+            addWinner(_tournamentId, _playerOneName);
+        } else {
+            addWinner(_tournamentId, _playerTwoName);
+        }
     }
 
     //HELPER FUNCTIONS **********************************************************
