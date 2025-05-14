@@ -21,6 +21,20 @@ export async function getUserFriends(request: FastifyRequest, reply: FastifyRepl
   }
 }
 
+export async function getUserPendingFriends(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const pendingFriends = await prisma.friendship.findMany({
+      where: {
+        OR: [{ userId: request.user.id }, { friendId: request.user.id }],
+        AND: { status: FriendshipStatus.PENDING },
+      },
+    });
+    reply.send(pendingFriends);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
 export async function createFriend(
   request: FastifyRequest<{ Body: FriendCreate }>,
   reply: FastifyReply,

@@ -52,7 +52,7 @@ model Friendship {
 enum FriendshipStatus {
   PENDING
   ACCEPTED
-  BLOCKED
+  REJECTED
 }
 
 model Match {
