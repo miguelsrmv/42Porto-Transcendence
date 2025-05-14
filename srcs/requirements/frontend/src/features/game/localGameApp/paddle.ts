@@ -88,7 +88,7 @@ export class Paddle {
    * @param modifier The new speed modifier.
    */
   setSpeedModifier(modifier: number): void {
-    this.speedModifier = modifier;
+    this.speedModifier *= modifier;
   }
 
   /**

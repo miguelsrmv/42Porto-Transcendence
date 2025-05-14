@@ -72,7 +72,6 @@ export async function initializeView(): Promise<void> {
       () => {
         setGameSettings(gameType, 'Remote Play');
         showWaitingModal();
-        // TODO: Hide elements, create "Waiting modal"
         initializeRemoteGame(getLeanGameSettings());
       },
       { once: true },
