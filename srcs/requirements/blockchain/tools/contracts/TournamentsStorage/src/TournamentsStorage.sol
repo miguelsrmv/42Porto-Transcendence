@@ -8,13 +8,19 @@ contract TournamentsStorage {
 
     uint8 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
+    struct Participant {
+        string uniqueId;
+        string userAlias;
+        string character;
+    }
+
     struct Tournament {
         uint256 id;
         uint16[3] date;
         uint8[3] time;
         uint8 maxParticipants;
-        string[MAX_PARTICIPANTS] participants;
-        string[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
+        Participant[MAX_PARTICIPANTS] participants;
+        Participant[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
         uint8[(MAX_PARTICIPANTS - 1) * 2] scores;
     }
 
@@ -42,11 +48,11 @@ contract TournamentsStorage {
         return tournaments[_id];
     }
 
-    function getParticipants(uint256 _id) public view returns (string[MAX_PARTICIPANTS] memory) {
+    function getParticipants(uint256 _id) public view returns (Participant[MAX_PARTICIPANTS] memory) {
         return tournaments[_id].participants;
     }
 
-    function getMatchedParticipants(uint256 _id) public view returns (string[MAX_PARTICIPANTS * 2 - 1] memory) {
+    function getMatchedParticipants(uint256 _id) public view returns (Participant[MAX_PARTICIPANTS * 2 - 1] memory) {
         return tournaments[_id].matchedParticipants;
     }
 
@@ -60,7 +66,7 @@ contract TournamentsStorage {
         for (uint8 i = 0; i < tournaments.length; i++) {
             for (uint8 j = 0; j < MAX_PARTICIPANTS; j++) {
                 if (
-                    keccak256(abi.encodePacked(tournaments[i].matchedParticipants[j]))
+                    keccak256(abi.encodePacked(tournaments[i].matchedParticipants[j].uniqueId))
                         == keccak256(abi.encodePacked(_playerName))
                 ) {
                     tournamentsParticipated++;
@@ -78,7 +84,7 @@ contract TournamentsStorage {
 
         for (uint8 i = 0; i < tournaments.length; i++) {
             if (
-                keccak256(abi.encodePacked(tournaments[i].matchedParticipants[winnersIndex]))
+                keccak256(abi.encodePacked(tournaments[i].matchedParticipants[winnersIndex].uniqueId))
                     == keccak256(abi.encodePacked(_playerName))
             ) {
                 tournamentsWon++;
@@ -91,32 +97,29 @@ contract TournamentsStorage {
     // ACTION FUNCTIONS *********************************************************
 
     function createTournament() public {
-        string[MAX_PARTICIPANTS] memory emptyParticipants;
+        tournaments.push();
+        Tournament storage newTournament = tournaments[tournaments.length - 1];
+
+        newTournament.id = tournaments.length - 1;
+        newTournament.date = getCurrentDate();
+        newTournament.time = getCurrentTime();
+        newTournament.maxParticipants = MAX_PARTICIPANTS;
+
         for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
-            emptyParticipants[i] = "";
+            newTournament.participants[i].uniqueId = "";
+            newTournament.participants[i].userAlias = "";
+            newTournament.participants[i].character = "";
         }
 
-        string[MAX_PARTICIPANTS * 2 - 1] memory emptyMatchedParticipants;
         for (uint8 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
-            emptyMatchedParticipants[i] = "";
+            newTournament.matchedParticipants[i].uniqueId = "";
+            newTournament.matchedParticipants[i].userAlias = "";
+            newTournament.matchedParticipants[i].character = "";
         }
 
-        uint8[(MAX_PARTICIPANTS - 1) * 2] memory emptyScores;
         for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
-            emptyScores[i] = 0;
+            newTournament.scores[i] = 0;
         }
-
-        tournaments.push(
-            Tournament({
-                id: tournaments.length,
-                date: getCurrentDate(),
-                time: getCurrentTime(),
-                maxParticipants: MAX_PARTICIPANTS,
-                participants: emptyParticipants,
-                matchedParticipants: emptyMatchedParticipants,
-                scores: emptyScores
-            })
-        );
     }
 
     function joinTournament(uint256 _tournamentId, string memory _participantName) public onlyOwner {
@@ -128,19 +131,26 @@ contract TournamentsStorage {
         }
 
         while (
-            keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength]))
+            keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
                 != keccak256(abi.encodePacked(""))
-        ) tournamentLength++;
+        ) {
+            require(
+                keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
+                    != keccak256(abi.encodePacked(_participantName)),
+                "The player is already registered in the tournament"
+            );
+            tournamentLength++;
+        }
 
-        tournaments[_tournamentId].participants[tournamentLength] = _participantName;
-        tournaments[_tournamentId].matchedParticipants[tournamentLength] = _participantName;
+        tournaments[_tournamentId].participants[tournamentLength].uniqueId = _participantName;
+        tournaments[_tournamentId].matchedParticipants[tournamentLength].uniqueId = _participantName;
         console.log(_participantName, "joined tournament", _tournamentId);
     }
 
     function addWinner(uint8 _tournamentId, string memory _winnerName) public onlyOwner {
         uint8 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winnerName) / 2 + MAX_PARTICIPANTS;
 
-        tournaments[_tournamentId].matchedParticipants[winnerNextIndex] = _winnerName;
+        tournaments[_tournamentId].matchedParticipants[winnerNextIndex].uniqueId = _winnerName;
         console.log("Added winner", _winnerName, "to tournament", _tournamentId);
     }
 
@@ -174,7 +184,7 @@ contract TournamentsStorage {
 
         while (
             tournamentLength < MAX_PARTICIPANTS
-                && keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength]))
+                && keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
                     != keccak256(abi.encodePacked(""))
         ) tournamentLength++;
 
@@ -192,7 +202,7 @@ contract TournamentsStorage {
 
         for (uint8 i = 0; i < tournamentLength; i++) {
             if (
-                keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[i]))
+                keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[i].uniqueId))
                     == keccak256(abi.encodePacked(_playerName))
             ) {
                 lastIndex = i;
@@ -200,7 +210,7 @@ contract TournamentsStorage {
         }
 
         require(
-            keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[lastIndex]))
+            keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[lastIndex].uniqueId))
                 == keccak256(abi.encodePacked(_playerName)),
             "Player not found"
         );
