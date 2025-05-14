@@ -24,6 +24,7 @@
 | `PUT`    | `/users/customAvatar`      |                     |                 avatar data                  | Uploads custom avatar image               |
 | `GET`    | `/leaderboard`             |                     |                                              | Get leaderboard                           |
 | `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user         |
+| `GET`    | `/friends/pending`         |                     |                                              | Get pending friends of logged in user     |
 | `POST`   | `/friends`                 |                     |             userId and friendId              | Create a friendship between two users     |
 | `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                  |
 | `DELETE` | `/friends/:id`             | `id` friendship id  |                                              | Delete a friendship                       |
