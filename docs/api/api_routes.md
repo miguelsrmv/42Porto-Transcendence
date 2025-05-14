@@ -145,7 +145,7 @@ Content-Type: application/json
 
 ```json
 {
-  "status": "PENDING" // or "ACCEPTED", "BLOCKED"
+  "status": "PENDING" // or "ACCEPTED", "REJECTED"
 }
 ```
 
