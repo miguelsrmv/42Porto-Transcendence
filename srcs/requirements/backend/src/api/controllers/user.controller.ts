@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
-import { getUserClassicStats, getUserCrazyStats } from '../services/user.services';
+import { getUserClassicStats, getUserCrazyStats, getUserRank } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
@@ -66,9 +66,9 @@ export async function getUserById(
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: request.params.id },
-      select: { id: true, username: true, lastActiveAt: true, avatarUrl: true },
+      select: { username: true, lastActiveAt: true, avatarUrl: true },
     });
-    reply.send(user);
+    reply.send({ ...user, rank: getUserRank(request.params.id) });
   } catch (error) {
     handleError(error, reply);
   }
@@ -291,6 +291,7 @@ export async function getUserStats(
     const stats = {
       classic: getUserClassicStats(userMatches, request.params.id),
       crazy: getUserCrazyStats(userMatches, request.params.id),
+      rank: getUserRank(request.params.id),
     };
 
     reply.send({ stats });

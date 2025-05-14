@@ -71,6 +71,13 @@ async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   });
 }
 
+async function updateLeaderboard(winningPlayer: Player) {
+  await prisma.leaderboard.update({
+    where: { userId: winningPlayer.id },
+    data: { score: { increment: 3 } },
+  });
+}
+
 export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
@@ -82,6 +89,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     stats: gameArea.stats,
   };
   await createMatch(winningPlayer, gameArea);
+  await updateLeaderboard(winningPlayer);
   if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
     gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
   gameEndMsg.ownSide = 'right';

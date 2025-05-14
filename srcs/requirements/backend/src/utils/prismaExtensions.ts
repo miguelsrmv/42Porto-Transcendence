@@ -9,6 +9,7 @@ export const userExtension = Prisma.defineExtension({
         args.data.hashedPassword = hash;
         args.data.salt = salt;
         args.data.avatarUrl = '../../../../static/avatar/default/mario.png';
+        args.data.leaderboard = { create: {} };
         return query(args);
       },
     },
