@@ -29,6 +29,13 @@ model User {
   tournaments        TournamentParticipant[]
 }
 
+model Leaderboard {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  score  Int    @default(0)
+}
+
 model Friendship {
   id        String           @id @default(uuid())
   user      User             @relation("UserToFriends", fields: [userId], references: [id], onDelete: Cascade)
@@ -45,7 +52,7 @@ model Friendship {
 enum FriendshipStatus {
   PENDING
   ACCEPTED
-  BLOCKED
+  REJECTED
 }
 
 model Match {
@@ -91,14 +98,6 @@ enum Character {
 enum MatchMode {
   CLASSIC
   CRAZY
-}
-
-model Leaderboard {
-  id      String @id @default(uuid())
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId  String
-  classic Int    @default(0)
-  crazy   Int    @default(0)
 }
 
 model Tournament {
