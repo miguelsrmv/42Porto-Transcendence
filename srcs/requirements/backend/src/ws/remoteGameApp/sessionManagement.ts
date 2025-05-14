@@ -98,6 +98,7 @@ async function createSession(ws: WebSocket, playerSettings: leanGameSettings) {
   const newSession: GameSession = {
     players: new Map<WebSocket, string>([[ws, playerSettings.playerID]]),
     settings: await mergePlayer1IntoGameSettings(playerSettings),
+    gameArea: null,
   };
 
   // For testing purposes
