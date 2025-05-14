@@ -10,17 +10,14 @@ import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types
 import { initializeRemoteGame } from './remoteGameApp/game';
 import { FastifyRequest } from 'fastify';
 import { leanGameSettings } from './remoteGameApp/settings';
+import { isGameType, isPlayerInput, isPlayType } from './remoteGameApp/helpers';
 
 export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, message: string) {
   if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
   if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
 }
 
-async function joinGameHandler(
-  socket: WebSocket,
-  userId: string,
-  playerSettings: leanGameSettings,
-) {
+function areGameSettingsValid(socket: WebSocket, userId: string, playerSettings: leanGameSettings) {
   if (playerSettings.playerID !== userId) {
     console.log(
       `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
@@ -28,9 +25,27 @@ async function joinGameHandler(
     const errorMessage: ServerMessage = { type: 'error', message: '401 Unauthorized' };
     if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
     socket.close();
-    return;
+    return false;
   }
+  if (!isGameType(playerSettings.gameType) || !isPlayType(playerSettings.playType)) {
+    console.log(
+      `gameType: '${playerSettings.gameType}' or playType: '${playerSettings.playType}' not valid`,
+    );
+    const errorMessage: ServerMessage = { type: 'error', message: '400 Game settings not valid' };
+    if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
+    socket.close();
+    return false;
+  }
+  return true;
+}
+
+async function joinGameHandler(
+  socket: WebSocket,
+  userId: string,
+  playerSettings: leanGameSettings,
+) {
   if (playerIsInASession(playerSettings.playerID)) return;
+  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
   await attributePlayerToSession(socket, playerSettings);
   const playerSession = getGameSession(socket);
   if (playerSession && isSessionFull(playerSession)) {
@@ -58,6 +73,10 @@ function stopGameHandler(socket: WebSocket) {
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
+  if (!isPlayerInput(direction)) {
+    console.log(`Not a valid player movement: ${direction}`);
+    return;
+  }
   const gameSession = getGameSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
