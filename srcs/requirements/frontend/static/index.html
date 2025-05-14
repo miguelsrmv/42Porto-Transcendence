@@ -803,6 +803,30 @@
     </div>
   </template>
 
+  <template id="friend-request-template">
+    <div class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg">
+      <div class="flex items-center">
+        <div class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
+          <img
+            src="./static/avatar/default/mario.png"
+            alt="Request 1"
+            class="h-full w-full object-cover"
+          />
+        </div>
+        <span class="text-white">SuperPlayer</span>
+      </div>
+      <div class="flex space-x-2">
+        <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+          Accept
+        </button>
+        <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+          Decline
+        </button>
+      </div>
+    </div>
+  </template>
+
+
   <template id="rankings-template">
     <div id="rankings-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
       <div class="flex flex-row gap-6 h-full">
