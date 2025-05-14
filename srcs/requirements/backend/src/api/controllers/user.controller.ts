@@ -346,7 +346,6 @@ export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply
 
 export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
   try {
-    // TODO: allow reset secret in case of error?
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
     if (user.enabled2FA)
       return reply.status(400).send({ message: '2FA already setup for this user.' });
