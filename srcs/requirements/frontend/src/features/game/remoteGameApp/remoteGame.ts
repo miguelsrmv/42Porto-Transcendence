@@ -59,18 +59,18 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   window.addEventListener(
     'popstate',
     () => {
-      const stopMessage = JSON.stringify({ type: 'stop_game' });
-      if (gameIsRunning) {
-        gameIsRunning = false;
-        webSocket.send(stopMessage);
-      }
-
-      if (webSocket.readyState === WebSocket.OPEN) {
-        webSocket.close();
-      }
+      stopGame();
     },
-    { once: true },
+    {
+      once: true,
+    },
   );
+
+  window.addEventListener('beforeunload', (event) => {
+    stopGame();
+    event.preventDefault();
+    event.returnValue = '';
+  });
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
@@ -85,6 +85,22 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       renderGame(webSocket);
     }
   };
+}
+
+function stopGame(): void {
+  const stopMessage = JSON.stringify({ type: 'stop_game' });
+
+  if (gameIsRunning) {
+    gameIsRunning = false;
+    setTimeout(() => {
+      if (webSocket.readyState === WebSocket.OPEN) {
+        webSocket.close();
+      }
+    }, 100);
+  } else if (webSocket.readyState === WebSocket.OPEN) {
+    webSocket.close();
+    webSocket.send(stopMessage);
+  }
 }
 
 /**

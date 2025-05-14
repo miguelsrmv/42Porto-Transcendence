@@ -659,11 +659,11 @@
 
   <template id="friends-template">
     <div id="friends-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
-      <div class="flex flex-row gap-6 h-full">
+      <div class="flex flex-row gap-6 h-full pb-20">
         <!-- Left Panel: User Friends List -->
         <div class="flex flex-col w-2/3 h-full">
           <div
-            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
+            class="flex flex-col bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
           >
             <h2 class="text-3xl font-serpentine text-center mb-8 text-white">My Friends</h2>
 
@@ -685,218 +685,15 @@
               </button>
             </div>
 
-            <div class="bg-gray-700 rounded-lg shadow-md overflow-hidden">
+            <div class="flex flex-col flex-grow bg-gray-700 rounded-lg shadow-md overflow-hidden">
               <div
                 class="flex justify-between items-center bg-gray-900 p-4 border-b border-gray-600"
               >
                 <div class="w-1/2 font-serpentine text-purple-400">Friend</div>
                 <div class="w-1/4 text-center font-serpentine text-purple-400">Status</div>
-                <div class="w-1/4 text-center font-serpentine text-purple-400">Actions</div>
               </div>
 
-              <div id="friends-list" class="max-h-[60vh] overflow-y-auto">
-                <!-- Online friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 1"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">PongMaster</span>
-                      <span class="text-gray-400 text-sm">Rank #2 • 4,720 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm"
-                      >Online</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200"
-                      title="Challenge to a game"
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Playing friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 2"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-yellow-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">GameChamp</span>
-                      <span class="text-gray-400 text-sm">Rank #3 • 3,980 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 text-sm"
-                      >In Game</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Currently in a game"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Offline friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3 opacity-70"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 3"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-gray-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">Striker42</span>
-                      <span class="text-gray-400 text-sm">Rank #4 • 3,250 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-500/20 text-gray-300 text-sm"
-                      >Offline</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Friend is offline"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Online friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 4"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">BallWizard</span>
-                      <span class="text-gray-400 text-sm">Rank #6 • 2,180 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm"
-                      >Online</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200"
-                      title="Challenge to a game"
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Offline friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3 opacity-70"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 5"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-gray-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">PaddlePro</span>
-                      <span class="text-gray-400 text-sm">Rank #7 • 1,950 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-500/20 text-gray-300 text-sm"
-                      >Offline</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Friend is offline"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
+              <div id="friends-list" class="flex-grow min-h-0 overflow-y-auto">
               </div>
             </div>
           </div>
@@ -976,6 +773,32 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="friend-template">
+    <div class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200">
+      <div class="w-1/2 flex items-center">
+        <div class="relative">
+          <div class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
+            <img
+              id="friend-avatar"
+              src="./static/avatar/default/mario.png"
+              alt="Friend 1"
+              class="h-full w-full object-cover"
+            />
+          </div>
+          <div id="friend-online-indicator" class="absolute bottom-0 right-2 h-3 w-3 rounded-full border-2 border-gray-800">
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <span id="friend-name" class="text-white font-bold">Friend Name</span>
+          <span id="friend-score" class="text-gray-400 text-sm">Rank #X • 9,999 pts</span>
+        </div>
+      </div>
+      <div class="w-1/4 text-center">
+        <span id="friend-online-status" class="inline-block px-3 py-1 rounded-full text-sm">Online</span>
       </div>
     </div>
   </template>
@@ -1531,6 +1354,7 @@
           <div class="py-2">
             <a
               href="#"
+              id="settings-dropdown-button"
               data-target="settings-page"
               class="block px-4 py-2 text-sm transition hover:bg-gray-300 hover:font-bold"
               >Settings</a
