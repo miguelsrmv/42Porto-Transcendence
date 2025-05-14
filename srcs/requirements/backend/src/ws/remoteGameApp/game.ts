@@ -56,11 +56,13 @@ function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameAr
 }
 
 export function initializeRemoteGame(
+  p1id: string,
+  p2id: string,
   player1socket: WebSocket,
   player2socket: WebSocket,
   gameSettings: gameSettings,
 ): void {
-  const gameArea = new GameArea(player1socket, player2socket, gameSettings);
+  const gameArea = new GameArea(p1id, p2id, player1socket, player2socket, gameSettings);
   setupInput(gameArea);
   setPowerUpBar(gameArea);
   setCloseGame(player1socket, player2socket, gameArea);

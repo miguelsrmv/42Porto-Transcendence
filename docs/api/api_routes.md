@@ -9,7 +9,9 @@
 | `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                         |
 | `PATCH`  | `/users`                   |                     |                data to update                | Update own user data                      |
 | `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                             |
+| `POST`   | `/users/preLogin`          |                     |              email and password              | Check if user has 2FA enabled             |
 | `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)                |
+| `POST`   | `/users/login2FA`          |                     |          email, password and token           | Get JWT (if user and 2FA token are valid) |
 | `DELETE` | `/users/logout`            |                     |                                              | Logout user                               |
 | `GET`    | `/users/checkLoginStatus`  |                     |                                              | Check if user is logged in                |
 | `GET`    | `/users/:id/stats`         |    `id` user id     |                                              | Get match stats of that user              |
@@ -47,7 +49,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 - **Get all users (Protected):** `GET /users`
 - **Get a specific user:** `GET /users/:id`
-- **Get own user:** `GET /users/me`
+- **Get own user (Protected):** `GET /users/me`
 - **Create a new user:** `POST /users`
 
 ```json
@@ -59,7 +61,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Update own user:** `PATCH /users`
+- **Update own user (Protected):** `PATCH /users`
 
 ```json
 {
@@ -72,7 +74,17 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 ```
 
 - **Delete a user:** `DELETE /users/:id`
-- **User login (Get JWT):** `POST /users/login`
+- **Check if user has 2FA enabled (Get JWT):** `POST /users/preLogin`
+- **User login (Get JWT) :** `POST /users/login`
+- **User login with 2FA (Get JWT):** `POST /users/login2FA`
+
+```json
+{
+  "email": "user@email.com",
+  "password": "password",
+  "token": "325362"
+}
+```
 
 ```http
 POST http://localhost:3000/users/login HTTP/1.1

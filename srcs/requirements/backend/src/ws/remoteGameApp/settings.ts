@@ -31,6 +31,8 @@ export interface gameSettings {
   gameType: gameType;
   alias1: string;
   alias2: string;
+  avatar1: string;
+  avatar2: string;
   paddleColour1: string;
   paddleColour2: string;
   character1: character | null;

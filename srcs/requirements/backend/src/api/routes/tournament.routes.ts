@@ -15,18 +15,13 @@ import {
   tournamentParticipantSchema,
   updateTournamentSchema,
 } from '../schemas/tournament.schema';
-import { validateGameSettings } from '../schemas/settingsValidation';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function tournamentRoutes(fastify: FastifyInstance) {
   fastify.get('/', getAllTournaments);
   fastify.get('/user/:id', { schema: getByIdSchema }, getUserTournaments);
   fastify.get('/:id', { schema: getByIdSchema }, getTournamentById);
-  fastify.post(
-    '/',
-    { schema: createTournamentSchema, preValidation: validateGameSettings },
-    createTournament,
-  );
+  fastify.post('/', { schema: createTournamentSchema }, createTournament);
   fastify.post('/newTournament', tournamentBlockchain);
   fastify.patch('/:id', { schema: updateTournamentSchema }, updateTournament);
   fastify.delete('/:id', { schema: getByIdSchema }, deleteTournament);

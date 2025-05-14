@@ -37,3 +37,16 @@ export const loginSchema = {
     additionalProperties: false,
   },
 };
+
+export const login2FASchema = {
+  body: {
+    type: 'object',
+    required: ['email', 'password', 'code'],
+    properties: {
+      email: { type: 'string', format: 'email' },
+      password: { type: 'string', minLength: 6 },
+      code: { type: 'integer' },
+    },
+    additionalProperties: false,
+  },
+};

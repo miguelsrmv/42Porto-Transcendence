@@ -9,6 +9,7 @@ import { transformUserUpdate } from '../../utils/helpers';
 import fs from 'fs';
 import util from 'util';
 import { pipeline } from 'stream';
+import path from 'path';
 
 export type UserCreate = {
   username: string;
@@ -41,6 +42,12 @@ export type DefaultAvatar = {
 export type VerifyToken = {
   code: string;
   password?: string;
+};
+
+export type Login2FAData = {
+  code: string;
+  email: string;
+  password: string;
 };
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
@@ -120,17 +127,14 @@ export async function deleteUser(
   }
 }
 
-export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
+export async function preLogin(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { email: request.body.email },
       select: {
-        id: true,
-        username: true,
-        email: true,
         hashedPassword: true,
         salt: true,
-        secret2FA: true,
+        enabled2FA: true,
       },
     });
 
@@ -143,25 +147,98 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
     if (!isMatch) {
       return reply.status(401).send({ message: 'Invalid credentials' });
     }
-    if (user.secret2FA) {
-      const tempToken = request.server.jwt.sign(
-        {
-          id: user.id,
-          email: user.email,
-          userName: user.username,
-          twoFactorPending: true,
-        },
-        { expiresIn: '5m' },
-      );
-      reply.setCookie('access_token', tempToken, {
-        path: '/',
-        httpOnly: true,
-        secure: true,
-        maxAge: 5 * 60, // 5 minutes
-      });
+    if (user.enabled2FA) return reply.status(206).send({ enabled2FA: true });
+    reply.send({ enabled2FA: false });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
 
-      return reply.status(206).send({ message: '2FA required' });
+// TODO: review HTTP codes
+export async function login2FA(
+  request: FastifyRequest<{ Body: Login2FAData }>,
+  reply: FastifyReply,
+) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: request.body.email },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        hashedPassword: true,
+        salt: true,
+        enabled2FA: true,
+        secret2FA: true,
+        avatarUrl: true,
+      },
+    });
+
+    const isMatch = verifyPassword({
+      candidatePassword: request.body.password,
+      hash: user.hashedPassword,
+      salt: user.salt,
+    });
+
+    if (!isMatch) {
+      return reply.status(401).send({ message: 'Invalid credentials' });
     }
+    if (!user.enabled2FA) return reply.status(401).send({ message: '2FA not setup' });
+    if (!user.secret2FA) return reply.status(401).send('2FA required but not setup.');
+
+    const token = request.body.code;
+
+    const verified = speakeasy.totp.verify({
+      secret: user.secret2FA,
+      encoding: 'base32',
+      token,
+    });
+    if (!verified)
+      return reply.status(401).send('The two-factor authentication token is invalid or expired.');
+
+    const finalToken = request.server.jwt.sign({
+      id: user.id,
+      email: user.email,
+      userName: user.username,
+    });
+
+    reply.setCookie('access_token', finalToken, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      maxAge: 2 * 60 * 60, // Valid for 2h
+    });
+    reply.send({ avatar: user.avatarUrl });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: request.body.email },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        hashedPassword: true,
+        salt: true,
+        enabled2FA: true,
+        avatarUrl: true,
+      },
+    });
+
+    const isMatch = verifyPassword({
+      candidatePassword: request.body.password,
+      hash: user.hashedPassword,
+      salt: user.salt,
+    });
+
+    if (!isMatch) {
+      return reply.status(401).send({ message: 'Invalid credentials' });
+    }
+    if (user.enabled2FA) return reply.status(401).send({ message: '2FA required' });
 
     const token = request.server.jwt.sign({
       id: user.id,
@@ -175,7 +252,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
       secure: true,
       maxAge: 2 * 60 * 60, // Valid for 2h
     });
-    reply.send({ token });
+    reply.send({ avatar: user.avatarUrl });
   } catch (error) {
     handleError(error, reply);
   }
@@ -196,7 +273,7 @@ export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
     const userId = request.user.id;
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { id: true, username: true, email: true },
+      select: { id: true, username: true, email: true, avatarUrl: true },
     });
 
     reply.send(user);
@@ -247,12 +324,14 @@ export async function uploadCustomAvatar(
   const pump = util.promisify(pipeline);
   const parts = request.files();
   const userId = request.user.id;
+  const avatarDir = path.resolve(__dirname, '../../../../avatar');
+  const filePath = path.join(avatarDir, `${userId}.png`);
   for await (const part of parts) {
-    await pump(part.file, fs.createWriteStream(`../avatar/${userId}`));
+    await pump(part.file, fs.createWriteStream(filePath));
   }
   await prisma.user.update({
     where: { id: userId },
-    data: { avatarUrl: `static/avatar/${userId}` },
+    data: { avatarUrl: `../../../../static/avatar/custom/${userId}.png` },
   });
   reply.send({ message: 'Avatar uploaded.' });
 }
@@ -274,7 +353,7 @@ export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
       return reply.status(400).send({ message: '2FA already setup for this user.' });
 
     const secret = speakeasy.generateSecret({
-      name: `ft_transcendence(${request.user.username})`,
+      name: `ft_transcendence(${user.username})`,
     });
     if (!secret.otpauth_url) {
       return reply.status(500).send({ message: 'No otpauth_url in secret.' });
@@ -297,9 +376,7 @@ export async function verify2FA(
   try {
     if (!request.cookies.access_token)
       return reply.status(400).send({ message: 'Access token not set.' });
-    // if (!request.user.twoFactorPending) {
-    //   return reply.status(400).send({ message: '2FA not pending' });
-    // }
+
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
     if (!user.secret2FA) {
       return reply.status(401).send('2FA required but not setup.');
@@ -322,7 +399,7 @@ export async function verify2FA(
       token,
     });
     if (!verified)
-      reply.status(401).send('The two-factor authentication token is invalid or expired.');
+      return reply.status(401).send('The two-factor authentication token is invalid or expired.');
 
     const finalToken = request.server.jwt.sign({
       id: user.id,
@@ -354,9 +431,35 @@ export async function check2FAstatus(request: FastifyRequest, reply: FastifyRepl
   }
 }
 
-export async function disable2FA(request: FastifyRequest, reply: FastifyReply) {
+export async function disable2FA(
+  request: FastifyRequest<{ Body: VerifyToken }>,
+  reply: FastifyReply,
+) {
   try {
-    // TODO: Check if already null?
+    // TODO: refactor, divide into smaller functions
+    if (!request.cookies.access_token)
+      return reply.status(400).send({ message: 'Access token not set.' });
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+    if (!user.enabled2FA) return reply.status(401).send('2FA not setup.');
+    if (!user.secret2FA) return reply.status(401).send('2FA required but not setup.');
+
+    if (!request.body.password) return reply.status(401).send('Password required.');
+    const isMatch = verifyPassword({
+      candidatePassword: request.body.password,
+      hash: user.hashedPassword,
+      salt: user.salt,
+    });
+    if (!isMatch) return reply.status(401).send('Password incorrect.');
+
+    const token = request.body.code;
+
+    const verified = speakeasy.totp.verify({
+      secret: user.secret2FA,
+      encoding: 'base32',
+      token,
+    });
+    if (!verified)
+      return reply.status(401).send('The two-factor authentication token is invalid or expired.');
     await prisma.user.update({
       where: { id: request.user.id },
       data: { secret2FA: null, enabled2FA: false },
