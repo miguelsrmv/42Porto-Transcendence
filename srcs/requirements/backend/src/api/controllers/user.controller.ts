@@ -68,7 +68,7 @@ export async function getUserById(
       where: { id: request.params.id },
       select: { username: true, lastActiveAt: true, avatarUrl: true },
     });
-    reply.send({ ...user, rank: getUserRank(request.params.id) });
+    reply.send({ ...user, rank: await getUserRank(request.params.id) });
   } catch (error) {
     handleError(error, reply);
   }
