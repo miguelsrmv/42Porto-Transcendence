@@ -5,14 +5,14 @@ import { FriendshipStatus } from '@prisma/client';
 
 type FriendCreate = {
   userId: string;
-  friendId: string;
+  recipientId: string;
 };
 
 export async function getUserFriends(request: FastifyRequest, reply: FastifyReply) {
   try {
     const friends = await prisma.friendship.findMany({
       where: {
-        OR: [{ userId: request.user.id }, { friendId: request.user.id }],
+        OR: [{ initiatorId: request.user.id }, { recipientId: request.user.id }],
       },
     });
     reply.send(friends);
@@ -25,9 +25,10 @@ export async function getUserPendingFriends(request: FastifyRequest, reply: Fast
   try {
     const pendingFriends = await prisma.friendship.findMany({
       where: {
-        OR: [{ userId: request.user.id }, { friendId: request.user.id }],
+        recipientId: request.user.id,
         AND: { status: FriendshipStatus.PENDING },
       },
+      select: { initiatorId: true },
     });
     reply.send(pendingFriends);
   } catch (error) {
@@ -41,12 +42,12 @@ export async function createFriend(
 ) {
   try {
     const { userId } = request.body;
-    const { friendId } = request.body;
+    const { recipientId } = request.body;
 
     const friendship = await prisma.friendship.create({
       data: {
-        userId: userId,
-        friendId: friendId,
+        initiatorId: userId,
+        recipientId: recipientId,
       },
     });
     reply.send(friendship);
