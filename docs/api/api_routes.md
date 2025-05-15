@@ -25,7 +25,7 @@
 | `GET`    | `/leaderboard`             |                     |                                              | Get leaderboard                           |
 | `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user         |
 | `GET`    | `/friends/pending`         |                     |                                              | Get pending friends of logged in user     |
-| `POST`   | `/friends`                 |                     |             userId and friendId              | Create a friendship between two users     |
+| `POST`   | `/friends`                 |                     |         initiatorId and recipientId          | Create a friendship between two users     |
 | `PATCH`  | `/friends/:id`             | `id` friendship id  |                    status                    | Update friendship status                  |
 | `DELETE` | `/friends/:id`             | `id` friendship id  |                                              | Delete a friendship                       |
 | `GET`    | `/matches`                 |                     |                                              | Get all matches                           |
@@ -77,7 +77,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 - **Delete a user:** `DELETE /users/:id`
 - **Check if user has 2FA enabled (Get JWT):** `POST /users/preLogin`
-- **User login (Get JWT) :** `POST /users/login`
 - **User login with 2FA (Get JWT):** `POST /users/login2FA`
 
 ```json
@@ -88,6 +87,8 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
+- **User login (Get JWT) :** `POST /users/login`
+
 ```http
 POST http://localhost:3000/users/login HTTP/1.1
 Content-Type: application/json
@@ -97,14 +98,6 @@ Content-Type: application/json
 	"password": "secure123"
 }
 
-```
-
-**Response:** (if the login data is correct and the user exists in the database)
-
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInCI6I.eyJwYXlImVtYWlsIbWFpbC5jLCJ1c2VyTmFtZSiaWF0.JwQiR3SOzVbsc7QmR-oM_GaNIB6kXhC"
-}
 ```
 
 **Note:** The token will be saved in a Cookie `access_token`. Requests to protected routes require this cookie to be set with a valid token.
@@ -135,8 +128,8 @@ Content-Type: application/json
 
 ```json
 {
-  "userId": "<id>",
-  "friendId": "<id>"
+  "initiatorId": "<id>",
+  "recipientId": "<id>"
 }
 ```
 
