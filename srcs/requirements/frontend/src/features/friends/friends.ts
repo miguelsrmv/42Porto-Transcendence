@@ -170,7 +170,7 @@ async function getPendingFriendRequests(): Promise<any[] | null> {
       try {
         // NOTE: PLACEHOLDER!!
         // TODO: Change to whatever David decides it should be
-        const userResponse = await fetch(`/api/users/${object.id}`, {
+        const userResponse = await fetch(`/api/users/${object.initiatorId}`, {
           method: 'GET',
           credentials: 'include',
         });
