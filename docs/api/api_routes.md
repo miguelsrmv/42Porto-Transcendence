@@ -29,6 +29,7 @@
 | `PATCH`  | `/friends`                 |                     |             friendId and status              | Update friendship status                                        |
 | `DELETE` | `/friends/:id`             |   `id` friend id    |                                              | Delete a friendship                                             |
 | `GET`    | `/matches`                 |                     |                                              | Get all matches                                                 |
+| `GET`    | `/matches/me`              |                     |                                              | Get all matches of logged in user, ordered by date              |
 | `GET`    | `/matches/user/:id`        |    `id` user id     |                                              | Get all matches from a specific user                            |
 | `GET`    | `/matches/:id`             |    `id` match id    |                                              | Get a specific match                                            |
 | `POST`   | `/matches`                 |                     |             user1Id and user2Id              | Create a match                                                  |
@@ -149,6 +150,7 @@ Content-Type: application/json
 ## Matches
 
 - **Get all matches:** `GET /matches`
+- **Get all matches of logged in user, ordered by date (desc):** `GET /matches/me`
 - **Get all matches from a specific user:** `GET /matches/user/:id`
 - **Get a specific match:** `GET /matches/:id`
 - **Create a new match:** `POST /matches`
