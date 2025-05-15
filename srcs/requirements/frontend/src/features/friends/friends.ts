@@ -238,13 +238,13 @@ async function changeFriendship(
   friendRequest: HTMLDivElement,
 ): Promise<void> {
   try {
-    const response = await fetch(`/api/friends/${requestingFriendId}`, {
+    const response = await fetch(`/api/friends`, {
       method: 'PATCH',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(status),
+      body: JSON.stringify({friendId: requestingFriendId, status: status}),
     });
     friendRequest.classList.add('hidden');
   } catch (error) {
