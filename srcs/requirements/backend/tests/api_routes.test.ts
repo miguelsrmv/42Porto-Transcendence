@@ -145,12 +145,10 @@ describe('users routes', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual(
       expect.objectContaining({
-        id: user!.id,
-        createdAt: expect.any(String),
         username: user!.username,
-        email: user!.email,
-        hashedPassword: user!.hashedPassword,
-        salt: user!.salt,
+        avatarUrl: user!.avatarUrl,
+        lastActiveAt: expect.any(String),
+        rank: expect.any(Number),
       }),
     );
   });
