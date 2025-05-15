@@ -1,11 +1,13 @@
 import { FastifyInstance } from 'fastify';
 import { createFriendSchema, updateFriendSchema } from '../schemas/friendship.schema';
 import {
-  createFriend,
+  addFriend,
   deleteFriend,
+  FriendCreate,
+  FriendUpdate,
   getUserFriends,
   getUserPendingFriends,
-  updateFriend,
+  updateFriendshipStatus,
 } from '../controllers/friendship.controller';
 import { getByIdSchema } from '../schemas/global.schema';
 
@@ -13,7 +15,19 @@ import { getByIdSchema } from '../schemas/global.schema';
 export async function friendRoutes(fastify: FastifyInstance) {
   fastify.get('/', { onRequest: [fastify.jwtAuth] }, getUserFriends);
   fastify.get('/pending', { onRequest: [fastify.jwtAuth] }, getUserPendingFriends);
-  fastify.post('/', { schema: createFriendSchema }, createFriend);
-  fastify.patch('/:id', { schema: updateFriendSchema }, updateFriend);
-  fastify.delete('/:id', { schema: getByIdSchema }, deleteFriend);
+  fastify.post<{ Body: FriendCreate }>(
+    '/',
+    { schema: createFriendSchema, onRequest: [fastify.jwtAuth] },
+    addFriend,
+  );
+  fastify.patch<{ Body: FriendUpdate }>(
+    '/',
+    { schema: updateFriendSchema, onRequest: [fastify.jwtAuth] },
+    updateFriendshipStatus,
+  );
+  fastify.delete<{ Params: IParams }>(
+    '/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    deleteFriend,
+  );
 }
