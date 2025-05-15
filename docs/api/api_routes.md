@@ -9,6 +9,7 @@
 | `POST`   | `/users`                   |                     | username, email, password and repeatPassword | Create a new user                                               |
 | `PATCH`  | `/users`                   |                     |                data to update                | Update own user data                                            |
 | `DELETE` | `/users/:id`               |    `id` user id     |                                              | Delete a user                                                   |
+| `GET`    | `/users/isOnline/:id`      |    `id` user id     |                                              | Check if a user is online                                       |
 | `POST`   | `/users/preLogin`          |                     |              email and password              | Check if user has 2FA enabled                                   |
 | `POST`   | `/users/login`             |                     |              email and password              | Get JWT (if user is valid)                                      |
 | `POST`   | `/users/login2FA`          |                     |          email, password and token           | Get JWT (if user and 2FA token are valid)                       |
@@ -77,6 +78,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 ```
 
 - **Delete a user:** `DELETE /users/:id`
+- **Check if a user is online:** `GET /users/isOnline/:id`
 - **Check if user has 2FA enabled (Get JWT):** `POST /users/preLogin`
 - **User login with 2FA (Get JWT):** `POST /users/login2FA`
 

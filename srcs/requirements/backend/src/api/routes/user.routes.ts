@@ -23,6 +23,7 @@ import {
   DefaultAvatar,
   preLogin,
   login2FA,
+  isUserOnline,
 } from '../controllers/user.controller';
 import {
   createUserSchema,
@@ -63,6 +64,11 @@ export async function userRoutes(fastify: FastifyInstance) {
     '/:id',
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     getUserById,
+  );
+  fastify.get<{ Params: IParams }>(
+    '/isOnline/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    isUserOnline,
   );
   fastify.patch<{ Body: UserUpdate }>(
     '/',

@@ -467,3 +467,21 @@ export async function disable2FA(
     handleError(error, reply);
   }
 }
+
+// TODO: review, check if in game? or logout?
+export async function isUserOnline(
+  request: FastifyRequest<{ Params: IParams }>,
+  reply: FastifyReply,
+) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: request.params.id },
+      select: { lastActiveAt: true },
+    });
+    const currentTime = Date.now() / 1000;
+    const isOnline = currentTime - user.lastActiveAt.getTime() / 1000 > 5 * 60 ? true : false;
+    reply.send(isOnline);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
