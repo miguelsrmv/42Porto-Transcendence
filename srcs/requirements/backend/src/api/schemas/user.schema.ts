@@ -15,6 +15,7 @@ export const createUserSchema = {
 export const updateUserSchema = {
   body: {
     type: 'object',
+    required: ['oldPassword'],
     properties: {
       username: { type: 'string', minLength: 3 },
       email: { type: 'string', format: 'email' },

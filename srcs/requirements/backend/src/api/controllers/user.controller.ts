@@ -85,6 +85,7 @@ export async function createUser(
         email: request.body.email,
         hashedPassword: request.body.password,
       },
+      select: { username: true, email: true },
     });
     reply.send(user);
   } catch (error) {
@@ -97,12 +98,11 @@ export async function updateUser(
   reply: FastifyReply,
 ) {
   try {
-    if (request.body.newPassword) {
-      request.body = transformUserUpdate(request.body);
-    }
+    request.body = transformUserUpdate(request.body);
     const user = await prisma.user.update({
       where: { id: request.user.id },
       data: request.body,
+      select: { username: true, email: true },
     });
     reply.send(user);
   } catch (error) {
