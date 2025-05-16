@@ -33,7 +33,7 @@ export function handleUserDataChange(): void {
       userDataSubmitButtonListenerAttached = true;
       fillUserData();
       userData.oldPassword = (await confirmChanges()) as string;
-      if (userData.oldPassword) submitUserData();
+      if (userData.oldPassword) await submitUserData();
     });
   }
 
