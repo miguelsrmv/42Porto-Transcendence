@@ -50,6 +50,7 @@ export type Login2FAData = {
   password: string;
 };
 
+// TODO: remove in the end
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
     const users = await prisma.user.findMany();
@@ -118,6 +119,7 @@ export async function deleteUser(
     if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.delete({
       where: { id: request.params.id },
+      select: { username: true, email: true },
     });
     reply.send(user);
   } catch (error) {
