@@ -62,7 +62,7 @@ export async function addFriend(
         recipientId: friendId,
       },
     });
-    reply.send('Friendship created');
+    reply.send({ message: 'Friendship created' });
   } catch (error) {
     handleError(error, reply);
   }
@@ -88,7 +88,7 @@ export async function updateFriendshipStatus(
         status: status,
       },
     });
-    reply.send('Friendship status updated');
+    reply.send({ message: 'Friendship status updated' });
   } catch (error) {
     handleError(error, reply);
   }
@@ -109,7 +109,7 @@ export async function deleteFriend(
         },
       },
     });
-    reply.send('Friendship deleted');
+    reply.send({ message: 'Friendship deleted' });
   } catch (error) {
     handleError(error, reply);
   }
