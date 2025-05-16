@@ -1,4 +1,5 @@
 import { Ball } from './ball';
+import { GameArea } from './gameArea';
 import { gameStats } from './gameStats';
 import { Paddle } from './paddle';
 import { gameSettings, leanGameSettings } from './settings';
@@ -31,6 +32,7 @@ export type ClientMessage =
   | { type: 'join_game'; playerSettings: leanGameSettings }
   | { type: 'movement'; direction: PlayerInput }
   | { type: 'power_up' }
+  | { type: 'ping' }
   | { type: 'stop_game' };
 
 export type ServerMessage =
@@ -50,6 +52,7 @@ export type ServerMessage =
 export interface GameSession {
   players: Map<WebSocket, string>;
   settings: gameSettings;
+  gameArea: GameArea | null;
 }
 
 // To be able to print

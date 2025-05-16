@@ -10,6 +10,7 @@ import { WSRoutes } from './ws/websocket.routes';
 import FastifyWebSocket from '@fastify/websocket';
 import { setLastActiveAt } from './api/middlewares/activeStatus';
 import multipart from '@fastify/multipart';
+import { leaderboardRoutes } from './api/routes/leaderboard.routes';
 
 dotenv.config();
 
@@ -44,5 +45,6 @@ app.register(userRoutes, { prefix: '/users' });
 app.register(friendRoutes, { prefix: '/friends' });
 app.register(matchRoutes, { prefix: '/matches' });
 app.register(tournamentRoutes, { prefix: '/tournaments' });
+app.register(leaderboardRoutes, { prefix: '/leaderboard' });
 
 export default app;

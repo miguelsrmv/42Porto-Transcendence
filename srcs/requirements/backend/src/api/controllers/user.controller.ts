@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
-import { getUserClassicStats, getUserCrazyStats } from '../services/user.services';
+import { getUserClassicStats, getUserCrazyStats, getUserRank } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
@@ -64,13 +64,11 @@ export async function getUserById(
   reply: FastifyReply,
 ) {
   try {
-    const loggedInUserId = request.user.id;
-
-    if (loggedInUserId !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: request.params.id },
+      select: { username: true, lastActiveAt: true, avatarUrl: true },
     });
-    reply.send(user);
+    reply.send({ ...user, rank: await getUserRank(request.params.id) });
   } catch (error) {
     handleError(error, reply);
   }
@@ -293,6 +291,7 @@ export async function getUserStats(
     const stats = {
       classic: getUserClassicStats(userMatches, request.params.id),
       crazy: getUserCrazyStats(userMatches, request.params.id),
+      rank: getUserRank(request.params.id),
     };
 
     reply.send({ stats });
@@ -347,7 +346,6 @@ export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply
 
 export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
   try {
-    // TODO: allow reset secret in case of error?
     const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
     if (user.enabled2FA)
       return reply.status(400).send({ message: '2FA already setup for this user.' });
@@ -465,6 +463,24 @@ export async function disable2FA(
       data: { secret2FA: null, enabled2FA: false },
     });
     return reply.send('Success');
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+// TODO: review, check if in game? or logout?
+export async function isUserOnline(
+  request: FastifyRequest<{ Params: IParams }>,
+  reply: FastifyReply,
+) {
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: request.params.id },
+      select: { lastActiveAt: true },
+    });
+    const currentTime = Date.now() / 1000;
+    const isOnline = currentTime - user.lastActiveAt.getTime() / 1000 > 5 * 60 ? true : false;
+    reply.send(isOnline);
   } catch (error) {
     handleError(error, reply);
   }

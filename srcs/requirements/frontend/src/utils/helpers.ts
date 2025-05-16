@@ -53,3 +53,7 @@ export function getTemplateId(templateHost: string): string | undefined {
       return 'game-template';
   }
 }
+
+export function checkLoginStatus(): boolean {
+  return localStorage.getItem('ID') !== null;
+}

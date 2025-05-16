@@ -54,7 +54,6 @@ export interface leanGameSettings {
   playType: playType;
   gameType: gameType;
   alias: string;
-  avatar: string;
   paddleColour: string;
   character: character | null;
 }
