@@ -295,7 +295,7 @@ export async function getUserStats(
     const stats = {
       classic: getUserClassicStats(userMatches, request.params.id),
       crazy: getUserCrazyStats(userMatches, request.params.id),
-      rank: getUserRank(request.params.id),
+      rank: await getUserRank(request.params.id),
     };
 
     reply.send({ stats });
