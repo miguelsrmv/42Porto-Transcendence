@@ -3,6 +3,8 @@ import app from '../src/app';
 import { prisma } from '../src/utils/prisma';
 
 let jwtCookie: string;
+let jwtCookie2: string;
+let jwtCookie3: string;
 
 test("GET / should return 'greetings Welcome to the ft_transcendence API'", async () => {
   const response = await app.inject({
@@ -17,36 +19,63 @@ test("GET / should return 'greetings Welcome to the ft_transcendence API'", asyn
 });
 
 beforeAll(async () => {
-  // Ensure the database is clean and insert test users
-  await prisma.user.deleteMany();
-  const testUser = await prisma.user.create({
-    data: {
-      username: 'alice23',
-      email: 'alice@example.com',
-      hashedPassword: 'hashed_password_1',
-    },
-  });
-  await prisma.user.create({
-    data: {
-      username: 'bob45',
-      email: 'bob@example.com',
-      hashedPassword: 'hashed_password_2',
-    },
-  });
-  await prisma.user.create({
-    data: {
-      username: 'susan43',
-      email: 'susan@example.com',
-      hashedPassword: 'hashed_password_3',
-    },
-  });
-  await app.ready();
-  const token = app.jwt.sign({
-    id: testUser.id,
-    username: testUser.username,
-    email: testUser.email,
-  });
-  jwtCookie = `access_token=${token}; HttpOnly; Path=/; Secure`;
+  try {
+    // Ensure the database is clean and insert test users
+    await prisma.user.deleteMany();
+    await prisma.friendship.deleteMany();
+    const testUser = await prisma.user.create({
+      data: {
+        username: 'alice23',
+        email: 'alice@example.com',
+        hashedPassword: 'hashed_password_1',
+      },
+    });
+    const testUser2 = await prisma.user.create({
+      data: {
+        username: 'bob45',
+        email: 'bob@example.com',
+        hashedPassword: 'hashed_password_2',
+      },
+    });
+    const testUser3 = await prisma.user.create({
+      data: {
+        username: 'susan43',
+        email: 'susan@example.com',
+        hashedPassword: 'hashed_password_3',
+      },
+    });
+    await prisma.user.create({
+      data: {
+        username: 'jack',
+        email: 'jack@example.com',
+        hashedPassword: 'hashed_password_4',
+      },
+    });
+    await prisma.friendship.create({
+      data: { initiatorId: testUser2.id, recipientId: testUser3.id },
+    });
+    await app.ready();
+    const token = app.jwt.sign({
+      id: testUser.id,
+      username: testUser.username,
+      email: testUser.email,
+    });
+    const token2 = app.jwt.sign({
+      id: testUser2.id,
+      username: testUser2.username,
+      email: testUser2.email,
+    });
+    const token3 = app.jwt.sign({
+      id: testUser3.id,
+      username: testUser3.username,
+      email: testUser3.email,
+    });
+    jwtCookie = `access_token=${token}; HttpOnly; Path=/; Secure`;
+    jwtCookie2 = `access_token=${token2}; HttpOnly; Path=/; Secure`;
+    jwtCookie3 = `access_token=${token3}; HttpOnly; Path=/; Secure`;
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 afterAll(async () => {
@@ -318,5 +347,91 @@ describe('users', () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({ enabled2FA: false });
+  });
+});
+
+describe('friends', () => {
+  test('GET / should return 200 and an array of user friends ids', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/friends',
+      headers: {
+        cookie: jwtCookie2,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(expect.arrayContaining([expect.any(String)]));
+  });
+
+  test('POST / should return 200 and an add a new friend', async () => {
+    const friend = await prisma.user.findUnique({ where: { username: 'jack' } });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/friends',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: jwtCookie2,
+      },
+      body: { friendId: friend?.id },
+    });
+
+    const user2 = await prisma.user.findUnique({ where: { username: 'bob45' } });
+    const friendship = await prisma.friendship.findUnique({
+      where: {
+        initiatorId_recipientId: {
+          initiatorId: user2!.id,
+          recipientId: friend!.id,
+        },
+      },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(friendship).toEqual(
+      expect.objectContaining({ initiatorId: user2!.id, recipientId: friend!.id }),
+    );
+    expect(response.json()).toEqual({ message: 'Friendship created' });
+  });
+
+  test('GET /pending should return 200 and an array of pending friends', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/friends/pending',
+      headers: {
+        cookie: jwtCookie3,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(expect.arrayContaining([{ initiatorId: expect.any(String) }]));
+  });
+
+  test('PATCH / should return 200 and update friendship status', async () => {
+    const friend = await prisma.user.findUnique({ where: { username: 'susan43' } });
+    const response = await app.inject({
+      method: 'PATCH',
+      url: '/friends',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: jwtCookie2,
+      },
+      body: { friendId: friend?.id, status: 'ACCEPTED' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ message: 'Friendship status updated' });
+  });
+
+  test('DELETE /:id should return 200 and delete friendship', async () => {
+    const friend = await prisma.user.findUnique({ where: { username: 'susan43' } });
+    const response = await app.inject({
+      method: 'DELETE',
+      url: '/friends/' + friend?.id,
+      headers: {
+        cookie: jwtCookie2,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ message: 'Friendship deleted' });
   });
 });
