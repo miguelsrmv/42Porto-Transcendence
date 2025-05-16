@@ -435,3 +435,25 @@ describe('friends', () => {
     expect(response.json()).toEqual({ message: 'Friendship deleted' });
   });
 });
+
+describe('leaderboard', () => {
+  test('GET / should return 200 and leaderboard', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/leaderboard',
+      headers: {
+        cookie: jwtCookie2,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          score: 0,
+          userId: expect.any(String),
+        }),
+      ]),
+    );
+  });
+});
