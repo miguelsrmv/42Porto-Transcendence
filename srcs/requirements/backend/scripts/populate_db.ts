@@ -1,11 +1,26 @@
-/* Script to interact with the database */
-import { MatchMode, User } from '@prisma/client';
+import { Character, FriendshipStatus, MatchMode, User } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
 const NUMBER_OF_USERS = 16;
 
-// This is the test user
+const CHARACTERS = [
+  'NONE',
+  'MARIO',
+  'LINK',
+  'PIKACHU',
+  'SONIC',
+  'KIRBY',
+  'YOSHI',
+  'DK',
+  'MEWTWO',
+  'BOWSER',
+  'SAMUS',
+  'CAPFALCON',
+  'SNAKE',
+];
+
+// Test users
 const USERNAME = 'ana123';
 const EMAIL = 'ana123@example.com';
 const TEST_PASSWORD = '123456789';
@@ -27,32 +42,67 @@ async function seedUsers() {
       },
     });
   }
+  await prisma.user.create({
+    data: {
+      username: USERNAME,
+      email: EMAIL,
+      hashedPassword: TEST_PASSWORD,
+    },
+  });
+  await prisma.user.create({
+    data: {
+      username: USERNAME2,
+      email: EMAIL2,
+      hashedPassword: TEST_PASSWORD2,
+    },
+  });
 }
 
 async function createFriends(users: User[]) {
+  await prisma.friendship.deleteMany();
   for (let index = 0; index < users.length / 2; index++) {
     const user = users[index];
     const recipientId = users[(index + 1) % users.length].id;
-    await prisma.friendship.create({
+    const friendship = await prisma.friendship.create({
       data: {
         initiatorId: user.id,
         recipientId: recipientId,
+      },
+    });
+    if (Math.random() < 0.5) {
+      await prisma.friendship.update({
+        where: { id: friendship.id },
+        data: { status: FriendshipStatus.ACCEPTED },
+      });
+    }
+    const testUser = await prisma.user.findUnique({ where: { username: USERNAME } });
+    await prisma.friendship.create({
+      data: {
+        initiatorId: user.id,
+        recipientId: testUser!.id,
       },
     });
   }
   for (let index = users.length / 2; index < users.length; index++) {
     const user = users[index];
     const recipientId = users[(index + 1) % users.length].id;
-    await prisma.friendship.create({
+    const friendship = await prisma.friendship.create({
       data: {
         initiatorId: recipientId,
         recipientId: user.id,
       },
     });
+    if (Math.random() < 0.5) {
+      await prisma.friendship.update({
+        where: { id: friendship.id },
+        data: { status: FriendshipStatus.ACCEPTED },
+      });
+    }
   }
 }
 
 async function createTournaments(users: User[]) {
+  await prisma.tournament.deleteMany();
   const tournamentSize = 4;
   for (let i = 0; i < users.length; i += tournamentSize) {
     const participants = users.slice(i, i + tournamentSize);
@@ -81,86 +131,94 @@ async function createTournaments(users: User[]) {
 }
 
 async function createMatches(users: User[]) {
+  await prisma.match.deleteMany();
   const matchSize = 2;
   for (let i = 0; i < users.length; i += matchSize) {
     const participants = users.slice(i, i + matchSize);
     if (participants.length === matchSize) {
-      await prisma.match.create({
+      const match = await prisma.match.create({
         data: {
           settings: '',
           user1Id: participants[0].id,
           user2Id: participants[1].id,
+          user1Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
+          user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
+        },
+      });
+      if (Math.random() < 0.5) {
+        await prisma.match.update({
+          where: { id: match.id },
+          data: {
+            mode: MatchMode.CRAZY,
+          },
+        });
+      }
+      if (Math.random() < 0.5) {
+        await prisma.match.update({
+          where: { id: match.id },
+          data: {
+            winnerId: participants[0].id,
+          },
+        });
+      }
+    }
+  }
+}
+
+async function createTestUserMatches(users: User[]) {
+  const testUser = await prisma.user.findUnique({ where: { username: USERNAME } });
+  for (let i = 0; i < users.length; i += 1) {
+    if (users[i].id === testUser!.id) continue;
+    const match = await prisma.match.create({
+      data: {
+        settings: '',
+        user1Id: testUser!.id,
+        user2Id: users[i].id,
+        user1Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
+        user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
+        user1Score: Math.round(Math.random() * 5),
+        user2Score: Math.round(Math.random() * 5),
+        mode: MatchMode.CRAZY,
+      },
+    });
+    if (match.user1Score > match.user2Score) {
+      await prisma.match.update({
+        where: { id: match.id },
+        data: {
+          winnerId: testUser!.id,
+        },
+      });
+    } else if (match.user1Score < match.user2Score) {
+      await prisma.match.update({
+        where: { id: match.id },
+        data: {
+          winnerId: users[i].id,
         },
       });
     }
   }
 }
 
-async function createTestUsers(users: User[]) {
-  const testUser = await prisma.user.create({
-    data: {
-      username: USERNAME,
-      email: EMAIL,
-      hashedPassword: TEST_PASSWORD,
-    },
-  });
-  const testUser2 = await prisma.user.create({
-    data: {
-      username: USERNAME2,
-      email: EMAIL2,
-      hashedPassword: TEST_PASSWORD2,
-    },
-  });
-  for (let index = 0; index < users.length / 2; index++) {
-    const recipientId = users[(index + 1) % users.length].id;
-    await prisma.friendship.create({
+async function generateLeaderboard(users: User[]) {
+  for (let index = 0; index < users.length; index++) {
+    await prisma.leaderboard.update({
+      where: { userId: users[index].id },
       data: {
-        initiatorId: recipientId,
-        recipientId: testUser.id,
+        score: Math.random() * 1000,
       },
     });
-    await prisma.friendship.create({
-      data: {
-        initiatorId: testUser2.id,
-        recipientId: recipientId,
-      },
-    });
-  }
-  for (let i = 0; i < users.length; i += 1) {
-    const match = await prisma.match.create({
-      data: {
-        settings: '',
-        user1Id: testUser.id,
-        user2Id: users[i].id,
-      },
-    });
-    if (Math.random() < 0.5) {
-      await prisma.match.update({
-        where: { id: match.id },
-        data: {
-          winnerId: testUser.id,
-        },
-      });
-    }
-    if (Math.random() < 0.5) {
-      await prisma.match.update({
-        where: { id: match.id },
-        data: {
-          mode: MatchMode.CRAZY,
-        },
-      });
-    }
   }
 }
 
 async function main() {
   try {
     await seedUsers();
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({ orderBy: { createdAt: 'asc' } });
     await createFriends(users);
     await createTournaments(users);
     await createMatches(users);
-    await createTestUsers(users);
+    await createTestUserMatches(users);
+    await generateLeaderboard(users);
     if (await prisma.user.findMany()) console.log('Database populated successfully.');
   } catch (e) {
     console.error(e);
