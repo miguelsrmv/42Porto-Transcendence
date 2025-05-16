@@ -30,13 +30,23 @@ async function seedUsers() {
 }
 
 async function createFriends(users: User[]) {
-  for (let index = 0; index < users.length; index++) {
+  for (let index = 0; index < users.length / 2; index++) {
     const user = users[index];
-    const friendId = users[(index + 1) % users.length].id;
+    const recipientId = users[(index + 1) % users.length].id;
     await prisma.friendship.create({
       data: {
-        userId: user.id,
-        friendId: friendId,
+        initiatorId: user.id,
+        recipientId: recipientId,
+      },
+    });
+  }
+  for (let index = users.length / 2; index < users.length; index++) {
+    const user = users[index];
+    const recipientId = users[(index + 1) % users.length].id;
+    await prisma.friendship.create({
+      data: {
+        initiatorId: recipientId,
+        recipientId: user.id,
       },
     });
   }
@@ -102,17 +112,17 @@ async function createTestUsers(users: User[]) {
     },
   });
   for (let index = 0; index < users.length / 2; index++) {
-    const friendId = users[(index + 1) % users.length].id;
+    const recipientId = users[(index + 1) % users.length].id;
     await prisma.friendship.create({
       data: {
-        userId: testUser.id,
-        friendId: friendId,
+        initiatorId: recipientId,
+        recipientId: testUser.id,
       },
     });
     await prisma.friendship.create({
       data: {
-        userId: testUser2.id,
-        friendId: friendId,
+        initiatorId: testUser2.id,
+        recipientId: recipientId,
       },
     });
   }

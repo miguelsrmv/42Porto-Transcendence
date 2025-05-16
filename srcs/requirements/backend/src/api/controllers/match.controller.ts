@@ -42,6 +42,20 @@ export async function getUserMatches(
   }
 }
 
+export async function getOwnUserMatches(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const matches = await prisma.match.findMany({
+      where: {
+        OR: [{ user1Id: request.user.id }, { user2Id: request.user.id }],
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+    reply.send(matches);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
 export async function getMatchById(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,

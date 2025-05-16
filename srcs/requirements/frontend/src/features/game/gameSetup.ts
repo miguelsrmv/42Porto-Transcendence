@@ -315,7 +315,6 @@ export function getLeanGameSettings(): leanGameSettings {
     playType: fullSettings.playType,
     gameType: fullSettings.gameType,
     alias: fullSettings.alias1,
-    avatar: window.localStorage.getItem('AvatarPath') as string, // NOTE: Tirar? Vai deixar de ser preciso?? Atualizar resto do código para deixar de implementar isto no lean game settings?
     paddleColour: fullSettings.paddleColour1,
     character: fullSettings.character1,
   };

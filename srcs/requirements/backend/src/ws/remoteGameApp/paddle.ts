@@ -41,7 +41,7 @@ export class Paddle {
   }
 
   setSpeedModifier(modifier: number): void {
-    this.speedModifier = modifier;
+    this.speedModifier *= modifier;
   }
 
   reset(): void {

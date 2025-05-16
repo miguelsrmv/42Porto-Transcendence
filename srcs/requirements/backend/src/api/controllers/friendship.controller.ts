@@ -3,66 +3,92 @@ import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { FriendshipStatus } from '@prisma/client';
 
-type FriendCreate = {
-  userId: string;
+export type FriendCreate = {
   friendId: string;
+};
+
+export type FriendUpdate = {
+  friendId: string;
+  status: FriendshipStatus;
 };
 
 export async function getUserFriends(request: FastifyRequest, reply: FastifyReply) {
   try {
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: request.user.id },
-      select: { id: true },
-    });
+    // TODO: Uncomment later
     const friends = await prisma.friendship.findMany({
       where: {
-        OR: [{ userId: user.id }, { friendId: user.id }],
+        OR: [{ initiatorId: request.user.id }, { recipientId: request.user.id }],
+        // AND: { status: FriendshipStatus.ACCEPTED },
       },
+      orderBy: { updatedAt: 'desc' },
+      select: { initiatorId: true, recipientId: true },
     });
-    reply.send(friends);
+    const friendIds = friends.map((friend) =>
+      friend.initiatorId === request.user.id ? friend.recipientId : friend.initiatorId,
+    );
+    reply.send(friendIds);
   } catch (error) {
     handleError(error, reply);
   }
 }
 
-export async function createFriend(
+export async function getUserPendingFriends(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const pendingFriends = await prisma.friendship.findMany({
+      where: {
+        recipientId: request.user.id,
+        AND: { status: FriendshipStatus.PENDING },
+      },
+      select: { initiatorId: true },
+    });
+    reply.send(pendingFriends);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function addFriend(
   request: FastifyRequest<{ Body: FriendCreate }>,
   reply: FastifyReply,
 ) {
   try {
-    const { userId } = request.body;
     const { friendId } = request.body;
 
-    const friendship = await prisma.friendship.create({
+    if (request.user.id === friendId)
+      return reply.status(400).send('A user cannot befriend itself');
+    await prisma.friendship.create({
       data: {
-        userId: userId,
-        friendId: friendId,
+        initiatorId: request.user.id,
+        recipientId: friendId,
       },
     });
-    reply.send(friendship);
+    reply.send('Friendship created');
   } catch (error) {
     handleError(error, reply);
   }
 }
 
-export async function updateFriend(
-  request: FastifyRequest<{ Params: IParams; Body: { status: FriendshipStatus } }>,
+export async function updateFriendshipStatus(
+  request: FastifyRequest<{ Body: FriendUpdate }>,
   reply: FastifyReply,
 ) {
   try {
-    // Friendship id
-    const { id } = request.params;
+    const userId = request.user.id;
+    const { friendId } = request.body;
     const { status } = request.body;
 
-    const friendship = await prisma.friendship.update({
+    await prisma.friendship.update({
       where: {
-        id: id,
+        initiatorId_recipientId: {
+          initiatorId: userId,
+          recipientId: friendId,
+        },
       },
       data: {
         status: status,
       },
     });
-    reply.send(friendship);
+    reply.send('Friendship status updated');
   } catch (error) {
     handleError(error, reply);
   }
@@ -75,12 +101,15 @@ export async function deleteFriend(
   try {
     const { id } = request.params;
 
-    const friendship = await prisma.friendship.delete({
+    await prisma.friendship.delete({
       where: {
-        id: id,
+        initiatorId_recipientId: {
+          initiatorId: request.user.id,
+          recipientId: id,
+        },
       },
     });
-    reply.send(friendship);
+    reply.send('Friendship deleted');
   } catch (error) {
     handleError(error, reply);
   }

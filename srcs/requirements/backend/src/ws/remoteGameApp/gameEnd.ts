@@ -3,7 +3,6 @@ import { GameArea } from './gameArea';
 import { Player } from './player';
 import { MatchMode, Character } from '@prisma/client';
 import { gameSettings } from './settings';
-import { gameRunningState } from './types';
 
 const gameTypeToMatchMode: Record<string, MatchMode> = {
   'Classic Pong': MatchMode.CLASSIC,
@@ -53,7 +52,6 @@ function filterGameSettings(settings: gameSettings) {
   });
 }
 
-// TODO: Deal with function being called twice
 async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   const gameMode = gameTypeToMatchMode[gameArea.settings.gameType] ?? MatchMode.CLASSIC;
   const [character1, character2] = getCharacters(gameArea.settings);
@@ -72,6 +70,13 @@ async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   });
 }
 
+async function updateLeaderboard(winningPlayer: Player) {
+  await prisma.leaderboard.update({
+    where: { userId: winningPlayer.id },
+    data: { score: { increment: 3 } },
+  });
+}
+
 export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
@@ -83,6 +88,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     stats: gameArea.stats,
   };
   await createMatch(winningPlayer, gameArea);
+  await updateLeaderboard(winningPlayer);
   if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
     gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
   gameEndMsg.ownSide = 'right';
