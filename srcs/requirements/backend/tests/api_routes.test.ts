@@ -145,7 +145,7 @@ describe('users', () => {
   });
 
   test('GET /getAvatarPath should return 200 and the avatar path', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'alice23' } });
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
       method: 'GET',
       url: '/users/getAvatarPath',
@@ -159,7 +159,7 @@ describe('users', () => {
   });
 
   test('GET /isOnline/:id should return 200 and a false', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'alice23' } });
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
       method: 'GET',
       url: '/users/isOnline/' + user?.id,
@@ -173,7 +173,7 @@ describe('users', () => {
   });
 
   test('GET /:id should return 200 and a specific user', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'alice23' } });
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
       method: 'GET',
       url: '/users/' + user?.id,
@@ -194,7 +194,7 @@ describe('users', () => {
   });
 
   test('GET /:id/stats should return 200 and a specific user stats', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'alice23' } });
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
       method: 'GET',
       url: '/users/' + user?.id + '/stats',
@@ -228,7 +228,7 @@ describe('users', () => {
   });
 
   test('GET /me should return 200 and a own user', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'alice23' } });
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
       method: 'GET',
       url: '/users/me',
@@ -286,7 +286,7 @@ describe('users', () => {
   });
 
   test('DELETE /:id should return 200 and the deleted user', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'alice23' } });
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
       method: 'DELETE',
       url: '/users/' + user?.id,
@@ -295,7 +295,7 @@ describe('users', () => {
       },
     });
 
-    const deletedUser = await prisma.user.findFirst({ where: { username: 'alice23' } });
+    const deletedUser = await prisma.user.findUnique({ where: { username: 'alice23' } });
 
     expect(response.statusCode).toBe(200);
     expect(deletedUser).toEqual(null);
@@ -308,7 +308,7 @@ describe('users', () => {
   });
 
   test('POST /preLogin should return 200 and false', async () => {
-    const user = await prisma.user.findFirst({ where: { username: 'bob45' } });
+    const user = await prisma.user.findUnique({ where: { username: 'bob45' } });
     const response = await app.inject({
       method: 'POST',
       url: '/users/preLogin',
