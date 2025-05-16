@@ -11,6 +11,8 @@ import util from 'util';
 import { pipeline } from 'stream';
 import path from 'path';
 
+const COOKIE_MAX_AGE = 2 * 60 * 60; // Valid for 2h
+
 export type UserCreate = {
   username: string;
   email: string;
@@ -206,7 +208,7 @@ export async function login2FA(
       path: '/',
       httpOnly: true,
       secure: true,
-      maxAge: 2 * 60 * 60, // Valid for 2h
+      maxAge: COOKIE_MAX_AGE,
     });
     reply.send({ avatar: user.avatarUrl });
   } catch (error) {
@@ -250,7 +252,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
       path: '/',
       httpOnly: true,
       secure: true,
-      maxAge: 2 * 60 * 60, // Valid for 2h
+      maxAge: COOKIE_MAX_AGE,
     });
     reply.send({ avatar: user.avatarUrl });
   } catch (error) {
@@ -411,7 +413,7 @@ export async function verify2FA(
       path: '/',
       httpOnly: true,
       secure: true,
-      maxAge: 2 * 60 * 60, // Valid for 2h
+      maxAge: COOKIE_MAX_AGE,
     });
     if (!user.enabled2FA) {
       await prisma.user.update({ where: { id: request.user.id }, data: { enabled2FA: true } });
