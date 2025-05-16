@@ -7,3 +7,4 @@
 
 # Backend
 - Make responses more uniform
+- Protect all routes in the end (except login/sign up related)
