@@ -31,7 +31,8 @@ async function fillFriendList(): Promise<void> {
   if (friendsListElement && friendTemplate && friendList) {
     for (let i = 0; i < friendList.length; i++) {
       const clone = friendTemplate.content.cloneNode(true) as DocumentFragment;
-      const newFriend: friendData | null = await getFriendData(friendList[i].id);
+      console.log('Current value:', friendList[i]);
+      const newFriend: friendData | null = await getFriendData(friendList[i]);
       if (newFriend) {
         updateNodeWithFriendData(clone, newFriend);
         friendsListElement.appendChild(clone);
@@ -54,25 +55,25 @@ async function getFriendList(): Promise<friend[] | null> {
   }
 }
 
-async function getFriendData(friendId: string): Promise<friendData | null> {
+async function getFriendData(friendId: friend): Promise<friendData | null> {
   try {
-    // const response = await fetch(`/api/users/${friendId}`, {
-    //   method: 'GET',
-    //   credentials: 'include',
-    // });
-    // const result = await response.json();
-    //console.dir("Here's the result!" + JSON.stringify(result));
-    // return result;
+    const response = await fetch(`/api/users/${friendId}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    const result = await response.json();
+    console.dir("Here's the result!" + JSON.stringify(result));
+    return result;
     // NOTE: PLACEHOLDER VALUES
-    const friend: friendData = {
-      id: 'placeholder Id',
-      name: 'placeholder Name',
-      points: 9999,
-      rank: 0,
-      avatar: '../../../../static/avatar/default/mario.png',
-      status: 'In Game',
-    };
-    return friend;
+    // const friend: friendData = {
+    //   id: 'placeholder Id',
+    //   name: 'placeholder Name',
+    //   points: 9999,
+    //   rank: 0,
+    //   avatar: '../../../../static/avatar/default/mario.png',
+    //   status: 'In Game',
+    // };
+    // return friend;
   } catch (error) {
     console.log(`Got error: ${error}`);
     return null;
@@ -110,8 +111,8 @@ function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData
     return;
   }
 
-  friendAvatar.src = newFriend.avatar;
-  friendName.innerText = newFriend.name;
+  friendAvatar.src = newFriend.avatarUrl;
+  friendName.innerText = newFriend.username;
   friendOnlineStatus.innerText = newFriend.status;
   let statusColour: string = 'green';
   switch (newFriend.status) {
@@ -222,8 +223,8 @@ function updateNodeWithFriendRequestData(node: DocumentFragment, requestingFrien
     return;
   }
 
-  friendRequestAvatar.src = requestingFriend.avatar;
-  friendRequestName.innerText = requestingFriend.name;
+  friendRequestAvatar.src = requestingFriend.avatarUrl;
+  friendRequestName.innerText = requestingFriend.username;
   acceptButton.addEventListener('click', () =>
     changeFriendship(requestingFriend.id, 'ACCEPTED', friendRequestContainer),
   );
@@ -244,7 +245,7 @@ async function changeFriendship(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({friendId: requestingFriendId, status: status}),
+      body: JSON.stringify({ friendId: requestingFriendId, status: status }),
     });
     friendRequest.classList.add('hidden');
   } catch (error) {
