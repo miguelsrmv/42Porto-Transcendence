@@ -80,8 +80,8 @@ export async function updateFriendshipStatus(
     await prisma.friendship.update({
       where: {
         initiatorId_recipientId: {
-          initiatorId: userId,
-          recipientId: friendId,
+          initiatorId: friendId,
+          recipientId: userId,
         },
       },
       data: {
