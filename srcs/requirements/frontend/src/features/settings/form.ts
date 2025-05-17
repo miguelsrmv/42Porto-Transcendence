@@ -28,12 +28,15 @@ export function handleUserDataChange(): void {
     return;
   }
 
+  //NOTE: Check if flag isn't necessary. REmoved as it caused a bug.
+  //if (!userDataSubmitButtonListenerAttached) {
   userDataSubmitButton.addEventListener('click', async () => {
     userDataSubmitButtonListenerAttached = true;
     fillUserData();
     userData.oldPassword = (await confirmChanges()) as string;
     if (userData.oldPassword) await submitUserData();
   });
+  //}
 
   async function submitUserData(): Promise<void> {
     try {
