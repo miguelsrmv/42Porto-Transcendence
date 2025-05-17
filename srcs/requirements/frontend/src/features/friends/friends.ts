@@ -23,7 +23,7 @@ export function initializeView(): void {
   fillFriendList();
   fillFriendRequests();
   setupFriendSearch();
-  // TODO: Setup Add Friend button!!
+  setupAddFriendButton();
 }
 
 async function fillFriendList(): Promise<void> {
@@ -262,5 +262,41 @@ function setupFriendSearch() {
         (friend as HTMLElement).style.display = 'none';
       }
     });
+  });
+}
+
+function setupAddFriendButton() {
+  const addButton = document.getElementById('add-friend-button');
+  const searchInput = document.getElementById('friend-search') as HTMLInputElement;
+
+  if (!addButton || !searchInput) return;
+
+  addButton.addEventListener('click', async () => {
+    const username = searchInput.value.trim();
+
+    if (!username) {
+      alert('Please enter a username to send a friend request.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/friends', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Request failed');
+      }
+      searchInput.value = '';
+    } catch (err) {
+      console.error('Error sending friend request:', err);
+      alert(`Error: ${(err as Error).message}`);
+    }
   });
 }
