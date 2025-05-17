@@ -23,7 +23,7 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
   const data = formToJSON(form);
 
   try {
-    const response = await fetch('/api/users/login', {
+    const response = await fetch('/api/users/preLogin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,6 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
     });
 
     if (!response.ok) {
-      //TODO: Remove before delivering project!?
       console.error(`HTTP error" ${response.status}`);
       console.log('Response:', response);
       const errorLoginMessageContainer = document.getElementById('error-login-message');
@@ -43,12 +42,122 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
         return;
       }
     }
-    await fetchUserData();
-    window.location.hash = 'main-menu-page';
-    // Handle success (e.g., redirect or store token)
+
+    const responseJson = await response.json();
+
+    if (responseJson.enabled2FA) {
+      await loginWith2FA(data);
+    } else {
+      await loginWithout2FA(data);
+    }
   } catch (error) {
     console.error('Login failed:', error);
     // Handle errors (e.g., show error message to user)
+  }
+}
+
+async function loginWith2FA(data: Record<string, string>): Promise<void> {
+  const loginForm = document.getElementById('login-form');
+  const authForm = document.getElementById('2fa-form') as HTMLFormElement;
+  const authInput = document.getElementById('authentication-code') as HTMLInputElement;
+
+  if (!loginForm || !authForm || !authInput) {
+    console.error('Missing form elements for 2FA login');
+    return;
+  }
+
+  // Hide login form and show 2FA form
+  loginForm.classList.add('hidden');
+  authForm.classList.remove('hidden');
+
+  // Prevent multiple listener bindings
+  if (authForm.dataset.listenerAttached === 'true') return;
+  authForm.dataset.listenerAttached = 'true';
+
+  return new Promise<void>((resolve, reject) => {
+    // Listen for the submit event of the 2FA form
+    authForm.addEventListener('submit', async (event) => {
+      event.preventDefault(); // Prevent default form submission
+
+      const code = authInput.value.trim();
+      if (!code) {
+        alert('Please enter the authentication code'); // User feedback if no code entered
+        return;
+      }
+
+      data['code'] = code; // Attach the code to the login data
+
+      try {
+        const response = await fetch('/api/users/login2FA', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          console.error(`HTTP error: ${response.status}`);
+          const errorLoginMessageContainer = document.getElementById('error-login-message');
+          if (errorLoginMessageContainer) {
+            errorLoginMessageContainer.classList.remove('hidden');
+            const errorMessage = await response.json();
+            errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+          }
+          reject('Failed 2FA login');
+          return;
+        }
+
+        // Successfully logged in with 2FA, fetch user data and redirect
+        await fetchUserData();
+        window.location.hash = 'main-menu-page'; // Handle success (e.g., redirect)
+        resolve();
+      } catch (error) {
+        console.error('2FA Login failed:', error);
+        reject('Failed 2FA login');
+      }
+    });
+  });
+}
+
+async function loginWithout2FA(data: Record<string, string>): Promise<void> {
+  const loginForm = document.getElementById('login-form') as HTMLFormElement;
+
+  if (!loginForm) {
+    console.log("Error, couldn't find login form");
+    return;
+  }
+  loginForm.dataset.listenerAttached = 'true';
+
+  const formData = new FormData(loginForm);
+  formData.forEach((value, key) => {
+    data[key] = value as string; // Populate the data object with form values
+  });
+
+  try {
+    const response = await fetch('/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      console.error(`HTTP error: ${response.status}`);
+      const errorLoginMessageContainer = document.getElementById('error-login-message');
+      if (errorLoginMessageContainer) {
+        errorLoginMessageContainer.classList.remove('hidden');
+        const errorMessage = await response.json();
+        errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+      }
+      return;
+    }
+
+    await fetchUserData();
+    window.location.hash = 'main-menu-page'; // Handle success (e.g., redirect)
+  } catch (error) {
+    console.error('Login failed:', error);
   }
 }
 
@@ -63,11 +172,7 @@ async function fetchUserData() {
   window.localStorage.setItem('Username', responsejson.username);
   window.localStorage.setItem('Email', responsejson.email);
   window.localStorage.setItem('ID', responsejson.id);
-  // TODO: Fix when I get it from user data!
-  window.localStorage.setItem(
-    'AvatarPath',
-    '../../../../static/avatar/default/pokemon_trainer.png',
-  );
+  window.localStorage.setItem('AvatarPath', responsejson.avatarUrl);
 }
 
 /**

@@ -19,8 +19,8 @@ model User {
   avatarUrl          String?
   secret2FA          String?
   enabled2FA         Boolean                 @default(false)
-  friends            Friendship[]            @relation("UserToFriends")
-  friendOf           Friendship[]            @relation("FriendsToUser")
+  friendsSent        Friendship[]            @relation("SentRequests")
+  friendsReceived    Friendship[]            @relation("ReceivedRequests")
   matches1           Match[]                 @relation("MatchUser1")
   matches2           Match[]                 @relation("MatchUser2")
   matchesWon         Match[]                 @relation("MatchWinner")
@@ -29,23 +29,30 @@ model User {
   tournaments        TournamentParticipant[]
 }
 
-model Friendship {
-  id        String           @id @default(uuid())
-  user      User             @relation("UserToFriends", fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  friendOf  User             @relation("FriendsToUser", fields: [friendId], references: [id], onDelete: Cascade)
-  friendId  String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @default(now()) @updatedAt
-  status    FriendshipStatus @default(PENDING)
+model Leaderboard {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  score  Int    @default(0)
+}
 
-  @@unique([userId, friendId])
+model Friendship {
+  id          String           @id @default(uuid())
+  initiator   User             @relation("SentRequests", fields: [initiatorId], references: [id], onDelete: Cascade)
+  initiatorId String
+  recipient   User             @relation("ReceivedRequests", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @default(now()) @updatedAt
+  status      FriendshipStatus @default(PENDING)
+
+  @@unique([initiatorId, recipientId])
 }
 
 enum FriendshipStatus {
   PENDING
   ACCEPTED
-  BLOCKED
+  REJECTED
 }
 
 model Match {
@@ -82,19 +89,15 @@ enum Character {
   YOSHI
   DK
   MEWTWO
+  BOWSER
+  SAMUS
+  CAPFALCON
+  SNAKE
 }
 
 enum MatchMode {
   CLASSIC
   CRAZY
-}
-
-model Leaderboard {
-  id      String @id @default(uuid())
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId  String
-  classic Int    @default(0)
-  crazy   Int    @default(0)
 }
 
 model Tournament {

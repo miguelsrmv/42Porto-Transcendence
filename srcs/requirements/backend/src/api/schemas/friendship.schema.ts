@@ -1,24 +1,32 @@
-import { getByIdSchema } from './global.schema';
-
 export const createFriendSchema = {
   body: {
     type: 'object',
-    required: ['userId', 'friendId'],
+    required: ['friendId'],
     properties: {
-      userId: { type: 'string', format: 'uuid' },
       friendId: { type: 'string', format: 'uuid' },
     },
     additionalProperties: false,
   },
 };
 
-export const updateFriendSchema = {
-  params: getByIdSchema.params,
+export const createFriendByUsernameSchema = {
   body: {
     type: 'object',
-    required: ['status'],
+    required: ['username'],
     properties: {
-      status: { type: 'string', enum: ['PENDING', 'ACCEPTED', 'BLOCKED'] },
+      username: { type: 'string', minLength: 3 },
+    },
+    additionalProperties: false,
+  },
+};
+
+export const updateFriendSchema = {
+  body: {
+    type: 'object',
+    required: ['friendId', 'status'],
+    properties: {
+      friendId: { type: 'string', format: 'uuid' },
+      status: { type: 'string', enum: ['PENDING', 'ACCEPTED', 'REJECTED'] },
     },
     additionalProperties: false,
   },

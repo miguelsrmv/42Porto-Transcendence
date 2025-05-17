@@ -2,7 +2,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { MatchMode } from '@prisma/client';
-import { defaultGameSettings } from '../../utils/defaults';
 
 export type MatchCreate = {
   mode: MatchMode;
@@ -18,6 +17,7 @@ type MatchUpdate = {
   user2Score: number;
 };
 
+// TODO: delete in the end
 export async function getAllMatches(request: FastifyRequest, reply: FastifyReply) {
   try {
     const matches = await prisma.match.findMany();
@@ -36,6 +36,20 @@ export async function getUserMatches(
       where: {
         OR: [{ user1Id: request.params.id }, { user2Id: request.params.id }],
       },
+    });
+    reply.send(matches);
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function getOwnUserMatches(request: FastifyRequest, reply: FastifyReply) {
+  try {
+    const matches = await prisma.match.findMany({
+      where: {
+        OR: [{ user1Id: request.user.id }, { user2Id: request.user.id }],
+      },
+      orderBy: { updatedAt: 'desc' },
     });
     reply.send(matches);
   } catch (error) {
@@ -65,14 +79,12 @@ export async function createMatch(
     const { user1Id, user2Id, mode } = request.body;
     const { settings } = request.body;
 
-    const finalSettings = { ...defaultGameSettings, ...(settings ? JSON.parse(settings) : {}) };
-
     const match = await prisma.match.create({
       data: {
         mode: mode,
         user1Id: user1Id,
         user2Id: user2Id,
-        settings: JSON.stringify(finalSettings),
+        settings: JSON.stringify(settings),
       },
     });
     reply.send(match);

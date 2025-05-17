@@ -1,15 +1,12 @@
-import { setupInput, handleInput } from './input.js';
-import WebSocket from 'ws';
+import { handleInput } from './input.js';
 import {
   checkWallCollision,
   checkPaddleCollision,
   checkGoal,
   checkFakeBallWallCollision,
 } from './collisions.js';
-import { gameSettings } from './settings.js';
-import { ClientMessage, gameRunningState, GameState, ServerMessage } from './types.js';
+import { gameRunningState, GameSession, GameState, ServerMessage } from './types.js';
 import { Player } from './player.js';
-import { removePlayer } from './sessionManagement.js';
 import { GameArea } from './gameArea.js';
 
 function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
@@ -37,33 +34,12 @@ function setPowerUpBar(gameArea: GameArea): void {
   setPlayerPowerBarInterval(gameArea.rightPlayer, gameArea);
 }
 
-function closeGameHandler(socket1: WebSocket, socket2: WebSocket, gameArea: GameArea) {
-  const playerLeft: ServerMessage = { type: 'player_left' };
-  socket1.on('message', (message) => {
-    const parsedMessage: ClientMessage = JSON.parse(message.toString());
-    if (parsedMessage.type === 'stop_game') {
-      gameArea.stop();
-      removePlayer(socket1);
-      if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
-      removePlayer(socket2);
-    }
-  });
-}
-
-function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: GameArea) {
-  closeGameHandler(player1socket, player2socket, gameArea);
-  closeGameHandler(player2socket, player1socket, gameArea);
-}
-
-export function initializeRemoteGame(
-  player1socket: WebSocket,
-  player2socket: WebSocket,
-  gameSettings: gameSettings,
-): void {
-  const gameArea = new GameArea(player1socket, player2socket, gameSettings);
-  setupInput(gameArea);
+export function initializeRemoteGame(gameSession: GameSession): void {
+  const [player1socket, player2socket] = Array.from(gameSession.players.keys());
+  const [p1id, p2id] = Array.from(gameSession.players.values());
+  const gameArea = new GameArea(p1id, p2id, player1socket, player2socket, gameSession.settings);
+  gameSession.gameArea = gameArea;
   setPowerUpBar(gameArea);
-  setCloseGame(player1socket, player2socket, gameArea);
   const gameInterval = setInterval(() => {
     gameArea.gameLoop();
   }, 20);

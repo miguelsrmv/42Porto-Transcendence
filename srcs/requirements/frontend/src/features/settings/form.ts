@@ -28,14 +28,17 @@ export function handleUserDataChange(): void {
     return;
   }
 
-  if (!userDataSubmitButtonListenerAttached) {
-    userDataSubmitButton.addEventListener('click', async () => {
-      userDataSubmitButtonListenerAttached = true;
-      fillUserData();
-      userData.oldPassword = (await confirmChanges()) as string;
-      if (userData.oldPassword) submitUserData();
-    });
-  }
+  //NOTE: Check if flag isn't necessary. REmoved as it caused a bug.
+  //if (!userDataSubmitButtonListenerAttached) {
+  userDataSubmitButton.addEventListener('click', async () => {
+    userDataSubmitButtonListenerAttached = true;
+    fillUserData();
+    userData.oldPassword = (await confirmChanges()) as string;
+    if (userData.oldPassword) await submitUserData();
+    updateLocalStorageData(userData.username);
+    updateHeaderData();
+  });
+  //}
 
   async function submitUserData(): Promise<void> {
     try {
@@ -88,4 +91,17 @@ export function handleUserDataChange(): void {
     userData.newPassword = passwordDataInput.value;
     userData.repeatPassword = retypePasswordDataInput.value;
   }
+}
+
+function updateLocalStorageData(username: string): void {
+  window.localStorage.setItem('Username', username);
+}
+
+function updateHeaderData(): void {
+  const headerUsername = document.getElementById('player-name');
+  if (!headerUsername) {
+    console.log("Couldn't find header usre name element");
+    return;
+  }
+  headerUsername.innerText = window.localStorage.getItem('Username') as string;
 }

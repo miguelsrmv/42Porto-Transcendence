@@ -217,6 +217,28 @@
               </button>
             </div>
           </form>
+
+          <form id="2fa-form" class="flex flex-col p-6 sm:p-8 space-y-6 hidden" action="#" method="post">
+              <label for="2fa-code" class="block text-sm font-medium text-gray-700"
+                >Authentication Code</label
+              >
+              <input
+                type="text"
+                id="authentication-code"
+                name="2FA code"
+                required
+                autocomplete=""
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            <div class="text-sm text-center text-gray-600 pt-2">
+              <button
+                id="2-fa-submit-button"
+                type="submit"
+                class="w-full bg-green-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out font-semibold"
+              >
+                Submit Authentication code
+              </button>
+            </form>
         </div>
       </div>
     </div>
@@ -637,17 +659,18 @@
 
   <template id="friends-template">
     <div id="friends-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
-      <div class="flex flex-row gap-6 h-full">
+      <div class="flex flex-row gap-6 h-full pb-20">
         <!-- Left Panel: User Friends List -->
         <div class="flex flex-col w-2/3 h-full">
           <div
-            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
+            class="flex flex-col bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
           >
             <h2 class="text-3xl font-serpentine text-center mb-8 text-white">My Friends</h2>
 
             <div class="flex items-center justify-between mb-6">
               <div class="relative flex-grow mr-4">
                 <input
+                  id="friend-search"
                   type="text"
                   placeholder="Search friends..."
                   class="w-full py-3 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-600"
@@ -657,224 +680,22 @@
                 </button>
               </div>
               <button
+                id="add-friend-button"
                 class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center"
               >
                 <span class="mr-2">+</span> Add Friend
               </button>
             </div>
 
-            <div class="bg-gray-700 rounded-lg shadow-md overflow-hidden">
+            <div class="flex flex-col flex-grow bg-gray-700 rounded-lg shadow-md overflow-hidden">
               <div
                 class="flex justify-between items-center bg-gray-900 p-4 border-b border-gray-600"
               >
                 <div class="w-1/2 font-serpentine text-purple-400">Friend</div>
                 <div class="w-1/4 text-center font-serpentine text-purple-400">Status</div>
-                <div class="w-1/4 text-center font-serpentine text-purple-400">Actions</div>
               </div>
 
-              <div id="friends-list" class="max-h-[60vh] overflow-y-auto">
-                <!-- Online friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 1"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">PongMaster</span>
-                      <span class="text-gray-400 text-sm">Rank #2 • 4,720 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm"
-                      >Online</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200"
-                      title="Challenge to a game"
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Playing friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 2"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-yellow-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">GameChamp</span>
-                      <span class="text-gray-400 text-sm">Rank #3 • 3,980 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 text-sm"
-                      >In Game</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Currently in a game"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Offline friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3 opacity-70"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 3"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-gray-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">Striker42</span>
-                      <span class="text-gray-400 text-sm">Rank #4 • 3,250 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-500/20 text-gray-300 text-sm"
-                      >Offline</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Friend is offline"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Online friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 4"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">BallWizard</span>
-                      <span class="text-gray-400 text-sm">Rank #6 • 2,180 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm"
-                      >Online</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200"
-                      title="Challenge to a game"
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Offline friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3 opacity-70"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 5"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-gray-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">PaddlePro</span>
-                      <span class="text-gray-400 text-sm">Rank #7 • 1,950 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-500/20 text-gray-300 text-sm"
-                      >Offline</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Friend is offline"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
+              <div id="friends-list" class="flex-grow min-h-0 overflow-y-auto">
               </div>
             </div>
           </div>
@@ -884,69 +705,13 @@
         <div class="flex flex-col w-1/3 h-full gap-4">
           <!-- Friend Requests Section -->
           <div
-            class="flex-1 bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
+            class="flex flex-col bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
           >
             <h3 class="text-2xl font-serpentine text-center mb-4 text-white">Friend Requests</h3>
 
-            <div class="bg-gray-700 rounded-lg p-4 shadow-md max-h-[25vh] overflow-y-auto">
+            <div class="bg-gray-700 rounded-lg p-4 shadow-md overflow-y-auto">
               <div id="friend-requests">
-                <!-- Pending requests -->
-                <div class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg">
-                  <div class="flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Request 1"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">SuperPlayer</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button
-                      class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
-                  <div class="flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Request 2"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">BounceKing</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button
-                      class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Empty state (hidden by default) -->
-                <div class="hidden text-center py-6">
+                <div id="empty-friend-request-section" class="hidden text-center py-6">
                   <div class="text-gray-400 mb-2">No pending friend requests</div>
                   <div class="text-sm text-gray-500">Friend requests will appear here</div>
                 </div>
@@ -957,6 +722,57 @@
       </div>
     </div>
   </template>
+
+  <template id="friend-template">
+    <div class="friend-item flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200">
+      <div class="w-1/2 flex items-center">
+        <div class="relative">
+          <div class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
+            <img
+              id="friend-avatar"
+              src="./static/avatar/default/mario.png"
+              alt="Friend 1"
+              class="h-full w-full object-cover"
+            />
+          </div>
+          <div id="friend-online-indicator" class="absolute bottom-0 right-2 h-3 w-3 rounded-full border-2 border-gray-800">
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <span id="friend-name" class="friend-name text-white font-bold">Friend Name</span>
+          <span id="friend-score" class="text-gray-400 text-sm">Rank #X • 9,999 pts</span>
+        </div>
+      </div>
+      <div class="w-1/4 text-center">
+        <span id="friend-online-status" class="inline-block px-3 py-1 rounded-full text-sm">Online</span>
+      </div>
+    </div>
+  </template>
+
+  <template id="friend-request-template">
+    <div id="friend-request-container" class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg">
+      <div class="flex items-center">
+        <div class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
+          <img
+            id="friend-request-avatar"
+            src="./static/avatar/default/mario.png"
+            alt="Request 1"
+            class="h-full w-full object-cover"
+          />
+        </div>
+        <span id="friend-request-name" class="text-white">SuperPlayer</span>
+      </div>
+      <div class="flex space-x-2">
+        <button id="friend-request-accept-button" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+          Accept
+        </button>
+        <button id="friend-request-decline-button" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+          Decline
+        </button>
+      </div>
+    </div>
+  </template>
+
 
   <template id="rankings-template">
     <div id="rankings-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
@@ -1509,6 +1325,7 @@
           <div class="py-2">
             <a
               href="#"
+              id="settings-dropdown-button"
               data-target="settings-page"
               class="block px-4 py-2 text-sm transition hover:bg-gray-300 hover:font-bold"
               >Settings</a

@@ -11,6 +11,7 @@
 # **************************************************************************** #
 
 DB_DATA = $(PWD)/data/backend_db
+AVATAR_DATA = $(PWD)/data/avatar
 BC_DATA = $(PWD)/data/blockchain
 COMPOSE = docker compose -f ./srcs/docker-compose.yml
 
@@ -19,6 +20,7 @@ all: up
 up:
 	@mkdir -p $(DB_DATA)
 	@mkdir -p $(BC_DATA)
+	@mkdir -p $(AVATAR_DATA)
 	@$(COMPOSE) up --build -d
 
 down:
@@ -33,7 +35,7 @@ clean: down
 	@echo "** REMOVING VOLUMES **"
 	@docker volume rm $$(docker volume ls -q)
 	@echo "** DELETING VOLUMES' DATA **"
-	@sudo rm -rf $(DB_DATA) $(BC_DATA)
+	@sudo rm -rf $(DB_DATA) $(BC_DATA) $(AVATAR_DATA)
 
 re: clean up
 
