@@ -1,9 +1,11 @@
 import { FastifyInstance } from 'fastify';
-import { createFriendSchema, updateFriendSchema } from '../schemas/friendship.schema';
+import { createFriendByUsernameSchema, createFriendSchema, updateFriendSchema } from '../schemas/friendship.schema';
 import {
   addFriend,
+  addFriendByUsername,
   deleteFriend,
   FriendCreate,
+  FriendCreateUsername,
   FriendUpdate,
   getUserFriends,
   getUserPendingFriends,
@@ -19,6 +21,11 @@ export async function friendRoutes(fastify: FastifyInstance) {
     '/',
     { schema: createFriendSchema, onRequest: [fastify.jwtAuth] },
     addFriend,
+  );
+  fastify.post<{ Body: FriendCreateUsername }>(
+    '/username',
+    { schema: createFriendByUsernameSchema, onRequest: [fastify.jwtAuth] },
+    addFriendByUsername,
   );
   fastify.patch<{ Body: FriendUpdate }>(
     '/',
