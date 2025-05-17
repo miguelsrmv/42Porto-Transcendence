@@ -9,9 +9,9 @@ export interface friend {
 
 export interface friendData {
   id: string;
-  name: string;
+  username: string;
   points: number;
   rank: number;
-  avatar: string;
+  avatarUrl: string;
   status: string;
 }
