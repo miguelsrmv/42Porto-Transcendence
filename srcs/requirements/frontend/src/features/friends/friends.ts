@@ -6,6 +6,7 @@
 import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
 import { friend, friendData } from './friends.types.js';
+import { capitalize } from '../../utils/helpers.js';
 
 /**
  * @brief Initializes view for friends
@@ -29,6 +30,7 @@ async function fillFriendList(): Promise<void> {
   const friendList = await getFriendList();
 
   if (friendsListElement && friendTemplate && friendList) {
+    friendsListElement.innerHTML = '';
     for (let i = 0; i < friendList.length; i++) {
       const clone = friendTemplate.content.cloneNode(true) as DocumentFragment;
       console.log('Current value:', friendList[i]);
@@ -64,16 +66,6 @@ async function getFriendData(friendId: friend): Promise<friendData | null> {
     const result = await response.json();
     console.dir("Here's the result!" + JSON.stringify(result));
     return result;
-    // NOTE: PLACEHOLDER VALUES
-    // const friend: friendData = {
-    //   id: 'placeholder Id',
-    //   name: 'placeholder Name',
-    //   points: 9999,
-    //   rank: 0,
-    //   avatar: '../../../../static/avatar/default/mario.png',
-    //   status: 'In Game',
-    // };
-    // return friend;
   } catch (error) {
     console.log(`Got error: ${error}`);
     return null;
@@ -113,9 +105,9 @@ function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData
 
   friendAvatar.src = newFriend.avatarUrl;
   friendName.innerText = newFriend.username;
-  friendOnlineStatus.innerText = newFriend.status;
+  friendOnlineStatus.innerText = capitalize(newFriend.onlineState);
   let statusColour: string = 'green';
-  switch (newFriend.status) {
+  switch (newFriend.onlineState) {
     case 'Online':
       statusColour = 'green';
       break;
@@ -128,7 +120,7 @@ function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData
   }
   friendOnlineStatus.classList.add(`bg-${statusColour}-500/20`, `text-${statusColour}-300`);
   friendOnlineIndicator.classList.add(`bg-${statusColour}-500`);
-  friendScore.innerText = `Rank ${newFriend.rank} • ${newFriend.points} pts`;
+  friendScore.innerText = `Rank ${newFriend.rank} • ${newFriend.score} pts`;
 }
 
 async function fillFriendRequests(): Promise<void> {
@@ -153,7 +145,7 @@ async function fillFriendRequests(): Promise<void> {
   }
 }
 
-async function getPendingFriendRequests(): Promise<any[] | null> {
+async function getPendingFriendRequests(): Promise<friendData[] | null> {
   try {
     const response = await fetch('/api/friends/pending', {
       method: 'GET',
@@ -163,28 +155,24 @@ async function getPendingFriendRequests(): Promise<any[] | null> {
     const pendingIDs = await response.json();
     if (!Array.isArray(pendingIDs)) return null;
 
-    const friendRequests = [];
-
-    console.log('Pending ID', pendingIDs);
+    const friendRequests: friendData[] = [];
 
     for (const object of pendingIDs) {
       try {
-        // NOTE: PLACEHOLDER!!
-        // TODO: Change to whatever David decides it should be
         const userResponse = await fetch(`/api/users/${object.initiatorId}`, {
           method: 'GET',
           credentials: 'include',
         });
         const user = await userResponse.json();
-        console.log('USER: ', user);
         if (user) {
+          user.id = object.initiatorId;
           friendRequests.push(user);
         }
+        console.log("Here's what I got:", friendRequests);
       } catch (error) {
         console.log(`Error fetching user ${object}:`, error);
       }
     }
-
     return friendRequests.length ? friendRequests : null;
   } catch (error) {
     console.log('Error fetching pending friend requests:', error);
@@ -239,6 +227,11 @@ async function changeFriendship(
   friendRequest: HTMLDivElement,
 ): Promise<void> {
   try {
+    console.log('Sending:', {
+      friendId: requestingFriendId,
+      status: status,
+    });
+
     const response = await fetch(`/api/friends`, {
       method: 'PATCH',
       credentials: 'include',
@@ -248,6 +241,7 @@ async function changeFriendship(
       body: JSON.stringify({ friendId: requestingFriendId, status: status }),
     });
     friendRequest.classList.add('hidden');
+    fillFriendList();
   } catch (error) {
     console.log(`Got error: ${error}`);
   }
