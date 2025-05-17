@@ -280,8 +280,7 @@ function setupAddFriendButton() {
     }
 
     try {
-      // TODO: Change after David's new api!
-      const res = await fetch('/api/friendsByName', {
+      const res = await fetch('/api/friends/username', {
         method: 'POST',
         credentials: 'include',
         headers: {
