@@ -73,7 +73,9 @@ export async function getUserById(
       where: { id: request.params.id },
       select: { username: true, lastActiveAt: true, avatarUrl: true },
     });
-    const friendScore = await prisma.leaderboard.findUnique({ where: { id: request.params.id } });
+    const friendScore = await prisma.leaderboard.findUnique({
+      where: { userId: request.params.id },
+    });
     const currentTime = Date.now() / 1000;
     const elapsedTime = currentTime - user.lastActiveAt.getTime() / 1000;
     const onlineState: OnlineState = elapsedTime > 5 * 60 ? 'offline' : 'online';
