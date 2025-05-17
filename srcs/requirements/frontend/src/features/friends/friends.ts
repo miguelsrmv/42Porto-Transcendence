@@ -22,6 +22,8 @@ export function initializeView(): void {
 
   fillFriendList();
   fillFriendRequests();
+  setupFriendSearch();
+  // TODO: Setup Add Friend button!!
 }
 
 async function fillFriendList(): Promise<void> {
@@ -33,7 +35,6 @@ async function fillFriendList(): Promise<void> {
     friendsListElement.innerHTML = '';
     for (let i = 0; i < friendList.length; i++) {
       const clone = friendTemplate.content.cloneNode(true) as DocumentFragment;
-      console.log('Current value:', friendList[i]);
       const newFriend: friendData | null = await getFriendData(friendList[i]);
       if (newFriend) {
         updateNodeWithFriendData(clone, newFriend);
@@ -64,7 +65,6 @@ async function getFriendData(friendId: friend): Promise<friendData | null> {
       credentials: 'include',
     });
     const result = await response.json();
-    console.dir("Here's the result!" + JSON.stringify(result));
     return result;
   } catch (error) {
     console.log(`Got error: ${error}`);
@@ -120,7 +120,7 @@ function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData
   }
   friendOnlineStatus.classList.add(`bg-${statusColour}-500/20`, `text-${statusColour}-300`);
   friendOnlineIndicator.classList.add(`bg-${statusColour}-500`);
-  friendScore.innerText = `Rank ${newFriend.rank} • ${newFriend.score} pts`;
+  friendScore.innerText = `Rank ${newFriend.rank} • ${newFriend.points} pts`;
 }
 
 async function fillFriendRequests(): Promise<void> {
@@ -168,7 +168,6 @@ async function getPendingFriendRequests(): Promise<friendData[] | null> {
           user.id = object.initiatorId;
           friendRequests.push(user);
         }
-        console.log("Here's what I got:", friendRequests);
       } catch (error) {
         console.log(`Error fetching user ${object}:`, error);
       }
@@ -227,11 +226,6 @@ async function changeFriendship(
   friendRequest: HTMLDivElement,
 ): Promise<void> {
   try {
-    console.log('Sending:', {
-      friendId: requestingFriendId,
-      status: status,
-    });
-
     const response = await fetch(`/api/friends`, {
       method: 'PATCH',
       credentials: 'include',
@@ -245,4 +239,28 @@ async function changeFriendship(
   } catch (error) {
     console.log(`Got error: ${error}`);
   }
+}
+
+function setupFriendSearch() {
+  const searchInput = document.getElementById('friend-search') as HTMLInputElement;
+  const friendList = document.getElementById('friends-list');
+
+  if (!searchInput || !friendList) return;
+
+  searchInput.addEventListener('input', () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    const friends = friendList.querySelectorAll('.friend-item');
+
+    friends.forEach((friend) => {
+      const nameElem = friend.querySelector('.friend-name');
+      if (!nameElem) return;
+
+      const name = nameElem.textContent?.toLowerCase() || '';
+      if (name.includes(searchTerm)) {
+        (friend as HTMLElement).style.display = '';
+      } else {
+        (friend as HTMLElement).style.display = 'none';
+      }
+    });
+  });
 }

@@ -10,7 +10,7 @@ export interface friend {
 export interface friendData {
   id: string;
   username: string;
-  score: number;
+  points: number;
   rank: number;
   avatarUrl: string;
   onlineState: string;
