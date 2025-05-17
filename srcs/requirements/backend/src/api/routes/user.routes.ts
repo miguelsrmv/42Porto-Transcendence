@@ -21,8 +21,16 @@ import {
   AvatarData,
   uploadCustomAvatar,
   DefaultAvatar,
+  preLogin,
+  login2FA,
+  isUserOnline,
 } from '../controllers/user.controller';
-import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
+import {
+  createUserSchema,
+  login2FASchema,
+  loginSchema,
+  updateUserSchema,
+} from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
 import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
 
@@ -32,6 +40,8 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.get('/', { onRequest: [fastify.jwtAuth] }, getAllUsers);
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
   fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
+  fastify.post('/preLogin', { schema: loginSchema }, preLogin);
+  fastify.post('/login2FA', { schema: login2FASchema }, login2FA);
   fastify.post('/login', { schema: loginSchema }, login);
   fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
@@ -55,7 +65,11 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     getUserById,
   );
-  // TODO: Add preValidation for UserUpdate
+  fastify.get<{ Params: IParams }>(
+    '/isOnline/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    isUserOnline,
+  );
   fastify.patch<{ Body: UserUpdate }>(
     '/',
     { schema: updateUserSchema, onRequest: [fastify.jwtAuth], preValidation: userUpdateValidation },

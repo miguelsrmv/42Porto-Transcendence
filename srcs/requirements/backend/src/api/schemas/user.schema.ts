@@ -15,6 +15,7 @@ export const createUserSchema = {
 export const updateUserSchema = {
   body: {
     type: 'object',
+    required: ['oldPassword'],
     properties: {
       username: { type: 'string', minLength: 3 },
       email: { type: 'string', format: 'email' },
@@ -33,6 +34,19 @@ export const loginSchema = {
     properties: {
       email: { type: 'string', format: 'email' },
       password: { type: 'string', minLength: 6 },
+    },
+    additionalProperties: false,
+  },
+};
+
+export const login2FASchema = {
+  body: {
+    type: 'object',
+    required: ['email', 'password', 'code'],
+    properties: {
+      email: { type: 'string', format: 'email' },
+      password: { type: 'string', minLength: 6 },
+      code: { type: 'integer' },
     },
     additionalProperties: false,
   },

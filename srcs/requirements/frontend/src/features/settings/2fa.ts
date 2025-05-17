@@ -73,14 +73,12 @@ async function fetchNormalised2FAStatus(): Promise<boolean | undefined> {
     });
     if (!response.ok) {
       console.error('Error fetching 2FA status:', response.status);
-      alert('Error fetching 2FA status: please try again later!');
       return undefined;
     }
     const apiResponseIs2FAOff = await response.json();
-    return apiResponseIs2FAOff; // Invert to get actual enabled status
+    return apiResponseIs2FAOff;
   } catch (error) {
     console.error('Network error fetching 2FA status:', error);
-    alert('Network error fetching 2FA status. Please check your connection.');
     return undefined;
   }
 }
@@ -456,7 +454,4 @@ async function enable2FA(): Promise<boolean> {
 }
 
 //TODO: Display error messages on modal
-//NOTE: David, issues I found:
-/// Should the opposite of /api/users/2fa/disable be /api/users/2fa/enable instead of verify?
-/// Both should be Post requests and take this object? { code: tokenElement.value, password: passwordElement.value };
-/// Am I getting the correct bool from fetch2FAstatus()? (see line 72)
+

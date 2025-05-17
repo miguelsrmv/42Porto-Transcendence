@@ -10,8 +10,8 @@ POST http://localhost:3000/friends/ HTTP/1.1
 content-type: application/json
 
 {
-	"playerId": "<id>",
-	"friendId": "<id>"
+	"initiatorId": "<id>",
+	"recipientId": "<id>"
 }
 
 ### Update a friendship status

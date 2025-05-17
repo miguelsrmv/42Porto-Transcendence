@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client';
 import { hashPassword } from './hash';
-import { defaultGameSettings } from './defaults';
 
 export const userExtension = Prisma.defineExtension({
   query: {
@@ -9,32 +8,8 @@ export const userExtension = Prisma.defineExtension({
         const { hash, salt } = hashPassword(args.data.hashedPassword);
         args.data.hashedPassword = hash;
         args.data.salt = salt;
-        args.data.avatarUrl = 'static/avatar/default/1.png';
-        return query(args);
-      },
-    },
-  },
-});
-
-// TODO: Delete?
-export const settingsExtension = Prisma.defineExtension({
-  query: {
-    match: {
-      create: async ({ args, query }) => {
-        args.data.settings = JSON.stringify({
-          ...defaultGameSettings,
-          ...(args.data.settings ? JSON.parse(args.data.settings) : {}),
-        });
-        if (args.data.settings !== JSON.stringify(defaultGameSettings)) args.data.mode = 'CRAZY';
-        return query(args);
-      },
-    },
-    tournament: {
-      create: async ({ args, query }) => {
-        args.data.settings = JSON.stringify({
-          ...defaultGameSettings,
-          ...(args.data.settings ? JSON.parse(args.data.settings) : {}),
-        });
+        args.data.avatarUrl = '../../../../static/avatar/default/mario.png';
+        args.data.leaderboard = { create: {} };
         return query(args);
       },
     },

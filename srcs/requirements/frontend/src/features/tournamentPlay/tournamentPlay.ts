@@ -12,12 +12,21 @@ import {
   setGameSettings,
 } from '../game/gameSetup.js';
 
+import { checkLoginStatus } from '../../utils/helpers.js';
+import { navigate } from '../../core/router.js';
+
 /**
  * @brief Initializes view for tournament play
  *
  * This function sets up the view for tournament play
  */
 export async function initializeView(): Promise<void> {
+  if (!checkLoginStatus()) {
+    alert('You need to be logged in to access this page');
+    navigate('landing-page');
+    return;
+  }
+
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
 

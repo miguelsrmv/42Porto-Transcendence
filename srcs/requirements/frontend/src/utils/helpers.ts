@@ -53,3 +53,11 @@ export function getTemplateId(templateHost: string): string | undefined {
       return 'game-template';
   }
 }
+
+export function checkLoginStatus(): boolean {
+  return localStorage.getItem('ID') !== null;
+}
+
+export function capitalize(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
