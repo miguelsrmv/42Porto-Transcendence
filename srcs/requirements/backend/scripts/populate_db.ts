@@ -76,12 +76,18 @@ async function createFriends(users: User[]) {
       });
     }
     const testUser = await prisma.user.findUnique({ where: { username: USERNAME } });
-    await prisma.friendship.create({
+    const testFriendship = await prisma.friendship.create({
       data: {
         initiatorId: user.id,
         recipientId: testUser!.id,
       },
     });
+    if (Math.random() < 0.5) {
+      await prisma.friendship.update({
+        where: { id: testFriendship.id },
+        data: { status: FriendshipStatus.ACCEPTED },
+      });
+    }
   }
   for (let index = users.length / 2; index < users.length; index++) {
     const user = users[index];
