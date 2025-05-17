@@ -52,6 +52,8 @@ export type Login2FAData = {
   password: string;
 };
 
+type OnlineState = 'online' | 'offline' | 'inGame';
+
 // TODO: remove in the end
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
@@ -71,7 +73,17 @@ export async function getUserById(
       where: { id: request.params.id },
       select: { username: true, lastActiveAt: true, avatarUrl: true },
     });
-    reply.send({ ...user, rank: await getUserRank(request.params.id) });
+    const friendScore = await prisma.leaderboard.findUnique({ where: { id: request.params.id } });
+    const currentTime = Date.now() / 1000;
+    const elapsedTime = currentTime - user.lastActiveAt.getTime() / 1000;
+    const onlineState: OnlineState = elapsedTime > 5 * 60 ? 'offline' : 'online';
+    // TODO: Add inGame logic
+    reply.send({
+      ...user,
+      rank: await getUserRank(request.params.id),
+      points: friendScore?.score,
+      onlineState: onlineState,
+    });
   } catch (error) {
     handleError(error, reply);
   }
