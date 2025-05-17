@@ -670,6 +670,7 @@
             <div class="flex items-center justify-between mb-6">
               <div class="relative flex-grow mr-4">
                 <input
+                  id="friend-search"
                   type="text"
                   placeholder="Search friends..."
                   class="w-full py-3 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-600"
@@ -722,7 +723,7 @@
   </template>
 
   <template id="friend-template">
-    <div class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200">
+    <div class="friend-item flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200">
       <div class="w-1/2 flex items-center">
         <div class="relative">
           <div class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
@@ -737,7 +738,7 @@
           </div>
         </div>
         <div class="flex flex-col">
-          <span id="friend-name" class="text-white font-bold">Friend Name</span>
+          <span id="friend-name" class="friend-name text-white font-bold">Friend Name</span>
           <span id="friend-score" class="text-gray-400 text-sm">Rank #X • 9,999 pts</span>
         </div>
       </div>
