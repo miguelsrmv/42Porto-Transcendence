@@ -28,14 +28,12 @@ export function handleUserDataChange(): void {
     return;
   }
 
-  if (!userDataSubmitButtonListenerAttached) {
-    userDataSubmitButton.addEventListener('click', async () => {
-      userDataSubmitButtonListenerAttached = true;
-      fillUserData();
-      userData.oldPassword = (await confirmChanges()) as string;
-      if (userData.oldPassword) await submitUserData();
-    });
-  }
+  userDataSubmitButton.addEventListener('click', async () => {
+    userDataSubmitButtonListenerAttached = true;
+    fillUserData();
+    userData.oldPassword = (await confirmChanges()) as string;
+    if (userData.oldPassword) await submitUserData();
+  });
 
   async function submitUserData(): Promise<void> {
     try {
