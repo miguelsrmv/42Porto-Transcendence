@@ -7,6 +7,10 @@ export type FriendCreate = {
   friendId: string;
 };
 
+export type FriendCreateUsername = {
+  username: string;
+};
+
 export type FriendUpdate = {
   friendId: string;
   status: FriendshipStatus;
@@ -60,6 +64,28 @@ export async function addFriend(
       data: {
         initiatorId: request.user.id,
         recipientId: friendId,
+      },
+    });
+    reply.send({ message: 'Friendship created' });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function addFriendByUsername(
+  request: FastifyRequest<{ Body: FriendCreateUsername }>,
+  reply: FastifyReply,
+) {
+  try {
+    const { username } = request.body;
+
+    if (request.user.username === username)
+      return reply.status(400).send('A user cannot befriend itself');
+    const friend = await prisma.user.findUniqueOrThrow({ where: { username: username } });
+    await prisma.friendship.create({
+      data: {
+        initiatorId: request.user.id,
+        recipientId: friend.id,
       },
     });
     reply.send({ message: 'Friendship created' });
