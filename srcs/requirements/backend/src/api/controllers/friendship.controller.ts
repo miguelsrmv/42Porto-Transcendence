@@ -18,7 +18,7 @@ export async function getUserFriends(request: FastifyRequest, reply: FastifyRepl
     const friends = await prisma.friendship.findMany({
       where: {
         OR: [{ initiatorId: request.user.id }, { recipientId: request.user.id }],
-        // AND: { status: FriendshipStatus.ACCEPTED },
+        AND: { status: FriendshipStatus.ACCEPTED },
       },
       orderBy: { updatedAt: 'desc' },
       select: { initiatorId: true, recipientId: true },
