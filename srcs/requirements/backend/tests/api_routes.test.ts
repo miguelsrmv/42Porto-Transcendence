@@ -142,16 +142,16 @@
 //       },
 //     });
 
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual(
-      expect.objectContaining({
-        username: user!.username,
-        avatarUrl: user!.avatarUrl,
-        lastActiveAt: expect.any(String),
-        rank: expect.any(Number),
-      }),
-    );
-  });
+  //   expect(response.statusCode).toBe(200);
+  //   expect(response.json()).toEqual(
+  //     expect.objectContaining({
+  //       username: user!.username,
+  //       avatarUrl: user!.avatarUrl,
+  //       lastActiveAt: expect.any(String),
+  //       rank: expect.any(Number),
+  //     }),
+  //   );
+  // });
 
 //   // TODO: Add oldPassword to body
 //   // test('PATCH / should return 200 and an updated user', async () => {

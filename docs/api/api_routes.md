@@ -41,7 +41,7 @@
 | `POST`   | `/tournaments`             |                     |        maxParticipants and createdBy         | Create a tournament                                             |
 | `PATCH`  | `/tournaments/:id`         | `id` tournaments id |                data to update                | Update data on a specific tournament                            |
 | `DELETE` | `/tournaments/:id`         | `id` tournaments id |                                              | Delete a tournament                                             |
-| `POST`   | `/tournaments/participant` |                     |         userId, alias and character          | Create a tournamentParticipant entry                            |
+| `POST`   | `/tournaments/participant` |                     | tournamentId, userId, alias and character    | Create a tournamentParticipant entry                            |
 
 ## Base
 

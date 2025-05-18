@@ -105,14 +105,14 @@ model Tournament {
   name            String?
   createdAt       DateTime                @default(now())
   updatedAt       DateTime                @default(now()) @updatedAt
-  matches         Match[]
-  createdBy       User                    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  // matches         Match[]
+  // createdBy       User                    @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById     String
   settings        String
   maxParticipants Int                     @default(8)
-  status          TournamentStatus        @default(PENDING)
+  // status          TournamentStatus        @default(PENDING)
   currentRound    Int                     @default(1)
-  participants    TournamentParticipant[]
+  // participants    TournamentParticipant[]
 }
 
 // enum TournamentStatus {
