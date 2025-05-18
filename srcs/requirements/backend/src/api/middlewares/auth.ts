@@ -10,6 +10,7 @@ async function jwtAuth(fastify: FastifyInstance) {
     secret: process.env.JWT_SIGN_SECRET as string,
     cookie: {
       cookieName: 'access_token',
+      // NOTE: signing would prevent cookie tampering, but JWT is already protected
       signed: false,
     },
   });

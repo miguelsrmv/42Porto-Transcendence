@@ -7,6 +7,10 @@ export type FriendCreate = {
   friendId: string;
 };
 
+export type FriendCreateUsername = {
+  username: string;
+};
+
 export type FriendUpdate = {
   friendId: string;
   status: FriendshipStatus;
@@ -18,7 +22,7 @@ export async function getUserFriends(request: FastifyRequest, reply: FastifyRepl
     const friends = await prisma.friendship.findMany({
       where: {
         OR: [{ initiatorId: request.user.id }, { recipientId: request.user.id }],
-        // AND: { status: FriendshipStatus.ACCEPTED },
+        AND: { status: FriendshipStatus.ACCEPTED },
       },
       orderBy: { updatedAt: 'desc' },
       select: { initiatorId: true, recipientId: true },
@@ -62,7 +66,29 @@ export async function addFriend(
         recipientId: friendId,
       },
     });
-    reply.send('Friendship created');
+    reply.send({ message: 'Friendship created' });
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
+export async function addFriendByUsername(
+  request: FastifyRequest<{ Body: FriendCreateUsername }>,
+  reply: FastifyReply,
+) {
+  try {
+    const { username } = request.body;
+
+    if (request.user.username === username)
+      return reply.status(400).send('A user cannot befriend itself');
+    const friend = await prisma.user.findUniqueOrThrow({ where: { username: username } });
+    await prisma.friendship.create({
+      data: {
+        initiatorId: request.user.id,
+        recipientId: friend.id,
+      },
+    });
+    reply.send({ message: 'Friendship created' });
   } catch (error) {
     handleError(error, reply);
   }
@@ -80,15 +106,15 @@ export async function updateFriendshipStatus(
     await prisma.friendship.update({
       where: {
         initiatorId_recipientId: {
-          initiatorId: userId,
-          recipientId: friendId,
+          initiatorId: friendId,
+          recipientId: userId,
         },
       },
       data: {
         status: status,
       },
     });
-    reply.send('Friendship status updated');
+    reply.send({ message: 'Friendship status updated' });
   } catch (error) {
     handleError(error, reply);
   }
@@ -109,7 +135,7 @@ export async function deleteFriend(
         },
       },
     });
-    reply.send('Friendship deleted');
+    reply.send({ message: 'Friendship deleted' });
   } catch (error) {
     handleError(error, reply);
   }

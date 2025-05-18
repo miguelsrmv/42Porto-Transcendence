@@ -9,6 +9,17 @@ export const createFriendSchema = {
   },
 };
 
+export const createFriendByUsernameSchema = {
+  body: {
+    type: 'object',
+    required: ['username'],
+    properties: {
+      username: { type: 'string', minLength: 3 },
+    },
+    additionalProperties: false,
+  },
+};
+
 export const updateFriendSchema = {
   body: {
     type: 'object',
