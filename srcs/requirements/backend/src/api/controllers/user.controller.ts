@@ -11,6 +11,8 @@ import util from 'util';
 import { pipeline } from 'stream';
 import path from 'path';
 
+const COOKIE_MAX_AGE = 2 * 60 * 60; // Valid for 2h
+
 export type UserCreate = {
   username: string;
   email: string;
@@ -50,6 +52,9 @@ export type Login2FAData = {
   password: string;
 };
 
+type OnlineState = 'online' | 'offline' | 'inGame';
+
+// TODO: remove in the end
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
   try {
     const users = await prisma.user.findMany();
@@ -68,7 +73,19 @@ export async function getUserById(
       where: { id: request.params.id },
       select: { username: true, lastActiveAt: true, avatarUrl: true },
     });
-    reply.send({ ...user, rank: await getUserRank(request.params.id) });
+    const friendScore = await prisma.leaderboard.findUnique({
+      where: { userId: request.params.id },
+    });
+    const currentTime = Date.now() / 1000;
+    const elapsedTime = currentTime - user.lastActiveAt.getTime() / 1000;
+    const onlineState: OnlineState = elapsedTime > 5 * 60 ? 'offline' : 'online';
+    // TODO: Add inGame logic
+    reply.send({
+      ...user,
+      rank: await getUserRank(request.params.id),
+      points: friendScore?.score,
+      onlineState: onlineState,
+    });
   } catch (error) {
     handleError(error, reply);
   }
@@ -85,6 +102,7 @@ export async function createUser(
         email: request.body.email,
         hashedPassword: request.body.password,
       },
+      select: { username: true, email: true },
     });
     reply.send(user);
   } catch (error) {
@@ -97,12 +115,11 @@ export async function updateUser(
   reply: FastifyReply,
 ) {
   try {
-    if (request.body.newPassword) {
-      request.body = transformUserUpdate(request.body);
-    }
+    request.body = transformUserUpdate(request.body);
     const user = await prisma.user.update({
       where: { id: request.user.id },
       data: request.body,
+      select: { username: true, email: true },
     });
     reply.send(user);
   } catch (error) {
@@ -118,6 +135,7 @@ export async function deleteUser(
     if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
     const user = await prisma.user.delete({
       where: { id: request.params.id },
+      select: { username: true, email: true },
     });
     reply.send(user);
   } catch (error) {
@@ -204,7 +222,7 @@ export async function login2FA(
       path: '/',
       httpOnly: true,
       secure: true,
-      maxAge: 2 * 60 * 60, // Valid for 2h
+      maxAge: COOKIE_MAX_AGE,
     });
     reply.send({ avatar: user.avatarUrl });
   } catch (error) {
@@ -248,7 +266,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
       path: '/',
       httpOnly: true,
       secure: true,
-      maxAge: 2 * 60 * 60, // Valid for 2h
+      maxAge: COOKIE_MAX_AGE,
     });
     reply.send({ avatar: user.avatarUrl });
   } catch (error) {
@@ -291,7 +309,7 @@ export async function getUserStats(
     const stats = {
       classic: getUserClassicStats(userMatches, request.params.id),
       crazy: getUserCrazyStats(userMatches, request.params.id),
-      rank: getUserRank(request.params.id),
+      rank: await getUserRank(request.params.id),
     };
 
     reply.send({ stats });
@@ -409,7 +427,7 @@ export async function verify2FA(
       path: '/',
       httpOnly: true,
       secure: true,
-      maxAge: 2 * 60 * 60, // Valid for 2h
+      maxAge: COOKIE_MAX_AGE,
     });
     if (!user.enabled2FA) {
       await prisma.user.update({ where: { id: request.user.id }, data: { enabled2FA: true } });

@@ -9,10 +9,10 @@ type TransformedUserUpdate = Omit<UserUpdate, 'newPassword' | 'repeatPassword'> 
 };
 
 export function transformUserUpdate(data: UserUpdate): TransformedUserUpdate {
-  const { newPassword, repeatPassword, ...rest } = data;
+  const { newPassword, repeatPassword, oldPassword, ...rest } = data;
 
   return {
     ...rest,
-    ...(newPassword ? { hashedPassword: newPassword } : {}),
+    ...(newPassword !== undefined ? { hashedPassword: newPassword } : {}),
   };
 }

@@ -2,7 +2,9 @@
 // import app from '../src/app';
 // import { prisma } from '../src/utils/prisma';
 
-// let jwtCookie: string;
+let jwtCookie: string;
+let jwtCookie2: string;
+let jwtCookie3: string;
 
 // test("GET / should return 'greetings Welcome to the ft_transcendence API'", async () => {
 //   const response = await app.inject({

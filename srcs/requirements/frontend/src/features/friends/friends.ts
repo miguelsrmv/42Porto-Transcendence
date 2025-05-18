@@ -6,6 +6,7 @@
 import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
 import { friend, friendData } from './friends.types.js';
+import { capitalize } from '../../utils/helpers.js';
 
 /**
  * @brief Initializes view for friends
@@ -21,6 +22,8 @@ export function initializeView(): void {
 
   fillFriendList();
   fillFriendRequests();
+  setupFriendSearch();
+  setupAddFriendButton();
 }
 
 async function fillFriendList(): Promise<void> {
@@ -29,9 +32,10 @@ async function fillFriendList(): Promise<void> {
   const friendList = await getFriendList();
 
   if (friendsListElement && friendTemplate && friendList) {
+    friendsListElement.innerHTML = '';
     for (let i = 0; i < friendList.length; i++) {
       const clone = friendTemplate.content.cloneNode(true) as DocumentFragment;
-      const newFriend: friendData | null = await getFriendData(friendList[i].id);
+      const newFriend: friendData | null = await getFriendData(friendList[i]);
       if (newFriend) {
         updateNodeWithFriendData(clone, newFriend);
         friendsListElement.appendChild(clone);
@@ -54,25 +58,14 @@ async function getFriendList(): Promise<friend[] | null> {
   }
 }
 
-async function getFriendData(friendId: string): Promise<friendData | null> {
+async function getFriendData(friendId: friend): Promise<friendData | null> {
   try {
-    // const response = await fetch(`/api/users/${friendId}`, {
-    //   method: 'GET',
-    //   credentials: 'include',
-    // });
-    // const result = await response.json();
-    //console.dir("Here's the result!" + JSON.stringify(result));
-    // return result;
-    // NOTE: PLACEHOLDER VALUES
-    const friend: friendData = {
-      id: 'placeholder Id',
-      name: 'placeholder Name',
-      points: 9999,
-      rank: 0,
-      avatar: '../../../../static/avatar/default/mario.png',
-      status: 'In Game',
-    };
-    return friend;
+    const response = await fetch(`/api/users/${friendId}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    const result = await response.json();
+    return result;
   } catch (error) {
     console.log(`Got error: ${error}`);
     return null;
@@ -110,11 +103,11 @@ function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData
     return;
   }
 
-  friendAvatar.src = newFriend.avatar;
-  friendName.innerText = newFriend.name;
-  friendOnlineStatus.innerText = newFriend.status;
+  friendAvatar.src = newFriend.avatarUrl;
+  friendName.innerText = newFriend.username;
+  friendOnlineStatus.innerText = capitalize(newFriend.onlineState);
   let statusColour: string = 'green';
-  switch (newFriend.status) {
+  switch (newFriend.onlineState) {
     case 'Online':
       statusColour = 'green';
       break;
@@ -152,7 +145,7 @@ async function fillFriendRequests(): Promise<void> {
   }
 }
 
-async function getPendingFriendRequests(): Promise<any[] | null> {
+async function getPendingFriendRequests(): Promise<friendData[] | null> {
   try {
     const response = await fetch('/api/friends/pending', {
       method: 'GET',
@@ -162,28 +155,23 @@ async function getPendingFriendRequests(): Promise<any[] | null> {
     const pendingIDs = await response.json();
     if (!Array.isArray(pendingIDs)) return null;
 
-    const friendRequests = [];
-
-    console.log('Pending ID', pendingIDs);
+    const friendRequests: friendData[] = [];
 
     for (const object of pendingIDs) {
       try {
-        // NOTE: PLACEHOLDER!!
-        // TODO: Change to whatever David decides it should be
         const userResponse = await fetch(`/api/users/${object.initiatorId}`, {
           method: 'GET',
           credentials: 'include',
         });
         const user = await userResponse.json();
-        console.log('USER: ', user);
         if (user) {
+          user.id = object.initiatorId;
           friendRequests.push(user);
         }
       } catch (error) {
         console.log(`Error fetching user ${object}:`, error);
       }
     }
-
     return friendRequests.length ? friendRequests : null;
   } catch (error) {
     console.log('Error fetching pending friend requests:', error);
@@ -222,8 +210,8 @@ function updateNodeWithFriendRequestData(node: DocumentFragment, requestingFrien
     return;
   }
 
-  friendRequestAvatar.src = requestingFriend.avatar;
-  friendRequestName.innerText = requestingFriend.name;
+  friendRequestAvatar.src = requestingFriend.avatarUrl;
+  friendRequestName.innerText = requestingFriend.username;
   acceptButton.addEventListener('click', () =>
     changeFriendship(requestingFriend.id, 'ACCEPTED', friendRequestContainer),
   );
@@ -244,10 +232,71 @@ async function changeFriendship(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({friendId: requestingFriendId, status: status}),
+      body: JSON.stringify({ friendId: requestingFriendId, status: status }),
     });
     friendRequest.classList.add('hidden');
+    fillFriendList();
   } catch (error) {
     console.log(`Got error: ${error}`);
   }
+}
+
+function setupFriendSearch() {
+  const searchInput = document.getElementById('friend-search') as HTMLInputElement;
+  const friendList = document.getElementById('friends-list');
+
+  if (!searchInput || !friendList) return;
+
+  searchInput.addEventListener('input', () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    const friends = friendList.querySelectorAll('.friend-item');
+
+    friends.forEach((friend) => {
+      const nameElem = friend.querySelector('.friend-name');
+      if (!nameElem) return;
+
+      const name = nameElem.textContent?.toLowerCase() || '';
+      if (name.includes(searchTerm)) {
+        (friend as HTMLElement).style.display = '';
+      } else {
+        (friend as HTMLElement).style.display = 'none';
+      }
+    });
+  });
+}
+
+function setupAddFriendButton() {
+  const addButton = document.getElementById('add-friend-button');
+  const searchInput = document.getElementById('friend-search') as HTMLInputElement;
+
+  if (!addButton || !searchInput) return;
+
+  addButton.addEventListener('click', async () => {
+    const username = searchInput.value.trim();
+
+    if (!username) {
+      alert('Please enter a username to send a friend request.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/friends/username', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Request failed');
+      }
+      searchInput.value = '';
+    } catch (err) {
+      console.error('Error sending friend request:', err);
+      alert(`Error: ${(err as Error).message}`);
+    }
+  });
 }

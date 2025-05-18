@@ -27,6 +27,7 @@
 | `GET`    | `/friends`                 |                     |                                              | Get all friends of logged in user                               |
 | `GET`    | `/friends/pending`         |                     |                                              | Get pending friends of logged in user                           |
 | `POST`   | `/friends`                 |                     |                   friendId                   | Create a friendship between the logged in user and another user |
+| `POST`   | `/friends/username`        |                     |                   username                   | Create a friendship between the logged in user and another user |
 | `PATCH`  | `/friends`                 |                     |             friendId and status              | Update friendship status                                        |
 | `DELETE` | `/friends/:id`             |   `id` friend id    |                                              | Delete a friendship                                             |
 | `GET`    | `/matches`                 |                     |                                              | Get all matches                                                 |
@@ -132,6 +133,14 @@ Content-Type: application/json
 ```json
 {
   "friendId": "<id>"
+}
+```
+
+- **Create a new friendship, based on friend username:** `POST /friends/username`
+
+```json
+{
+  "username": "<username>"
 }
 ```
 
