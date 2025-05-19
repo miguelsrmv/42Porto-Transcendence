@@ -81,6 +81,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
   gameArea.stop();
+  // TODO: Differentiate between remote and tournament match flow
   const gameEndMsg = {
     type: 'game_end',
     winningPlayer: winningPlayer.side,
