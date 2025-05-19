@@ -5,6 +5,7 @@
 - Check if form is empty before requesting oldPassword on user update
 - Hide password as it is being inserted in settings form
 - Lead user to login again after JWT cookie expires?
+- When submitting empty username, no error and header gets updated
 
 # Backend
 - Make responses more uniform
