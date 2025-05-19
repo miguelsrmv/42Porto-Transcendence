@@ -71,6 +71,8 @@ export async function getMatchById(
   }
 }
 
+// TODO: Create createLocalMatch (creates match between logged in user and 'guest')
+
 export async function createMatch(
   request: FastifyRequest<{ Body: MatchCreate }>,
   reply: FastifyReply,
