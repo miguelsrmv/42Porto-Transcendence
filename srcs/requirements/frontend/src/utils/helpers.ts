@@ -59,7 +59,7 @@ export function getTemplateId(templateHost: string): string | undefined {
 export async function checkLoginStatus(): Promise<boolean> {
   const loggedInStatus = await userIsLoggedIn();
 
-  if (!loggedInStatus) localStorage.setItem('ID', '');
+  if (!loggedInStatus) window.localStorage.clear();
 
   return localStorage.getItem('ID') !== null;
 }
