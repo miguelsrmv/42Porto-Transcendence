@@ -14,7 +14,7 @@ function getRandomBackground(): background {
   return backgroundList[Math.floor(Math.random() * backgroundList.length)];
 }
 
-async function mergePlayer2IntoGameSettings(
+export async function mergePlayer2IntoGameSettings(
   matchSettings: gameSettings,
   playerSettings: leanGameSettings,
 ) {
@@ -33,7 +33,7 @@ async function getAvatarFromPlayer(playerID: string) {
   return user.avatarUrl;
 }
 
-async function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings) {
+export async function mergePlayer1IntoGameSettings(playerSettings: leanGameSettings) {
   return {
     playType: playerSettings.playType,
     gameType: playerSettings.gameType,
@@ -140,6 +140,14 @@ export function playerIsInASession(playerId: string): boolean {
 export function removePlayer(playerSocket: WebSocket) {
   const playerSession = getGameSession(playerSocket);
   if (playerSession) playerSession.players.delete(playerSocket);
+}
+
+export function removeSession(sessionToRemove: GameSession) {
+  const sessions = gameTypeToSessions(sessionToRemove.settings.gameType);
+  const index = sessions.indexOf(sessionToRemove);
+  if (index !== -1) {
+    sessions.splice(index, 1);
+  }
 }
 
 // function printSessions() {
