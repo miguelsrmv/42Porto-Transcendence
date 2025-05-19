@@ -1,5 +1,19 @@
+/**
+ * @file form.ts
+ * @brief Handles user settings form functionality, including data submission and UI updates.
+ */
+
 import { confirmChanges } from './passwordModal.js';
 
+/**
+ * @typedef UserData
+ * @brief Represents the structure of user data for the settings form.
+ * @property {string} username - The username of the user.
+ * @property {string} email - The email address of the user.
+ * @property {string} newPassword - The new password entered by the user.
+ * @property {string} repeatPassword - The repeated new password for confirmation.
+ * @property {string} oldPassword - The current password of the user.
+ */
 type UserData = {
   username: string;
   email: string;
@@ -11,6 +25,10 @@ type UserData = {
 let userData: UserData;
 let userDataSubmitButtonListenerAttached: boolean = false;
 
+/**
+ * @function resetFormData
+ * @brief Resets the user data to its default empty state.
+ */
 export function resetFormData(): void {
   userData = {
     username: '',
@@ -21,6 +39,10 @@ export function resetFormData(): void {
   };
 }
 
+/**
+ * @function handleUserDataChange
+ * @brief Attaches an event listener to handle user data changes and submission.
+ */
 export function handleUserDataChange(): void {
   const userDataSubmitButton = document.getElementById('settings-submit-button');
   if (!userDataSubmitButton) {
@@ -28,8 +50,6 @@ export function handleUserDataChange(): void {
     return;
   }
 
-  //NOTE: Check if flag isn't necessary. REmoved as it caused a bug.
-  //if (!userDataSubmitButtonListenerAttached) {
   userDataSubmitButton.addEventListener('click', async () => {
     userDataSubmitButtonListenerAttached = true;
     fillUserData();
@@ -42,8 +62,12 @@ export function handleUserDataChange(): void {
       alert('Error: no valid input!');
     }
   });
-  //}
 
+  /**
+   * @function submitUserData
+   * @brief Submits the user data to the server via a PATCH request.
+   * @returns {Promise<void>} A promise that resolves when the request completes.
+   */
   async function submitUserData(): Promise<void> {
     try {
       const response = await fetch('/api/users/', {
@@ -59,6 +83,10 @@ export function handleUserDataChange(): void {
     }
   }
 
+  /**
+   * @function fillUserData
+   * @brief Fills the userData object with values from the form inputs.
+   */
   function fillUserData(): void {
     const usernameDataInput = document.getElementById(
       'username-settings-container',
@@ -97,10 +125,19 @@ export function handleUserDataChange(): void {
   }
 }
 
+/**
+ * @function updateLocalStorageData
+ * @brief Updates the local storage with the provided username.
+ * @param {string} username - The username to store in local storage.
+ */
 function updateLocalStorageData(username: string): void {
   window.localStorage.setItem('Username', username);
 }
 
+/**
+ * @function updateHeaderData
+ * @brief Updates the header UI with the username from local storage.
+ */
 function updateHeaderData(): void {
   const headerUsername = document.getElementById('player-name');
   if (!headerUsername) {
