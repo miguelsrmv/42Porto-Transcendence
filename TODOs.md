@@ -10,3 +10,5 @@
 - Make responses more uniform
 - Protect all routes in the end (except login/sign up related)
 - Discuss refresh JWT token
+- Store local matches (not counting for rank, other user as guest)
+- Test server-side pong through CLI
