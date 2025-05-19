@@ -5,6 +5,7 @@ import {
   isSessionFull,
   playerIsInASession,
   removePlayer,
+  removeSession,
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
 import { initializeRemoteGame } from './remoteGameApp/game';
@@ -70,6 +71,7 @@ function stopGameHandler(socket: WebSocket) {
   if (!socket2) return;
   if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
   removePlayer(socket2);
+  removeSession(gameSession);
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
