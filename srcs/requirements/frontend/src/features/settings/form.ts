@@ -33,10 +33,14 @@ export function handleUserDataChange(): void {
   userDataSubmitButton.addEventListener('click', async () => {
     userDataSubmitButtonListenerAttached = true;
     fillUserData();
-    userData.oldPassword = (await confirmChanges()) as string;
-    if (userData.oldPassword) await submitUserData();
-    updateLocalStorageData(userData.username);
-    updateHeaderData();
+    if (userData.username || userData.email || (userData.newPassword && userData.repeatPassword)) {
+      userData.oldPassword = (await confirmChanges()) as string;
+      if (userData.oldPassword) await submitUserData();
+      updateLocalStorageData(userData.username);
+      updateHeaderData();
+    } else {
+      alert('Error: no valid input!');
+    }
   });
   //}
 
