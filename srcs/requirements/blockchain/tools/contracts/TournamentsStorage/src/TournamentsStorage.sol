@@ -122,35 +122,54 @@ contract TournamentsStorage {
         }
     }
 
-    function joinTournament(uint256 _tournamentId, Participant memory participant) public onlyOwner {
-        uint8 tournamentLength = 0;
+    // function joinTournament(uint256 _tournamentId, Participant memory _participant) public onlyOwner {
+    //     uint8 tournamentLength = 0;
 
+    //     if (isTournamentFull(_tournamentId)) {
+    //         createTournament();
+    //         _tournamentId++;
+    //     }
+
+    //     while (
+    //         keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
+    //             != keccak256(abi.encodePacked(""))
+    //     ) {
+    //         require(
+    //             keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
+    //                 != keccak256(abi.encodePacked(_participant.uniqueId)),
+    //             "The player is already registered in the tournament"
+    //         );
+    //         tournamentLength++;
+    //     }
+
+    //     tournaments[_tournamentId].participants[tournamentLength].uniqueId = _participant.uniqueId;
+    //     tournaments[_tournamentId].participants[tournamentLength].userAlias = _participant.userAlias;
+    //     tournaments[_tournamentId].participants[tournamentLength].character = _participant.character;
+
+    //     tournaments[_tournamentId].matchedParticipants[tournamentLength].uniqueId = _participant.uniqueId;
+    //     tournaments[_tournamentId].matchedParticipants[tournamentLength].userAlias = _participant.userAlias;
+    //     tournaments[_tournamentId].matchedParticipants[tournamentLength].character = _participant.character;
+
+    //     console.log(_participant.uniqueId, "joined tournament", _tournamentId);
+    // }
+
+    function joinTournament(uint256 _tournamentId, Participant[] memory _participants) public onlyOwner {
         if (isTournamentFull(_tournamentId)) {
             createTournament();
             _tournamentId++;
         }
 
-        while (
-            keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
-                != keccak256(abi.encodePacked(""))
-        ) {
-            require(
-                keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
-                    != keccak256(abi.encodePacked(participant.uniqueId)),
-                "The player is already registered in the tournament"
-            );
-            tournamentLength++;
+        for (uint8 i = 0; i < _participants.length; i++) {
+            tournaments[_tournamentId].participants[i].uniqueId = _participants[i].uniqueId;
+            tournaments[_tournamentId].participants[i].userAlias = _participants[i].userAlias;
+            tournaments[_tournamentId].participants[i].character = _participants[i].character;
+
+            tournaments[_tournamentId].matchedParticipants[i].uniqueId = _participants[i].uniqueId;
+            tournaments[_tournamentId].matchedParticipants[i].userAlias = _participants[i].userAlias;
+            tournaments[_tournamentId].matchedParticipants[i].character = _participants[i].character;
+
+            console.log(_participants[i].uniqueId, "joined tournament", _tournamentId);
         }
-
-        tournaments[_tournamentId].participants[tournamentLength].uniqueId = participant.uniqueId;
-        tournaments[_tournamentId].participants[tournamentLength].userAlias = participant.userAlias;
-        tournaments[_tournamentId].participants[tournamentLength].character = participant.character;
-
-        tournaments[_tournamentId].matchedParticipants[tournamentLength].uniqueId = participant.uniqueId;
-        tournaments[_tournamentId].matchedParticipants[tournamentLength].userAlias = participant.userAlias;
-        tournaments[_tournamentId].matchedParticipants[tournamentLength].character = participant.character;
-
-        console.log(participant.uniqueId, "joined tournament", _tournamentId);
     }
 
     function addWinner(uint8 _tournamentId, string memory _winnerName) public onlyOwner {
