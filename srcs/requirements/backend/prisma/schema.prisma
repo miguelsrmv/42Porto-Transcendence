@@ -47,6 +47,7 @@ model Friendship {
   status      FriendshipStatus @default(PENDING)
 
   @@unique([initiatorId, recipientId])
+  @@unique([recipientId, initiatorId])
 }
 
 enum FriendshipStatus {
