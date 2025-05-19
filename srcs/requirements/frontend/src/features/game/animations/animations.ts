@@ -8,7 +8,6 @@
 
 import { wait } from '../../../utils/helpers.js';
 
-// TODO: Check why the power bar sometimes activates out of nowhere
 /**
  * @brief Activates the power bar animation for a specified side.
  *
