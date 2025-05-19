@@ -13,3 +13,5 @@
 - Discuss refresh JWT token
 - Store local matches (not counting for rank, other user as guest)
 - Test server-side pong through CLI
+- Test waiting player to remote and then remove a player in the match. Does the third player go into the match?
+- Transform GameSession and Tournament into classes
