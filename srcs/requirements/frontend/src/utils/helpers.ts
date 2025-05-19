@@ -6,6 +6,8 @@
  * and manage template IDs based on different template hosts.
  */
 
+import { userIsLoggedIn } from '../features/auth/auth.service.js';
+
 /**
  * @brief Pauses execution for a specified number of seconds.
  *
@@ -54,7 +56,11 @@ export function getTemplateId(templateHost: string): string | undefined {
   }
 }
 
-export function checkLoginStatus(): boolean {
+export async function checkLoginStatus(): Promise<boolean> {
+  const loggedInStatus = await userIsLoggedIn();
+
+  if (!loggedInStatus) localStorage.setItem('ID', '');
+
   return localStorage.getItem('ID') !== null;
 }
 
