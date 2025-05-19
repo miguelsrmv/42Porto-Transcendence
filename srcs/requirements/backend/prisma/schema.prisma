@@ -77,8 +77,8 @@ model Match {
   updatedAt      DateTime    @default(now()) @updatedAt
   settings       String
 
-  @@unique([user1Id, user2Id, tournamentId])
-  @@unique([user2Id, user1Id, tournamentId])
+  // @@unique([user1Id, user2Id, tournamentId])
+  // @@unique([user2Id, user1Id, tournamentId])
 }
 
 enum Character {
