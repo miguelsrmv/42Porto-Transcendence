@@ -24,6 +24,8 @@ async function joinGameHandler(
     playerTournament.broadcastSettingsToSessions();
     for (const session of playerTournament.sessions) initializeRemoteGame(session);
     // TODO: Create tournament in the Blockchain
+    // { alias, userID, character, gameType, tournamentID }
+    // TODO: Add tournamentID to User (Classic and Crazy tournaments)
     const gameStartMsg: ServerMessage = { type: 'game_start' };
     playerTournament.broadcastToAll(JSON.stringify(gameStartMsg));
   }
@@ -43,6 +45,7 @@ function stopGameHandler(socket: WebSocket) {
   if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
   // TODO: set other player as winner (score to 5 ?)
   // TODO: Update data on Blockchain
+  // { gameType, user1ID, score1, user2ID, score2, tournamentID }
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
