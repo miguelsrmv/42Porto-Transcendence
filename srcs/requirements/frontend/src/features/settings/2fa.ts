@@ -1,6 +1,14 @@
+/**
+ * @file 2fa.ts
+ * @brief Handles Two-Factor Authentication (2FA) UI and API interactions.
+ */
+
 import { twoFAErrorMessages } from '../../constants/errorMessages.js';
 
-// --- Centralized DOM Element Getters ---
+/**
+ * @brief Retrieves and centralizes DOM elements used in the 2FA modal.
+ * @returns {Object} An object containing references to various DOM elements.
+ */
 function getElements() {
   const twoFAtoggle = document.getElementById('2fa-toggle-input') as HTMLInputElement | null;
   const twoFAmodal = document.getElementById('twoFA-modal') as HTMLElement | null;
@@ -29,7 +37,11 @@ function getElements() {
   };
 }
 
-// --- Modal Error Handling ---
+/**
+ * @brief Displays an error message in the 2FA modal.
+ * @param messageKey The key for a predefined error message.
+ * @param customMessage A custom error message to display (optional).
+ */
 function showModalError(messageKey: string | undefined, customMessage?: string) {
   const { errorContainer } = getElements();
   if (errorContainer) {
@@ -44,6 +56,9 @@ function showModalError(messageKey: string | undefined, customMessage?: string) 
   }
 }
 
+/**
+ * @brief Clears the error message in the 2FA modal.
+ */
 function clearModalError() {
   const { errorContainer } = getElements();
   if (errorContainer) {
@@ -52,6 +67,9 @@ function clearModalError() {
   }
 }
 
+/**
+ * @brief Clears input fields and error messages in the 2FA modal.
+ */
 function clear2FAModalInputsAndErrors(): void {
   const { form, tokenElement, passwordElement } = getElements();
   if (form) {
@@ -64,7 +82,10 @@ function clear2FAModalInputsAndErrors(): void {
   clearModalError();
 }
 
-// --- 2FA Status API ---
+/**
+ * @brief Fetches the current 2FA status from the server.
+ * @returns {Promise<boolean | undefined>} True if 2FA is enabled, false if disabled, undefined on error.
+ */
 async function fetchNormalised2FAStatus(): Promise<boolean | undefined> {
   try {
     const response = await fetch('/api/users/2FA/check', {
@@ -83,6 +104,9 @@ async function fetchNormalised2FAStatus(): Promise<boolean | undefined> {
   }
 }
 
+/**
+ * @brief Resets the 2FA toggle to reflect the actual server-side status.
+ */
 export async function reset2FAToggleVisuals(): Promise<void> {
   const { twoFAtoggle } = getElements();
   if (!twoFAtoggle) {
@@ -105,6 +129,9 @@ let isModalAnimating = false;
 let currentCloseModalTransitionEndHandler: ((event: TransitionEvent) => void) | null = null;
 let currentCloseModalTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
+/**
+ * @brief Closes the 2FA modal with animations and cleans up event listeners.
+ */
 function closeModal(): void {
   const { twoFAmodal } = getElements(); // Get fresh DOM elements each call
   if (!twoFAmodal || isModalAnimating || twoFAmodal.classList.contains('hidden')) {
@@ -167,6 +194,9 @@ function closeModal(): void {
   twoFAmodal.addEventListener('transitionend', currentCloseModalTransitionEndHandler);
 }
 
+/**
+ * @brief Opens the 2FA modal with animations.
+ */
 function openModal(): void {
   const { twoFAmodal } = getElements();
   if (!twoFAmodal || isModalAnimating || !twoFAmodal.classList.contains('hidden')) return;
@@ -239,6 +269,9 @@ async function handleConfirmClick(): Promise<void> {
 // --- Setup Function ---
 let isEventSetupComplete = false;
 
+/**
+ * @brief Handles the 2FA toggle and modal interactions.
+ */
 export function handle2FA(): void {
   const elements = getElements();
   const { twoFAtoggle, twoFAmodal, confirmButton, cancelButton, closeModalButton } = elements;
@@ -296,7 +329,10 @@ export function handle2FA(): void {
   isEventSetupComplete = true;
 }
 
-// --- Toggle UI Between Enable/Disable Mode ---
+/**
+ * @brief Toggles the 2FA modal UI between enable and disable modes.
+ * @param intendingToEnable True if enabling 2FA, false if disabling.
+ */
 async function toggleQRModalView(intendingToEnable: boolean): Promise<void> {
   const { headerText, qrCodeImage, confirmButton } = getElements();
 
@@ -352,9 +388,8 @@ async function toggleQRModalView(intendingToEnable: boolean): Promise<void> {
   confirmButton.focus();
 }
 
-// --- API Interactions ---
 /**
- * Attempts to disable 2FA.
+ * @brief Attempts to disable 2FA.
  * @returns {Promise<boolean>} True on success, false on failure.
  */
 async function disable2FA(): Promise<boolean> {
@@ -454,4 +489,3 @@ async function enable2FA(): Promise<boolean> {
 }
 
 //TODO: Display error messages on modal
-
