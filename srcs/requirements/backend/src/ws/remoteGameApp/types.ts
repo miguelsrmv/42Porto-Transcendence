@@ -55,6 +55,11 @@ export interface GameSession {
   gameArea: GameArea | null;
 }
 
+export interface Tournament {
+  sessions: GameSession[];
+  ongoing: boolean;
+}
+
 // To be able to print
 export interface GameSessionSerializable {
   players: string[]; // just the player IDs
