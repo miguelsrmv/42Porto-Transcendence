@@ -1,10 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
-import { MatchMode } from '@prisma/client';
+import { GameMode } from '@prisma/client';
 
 export type MatchCreate = {
-  mode: MatchMode;
+  mode: GameMode;
   user1Id: string;
   user2Id: string;
   settings: string;

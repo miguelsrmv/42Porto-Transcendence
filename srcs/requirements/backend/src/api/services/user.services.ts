@@ -1,8 +1,8 @@
-import { Match, MatchMode } from '@prisma/client';
+import { Match, GameMode } from '@prisma/client';
 import { prisma } from '../../utils/prisma';
 
 export function getUserClassicStats(matches: Match[], userId: string) {
-  const classicMatches = matches.filter((match) => match.mode === MatchMode.CLASSIC);
+  const classicMatches = matches.filter((match) => match.mode === GameMode.CLASSIC);
   const totalMatches = classicMatches.length;
   const wins = classicMatches.filter((match) => match.winnerId === userId).length;
   const losses = totalMatches - wins;
@@ -17,7 +17,7 @@ export function getUserClassicStats(matches: Match[], userId: string) {
 }
 
 export function getUserCrazyStats(matches: Match[], userId: string) {
-  const crazyMatches = matches.filter((match) => match.mode === MatchMode.CRAZY);
+  const crazyMatches = matches.filter((match) => match.mode === GameMode.CRAZY);
   const totalMatches = crazyMatches.length;
   const wins = crazyMatches.filter((match) => match.winnerId === userId).length;
   const losses = totalMatches - wins;

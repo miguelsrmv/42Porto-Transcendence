@@ -1,4 +1,4 @@
-import { Character, FriendshipStatus, MatchMode, User } from '@prisma/client';
+import { Character, FriendshipStatus, GameMode, User } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
@@ -129,6 +129,7 @@ async function createTournaments(users: User[]) {
             alias: faker.internet.username(),
             tournamentId: tournament.id,
             userId: users[j].id,
+            tournamentType: GameMode.CRAZY,
           },
         });
       }
@@ -155,7 +156,7 @@ async function createMatches(users: User[]) {
         await prisma.match.update({
           where: { id: match.id },
           data: {
-            mode: MatchMode.CRAZY,
+            mode: GameMode.CRAZY,
           },
         });
       }
@@ -184,7 +185,7 @@ async function createTestUserMatches(users: User[]) {
         user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
         user1Score: Math.round(Math.random() * 5),
         user2Score: Math.round(Math.random() * 5),
-        mode: MatchMode.CRAZY,
+        mode: GameMode.CRAZY,
       },
     });
     if (match.user1Score > match.user2Score) {
