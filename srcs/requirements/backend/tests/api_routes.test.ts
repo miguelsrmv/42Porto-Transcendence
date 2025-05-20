@@ -351,19 +351,6 @@ describe('users', () => {
 });
 
 describe('friends', () => {
-  test('GET / should return 200 and an array of user friends ids', async () => {
-    const response = await app.inject({
-      method: 'GET',
-      url: '/friends',
-      headers: {
-        cookie: jwtCookie2,
-      },
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual(expect.arrayContaining([expect.any(String)]));
-  });
-
   test('POST / should return 200 and an add a new friend', async () => {
     const friend = await prisma.user.findUnique({ where: { username: 'jack' } });
     const response = await app.inject({
@@ -406,19 +393,32 @@ describe('friends', () => {
   });
 
   test('PATCH / should return 200 and update friendship status', async () => {
-    const friend = await prisma.user.findUnique({ where: { username: 'susan43' } });
+    const friend = await prisma.user.findUnique({ where: { username: 'bob45' } });
     const response = await app.inject({
       method: 'PATCH',
       url: '/friends',
       headers: {
         'Content-Type': 'application/json',
-        cookie: jwtCookie2,
+        cookie: jwtCookie3,
       },
       body: { friendId: friend?.id, status: 'ACCEPTED' },
     });
 
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({ message: 'Friendship status updated' });
+  });
+
+  test('GET / should return 200 and an array of user friends ids', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/friends',
+      headers: {
+        cookie: jwtCookie3,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(expect.arrayContaining([expect.any(String)]));
   });
 
   test('DELETE /:id should return 200 and delete friendship', async () => {
