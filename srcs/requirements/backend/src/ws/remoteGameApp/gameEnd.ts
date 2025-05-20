@@ -81,8 +81,19 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
   gameArea.stop();
-  // TODO: Differentiate between remote and tournament match flow
-  // Blockchain: { gameType, user1ID, score1, user2ID, score2, tournamentID }
+  if (gameArea.settings.playType === 'Tournament Play') {
+    // TODO: Add advance on tournament logic
+    // Blockchain: { gameType, user1ID, score1, user2ID, score2, tournamentID }
+    // const data = {
+    //   gameType: gameArea.settings.gameType,
+    //   user1Id: gameArea.leftPlayer.id,
+    //   score1: gameArea.leftPlayer.score, // hard-coded win
+    //   user2Id: gameArea.rightPlayer.id,
+    //   score2: gameArea.rightPlayer.score,
+    //   tournamentId: gameArea.tournamentId,
+    // };
+    return;
+  }
   const gameEndMsg = {
     type: 'game_end',
     winningPlayer: winningPlayer.side,
