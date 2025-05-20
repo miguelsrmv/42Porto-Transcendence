@@ -28,6 +28,7 @@ export class Tournament {
 
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     const newSession = new GameSession(ws, playerSettings);
+    newSession.tournamentId = this.id;
     await newSession.updateAvatar1(playerSettings.playerID);
 
     // For testing purposes
@@ -85,5 +86,16 @@ export class Tournament {
       const message: ServerMessage = { type: 'game_setup', settings: session.settings };
       session.broadcastMessage(JSON.stringify(message));
     }
+  }
+
+  getAllPlayerIds() {
+    const playerIds = this.sessions.map((session) => {
+      return session.getPlayers();
+    });
+    return playerIds.flat();
+  }
+
+  async addTournamentToDB(id: string, gameType: gameType, playerIds: string[]) {
+    // TODO: add logic to create tournamentParticipant with the data
   }
 }
