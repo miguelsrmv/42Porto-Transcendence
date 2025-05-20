@@ -16,6 +16,7 @@ export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
 
 export class GameArea {
+  tournamentId: string | null;
   ball: Ball;
   leftPaddle: Paddle;
   rightPaddle: Paddle;
@@ -42,6 +43,7 @@ export class GameArea {
     p2socket: WebSocket,
     gameSettings: gameSettings,
   ) {
+    this.tournamentId = null;
     this.settings = gameSettings;
     this.isEnding = false;
     this.ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);

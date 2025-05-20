@@ -10,6 +10,30 @@ import { areGameSettingsValid } from './remoteGameRouter';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { initializeRemoteGame } from './remoteGameApp/game';
 import { isPlayerInput } from './remoteGameApp/helpers';
+import { Tournament } from './tournament';
+
+function getTournamentCreateData(tournament: Tournament) {
+  const playersData = tournament.sessions.map((session) => {
+    if (!session.gameArea) return;
+    return [
+      {
+        userId: session.gameArea.leftPlayer.id,
+        alias: session.gameArea.settings.alias1,
+        character: session.gameArea.settings.character1?.name,
+        gameType: tournament.type,
+        tournamentId: tournament.id,
+      },
+      {
+        userId: session.gameArea.rightPlayer.id,
+        alias: session.gameArea.settings.alias2,
+        character: session.gameArea.settings.character2?.name,
+        gameType: tournament.type,
+        tournamentId: tournament.id,
+      },
+    ];
+  });
+  return playersData;
+}
 
 async function joinGameHandler(
   socket: WebSocket,
@@ -22,10 +46,16 @@ async function joinGameHandler(
   const playerTournament = getPlayerTournament(socket);
   if (playerTournament && playerTournament.isFull()) {
     playerTournament.broadcastSettingsToSessions();
-    for (const session of playerTournament.sessions) initializeRemoteGame(session);
-    // TODO: Create tournament in the Blockchain
+    // const tournamentPlayersData = getTournamentCreateData(playerTournament);
     // { alias, userID, character, gameType, tournamentID }
-    // TODO: Add tournamentID to User (Classic and Crazy tournaments)
+    // TODO: Create tournament in the Blockchain
+    // TODO: Save tournamentId on each User
+    await playerTournament.addTournamentToDB(
+      playerTournament.id,
+      playerTournament.type,
+      playerTournament.getAllPlayerIds(),
+    );
+    for (const session of playerTournament.sessions) initializeRemoteGame(session);
     const gameStartMsg: ServerMessage = { type: 'game_start' };
     playerTournament.broadcastToAll(JSON.stringify(gameStartMsg));
   }
@@ -35,17 +65,24 @@ function stopGameHandler(socket: WebSocket) {
   const playerLeft: ServerMessage = { type: 'player_left' };
   const playerTournament = getPlayerTournament(socket);
   const gameSession = playerTournament?.getPlayerSession(socket);
-  if (!gameSession || !gameSession.gameArea) return;
-  gameSession.gameArea.stop();
+  if (!playerTournament || !gameSession || !gameSession.gameArea) return;
+  const gameArea = gameSession.gameArea;
+  gameArea.stop();
+  const playerWhoLeft = gameArea.getPlayerByWebSocket(socket);
   removePlayerTournament(socket);
-  const iterator = gameSession.players.entries();
-  const { value } = iterator.next();
-  const socket2 = value?.[0];
-  if (!socket2) return;
-  if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
-  // TODO: set other player as winner (score to 5 ?)
+  const playerWhoStayed = gameArea.getOtherPlayer(playerWhoLeft);
   // TODO: Update data on Blockchain
-  // { gameType, user1ID, score1, user2ID, score2, tournamentID }
+  // const data = {
+  //   gameType: gameArea.settings.gameType,
+  //   user1Id: playerWhoStayed.id,
+  //   score1: 5, // hard-coded win
+  //   user2Id: playerWhoLeft.id,
+  //   score2: playerWhoLeft.score,
+  //   tournamentId: playerTournament.id,
+  // };
+  if (playerWhoStayed.socket.readyState === WebSocket.OPEN)
+    playerWhoStayed.socket.send(JSON.stringify(playerLeft));
+  // TODO: Advance tournament to next match
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
