@@ -49,12 +49,6 @@ export type ServerMessage =
   | { type: 'player_left' }
   | { type: 'error'; message: string };
 
-export interface GameSession {
-  players: Map<WebSocket, string>;
-  settings: gameSettings;
-  gameArea: GameArea | null;
-}
-
 // To be able to print
 export interface GameSessionSerializable {
   players: string[]; // just the player IDs
