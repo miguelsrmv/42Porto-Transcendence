@@ -108,6 +108,14 @@ export class GameArea {
       this.rightPlayer.socket.send(message);
   }
 
+  getPlayerByWebSocket(socket: WebSocket) {
+    return socket === this.leftPlayer.socket ? this.leftPlayer : this.rightPlayer;
+  }
+
+  getOtherPlayer(player: Player) {
+    return player === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
+  }
+
   async gameLoop() {
     const currentTime = Date.now() / 1000;
     if (this.lastTime === 0) this.lastTime = currentTime;
