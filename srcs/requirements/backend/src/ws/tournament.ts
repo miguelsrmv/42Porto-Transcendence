@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { GameSession } from './gameSession';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { GameSessionSerializable, ServerMessage } from './remoteGameApp/types';
@@ -16,11 +17,13 @@ export class Tournament {
   sessions: GameSession[];
   state: tournamentState;
   type: gameType;
+  id: string;
 
   constructor(type: gameType) {
     this.state = tournamentState.creating;
     this.sessions = [];
     this.type = type;
+    this.id = randomUUID();
   }
 
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
