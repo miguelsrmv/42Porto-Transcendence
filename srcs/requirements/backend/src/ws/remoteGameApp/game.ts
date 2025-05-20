@@ -5,9 +5,10 @@ import {
   checkGoal,
   checkFakeBallWallCollision,
 } from './collisions.js';
-import { gameRunningState, GameSession, GameState, ServerMessage } from './types.js';
+import { gameRunningState, GameState, ServerMessage } from './types.js';
 import { Player } from './player.js';
 import { GameArea } from './gameArea.js';
+import { GameSession } from '../gameSession.js';
 
 function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
   if (player.attack) player.attack.lastUsed = Date.now();

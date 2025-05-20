@@ -47,6 +47,7 @@ model Friendship {
   status      FriendshipStatus @default(PENDING)
 
   @@unique([initiatorId, recipientId])
+  @@unique([recipientId, initiatorId])
 }
 
 enum FriendshipStatus {
@@ -77,6 +78,7 @@ model Match {
   settings       String
 
   @@unique([user1Id, user2Id, tournamentId])
+  @@unique([user2Id, user1Id, tournamentId])
 }
 
 enum Character {

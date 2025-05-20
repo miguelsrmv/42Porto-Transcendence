@@ -21,7 +21,7 @@ import { navigate } from '../../core/router.js';
  * This function sets up the view for tournament play
  */
 export async function initializeView(): Promise<void> {
-  if (!checkLoginStatus()) {
+  if (!(await checkLoginStatus())) {
     alert('You need to be logged in to access this page');
     navigate('landing-page');
     return;
