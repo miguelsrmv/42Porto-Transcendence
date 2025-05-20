@@ -56,9 +56,10 @@ enum FriendshipStatus {
   REJECTED
 }
 
+// TODO: Remove tournament elements
 model Match {
   id             String      @id @default(uuid())
-  mode           MatchMode   @default(CLASSIC)
+  mode           GameMode   @default(CLASSIC)
   duration       Int         @default(0)
   user1Id        String
   user1          User        @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
@@ -97,11 +98,12 @@ enum Character {
   SNAKE
 }
 
-enum MatchMode {
+enum GameMode {
   CLASSIC
   CRAZY
 }
 
+// TODO: Remove Tournament
 model Tournament {
   id              String                  @id @default(uuid())
   name            String?
@@ -124,13 +126,14 @@ enum TournamentStatus {
 }
 
 model TournamentParticipant {
-  id           String     @id @default(uuid())
-  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  tournamentId String
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
-  alias        String
-  character    Character?
+  id             String     @id @default(uuid())
+  tournament     Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournamentId   String
+  tournamentType GameMode
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  alias          String
+  character      Character?
 
   @@unique([tournamentId, userId])
   @@unique([tournamentId, alias])

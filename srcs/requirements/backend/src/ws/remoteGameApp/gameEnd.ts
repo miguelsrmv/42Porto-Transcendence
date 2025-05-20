@@ -1,13 +1,9 @@
 import { prisma } from '../../utils/prisma';
 import { GameArea } from './gameArea';
 import { Player } from './player';
-import { MatchMode, Character } from '@prisma/client';
+import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
-
-const gameTypeToMatchMode: Record<string, MatchMode> = {
-  'Classic Pong': MatchMode.CLASSIC,
-  'Crazy Pong': MatchMode.CRAZY,
-};
+import { gameTypeToGameMode } from '../../utils/helpers';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -53,7 +49,7 @@ function filterGameSettings(settings: gameSettings) {
 }
 
 async function createMatch(winningPlayer: Player, gameArea: GameArea) {
-  const gameMode = gameTypeToMatchMode[gameArea.settings.gameType] ?? MatchMode.CLASSIC;
+  const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
   const [character1, character2] = getCharacters(gameArea.settings);
   await prisma.match.create({
     data: {
