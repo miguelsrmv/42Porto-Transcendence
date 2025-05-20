@@ -1,5 +1,7 @@
 import { FastifyRequest } from 'fastify';
 import WebSocket from 'ws';
+import { ethers } from 'ethers';
+import { contract, wallet } from '../api/services/blockchain.services'
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
 import {
   attributePlayerToTournament,
@@ -23,7 +25,9 @@ async function joinGameHandler(
   if (playerTournament && playerTournament.isFull()) {
     playerTournament.broadcastSettingsToSessions();
     for (const session of playerTournament.sessions) initializeRemoteGame(session);
-    // TODO: Create tournament in the Blockchain
+    // TODO: Get variables to add to bellow function
+    const tx = await contract.joinTournament(tournamentId, gameType, participants);
+    await tx.wait();
     // { alias, userID, character, gameType, tournamentID }
     // TODO: Add tournamentID to User (Classic and Crazy tournaments)
     const gameStartMsg: ServerMessage = { type: 'game_start' };
@@ -31,7 +35,7 @@ async function joinGameHandler(
   }
 }
 
-function stopGameHandler(socket: WebSocket) {
+async function stopGameHandler(socket: WebSocket) {
   const playerLeft: ServerMessage = { type: 'player_left' };
   const playerTournament = getPlayerTournament(socket);
   const gameSession = playerTournament?.getPlayerSession(socket);
@@ -44,7 +48,9 @@ function stopGameHandler(socket: WebSocket) {
   if (!socket2) return;
   if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
   // TODO: set other player as winner (score to 5 ?)
-  // TODO: Update data on Blockchain
+  // TODO: Get variables to add to bellow function
+  const tx = await contract.saveScoreAndAddWinner(tournamentId, gameType, user1ID, score1, user2ID, score2);
+  await tx.wait();
   // { gameType, user1ID, score1, user2ID, score2, tournamentID }
 }
 
