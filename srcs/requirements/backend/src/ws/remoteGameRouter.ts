@@ -2,9 +2,9 @@ import WebSocket from 'ws';
 import {
   attributePlayerToSession,
   getGameSession,
-  isSessionFull,
   playerIsInASession,
   removePlayer,
+  removeSession,
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
 import { initializeRemoteGame } from './remoteGameApp/game';
@@ -17,7 +17,11 @@ export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, mes
   if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
 }
 
-function areGameSettingsValid(socket: WebSocket, userId: string, playerSettings: leanGameSettings) {
+export function areGameSettingsValid(
+  socket: WebSocket,
+  userId: string,
+  playerSettings: leanGameSettings,
+) {
   if (playerSettings.playerID !== userId) {
     console.log(
       `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
@@ -48,7 +52,7 @@ async function joinGameHandler(
   if (!areGameSettingsValid(socket, userId, playerSettings)) return;
   await attributePlayerToSession(socket, playerSettings);
   const playerSession = getGameSession(socket);
-  if (playerSession && isSessionFull(playerSession)) {
+  if (playerSession && playerSession.isFull()) {
     const response: ServerMessage = { type: 'game_setup', settings: playerSession.settings };
     const [ws1, ws2] = Array.from(playerSession.players.keys());
     broadcastMessageTo(ws1, ws2, JSON.stringify(response));
@@ -70,6 +74,7 @@ function stopGameHandler(socket: WebSocket) {
   if (!socket2) return;
   if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
   removePlayer(socket2);
+  removeSession(gameSession);
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
@@ -122,7 +127,10 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
   let clientLastActive = Date.now() / 1000;
   const keepAlive = setInterval(() => {
     const currentTime = Date.now() / 1000;
-    if (currentTime - clientLastActive > 30) socket.close();
+    if (currentTime - clientLastActive > 30) {
+      console.log('Client inactive for too long. Disconnecting...');
+      socket.close();
+    }
   }, 15000); // every 15 seconds
 
   socket.on('message', async (message) => {
