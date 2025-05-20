@@ -24,7 +24,6 @@ model User {
   matches1           Match[]                 @relation("MatchUser1")
   matches2           Match[]                 @relation("MatchUser2")
   matchesWon         Match[]                 @relation("MatchWinner")
-  tournamentsCreated Tournament[]
   leaderboard        Leaderboard[]
   tournaments        TournamentParticipant[]
 }
@@ -56,11 +55,10 @@ enum FriendshipStatus {
   REJECTED
 }
 
-// TODO: Remove tournament elements
+// TODO: Review if updatedAt is necessary
 model Match {
   id             String      @id @default(uuid())
   mode           GameMode   @default(CLASSIC)
-  duration       Int         @default(0)
   user1Id        String
   user1          User        @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
   user2Id        String
@@ -71,15 +69,9 @@ model Match {
   user2Character Character?
   winnerId       String?
   winner         User?       @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
-  tournamentId   String?
-  tournament     Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  roundNumber    Int?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @default(now()) @updatedAt
   settings       String
-
-  @@unique([user1Id, user2Id, tournamentId])
-  @@unique([user2Id, user1Id, tournamentId])
 }
 
 enum Character {
@@ -103,31 +95,8 @@ enum GameMode {
   CRAZY
 }
 
-// TODO: Remove Tournament
-model Tournament {
-  id              String                  @id @default(uuid())
-  name            String?
-  createdAt       DateTime                @default(now())
-  updatedAt       DateTime                @default(now()) @updatedAt
-  matches         Match[]
-  createdBy       User                    @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  createdById     String
-  settings        String
-  maxParticipants Int                     @default(8)
-  status          TournamentStatus        @default(PENDING)
-  currentRound    Int                     @default(1)
-  participants    TournamentParticipant[]
-}
-
-enum TournamentStatus {
-  PENDING
-  ACTIVE
-  COMPLETED
-}
-
 model TournamentParticipant {
   id             String     @id @default(uuid())
-  tournament     Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
   tournamentId   String
   tournamentType GameMode
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
