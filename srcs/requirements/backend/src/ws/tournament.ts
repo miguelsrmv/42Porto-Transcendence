@@ -3,6 +3,8 @@ import { GameSession } from './gameSession';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { GameSessionSerializable, ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
+import { prisma } from '../utils/prisma';
+import { gameTypeToGameMode } from '../utils/helpers';
 
 const NBR_PARTICIPANTS = 8;
 
@@ -95,7 +97,18 @@ export class Tournament {
     return playerIds.flat();
   }
 
-  async addTournamentToDB(id: string, gameType: gameType, playerIds: string[]) {
+  async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
     // TODO: add logic to create tournamentParticipant with the data
+    // Remove alias and character from tournamentParticipant?
+    playerIds.forEach(async (id) => {
+      await prisma.tournamentParticipant.create({
+        data: {
+          tournamentId: tournamentId,
+          userId: id,
+          tournamentType: gameTypeToGameMode(gameType),
+          alias: '',
+        },
+      });
+    });
   }
 }
