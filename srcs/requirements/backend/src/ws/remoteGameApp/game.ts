@@ -45,8 +45,8 @@ export function initializeRemoteGame(gameSession: GameSession): void {
     player2socket,
     gameSession.settings,
     gameSession,
-    gameSession.tournament,
   );
+  gameArea.tournament = gameSession.tournament;
   gameSession.gameArea = gameArea;
   gameArea.tournament = gameSession.tournament;
   setPowerUpBar(gameArea);
