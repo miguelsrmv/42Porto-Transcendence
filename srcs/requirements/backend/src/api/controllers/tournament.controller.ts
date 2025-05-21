@@ -94,4 +94,20 @@ export async function getUserLastThreeTournaments(
   }
 }
 
-// quarter-finals, semi-finals, final, winner
+export async function getUserTournaments(
+  request: FastifyRequest<{ Params: IParams }>,
+  reply: FastifyReply,
+) {
+  try {
+    const tournamentIds = await prisma.tournamentParticipant.findMany({
+      where: { userId: request.params.id },
+      select: { tournamentId: true, tournamentType: true },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+    });
+    reply.send();
+  } catch (error) {
+    handleError(error, reply);
+  }
+}
+
