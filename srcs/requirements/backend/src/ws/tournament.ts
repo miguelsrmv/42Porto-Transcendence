@@ -17,12 +17,6 @@ export enum tournamentState {
   ended,
 }
 
-export enum tournamentPosition {
-  quarterfinals,
-  semifinals,
-  finals,
-}
-
 export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
