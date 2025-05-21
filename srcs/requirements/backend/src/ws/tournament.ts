@@ -17,21 +17,19 @@ export enum tournamentState {
 }
 
 export class Tournament {
-  sessions: GameSession[];
-  state: tournamentState;
+  sessions: GameSession[] = [];
+  state: tournamentState = tournamentState.creating;
   type: gameType;
-  id: string;
+  id: string = randomUUID();
+  currentRound: number = 1;
 
   constructor(type: gameType) {
-    this.state = tournamentState.creating;
-    this.sessions = [];
     this.type = type;
-    this.id = randomUUID();
   }
 
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     const newSession = new GameSession(ws, playerSettings);
-    newSession.tournamentId = this.id;
+    newSession.tournament = this;
     await newSession.updateAvatar1(playerSettings.playerID);
 
     // For testing purposes
@@ -99,17 +97,37 @@ export class Tournament {
   }
 
   async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
-    // TODO: add logic to create tournamentParticipant with the data
-    // Remove alias and character from tournamentParticipant?
+    // TODO: Check for repeated alias
     playerIds.forEach(async (id) => {
       await prisma.tournamentParticipant.create({
         data: {
           tournamentId: tournamentId,
           userId: id,
           tournamentType: gameTypeToGameMode(gameType),
-          alias: '',
         },
       });
     });
+  }
+
+  updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+    if (sessionToUpdate.winner) return;
+    sessionToUpdate.winner = winner;
+
+    const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
+    if (roundSessions.every((session) => session.winner)) this.advanceRound();
+  }
+
+  advanceRound() {
+    const winners = this.sessions
+      .filter((session) => session.round === this.currentRound)
+      .map((s) => s.winner)
+      .filter((winner): winner is string => !!winner);
+
+    if (winners.length <= 1) {
+      this.state = tournamentState.ended;
+      // TODO: send message to all players
+      // this.broadcastToAll('Tournament has ended');
+    }
+    ++this.currentRound;
   }
 }
