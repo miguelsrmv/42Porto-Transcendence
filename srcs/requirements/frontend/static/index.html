@@ -1402,12 +1402,12 @@
   </template>
 
   <template id="leaderboard-player-template">
-    <div class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200">
+    <div id="leaderboard-player" class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200">
       <div class="w-1/6 text-center">
         <span id="leaderboard-player-ranking" class="inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold">#2</span>
       </div>
       <div class="w-2/6 flex items-center">
-        <div class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
+        <div id="leaderboard-player-round-circle" class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
          <img id="leaderboard-player-avatar"
          src="./static/avatar/default/mario.png"
          alt="Player 2"
@@ -1421,60 +1421,4 @@
     </div>
   </template>
 
-                <!-- Top player (highlighted) 
-                <div
-                  class="flex justify-between items-center p-4 bg-gradient-to-r from-yellow-900/30 to-transparent border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 font-bold"
-                      >#1</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-yellow-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 1"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white font-bold">SuperPlayer</span>
-                  </div>
-                  <div class="w-1/6 text-center text-yellow-300 font-bold">5,230</div>
-                  <div class="w-1/6 text-center text-white">42/5</div>
-                  <div class="w-1/6 text-center text-white">7</div>
-                </div>
--->
- 
-                <!-- Current user (highlighted) 
-                <div
-                  class="flex justify-between items-center p-4 bg-gradient-to-r from-green-900/30 to-transparent border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 font-bold"
-                      >#5</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-green-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Current User"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white font-bold">Username</span>
-                  </div>
-                  <div class="w-1/6 text-center text-green-300 font-bold">2,450</div>
-                  <div class="w-1/6 text-center text-white">23/17</div>
-                  <div class="w-1/6 text-center text-white">3</div>
-                </div> -->
-
 </html>
-
