@@ -12,7 +12,7 @@ RUN git config --global --add safe.directory /home/foundry/blockchain
 USER foundry
 
 WORKDIR /home/foundry/blockchain/TournamentsStorage
-
+RUN forge install OpenZeppelin/openzeppelin-contracts
 RUN forge test
 
 ENTRYPOINT ["/bin/sh", "/home/foundry/blockchain/deploy.sh"]
