@@ -18,20 +18,21 @@ export async function initializeView(): Promise<void> {
     navigate('landing-page');
     return;
   }
-  await initializeLeftPanel();
+
+  const userId = window.localStorage.getItem('ID') as string;
+
+  await renderLeftPanel(userId);
   await initializeRightPanel();
   setupLeaderboardSearch();
 }
 
-async function initializeLeftPanel(): Promise<void> {
-  await initializeTopLeftBoard();
-  await initializeMatchesBoard();
-  await initializeTournamentBoard();
+async function renderLeftPanel(userId: string): Promise<void> {
+  await renderTopLeftBoard(userId);
+  await renderMatchesBoard(userId);
+  await renderTournamentBoard(userId);
 }
 
-async function initializeTopLeftBoard(): Promise<void> {
-  const userId = window.localStorage.getItem('ID');
-
+async function renderTopLeftBoard(userId: string): Promise<void> {
   const userAvatar = document.getElementById('user-avatar-rankings') as HTMLImageElement;
   if (!userAvatar) {
     console.log("Couldn't find user avatar HTML element");
@@ -93,7 +94,7 @@ async function initializeTopLeftBoard(): Promise<void> {
   }
 }
 
-async function initializeMatchesBoard(): Promise<void> {
+async function renderMatchesBoard(userId: string): Promise<void> {
   const recentMatchesSection = document.getElementById('recent-matches');
   if (!recentMatchesSection) {
     console.log("Couldn't find recent matches element");
@@ -109,7 +110,7 @@ async function initializeMatchesBoard(): Promise<void> {
   }
 
   try {
-    const response = await fetch('api/matches/me', {
+    const response = await fetch(`api/matches/user/${userId}`, {
       method: 'GET',
       credentials: 'include',
     });
@@ -178,7 +179,7 @@ async function updateNodeWithRecentMatchesData(
   recentMatchResult.classList.add(`text-${colour}-400`);
 }
 
-async function initializeTournamentBoard(): Promise<void> {}
+async function renderTournamentBoard(userId: string): Promise<void> {}
 
 async function initializeRightPanel(): Promise<void> {
   const rankingsList = document.getElementById('rankings-list');
