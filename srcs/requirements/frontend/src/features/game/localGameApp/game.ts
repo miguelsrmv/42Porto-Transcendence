@@ -390,6 +390,8 @@ export function endLocalGameIfRunning(): void {
     countdownVisible = true;
     isInitialCountdownActive = true;
     stats.reset();
+    deactivatePowerBarAnimation('left');
+    deactivatePowerBarAnimation('right');
     myGameArea.stop();
   }
 }

@@ -9,12 +9,13 @@ import { friend, friendData } from './friends.types.js';
 import { capitalize } from '../../utils/helpers.js';
 
 /**
- * @brief Initializes view for friends
+ * @brief Initializes the view for the friends page.
  *
- * This function sets up the view for friends
+ * This function ensures the user is logged in and sets up the friends page by
+ * populating the friend list, friend requests, and configuring UI elements.
  */
-export function initializeView(): void {
-  if (!checkLoginStatus()) {
+export async function initializeView() {
+  if (!(await checkLoginStatus())) {
     alert('You need to be logged in to access this page');
     navigate('landing-page');
     return;
@@ -26,6 +27,12 @@ export function initializeView(): void {
   setupAddFriendButton();
 }
 
+/**
+ * @brief Populates the friend list in the UI.
+ *
+ * Fetches the list of friends from the server and updates the DOM with the
+ * corresponding friend data.
+ */
 async function fillFriendList(): Promise<void> {
   const friendsListElement = document.getElementById('friends-list');
   const friendTemplate = document.getElementById('friend-template') as HTMLTemplateElement;
@@ -44,6 +51,11 @@ async function fillFriendList(): Promise<void> {
   }
 }
 
+/**
+ * @brief Fetches the list of friends from the server.
+ *
+ * @return A promise that resolves to an array of friend IDs or null if an error occurs.
+ */
 async function getFriendList(): Promise<friend[] | null> {
   try {
     const response = await fetch('/api/friends', {
@@ -58,6 +70,12 @@ async function getFriendList(): Promise<friend[] | null> {
   }
 }
 
+/**
+ * @brief Fetches detailed data for a specific friend.
+ *
+ * @param friendId The ID of the friend to fetch data for.
+ * @return A promise that resolves to the friend's data or null if an error occurs.
+ */
 async function getFriendData(friendId: friend): Promise<friendData | null> {
   try {
     const response = await fetch(`/api/users/${friendId}`, {
@@ -72,6 +90,12 @@ async function getFriendData(friendId: friend): Promise<friendData | null> {
   }
 }
 
+/**
+ * @brief Updates a DOM node with friend data.
+ *
+ * @param clone The DOM node to update.
+ * @param newFriend The data of the friend to populate the node with.
+ */
 function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData): void {
   const friendAvatar = clone.querySelector('#friend-avatar') as HTMLImageElement;
   if (!friendAvatar) {
@@ -123,6 +147,12 @@ function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData
   friendScore.innerText = `Rank ${newFriend.rank} • ${newFriend.points} pts`;
 }
 
+/**
+ * @brief Populates the friend requests section in the UI.
+ *
+ * Fetches pending friend requests from the server and updates the DOM with the
+ * corresponding request data.
+ */
 async function fillFriendRequests(): Promise<void> {
   const friendRequestList: friendData[] | null = await getPendingFriendRequests();
   const friendRequestSection = document.getElementById('friend-requests');
@@ -145,6 +175,11 @@ async function fillFriendRequests(): Promise<void> {
   }
 }
 
+/**
+ * @brief Fetches pending friend requests from the server.
+ *
+ * @return A promise that resolves to an array of friend request data or null if an error occurs.
+ */
 async function getPendingFriendRequests(): Promise<friendData[] | null> {
   try {
     const response = await fetch('/api/friends/pending', {
@@ -179,10 +214,19 @@ async function getPendingFriendRequests(): Promise<friendData[] | null> {
   }
 }
 
-function updateNodeWithFriendRequestData(node: DocumentFragment, requestingFriend: friendData) {
+/**
+ * @brief Updates a DOM node with friend request data.
+ *
+ * @param node The DOM node to update.
+ * @param requestingFriend The data of the friend request to populate the node with.
+ */
+function updateNodeWithFriendRequestData(
+  node: DocumentFragment,
+  requestingFriend: friendData,
+): void {
   const friendRequestContainer = node.querySelector('#friend-request-container') as HTMLDivElement;
   if (!friendRequestContainer) {
-    console.log("Couldn't find frined request container");
+    console.log("Couldn't find friend request container");
     return;
   }
 
@@ -220,6 +264,13 @@ function updateNodeWithFriendRequestData(node: DocumentFragment, requestingFrien
   );
 }
 
+/**
+ * @brief Changes the friendship status for a friend request.
+ *
+ * @param requestingFriendId The ID of the friend whose request is being updated.
+ * @param status The new status of the friendship (e.g., ACCEPTED, REJECTED).
+ * @param friendRequest The DOM element representing the friend request.
+ */
 async function changeFriendship(
   requestingFriendId: string,
   status: string,
@@ -241,7 +292,12 @@ async function changeFriendship(
   }
 }
 
-function setupFriendSearch() {
+/**
+ * @brief Sets up the friend search functionality.
+ *
+ * Adds an event listener to the search input to filter the friend list based on the search term.
+ */
+function setupFriendSearch(): void {
   const searchInput = document.getElementById('friend-search') as HTMLInputElement;
   const friendList = document.getElementById('friends-list');
 
@@ -265,7 +321,12 @@ function setupFriendSearch() {
   });
 }
 
-function setupAddFriendButton() {
+/**
+ * @brief Sets up the "Add Friend" button functionality.
+ *
+ * Adds an event listener to the button to send a friend request based on the entered username.
+ */
+function setupAddFriendButton(): void {
   const addButton = document.getElementById('add-friend-button');
   const searchInput = document.getElementById('friend-search') as HTMLInputElement;
 
@@ -291,7 +352,7 @@ function setupAddFriendButton() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || 'Request failed');
+        throw Error(data.message || 'Request failed');
       }
       searchInput.value = '';
     } catch (err) {

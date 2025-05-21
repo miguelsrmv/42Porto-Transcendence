@@ -5,9 +5,10 @@ import {
   checkGoal,
   checkFakeBallWallCollision,
 } from './collisions.js';
-import { gameRunningState, GameSession, GameState, ServerMessage } from './types.js';
+import { gameRunningState, GameState, ServerMessage } from './types.js';
 import { Player } from './player.js';
 import { GameArea } from './gameArea.js';
+import { GameSession } from '../gameSession.js';
 
 function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
   if (player.attack) player.attack.lastUsed = Date.now();
@@ -37,8 +38,17 @@ function setPowerUpBar(gameArea: GameArea): void {
 export function initializeRemoteGame(gameSession: GameSession): void {
   const [player1socket, player2socket] = Array.from(gameSession.players.keys());
   const [p1id, p2id] = Array.from(gameSession.players.values());
-  const gameArea = new GameArea(p1id, p2id, player1socket, player2socket, gameSession.settings);
+  const gameArea = new GameArea(
+    p1id,
+    p2id,
+    player1socket,
+    player2socket,
+    gameSession.settings,
+    gameSession,
+  );
+  gameArea.tournament = gameSession.tournament;
   gameSession.gameArea = gameArea;
+  gameArea.tournament = gameSession.tournament;
   setPowerUpBar(gameArea);
   const gameInterval = setInterval(() => {
     gameArea.gameLoop();
