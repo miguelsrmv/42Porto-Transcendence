@@ -25,8 +25,8 @@ export async function initializeView(): Promise<void> {
 
 async function initializeLeftPanel(): Promise<void> {
   await initializeTopLeftBoard();
-  initializeMatchesBoard();
-  initializeTournamentBoard();
+  await initializeMatchesBoard();
+  await initializeTournamentBoard();
 }
 
 async function initializeTopLeftBoard(): Promise<void> {
@@ -117,9 +117,8 @@ async function initializeMatchesBoard(): Promise<void> {
       console.error('Error fetching user response matches:', response.status);
       return;
     }
-    const recentMatchesJson: matchData[] = await response.json();
-    const recentMatchesArray: matchData[] = recentMatchesJson.slice(0, 3);
-    for (let index: number = 0; index < 3; index++) {
+    const recentMatchesArray: matchData[] = await response.json();
+    for (let index: number = 0; index < 3 && index < recentMatchesArray.length; index++) {
       const clone = recentMatchTemplate.content.cloneNode(true) as DocumentFragment;
       await updateNodeWithRecentMatchesData(clone, recentMatchesArray[index]);
       recentMatchesSection.appendChild(clone);
@@ -179,7 +178,7 @@ async function updateNodeWithRecentMatchesData(
   recentMatchResult.classList.add(`text-${colour}-400`);
 }
 
-function initializeTournamentBoard(): void {}
+async function initializeTournamentBoard(): Promise<void> {}
 
 async function initializeRightPanel(): Promise<void> {
   const rankingsList = document.getElementById('rankings-list');
@@ -206,6 +205,7 @@ async function initializeRightPanel(): Promise<void> {
       return;
     }
     const leaderboardJson: leaderboardData[] = await response.json();
+
     for (let index: number = 0; index < leaderboardJson.length; index++) {
       const clone = playerTemplate.content.cloneNode(true) as DocumentFragment;
       await updateNodeWithLeaderboardPlayer(clone, leaderboardJson[index]);
