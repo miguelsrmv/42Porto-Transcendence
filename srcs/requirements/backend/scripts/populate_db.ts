@@ -137,6 +137,10 @@ async function createMatches(users: User[]) {
           },
         });
       }
+      await prisma.leaderboard.update({
+        where: { userId: score1 > score2 ? participants[0].id : participants[1].id },
+        data: { score: { increment: 3 } },
+      });
     }
   }
 }
@@ -161,16 +165,9 @@ async function createTestUserMatches(users: User[]) {
         mode: GameMode.CRAZY,
       },
     });
-  }
-}
-
-async function generateLeaderboard(users: User[]) {
-  for (let index = 0; index < users.length; index++) {
     await prisma.leaderboard.update({
-      where: { userId: users[index].id },
-      data: {
-        score: Math.random() * 1000,
-      },
+      where: { userId: score1 > score2 ? testUser!.id : users[i].id },
+      data: { score: { increment: 3 } },
     });
   }
 }
@@ -182,7 +179,6 @@ async function main() {
     await createFriends(users);
     await createMatches(users);
     await createTestUserMatches(users);
-    await generateLeaderboard(users);
     if (await prisma.user.findMany()) console.log('Database populated successfully.');
   } catch (e) {
     console.error(e);
