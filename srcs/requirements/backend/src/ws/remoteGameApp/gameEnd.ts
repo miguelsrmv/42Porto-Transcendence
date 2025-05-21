@@ -4,7 +4,8 @@ import { Player } from './player';
 import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
 import { gameTypeToGameMode } from '../../utils/helpers';
-import { contract } from '../../api/services/blockchain.services'
+import { contractSigner } from '../../api/services/blockchain.services'
+import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -85,13 +86,6 @@ async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   });
 }
 
-async function updateLeaderboard(winningPlayer: Player) {
-  await prisma.leaderboard.update({
-    where: { userId: winningPlayer.id },
-    data: { score: { increment: 3 } },
-  });
-}
-
 export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
@@ -103,10 +97,12 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
       score1: gameArea.leftPlayer.score,
       user2Id: gameArea.rightPlayer.id,
       score2: gameArea.rightPlayer.score,
-      tournamentId: gameArea.tournamentId,
+      tournamentId: gameArea.tournament!.id,
     };
-    const tx = await contract.saveScoreAndAddWinner(data.tournamentId, data.gameType, data.user1Id, data.score1, data.user2Id, data.score2);
+    const tx = await contractSigner.saveScoreAndAddWinner(data.tournamentId, data.gameType, data.user1Id, data.score1, data.user2Id, data.score2);
     await tx.wait();
+    gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
+
     return;
   }
   const gameEndMsg = {
@@ -116,7 +112,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     stats: gameArea.stats,
   };
   await createMatch(winningPlayer, gameArea);
-  await updateLeaderboard(winningPlayer);
+  await updateLeaderboardRemote(winningPlayer, gameArea.getOtherPlayer(winningPlayer));
   if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
     gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
   gameEndMsg.ownSide = 'right';

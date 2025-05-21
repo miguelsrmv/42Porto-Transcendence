@@ -22,6 +22,8 @@ export async function initializeView() {
       showMenuHelperText(availableButton);
     }
 
+    window.localStorage.clear();
+
     const disableButton = (
       buttonId: string,
       buttonContainerId: string,
