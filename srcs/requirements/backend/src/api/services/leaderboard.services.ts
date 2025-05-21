@@ -1,6 +1,5 @@
 import { prisma } from '../../utils/prisma';
 import { Player } from '../../ws/remoteGameApp/player';
-import { tournamentPosition } from '../../ws/tournament';
 
 export async function getUserRank(id: string) {
   const userLeaderboard = await prisma.leaderboard.findUniqueOrThrow({
