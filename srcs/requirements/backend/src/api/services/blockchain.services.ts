@@ -10,6 +10,7 @@ const CONTRACT_ADDRESS = fs.readFileSync('/app/data/blockchain/blockchain_addres
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
-const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
+const contractSigner = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
+const contractProvider = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
 
-export { contract };
+export { contractSigner, contractProvider };
