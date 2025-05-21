@@ -1,6 +1,7 @@
 import { Character, FriendshipStatus, GameMode, User } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
+import { getRandomAvatarPath } from './avatarData';
 
 const NUMBER_OF_USERS = 16;
 
@@ -38,6 +39,7 @@ async function seedUsers() {
         username: username,
         email: email,
         hashedPassword: faker.internet.password(),
+        avatarUrl: getRandomAvatarPath(),
       },
     });
   }
@@ -46,6 +48,7 @@ async function seedUsers() {
       username: USERNAME,
       email: EMAIL,
       hashedPassword: TEST_PASSWORD,
+      avatarUrl: getRandomAvatarPath(),
     },
   });
   await prisma.user.create({
@@ -53,6 +56,7 @@ async function seedUsers() {
       username: USERNAME2,
       email: EMAIL2,
       hashedPassword: TEST_PASSWORD2,
+      avatarUrl: getRandomAvatarPath(),
     },
   });
 }
