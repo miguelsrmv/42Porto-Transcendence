@@ -12,3 +12,26 @@ export interface matchData {
   user2Score: number;
   winnerId: string;
 }
+
+export interface leaderboardData {
+  userId: string;
+  score: number;
+}
+
+export interface statsData {
+  totalMatches: number;
+  wins: number;
+  losses: number;
+  winrate: number;
+  points: number;
+  rank: number;
+}
+
+export interface userData {
+  username: string;
+  lastActiveAt: string;
+  avatarUrl: string;
+  rank: number;
+  points: number;
+  onlineState: string;
+}
