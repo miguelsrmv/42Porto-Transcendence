@@ -1,13 +1,9 @@
 import { prisma } from '../../utils/prisma';
 import { GameArea } from './gameArea';
 import { Player } from './player';
-import { MatchMode, Character } from '@prisma/client';
+import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
-
-const gameTypeToMatchMode: Record<string, MatchMode> = {
-  'Classic Pong': MatchMode.CLASSIC,
-  'Crazy Pong': MatchMode.CRAZY,
-};
+import { gameTypeToGameMode } from '../../utils/helpers';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -24,7 +20,7 @@ const characterNameToCharacter: Record<string, Character> = {
   'Donkey Kong': Character.DK,
 };
 
-function getCharacters(settings: gameSettings) {
+export function getCharacters(settings: gameSettings) {
   let character1: Character;
   let character2: Character;
   if (!settings.character1) {
@@ -52,8 +48,26 @@ function filterGameSettings(settings: gameSettings) {
   });
 }
 
+export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: GameArea) {
+  const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
+  const [character1, character2] = getCharacters(gameArea.settings);
+  await prisma.match.create({
+    data: {
+      user1Id: gameArea.leftPlayer.id,
+      user2Id: gameArea.rightPlayer.id,
+      user1Character: character1,
+      user2Character: character2,
+      winnerId: winningPlayer.id,
+      user1Score: gameArea.leftPlayer === winningPlayer ? 5 : gameArea.stats.left.goals,
+      user2Score: gameArea.rightPlayer === winningPlayer ? 5 : gameArea.stats.right.goals,
+      mode: gameMode,
+      settings: filterGameSettings(gameArea.settings),
+    },
+  });
+}
+
 async function createMatch(winningPlayer: Player, gameArea: GameArea) {
-  const gameMode = gameTypeToMatchMode[gameArea.settings.gameType] ?? MatchMode.CLASSIC;
+  const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
   const [character1, character2] = getCharacters(gameArea.settings);
   await prisma.match.create({
     data: {
@@ -81,8 +95,19 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
   gameArea.stop();
-  // TODO: Differentiate between remote and tournament match flow
-  // Blockchain: { gameType, user1ID, score1, user2ID, score2, tournamentID }
+  if (gameArea.settings.playType === 'Tournament Play') {
+    // TODO: Add advance on tournament logic
+    // Blockchain: { gameType, user1ID, score1, user2ID, score2, tournamentID }
+    // const data = {
+    //   gameType: gameArea.settings.gameType,
+    //   user1Id: gameArea.leftPlayer.id,
+    //   score1: gameArea.leftPlayer.score, // hard-coded win
+    //   user2Id: gameArea.rightPlayer.id,
+    //   score2: gameArea.rightPlayer.score,
+    //   tournamentId: gameArea.tournamentId,
+    // };
+    return;
+  }
   const gameEndMsg = {
     type: 'game_end',
     winningPlayer: winningPlayer.side,

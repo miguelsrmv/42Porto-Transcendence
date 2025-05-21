@@ -14,8 +14,8 @@ import { capitalize } from '../../utils/helpers.js';
  * This function ensures the user is logged in and sets up the friends page by
  * populating the friend list, friend requests, and configuring UI elements.
  */
-export function initializeView(): void {
-  if (!checkLoginStatus()) {
+export async function initializeView() {
+  if (!(await checkLoginStatus())) {
     alert('You need to be logged in to access this page');
     navigate('landing-page');
     return;

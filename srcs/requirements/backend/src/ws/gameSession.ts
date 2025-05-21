@@ -10,13 +10,18 @@ import {
 export class GameSession {
   type: playType;
   players: Map<WebSocket, string>;
+  winner?: string;
+  round: number;
   settings: gameSettings;
   gameArea: GameArea | null;
+  tournamentId: string | null;
 
   // TODO: Review placeholders
   constructor(ws: WebSocket, player1settings: leanGameSettings) {
+    this.round = 1;
     this.type = player1settings.playType;
     this.gameArea = null;
+    this.tournamentId = null;
     this.settings = {
       playType: player1settings.playType,
       gameType: player1settings.gameType,
@@ -40,6 +45,15 @@ export class GameSession {
 
   isEmpty(): boolean {
     return this.players.size === 0;
+  }
+
+  getPlayers() {
+    const iterator = this.players.values();
+    const playerIds = [];
+    for (const value of iterator) {
+      playerIds.push(value);
+    }
+    return playerIds;
   }
 
   async mergePlayer2IntoGameSettings(playerSettings: leanGameSettings) {
