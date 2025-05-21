@@ -113,7 +113,7 @@ export class Tournament {
   async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
-    await updateLeaderboardTournament(winner, this.currentRound);
+    await updateLeaderboardTournament(winner, sessionToUpdate.round);
 
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
     if (roundSessions.every((session) => session.winner)) this.advanceRound();
