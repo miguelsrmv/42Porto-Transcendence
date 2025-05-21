@@ -6,7 +6,6 @@ import {
   // deleteTournament,
   // getAllTournaments,
   getUserTournaments,
-  getTournamentById,
   // updateTournament,
   // tournamentBlockchain,
 } from '../controllers/tournament.controller';
@@ -20,7 +19,6 @@ import {
 export async function tournamentRoutes(fastify: FastifyInstance) {
   // fastify.get('/', getAllTournaments);
   fastify.get('/user/:id', { schema: getByIdSchema }, getUserTournaments);
-  fastify.get('/:id', { schema: getByIdSchema }, getTournamentById);
   // fastify.post('/', { schema: createTournamentSchema }, createTournament);
   // fastify.post('/newTournament', tournamentBlockchain);
   // fastify.patch('/:id', { schema: updateTournamentSchema }, updateTournament);
