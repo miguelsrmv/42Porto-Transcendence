@@ -1,7 +1,17 @@
+/**
+ * Imports the list of available avatars.
+ */
 import { avatarList } from '../../ui/avatarData/avatarData.js';
+
 let avatarIndex: number;
 let isCustomAvatarListenerAdded = false;
 
+/**
+ * Initializes the avatar navigation loop, allowing users to cycle through avatars.
+ *
+ * This function sets up event listeners for the "previous" and "next" buttons
+ * and updates the displayed avatar accordingly.
+ */
 export function createAvatarLoop(): void {
   const prevButton: HTMLButtonElement | null = document.getElementById(
     'previous-avatar',
@@ -28,11 +38,14 @@ export function createAvatarLoop(): void {
     return;
   }
 
+  /**
+   * Updates the displayed avatar based on the current avatar index.
+   */
   function updateAvatarDisplay(): void {
     if (userAvatar) userAvatar.src = avatarList[avatarIndex].imagePath;
   }
 
-  // Event listener for previous button
+  // Event listener for the "previous" button
   if (prevButton) {
     prevButton.addEventListener('click', () => {
       // Decrement the index and cycle back to the end if necessary
@@ -41,7 +54,7 @@ export function createAvatarLoop(): void {
     });
   }
 
-  // Event listener for next button
+  // Event listener for the "next" button
   if (nextButton) {
     nextButton.addEventListener('click', () => {
       // Increment the index and cycle back to the start if necessary
@@ -50,10 +63,16 @@ export function createAvatarLoop(): void {
     });
   }
 
-  // Initialize the first character
+  // Initialize the first avatar display
   updateAvatarDisplay();
 }
 
+/**
+ * Handles the submission of the selected avatar.
+ *
+ * This function sets up an event listener for the avatar submission button
+ * and sends the selected avatar to the server.
+ */
 export function handleSubmitAvatar(): void {
   const submitButton = document.getElementById('avatar-submit-button');
   if (!submitButton) {
@@ -67,6 +86,9 @@ export function handleSubmitAvatar(): void {
     else sendCustomAvatar();
   });
 
+  /**
+   * Sends the selected default avatar's path to the server.
+   */
   async function sendImagePath(): Promise<void> {
     try {
       const response = await fetch('/api/users/defaultAvatar', {
@@ -83,6 +105,12 @@ export function handleSubmitAvatar(): void {
     }
   }
 
+  /**
+   * Handles the upload of a custom avatar.
+   *
+   * This function sets up an event listener for the custom avatar input
+   * and sends the selected file to the server.
+   */
   async function sendCustomAvatar(): Promise<void> {
     const customAvatar = document.getElementById('customAvatarInput') as HTMLInputElement;
     if (!customAvatar) {
@@ -121,6 +149,9 @@ export function handleSubmitAvatar(): void {
     customAvatar.click();
   }
 
+  /**
+   * Updates the avatar path in local storage and refreshes the header.
+   */
   async function updateLocalStorageAvatar(): Promise<void> {
     try {
       const response = await fetch('/api/users/getAvatarPath', {
@@ -136,11 +167,21 @@ export function handleSubmitAvatar(): void {
   }
 }
 
+/**
+ * Resets the avatar index to the default value.
+ *
+ * @note The default value corresponds to Mario's index in the avatar list.
+ */
 export function resetAvatarIndex(): void {
   avatarIndex = 54;
-  // NOTE: Mario's index on the Avatar list
 }
 
+/**
+ * Refreshes the avatar displayed in the header.
+ *
+ * This function updates the header avatar image to reflect the current avatar
+ * stored in local storage.
+ */
 function refreshHeader(): void {
   let headerAvatar = document.getElementById('nav-settings-avatar') as HTMLImageElement;
   let headerAvatarPath = window.localStorage.getItem('AvatarPath');

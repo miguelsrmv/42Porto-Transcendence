@@ -251,4 +251,6 @@ function resetVariables(): void {
   rightSideGoal = 0;
   leftPowerBarAnimation = false;
   rightPowerBarAnimation = false;
+  deactivatePowerBarAnimation('left');
+  deactivatePowerBarAnimation('right');
 }

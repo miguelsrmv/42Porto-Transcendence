@@ -6,6 +6,8 @@
  * and manage template IDs based on different template hosts.
  */
 
+import { userIsLoggedIn } from '../features/auth/auth.service.js';
+
 /**
  * @brief Pauses execution for a specified number of seconds.
  *
@@ -54,10 +56,32 @@ export function getTemplateId(templateHost: string): string | undefined {
   }
 }
 
-export function checkLoginStatus(): boolean {
+/**
+ * @brief Checks the login status of the user.
+ *
+ * This function checks whether the user is logged in by calling an external
+ * service. If the user is not logged in, it clears the local storage. It then
+ * verifies the presence of a user ID in local storage to determine the login status.
+ *
+ * @return A promise that resolves to true if the user is logged in, false otherwise.
+ */
+export async function checkLoginStatus(): Promise<boolean> {
+  const loggedInStatus = await userIsLoggedIn();
+
+  if (!loggedInStatus) window.localStorage.clear();
+
   return localStorage.getItem('ID') !== null;
 }
 
+/**
+ * @brief Capitalizes the first letter of a given word.
+ *
+ * This function takes a string and returns a new string with the first letter
+ * converted to uppercase while leaving the rest of the string unchanged.
+ *
+ * @param word The input string to capitalize.
+ * @return The capitalized string.
+ */
 export function capitalize(word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
