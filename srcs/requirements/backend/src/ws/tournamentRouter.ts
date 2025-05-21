@@ -44,13 +44,9 @@ async function joinGameHandler(
   if (playerTournament && playerTournament.isFull()) {
     playerTournament.broadcastSettingsToSessions();
     for (const session of playerTournament.sessions) initializeRemoteGame(session);
-    // TODO: Get variables to add to bellow function
     const data = getTournamentCreateData(playerTournament);
     const tx = await contract.joinTournament(data.tournamentId, data.gameType, data.participants);
     await tx.wait();
-    // { alias, userID, character, gameType, tournamentID }
-    // TODO: Create tournament in the Blockchain
-    // TODO: Save tournamentId on each User
     await playerTournament.addTournamentToDB(
       playerTournament.id,
       playerTournament.type,
@@ -128,7 +124,7 @@ async function messageTypeHandlerTournament(
       break;
     }
     case 'stop_game': {
-      stopGameHandler(socket);
+      await stopGameHandler(socket);
       break;
     }
     case 'movement': {
