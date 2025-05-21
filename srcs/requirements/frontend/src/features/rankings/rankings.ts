@@ -24,9 +24,11 @@ export async function initializeView(): Promise<void> {
   await renderLeftPanel(userId);
   await initializeRightPanel();
   setupLeaderboardSearch();
+  setupLeaderboardClick();
 }
 
 async function renderLeftPanel(userId: string): Promise<void> {
+  cleanLeftPanel();
   await renderTopLeftBoard(userId);
   await renderMatchesBoard(userId);
   await renderTournamentBoard(userId);
@@ -73,15 +75,28 @@ async function renderTopLeftBoard(userId: string): Promise<void> {
   userAvatar.src = window.localStorage.getItem('AvatarPath') as string;
 
   try {
-    const response = await fetch(`api/users/${userId}/stats`, {
+    const userProfileResponse = await fetch(`api/users/${userId}`, {
       method: 'GET',
       credentials: 'include',
     });
-    if (!response.ok) {
-      console.error('Error fetching user stats:', response.status);
+    if (!userProfileResponse.ok) {
+      console.error('Error fetching uder profile data:', userProfileResponse.status);
       return;
     }
-    const statsJson = await response.json();
+    const userProfileJson = await userProfileResponse.json();
+
+    userName.innerText = userProfileJson.username;
+    userAvatar.src = userProfileJson.avatarUrl;
+
+    const statsResponse = await fetch(`api/users/${userId}/stats`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!statsResponse.ok) {
+      console.error('Error fetching user stats:', statsResponse.status);
+      return;
+    }
+    const statsJson = await statsResponse.json();
     const stats: statsData = statsJson.stats;
     userRanking.innerText = stats.rank.toString();
     userWL.innerText = `${stats.wins}/${stats.losses}`;
@@ -301,6 +316,7 @@ async function updateNodeWithLeaderboardPlayer(
     userTournamentsWon.innerText = 'WAITING';
     userPoints.innerText = stats.points.toString();
     user.setAttribute('data-ranking', stats.rank.toString());
+    user.setAttribute('data-user-id', element.userId.toString());
 
     const userDataResponse = await fetch(`api/users/${element.userId}`, {
       method: 'GET',
@@ -376,4 +392,31 @@ function setupLeaderboardSearch(): void {
   });
 }
 
-// TODO: Make usernames clickable
+function setupLeaderboardClick(): void {
+  const leaderboardList = document.getElementById('rankings-list');
+  if (!leaderboardList) {
+    console.log("Couldn't find leaderbost list element");
+    return;
+  }
+
+  leaderboardList.addEventListener('click', (event: MouseEvent) => {
+    const clickedElement = event.target as HTMLElement;
+    const playerRowElement = clickedElement.closest<HTMLDivElement>('.leaderboard-player');
+
+    if (playerRowElement) {
+      const userId = playerRowElement.getAttribute('data-user-id') as string;
+      console.log('User id is ', userId);
+      renderLeftPanel(userId);
+    }
+  });
+}
+
+function cleanLeftPanel(): void {
+  const recentMatchList = document.getElementById('recent-matches');
+  if (!recentMatchList) {
+    console.log("Couldn't find recent match list");
+    return;
+  }
+
+  recentMatchList.innerHTML = '';
+}
