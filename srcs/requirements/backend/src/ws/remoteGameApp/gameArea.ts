@@ -1,3 +1,5 @@
+import { GameSession } from '../gameSession';
+import { Tournament } from '../tournament';
 import { Ball } from './ball';
 import { updateGameArea } from './game';
 import { gameStats } from './gameStats';
@@ -16,7 +18,6 @@ export const PADDLE_START_Y_POS = CANVAS_HEIGHT / 2 - PADDLE_LEN / 2;
 export const BALL_RADIUS = 10;
 
 export class GameArea {
-  tournamentId: string | null;
   ball: Ball;
   leftPaddle: Paddle;
   rightPaddle: Paddle;
@@ -35,6 +36,8 @@ export class GameArea {
   intervals: NodeJS.Timeout[] = [];
   settings: gameSettings;
   isEnding: boolean;
+  session: GameSession;
+  tournament: Tournament | null;
 
   constructor(
     p1id: string,
@@ -42,8 +45,11 @@ export class GameArea {
     p1socket: WebSocket,
     p2socket: WebSocket,
     gameSettings: gameSettings,
+    session: GameSession,
+    tournament: Tournament | null,
   ) {
-    this.tournamentId = null;
+    this.session = session;
+    this.tournament = tournament;
     this.settings = gameSettings;
     this.isEnding = false;
     this.ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
