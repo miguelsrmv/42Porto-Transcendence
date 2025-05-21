@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { Character } from '@prisma/client';
-import { contract } from '../services/blockchain.services'
+import { contractSigner, contractProvider } from '../services/blockchain.services'
 
 export type TournamentPlayer = {
   tournamentId: string;
@@ -18,6 +18,12 @@ export type MatchInfo = {
   scoreOne: number;
   scoreTwo: number;
 };
+
+export type TournamentsFromPlayer = {
+  userId: string;
+  classicTournamentsIds: number[];
+  crazyTournamentsIds: number[];
+}
 
 export type WinnerInfo = {
   tournamentId: string;
@@ -37,7 +43,7 @@ export async function saveTournamentScore(
         .send({ error: 'tournamentId must be provided (starting point)' });
     }
 
-    const tx = await contract.saveScore(BigInt(tournamentId), BigInt(userOneId), BigInt(scoreOne), BigInt(userTwoId), BigInt(scoreTwo));
+    const tx = await contractSigner.saveScore(BigInt(tournamentId), BigInt(userOneId), BigInt(scoreOne), BigInt(userTwoId), BigInt(scoreTwo));
     await tx.wait();
 
     reply.send("OK");
@@ -60,7 +66,7 @@ export async function addMatchWinner(
         .send({ error: 'tournamentId must be provided (starting point)' });
     }
 
-    const tx = await contract.addWinner(BigInt(tournamentId), BigInt(userId));
+    const tx = await contractSigner.addWinner(BigInt(tournamentId), BigInt(userId));
     await tx.wait();
 
     reply.send("OK");
@@ -69,3 +75,21 @@ export async function addMatchWinner(
     reply.status(500).send({ error: 'Failed to add winner' });
   }
 }
+
+export async function getUserLastThreeTournaments(
+  request: FastifyRequest<{ Body: TournamentsFromPlayer }>,
+  reply: FastifyReply,
+) {
+  try {
+    // TODO: get tournament id from user
+    const tx = await contractProvider.addWinner(BigInt(tournamentId), BigInt(request.params.id));
+    await tx.wait();
+
+    reply.send("OK");
+  } catch (error) {
+    console.error('Error in addWinner:', error);
+    reply.status(500).send({ error: 'Failed to add winner' });
+  }
+}
+
+// quarter-finals, semi-finals, final, winner
