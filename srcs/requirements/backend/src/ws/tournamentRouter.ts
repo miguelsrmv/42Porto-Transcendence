@@ -1,6 +1,5 @@
 import { FastifyRequest } from 'fastify';
 import WebSocket from 'ws';
-import { contract } from '../api/services/blockchain.services'
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
 import {
   attributePlayerToTournament,
@@ -12,6 +11,7 @@ import { leanGameSettings } from './remoteGameApp/settings';
 import { initializeRemoteGame } from './remoteGameApp/game';
 import { isPlayerInput } from './remoteGameApp/helpers';
 import { Tournament } from './tournament';
+import { contractSigner } from '../api/services/blockchain.services';
 
 function getTournamentCreateData(tournament: Tournament) {
   const playersData = tournament.sessions.map((session) => {
@@ -45,7 +45,11 @@ async function joinGameHandler(
     playerTournament.broadcastSettingsToSessions();
     for (const session of playerTournament.sessions) initializeRemoteGame(session);
     const data = getTournamentCreateData(playerTournament);
-    const tx = await contract.joinTournament(data.tournamentId, data.gameType, data.participants);
+    const tx = await contractSigner.joinTournament(
+      data.tournamentId,
+      data.gameType,
+      data.participants,
+    );
     await tx.wait();
     await playerTournament.addTournamentToDB(
       playerTournament.id,
@@ -82,7 +86,14 @@ async function stopGameHandler(socket: WebSocket) {
   // TODO: Advance tournament to next match
   // TODO: set other player as winner (score to 5 ?)
   // TODO: Get variables to add to bellow function
-  const tx = await contract.saveScoreAndAddWinner(data.tournamentId, data.gameType, data.user1Id, data.score1, data.user2Id, data.score2);
+  const tx = await contractSigner.saveScoreAndAddWinner(
+    data.tournamentId,
+    data.gameType,
+    data.user1Id,
+    data.score1,
+    data.user2Id,
+    data.score2,
+  );
   await tx.wait();
   // { gameType, user1ID, score1, user2ID, score2, tournamentID }
 }
