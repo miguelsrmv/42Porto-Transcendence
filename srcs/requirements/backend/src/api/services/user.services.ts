@@ -11,7 +11,7 @@ export async function getUserGlobalStats(matches: Match[], userId: string) {
     wins,
     losses,
     winRate: parseFloat(((wins / totalMatches) * 100).toFixed(2)) || 0,
-    points: wins * 3, // Assuming 3 point for a win and 0 for a loss
+    points: await getUserScore(userId),
     rank: await getUserRank(userId),
   };
 }
@@ -25,4 +25,11 @@ export async function getUserRank(id: string) {
     where: { score: { gt: userScore } },
   });
   return betterPlayers + 1;
+}
+
+export async function getUserScore(id: string) {
+  const userLeaderboard = await prisma.leaderboard.findUniqueOrThrow({
+    where: { userId: id },
+  });
+  return userLeaderboard.score;
 }
