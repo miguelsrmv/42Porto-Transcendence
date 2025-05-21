@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
-import { Character } from '@prisma/client';
+import { Character, GameMode } from '@prisma/client';
 import { contractSigner, contractProvider } from '../services/blockchain.services'
 
 export type TournamentPlayer = {
@@ -19,10 +19,13 @@ export type MatchInfo = {
   scoreTwo: number;
 };
 
+export type TournamentAndType = {
+  tournamentId: number;
+  type: GameMode;
+}
+
 export type TournamentsFromPlayer = {
-  userId: string;
-  classicTournamentsIds: number[];
-  crazyTournamentsIds: number[];
+  tournamentsIdsandTypes: TournamentAndType[];
 }
 
 export type WinnerInfo = {
@@ -77,12 +80,11 @@ export async function addMatchWinner(
 }
 
 export async function getUserLastThreeTournaments(
-  request: FastifyRequest<{ Body: TournamentsFromPlayer }>,
+  request: FastifyRequest<{ Body: TournamentsFromPlayer, Params: IParams}>,
   reply: FastifyReply,
 ) {
   try {
-    // TODO: get tournament id from user
-    const tx = await contractProvider.addWinner(BigInt(tournamentId), BigInt(request.params.id));
+    const tx = await contractProvider.getLastThreeTournamentsPosition(BigInt(request.params.id), request.body.tournamentsIdsandTypes);
     await tx.wait();
 
     reply.send("OK");
