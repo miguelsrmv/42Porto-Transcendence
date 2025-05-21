@@ -4,6 +4,7 @@ import {
   getGameSession,
   playerIsInASession,
   removePlayer,
+  removePlayerBySocket,
   removeSession,
 } from './remoteGameApp/sessionManagement';
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
@@ -11,6 +12,7 @@ import { initializeRemoteGame } from './remoteGameApp/game';
 import { FastifyRequest } from 'fastify';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isGameType, isPlayerInput, isPlayType } from './remoteGameApp/helpers';
+import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 
 export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, message: string) {
   if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
@@ -62,18 +64,18 @@ async function joinGameHandler(
   }
 }
 
-function stopGameHandler(socket: WebSocket) {
+async function stopGameHandler(socket: WebSocket) {
   const playerLeft: ServerMessage = { type: 'player_left' };
   const gameSession = getGameSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
-  gameSession.gameArea.stop();
-  removePlayer(socket);
-  const iterator = gameSession.players.entries();
-  const { value } = iterator.next();
-  const socket2 = value?.[0];
-  if (!socket2) return;
-  if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
-  removePlayer(socket2);
+  const gameArea = gameSession.gameArea;
+  gameArea.stop();
+  const player1 = gameArea.getPlayerByWebSocket(socket);
+  removePlayer(player1);
+  const player2 = gameArea.getOtherPlayer(player1);
+  await createMatchPlayerLeft(player2, gameArea);
+  if (player2.socket.readyState === WebSocket.OPEN) player2.socket.send(JSON.stringify(playerLeft));
+  removePlayer(player2);
   removeSession(gameSession);
 }
 
@@ -108,7 +110,7 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
       break;
     }
     case 'stop_game': {
-      stopGameHandler(socket);
+      await stopGameHandler(socket);
       break;
     }
     case 'movement': {
@@ -140,7 +142,7 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
   });
 
   socket.on('close', () => {
-    removePlayer(socket);
+    removePlayerBySocket(socket);
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });

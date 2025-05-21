@@ -9,23 +9,23 @@ datasource db {
 }
 
 model User {
-  id                 String                  @id @default(uuid())
-  email              String                  @unique
-  username           String                  @unique
-  hashedPassword     String
-  salt               String                  @default("")
-  createdAt          DateTime                @default(now())
-  lastActiveAt       DateTime                @default(now())
-  avatarUrl          String?
-  secret2FA          String?
-  enabled2FA         Boolean                 @default(false)
-  friendsSent        Friendship[]            @relation("SentRequests")
-  friendsReceived    Friendship[]            @relation("ReceivedRequests")
-  matches1           Match[]                 @relation("MatchUser1")
-  matches2           Match[]                 @relation("MatchUser2")
-  matchesWon         Match[]                 @relation("MatchWinner")
-  leaderboard        Leaderboard[]
-  tournaments        TournamentParticipant[]
+  id              String                  @id @default(uuid())
+  email           String                  @unique
+  username        String                  @unique
+  hashedPassword  String
+  salt            String                  @default("")
+  createdAt       DateTime                @default(now())
+  lastActiveAt    DateTime                @default(now())
+  avatarUrl       String?
+  secret2FA       String?
+  enabled2FA      Boolean                 @default(false)
+  friendsSent     Friendship[]            @relation("SentRequests")
+  friendsReceived Friendship[]            @relation("ReceivedRequests")
+  matches1        Match[]                 @relation("MatchUser1")
+  matches2        Match[]                 @relation("MatchUser2")
+  matchesWon      Match[]                 @relation("MatchWinner")
+  leaderboard     Leaderboard[]
+  tournaments     TournamentParticipant[]
 }
 
 model Leaderboard {
@@ -57,20 +57,20 @@ enum FriendshipStatus {
 
 // TODO: Review if updatedAt is necessary
 model Match {
-  id             String      @id @default(uuid())
+  id             String     @id @default(uuid())
   mode           GameMode   @default(CLASSIC)
   user1Id        String
-  user1          User        @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user1          User       @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
   user2Id        String
-  user2          User        @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
-  user1Score     Int         @default(0)
-  user2Score     Int         @default(0)
+  user2          User       @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  user1Score     Int        @default(0)
+  user2Score     Int        @default(0)
   user1Character Character?
   user2Character Character?
   winnerId       String?
-  winner         User?       @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @default(now()) @updatedAt
+  winner         User?      @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @default(now()) @updatedAt
   settings       String
 }
 
@@ -96,14 +96,12 @@ enum GameMode {
 }
 
 model TournamentParticipant {
-  id             String     @id @default(uuid())
+  id             String   @id @default(uuid())
   tournamentId   String
   tournamentType GameMode
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
-  alias          String
-  character      Character?
+  createdAt      DateTime @default(now())
 
   @@unique([tournamentId, userId])
-  @@unique([tournamentId, alias])
 }
