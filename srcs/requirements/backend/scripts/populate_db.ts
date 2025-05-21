@@ -1,4 +1,4 @@
-import { Character, FriendshipStatus, MatchMode, User } from '@prisma/client';
+import { Character, FriendshipStatus, GameMode, User } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
 
@@ -107,35 +107,6 @@ async function createFriends(users: User[]) {
   }
 }
 
-async function createTournaments(users: User[]) {
-  await prisma.tournament.deleteMany();
-  const tournamentSize = 4;
-  for (let i = 0; i < users.length; i += tournamentSize) {
-    const participants = users.slice(i, i + tournamentSize);
-    if (participants.length === tournamentSize) {
-      const tournament = await prisma.tournament.create({
-        data: {
-          name: `Tournament ${Math.floor(i / tournamentSize) + 1}`,
-          maxParticipants: tournamentSize,
-          settings: '',
-          createdBy: {
-            connect: { id: users[i].id },
-          },
-        },
-      });
-      for (let j = 0; j < tournamentSize; j += 1) {
-        await prisma.tournamentParticipant.create({
-          data: {
-            alias: faker.internet.username(),
-            tournamentId: tournament.id,
-            userId: users[j].id,
-          },
-        });
-      }
-    }
-  }
-}
-
 async function createMatches(users: User[]) {
   await prisma.match.deleteMany();
   const matchSize = 2;
@@ -155,7 +126,7 @@ async function createMatches(users: User[]) {
         await prisma.match.update({
           where: { id: match.id },
           data: {
-            mode: MatchMode.CRAZY,
+            mode: GameMode.CRAZY,
           },
         });
       }
@@ -184,7 +155,7 @@ async function createTestUserMatches(users: User[]) {
         user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
         user1Score: Math.round(Math.random() * 5),
         user2Score: Math.round(Math.random() * 5),
-        mode: MatchMode.CRAZY,
+        mode: GameMode.CRAZY,
       },
     });
     if (match.user1Score > match.user2Score) {
@@ -221,7 +192,6 @@ async function main() {
     await seedUsers();
     const users = await prisma.user.findMany({ orderBy: { createdAt: 'asc' } });
     await createFriends(users);
-    await createTournaments(users);
     await createMatches(users);
     await createTestUserMatches(users);
     await generateLeaderboard(users);
