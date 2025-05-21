@@ -1,10 +1,5 @@
 const avatarDefaultPicturePath = '../../../../static/avatar/default/';
 
-export function getRandomAvatarPath() {
-  const randomIndex = Math.floor(Math.random() * avatarImagePaths.length);
-  return avatarImagePaths[randomIndex];
-}
-
 export const avatarImagePaths = [
   'bayonetta.png',
   'corrin.png',
@@ -80,3 +75,8 @@ export const avatarImagePaths = [
   'villager.png',
   'zelda.png',
 ].map((fileName) => `${avatarDefaultPicturePath}${fileName}`);
+
+export function getRandomAvatarPath() {
+  const randomIndex = Math.floor(Math.random() * avatarImagePaths.length);
+  return avatarImagePaths[randomIndex];
+}
