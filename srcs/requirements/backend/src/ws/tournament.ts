@@ -99,15 +99,13 @@ export class Tournament {
   }
 
   async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
-    // TODO: add logic to create tournamentParticipant with the data
-    // Remove alias and character from tournamentParticipant?
+    // TODO: Check for repeated alias
     playerIds.forEach(async (id) => {
       await prisma.tournamentParticipant.create({
         data: {
           tournamentId: tournamentId,
           userId: id,
           tournamentType: gameTypeToGameMode(gameType),
-          alias: '',
         },
       });
     });

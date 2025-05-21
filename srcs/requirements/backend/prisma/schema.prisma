@@ -101,9 +101,6 @@ model TournamentParticipant {
   tournamentType GameMode
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
-  alias          String
-  character      Character?
 
   @@unique([tournamentId, userId])
-  @@unique([tournamentId, alias])
 }
