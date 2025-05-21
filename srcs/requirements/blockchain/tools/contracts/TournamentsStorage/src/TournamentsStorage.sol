@@ -101,44 +101,6 @@ contract TournamentsStorage {
         return crazyTournaments[_id].scores;
     }
 
-    function getLastThreeTournamentsPosition(string memory userId, TournamentIdAndType[] memory data)
-        public
-        view
-        returns (string[3] memory)
-    {
-        string[3] memory placements;
-
-        for (uint256 i = 0; i < 3; i++) {
-            Tournament memory tournament = getTournament(data[i].id, data[i].gameType);
-            uint256 lastIndex = findLastIndexOfPlayer(tournament.id, data[i].gameType, userId);
-            uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
-
-            if (lastIndex == maxNumberOfPlaces) {
-                placements[i] = "Tournament Winner!";
-            } else if (lastIndex >= maxNumberOfPlaces - 2 && lastIndex <= maxNumberOfPlaces - 1) {
-                placements[i] = "Final";
-            } else if (lastIndex >= maxNumberOfPlaces - 6 && lastIndex <= maxNumberOfPlaces - 3) {
-                placements[i] = "Semi-final";
-            } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
-                placements[i] = "Quarter-final";
-            } else if (maxNumberOfPlaces > 14) {
-                uint256 nbrRound = MAX_PARTICIPANTS;
-                uint256 tier = nbrRound;
-
-                while (lastIndex < tier) {
-                    nbrRound /= 2;
-                    tier += nbrRound;
-                }
-
-                string memory strRoundName = "Round of ";
-                string memory strRoundNumber = nbrRound.toString();
-
-                placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
-            }
-        }
-        return placements;
-    }
-
     function getNumberOfTournamentsParticipatedByPlayer(string memory _playerName, gameType _gameType)
         public
         view
@@ -378,6 +340,44 @@ contract TournamentsStorage {
         );
 
         return lastIndex;
+    }
+
+    function getLastThreeTournamentsPosition(string memory userId, TournamentIdAndType[3] memory data)
+        public
+        view
+        returns (string[3] memory)
+    {
+        string[3] memory placements;
+
+        for (uint256 i = 0; i < 3; i++) {
+            Tournament memory tournament = getTournament(data[i].id, data[i].gameType);
+            uint256 lastIndex = findLastIndexOfPlayer(tournament.id, data[i].gameType, userId);
+            uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
+
+            if (lastIndex == maxNumberOfPlaces) {
+                placements[i] = "Tournament Winner!";
+            } else if (lastIndex >= maxNumberOfPlaces - 2 && lastIndex <= maxNumberOfPlaces - 1) {
+                placements[i] = "Final";
+            } else if (lastIndex >= maxNumberOfPlaces - 6 && lastIndex <= maxNumberOfPlaces - 3) {
+                placements[i] = "Semi-final";
+            } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
+                placements[i] = "Quarter-final";
+            } else if (maxNumberOfPlaces > 14) {
+                uint256 nbrRound = MAX_PARTICIPANTS;
+                uint256 tier = nbrRound;
+
+                while (lastIndex < tier) {
+                    nbrRound /= 2;
+                    tier += nbrRound;
+                }
+
+                string memory strRoundName = "Round of ";
+                string memory strRoundNumber = nbrRound.toString();
+
+                placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
+            }
+        }
+        return placements;
     }
 
     /* Get the current timestamp */
