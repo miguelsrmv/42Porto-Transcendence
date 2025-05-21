@@ -5,7 +5,7 @@ import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
 import { gameTypeToGameMode } from '../../utils/helpers';
 import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
-import { contract } from '../../api/services/blockchain.services';
+import { contractSigner } from '../../api/services/blockchain.services';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -99,7 +99,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
       score2: gameArea.rightPlayer.score,
       tournamentId: gameArea.tournament!.id,
     };
-    const tx = await contract.saveScoreAndAddWinner(
+    const tx = await contractSigner.saveScoreAndAddWinner(
       data.tournamentId,
       data.gameType,
       data.user1Id,
