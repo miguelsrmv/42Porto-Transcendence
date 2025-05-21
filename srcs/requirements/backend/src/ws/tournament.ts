@@ -21,17 +21,19 @@ export class Tournament {
   state: tournamentState;
   type: gameType;
   id: string;
+  currentRound: number;
 
   constructor(type: gameType) {
     this.state = tournamentState.creating;
     this.sessions = [];
     this.type = type;
     this.id = randomUUID();
+    this.currentRound = 1;
   }
 
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     const newSession = new GameSession(ws, playerSettings);
-    newSession.tournamentId = this.id;
+    newSession.tournament = this;
     await newSession.updateAvatar1(playerSettings.playerID);
 
     // For testing purposes
@@ -110,4 +112,8 @@ export class Tournament {
       });
     });
   }
+
+  // advanceRound() {
+  //   this.sessions.every((session) => {});
+  // }
 }

@@ -6,6 +6,7 @@ import {
   getAvatarFromPlayer,
   getRandomBackground,
 } from './remoteGameApp/sessionManagement';
+import { Tournament } from './tournament';
 
 export class GameSession {
   type: playType;
@@ -14,14 +15,14 @@ export class GameSession {
   round: number;
   settings: gameSettings;
   gameArea: GameArea | null;
-  tournamentId: string | null;
+  tournament: Tournament | null;
 
   // TODO: Review placeholders
   constructor(ws: WebSocket, player1settings: leanGameSettings) {
+    this.tournament = null;
     this.round = 1;
     this.type = player1settings.playType;
     this.gameArea = null;
-    this.tournamentId = null;
     this.settings = {
       playType: player1settings.playType,
       gameType: player1settings.gameType,
