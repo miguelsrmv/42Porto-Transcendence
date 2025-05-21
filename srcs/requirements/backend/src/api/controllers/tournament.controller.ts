@@ -152,37 +152,37 @@ export type WinnerInfo = {
 //   }
 // }
 
-export async function addPlayerToTournament(
-  request: FastifyRequest<{ Body: TournamentPlayer }>,
-  reply: FastifyReply,
-) {
-  try {
-    const { tournamentId, userId, alias, character } = request.body;
+// export async function addPlayerToTournament(
+//   request: FastifyRequest<{ Body: TournamentPlayer }>,
+//   reply: FastifyReply,
+// ) {
+//   try {
+//     const { tournamentId, userId, alias, character } = request.body;
 
-    if (!tournamentId) {
-      return reply
-        .status(400)
-        .send({ error: 'tournamentId must be provided (starting point)' });
-    }
+//     if (!tournamentId) {
+//       return reply
+//         .status(400)
+//         .send({ error: 'tournamentId must be provided (starting point)' });
+//     }
 
-    const BCParticiant = {userId: BigInt(userId), alias: BigInt(alias), character: BigInt(character)};
+//     const BCParticiant = {userId: BigInt(userId), alias: BigInt(alias), character: BigInt(character)};
 
-    const tx = await contract.joinTournament(BigInt(tournamentId), BCParticiant);
-    await tx.wait();
+//     const tx = await contract.joinTournament(BigInt(tournamentId), BCParticiant);
+//     await tx.wait();
 
-    const participant = await prisma.tournamentParticipant.create({data: {
-      userId: userId,
-      tournamentId: tournamentId!,
-    },});
+//     const participant = await prisma.tournamentParticipant.create({data: {
+//       userId: userId,
+//       tournamentId: tournamentId!,
+//     },});
 
-    await prisma.user.update({where: {id: userId}, data: {tournaments: {connect: {id: participant.id},},},})
+//     await prisma.user.update({where: {id: userId}, data: {tournaments: {connect: {id: participant.id},},},})
   
-    reply.send("OK");
-  } catch (error) {
-    console.error('Error in addPlayerToTournament:', error);
-    reply.status(500).send({ error: 'Failed to join tournament' });
-  }
-}
+//     reply.send("OK");
+//   } catch (error) {
+//     console.error('Error in addPlayerToTournament:', error);
+//     reply.status(500).send({ error: 'Failed to join tournament' });
+//   }
+// }
 
 export async function saveTournamentScore(
   request: FastifyRequest<{ Body: MatchInfo }>,

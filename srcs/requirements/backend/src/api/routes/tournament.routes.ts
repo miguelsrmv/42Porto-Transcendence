@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { getByIdSchema } from '../schemas/global.schema';
 import {
-  addPlayerToTournament,
+  // addPlayerToTournament,
   // createTournament,
   // deleteTournament,
   // getAllTournaments,
@@ -25,5 +25,5 @@ export async function tournamentRoutes(fastify: FastifyInstance) {
   // fastify.post('/newTournament', tournamentBlockchain);
   // fastify.patch('/:id', { schema: updateTournamentSchema }, updateTournament);
   // fastify.delete('/:id', { schema: getByIdSchema }, deleteTournament);
-  fastify.post('/participant', { schema: tournamentParticipantSchema }, addPlayerToTournament);
+  // fastify.post('/participant', { schema: tournamentParticipantSchema }, addPlayerToTournament);
 }
