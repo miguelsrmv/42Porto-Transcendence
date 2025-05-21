@@ -10,19 +10,16 @@ import { Tournament } from './tournament';
 
 export class GameSession {
   type: playType;
-  players: Map<WebSocket, string>;
+  players: Map<WebSocket, string> = new Map();
   winner?: string;
-  round: number;
+  round: number = 1;
   settings: gameSettings;
-  gameArea: GameArea | null;
-  tournament: Tournament | null;
+  gameArea: GameArea | null = null;
+  tournament?: Tournament;
 
   // TODO: Review placeholders
   constructor(ws: WebSocket, player1settings: leanGameSettings) {
-    this.tournament = null;
-    this.round = 1;
     this.type = player1settings.playType;
-    this.gameArea = null;
     this.settings = {
       playType: player1settings.playType,
       gameType: player1settings.gameType,
@@ -36,7 +33,6 @@ export class GameSession {
       character2: player1settings.character,
       background: getRandomBackground(),
     };
-    this.players = new Map();
     this.players.set(ws, player1settings.playerID);
   }
 

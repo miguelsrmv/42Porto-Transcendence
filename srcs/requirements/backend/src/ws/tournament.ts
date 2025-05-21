@@ -17,18 +17,14 @@ export enum tournamentState {
 }
 
 export class Tournament {
-  sessions: GameSession[];
-  state: tournamentState;
+  sessions: GameSession[] = [];
+  state: tournamentState = tournamentState.creating;
   type: gameType;
-  id: string;
-  currentRound: number;
+  id: string = randomUUID();
+  currentRound: number = 1;
 
   constructor(type: gameType) {
-    this.state = tournamentState.creating;
-    this.sessions = [];
     this.type = type;
-    this.id = randomUUID();
-    this.currentRound = 1;
   }
 
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
@@ -113,7 +109,25 @@ export class Tournament {
     });
   }
 
-  // advanceRound() {
-  //   this.sessions.every((session) => {});
-  // }
+  updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+    if (sessionToUpdate.winner) return;
+    sessionToUpdate.winner = winner;
+
+    const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
+    if (roundSessions.every((session) => session.winner)) this.advanceRound();
+  }
+
+  advanceRound() {
+    const winners = this.sessions
+      .filter((session) => session.round === this.currentRound)
+      .map((s) => s.winner)
+      .filter((winner): winner is string => !!winner);
+
+    if (winners.length <= 1) {
+      this.state = tournamentState.ended;
+      // TODO: send message to all players
+      // this.broadcastToAll('Tournament has ended');
+    }
+    ++this.currentRound;
+  }
 }

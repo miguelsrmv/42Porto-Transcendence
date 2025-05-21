@@ -106,6 +106,8 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     //   score2: gameArea.rightPlayer.score,
     //   tournamentId: gameArea.tournamentId,
     // };
+    gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
+    // TODO: What to do with losing player?
     return;
   }
   const gameEndMsg = {
