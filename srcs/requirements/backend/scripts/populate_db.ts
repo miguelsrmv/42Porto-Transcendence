@@ -5,7 +5,6 @@ import { faker } from '@faker-js/faker';
 const NUMBER_OF_USERS = 16;
 
 const CHARACTERS = [
-  'NONE',
   'MARIO',
   'LINK',
   'PIKACHU',
@@ -113,31 +112,35 @@ async function createMatches(users: User[]) {
   for (let i = 0; i < users.length; i += matchSize) {
     const participants = users.slice(i, i + matchSize);
     if (participants.length === matchSize) {
+      let score1 = Math.round(Math.random() * 5);
+      const score2 = Math.round(Math.random() * 5);
+      if (score1 === score2) --score1;
       const match = await prisma.match.create({
         data: {
           settings: '',
           user1Id: participants[0].id,
           user2Id: participants[1].id,
-          user1Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
-          user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
+          user1Score: score1,
+          user2Score: score2,
+          user1Character: Character.NONE,
+          user2Character: Character.NONE,
+          winnerId: score1 > score2 ? participants[0].id : participants[1].id,
         },
       });
-      if (Math.random() < 0.5) {
+      if (Math.random() <= 0.5) {
         await prisma.match.update({
           where: { id: match.id },
           data: {
             mode: GameMode.CRAZY,
+            user1Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
+            user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
           },
         });
       }
-      if (Math.random() < 0.5) {
-        await prisma.match.update({
-          where: { id: match.id },
-          data: {
-            winnerId: participants[0].id,
-          },
-        });
-      }
+      await prisma.leaderboard.update({
+        where: { userId: score1 > score2 ? participants[0].id : participants[1].id },
+        data: { score: { increment: 3 } },
+      });
     }
   }
 }
@@ -146,43 +149,25 @@ async function createTestUserMatches(users: User[]) {
   const testUser = await prisma.user.findUnique({ where: { username: USERNAME } });
   for (let i = 0; i < users.length; i += 1) {
     if (users[i].id === testUser!.id) continue;
-    const match = await prisma.match.create({
+    let score1 = Math.round(Math.random() * 5);
+    const score2 = Math.round(Math.random() * 5);
+    if (score1 === score2) --score1;
+    await prisma.match.create({
       data: {
         settings: '',
         user1Id: testUser!.id,
         user2Id: users[i].id,
         user1Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
         user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
-        user1Score: Math.round(Math.random() * 5),
-        user2Score: Math.round(Math.random() * 5),
+        user1Score: score1,
+        user2Score: score2,
+        winnerId: score1 > score2 ? testUser!.id : users[i].id,
         mode: GameMode.CRAZY,
       },
     });
-    if (match.user1Score > match.user2Score) {
-      await prisma.match.update({
-        where: { id: match.id },
-        data: {
-          winnerId: testUser!.id,
-        },
-      });
-    } else if (match.user1Score < match.user2Score) {
-      await prisma.match.update({
-        where: { id: match.id },
-        data: {
-          winnerId: users[i].id,
-        },
-      });
-    }
-  }
-}
-
-async function generateLeaderboard(users: User[]) {
-  for (let index = 0; index < users.length; index++) {
     await prisma.leaderboard.update({
-      where: { userId: users[index].id },
-      data: {
-        score: Math.random() * 1000,
-      },
+      where: { userId: score1 > score2 ? testUser!.id : users[i].id },
+      data: { score: { increment: 3 } },
     });
   }
 }
@@ -194,7 +179,6 @@ async function main() {
     await createFriends(users);
     await createMatches(users);
     await createTestUserMatches(users);
-    await generateLeaderboard(users);
     if (await prisma.user.findMany()) console.log('Database populated successfully.');
   } catch (e) {
     console.error(e);
