@@ -188,16 +188,268 @@ let jwtCookie3: string;
 //       },
 //     });
 
-//     expect(response.statusCode).toBe(200);
-//     expect(response.json()).toEqual(
-//       expect.objectContaining({
-//         id: user!.id,
-//         createdAt: expect.any(String),
-//         username: user!.username,
-//         email: user!.email,
-//         hashedPassword: user!.hashedPassword,
-//         salt: user!.salt,
-//       }),
-//     );
-//   });
-// });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ path: user?.avatarUrl });
+  });
+
+  test('GET /isOnline/:id should return 200 and a false', async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/users/isOnline/' + user?.id,
+      headers: {
+        cookie: jwtCookie,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(false);
+  });
+
+  test('GET /:id should return 200 and a specific user', async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/users/' + user?.id,
+      headers: {
+        cookie: jwtCookie,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.objectContaining({
+        username: user!.username,
+        avatarUrl: user!.avatarUrl,
+        lastActiveAt: expect.any(String),
+        rank: 1,
+      }),
+    );
+  });
+
+  test('GET /:id/stats should return 200 and a specific user stats', async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/users/' + user?.id + '/stats',
+      headers: {
+        cookie: jwtCookie,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.objectContaining({
+        stats: expect.objectContaining({
+          totalMatches: 0,
+          wins: 0,
+          losses: 0,
+          points: 0,
+          winRate: 0,
+          rank: 1,
+        }),
+      }),
+    );
+  });
+
+  test('GET /me should return 200 and a own user', async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/users/me',
+      headers: {
+        cookie: jwtCookie,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.objectContaining({
+        id: user?.id,
+        username: user!.username,
+        email: user?.email,
+        avatarUrl: user!.avatarUrl,
+      }),
+    );
+  });
+
+  test('PUT /defaultAvatar should return 200 and an updated user', async () => {
+    const response = await app.inject({
+      method: 'PUT',
+      url: '/users/defaultAvatar',
+      headers: { 'Content-Type': 'application/json', cookie: jwtCookie },
+      body: { path: 'newAvatarPath.png' },
+    });
+
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    expect(response.statusCode).toBe(200);
+    expect(user?.avatarUrl).toEqual('newAvatarPath.png');
+    expect(response.json()).toEqual(
+      expect.objectContaining({ message: 'Path to avatar updated successfully.' }),
+    );
+  });
+
+  test('PATCH / should return 200 and an updated user', async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    const response = await app.inject({
+      method: 'PATCH',
+      url: '/users',
+      headers: { 'Content-Type': 'application/json', cookie: jwtCookie },
+      body: { email: 'modified@gmail.com', oldPassword: 'hashed_password_1' },
+    });
+
+    const updatedUser = await prisma.user.findUnique({ where: { username: user?.username } });
+
+    expect(response.statusCode).toBe(200);
+    expect(updatedUser?.email).toEqual('modified@gmail.com');
+    expect(response.json()).toEqual(
+      expect.objectContaining({
+        username: user?.username,
+        email: 'modified@gmail.com',
+      }),
+    );
+  });
+
+  test('DELETE /:id should return 200 and the deleted user', async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    const response = await app.inject({
+      method: 'DELETE',
+      url: '/users/' + user?.id,
+      headers: {
+        cookie: jwtCookie,
+      },
+    });
+
+    const deletedUser = await prisma.user.findUnique({ where: { username: 'alice23' } });
+
+    expect(response.statusCode).toBe(200);
+    expect(deletedUser).toEqual(null);
+    expect(response.json()).toEqual(
+      expect.objectContaining({
+        username: user!.username,
+        email: user!.email,
+      }),
+    );
+  });
+
+  test('POST /preLogin should return 200 and false', async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'bob45' } });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/users/preLogin',
+      headers: { 'Content-Type': 'application/json' },
+      body: { email: user?.email, password: 'hashed_password_2' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ enabled2FA: false });
+  });
+});
+
+describe('friends', () => {
+  test('POST / should return 200 and an add a new friend', async () => {
+    const friend = await prisma.user.findUnique({ where: { username: 'jack' } });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/friends',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: jwtCookie2,
+      },
+      body: { friendId: friend?.id },
+    });
+
+    const user2 = await prisma.user.findUnique({ where: { username: 'bob45' } });
+    const friendship = await prisma.friendship.findUnique({
+      where: {
+        initiatorId_recipientId: {
+          initiatorId: user2!.id,
+          recipientId: friend!.id,
+        },
+      },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(friendship).toEqual(
+      expect.objectContaining({ initiatorId: user2!.id, recipientId: friend!.id }),
+    );
+    expect(response.json()).toEqual({ message: 'Friendship created' });
+  });
+
+  test('GET /pending should return 200 and an array of pending friends', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/friends/pending',
+      headers: {
+        cookie: jwtCookie3,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(expect.arrayContaining([{ initiatorId: expect.any(String) }]));
+  });
+
+  test('PATCH / should return 200 and update friendship status', async () => {
+    const friend = await prisma.user.findUnique({ where: { username: 'bob45' } });
+    const response = await app.inject({
+      method: 'PATCH',
+      url: '/friends',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: jwtCookie3,
+      },
+      body: { friendId: friend?.id, status: 'ACCEPTED' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ message: 'Friendship status updated' });
+  });
+
+  test('GET / should return 200 and an array of user friends ids', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/friends',
+      headers: {
+        cookie: jwtCookie3,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(expect.arrayContaining([expect.any(String)]));
+  });
+
+  test('DELETE /:id should return 200 and delete friendship', async () => {
+    const friend = await prisma.user.findUnique({ where: { username: 'susan43' } });
+    const response = await app.inject({
+      method: 'DELETE',
+      url: '/friends/' + friend?.id,
+      headers: {
+        cookie: jwtCookie2,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ message: 'Friendship deleted' });
+  });
+});
+
+describe('leaderboard', () => {
+  test('GET / should return 200 and leaderboard', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/leaderboard',
+      headers: {
+        cookie: jwtCookie2,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          score: 0,
+          userId: expect.any(String),
+        }),
+      ]),
+    );
+  });
+});

@@ -40,6 +40,7 @@ export function initializeRemoteGame(gameSession: GameSession): void {
   const [p1id, p2id] = Array.from(gameSession.players.values());
   const gameArea = new GameArea(p1id, p2id, player1socket, player2socket, gameSession.settings);
   gameSession.gameArea = gameArea;
+  gameArea.tournamentId = gameSession.tournamentId;
   setPowerUpBar(gameArea);
   const gameInterval = setInterval(() => {
     gameArea.gameLoop();

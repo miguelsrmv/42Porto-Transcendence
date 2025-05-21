@@ -25,7 +25,7 @@ import { navigate } from '../../core/router.js';
  */
 export async function initializeView(): Promise<void> {
   // If not logged in, redirect
-  if (!checkLoginStatus()) {
+  if (!(await checkLoginStatus())) {
     alert('You need to be logged in to access this page');
     navigate('landing-page');
     return;
