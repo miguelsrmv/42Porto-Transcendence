@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19;
 
 import {console} from "forge-std/Script.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
@@ -99,21 +100,47 @@ contract TournamentsStorage {
         return crazyTournaments[_id].scores;
     }
 
-    function getLastThreeTournamentsPosition(string memory userId, TournamentIdAndType[] memory data) public view returns (string[] memory) {
+    // Only works for tournaments of 8 partciants
+    function getLastThreeTournamentsPosition(string memory userId, TournamentIdAndType[] memory data)
+        public
+        view
+        returns (string[] memory)
+    {
         string[] memory placements;
-        
+
         for (uint256 i = 0; i < 3; i++) {
             Tournament memory tournament = getTournament(data[i].id, data[i].gameType);
-            uint256 lastTier = findLastIndexOfPlayer(tournament.id, data[i].gameType, userId);
-            if (lastTier >= 0 || lastTier <= 7) {
-                placements[i] = "Quarter-finals";
-            } else if (lastTier >= 8 || lastTier <= 11) {
-                placements[i] = "Semi-finals";
-            } else if (lastTier >= 12 || lastTier <= 13) {
+            uint256 lastIndex = findLastIndexOfPlayer(tournament.id, data[i].gameType, userId);
+
+            if (lastIndex == MAX_PARTICIPANTS) {
+                placements[i] = "Tournament Winner!";
+            } else if (lastIndex >= MAX_PARTICIPANTS - 2 || lastIndex <= MAX_PARTICIPANTS - 1) {
                 placements[i] = "Final";
-            } else {
-                placements[i] = "Winner!";
+            } else if (lastIndex >= MAX_PARTICIPANTS - 6 || lastIndex <= MAX_PARTICIPANTS - 3) {
+                placements[i] = "Semi-inal";
+            } else if (lastIndex >= MAX_PARTICIPANTS - 14 || lastIndex <= MAX_PARTICIPANTS - 7) {
+                placements[i] = "Quarter-final";
+            } else if (MAX_PARTICIPANTS > 8) {
+                uint256 nbrRound = MAX_PARTICIPANTS;
+
+                while (lastIndex >= nbrRound) {
+                    nbrRound /= 2;
+                }
+
+                string memory strRoundName = "Round of ";
+                string memory strRoundNumber = nbrRound.toString();
+
+                placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
             }
+            // if (lastIndex >= 0 || lastIndex <= 7) {
+            //     placements[i] = "Quarter-final";
+            // } else if (lastIndex >= 8 || lastIndex <= 11) {
+            //     placements[i] = "Semi-final";
+            // } else if (lastIndex >= 12 || lastIndex <= 13) {
+            //     placements[i] = "Final";
+            // } else {
+            //     placements[i] = "Tournament Winner!";
+            // }
         }
         return placements;
     }
