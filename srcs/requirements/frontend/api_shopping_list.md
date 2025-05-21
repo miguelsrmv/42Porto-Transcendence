@@ -1,8 +1,16 @@
-| Method   | Route                      |   URL parameters    |                     Body                     | Description                              |
-| -------- | -------------------------- | :-----------------: | :------------------------------------------: | ---------------------------------------- |
-| `PUT`    | `/users/defaultAvatar`     |                     |                                              | Default avatar image path                |
-| `PUT`    | `/users/customAvatar`      |                     | Picture data                                 | Custom avatar image                      |
-| `GET`    | `/users/getAvatarPath`     |                     |                                              | Get user's avatar image path             |
-| `POST`   | `/users/disableTwoFA`      |                     |                                              | Disable the users's two FA               |
-| `POST`   | `/users/enableTwoFA`       |                     | QR Code                                      | Enable the users' two FA                 |
-| `GET`    | `/users/checkTwoFAStatus`  |                     |                                              | Get user's two FA status                 |
+AJUSTE DE PONTOS
+
+Remote:
+Wins +3
+Loss -1
+
+Tournamnets:
+1 Win: +1 ponto                 [1]
+2 Wins: (+1) +3 pontos          [4]
+3 Wins: (+4) +8			[12]
+
+
+ORDERNAR LEADERBOARD
+
+
+TOURNAMENT DATA
