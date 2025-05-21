@@ -2,27 +2,47 @@
 pragma solidity ^0.8.19;
 
 import {console} from "forge-std/Script.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
-
     uint8 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
+
+    using Strings for uint256;
+
+    enum gameType {
+        CLASSIC,
+        CRAZY
+    }
+
+    struct Participant {
+        string uniqueId;
+        string userAlias;
+        string character;
+    }
 
     struct Tournament {
         uint256 id;
         uint16[3] date;
         uint8[3] time;
         uint8 maxParticipants;
-        string[MAX_PARTICIPANTS] participants;
-        string[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
+        Participant[MAX_PARTICIPANTS] participants;
+        Participant[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
         uint8[(MAX_PARTICIPANTS - 1) * 2] scores;
     }
 
-    Tournament[] public tournaments;
+    struct TournamentIdAndType {
+        uint256 id;
+        TournamentsStorage.gameType gameType;
+    }
+
+    Tournament[] public classicTournaments;
+    Tournament[] public crazyTournaments;
 
     // CONSTRUCTOR **************************************************************
     constructor() {
-        createTournament();
+        createTournament(gameType.CLASSIC);
+        createTournament(gameType.CRAZY);
         i_owner = msg.sender;
     }
 
@@ -34,33 +54,112 @@ contract TournamentsStorage {
     }
 
     // GETTER FUNCTIONS *********************************************************
-    function getTournaments() public view returns (Tournament[] memory) {
-        return tournaments;
+    function getAllTournaments(gameType _gameType) public view returns (Tournament[] memory) {
+        if (_gameType == gameType.CLASSIC) {
+            return classicTournaments;
+        }
+        return crazyTournaments;
     }
 
-    function getTournament(uint256 _id) public view returns (Tournament memory) {
-        return tournaments[_id];
+    function getTournament(uint256 _id, gameType _gameType) public view returns (Tournament memory) {
+        if (_gameType == gameType.CLASSIC) {
+            return classicTournaments[_id];
+        }
+        return crazyTournaments[_id];
     }
 
-    function getParticipants(uint256 _id) public view returns (string[MAX_PARTICIPANTS] memory) {
-        return tournaments[_id].participants;
+    function getParticipants(uint256 _id, gameType _gameType)
+        public
+        view
+        returns (Participant[MAX_PARTICIPANTS] memory)
+    {
+        if (_gameType == gameType.CLASSIC) {
+            return classicTournaments[_id].participants;
+        }
+        return crazyTournaments[_id].participants;
     }
 
-    function getMatchedParticipants(uint256 _id) public view returns (string[MAX_PARTICIPANTS * 2 - 1] memory) {
-        return tournaments[_id].matchedParticipants;
+    function getMatchedParticipants(uint256 _id, gameType _gameType)
+        public
+        view
+        returns (Participant[MAX_PARTICIPANTS * 2 - 1] memory)
+    {
+        if (_gameType == gameType.CLASSIC) {
+            return classicTournaments[_id].matchedParticipants;
+        }
+        return crazyTournaments[_id].matchedParticipants;
     }
 
-    function getScores(uint256 _id) public view returns (uint8[(MAX_PARTICIPANTS - 1) * 2] memory) {
-        return tournaments[_id].scores;
+    function getScores(uint256 _id, gameType _gameType)
+        public
+        view
+        returns (uint8[(MAX_PARTICIPANTS - 1) * 2] memory)
+    {
+        if (_gameType == gameType.CLASSIC) {
+            return classicTournaments[_id].scores;
+        }
+        return crazyTournaments[_id].scores;
     }
 
-    function getNumberOfTournamentsParticipatedByPlayer(string memory _playerName) public view returns (uint256) {
+    function getLastThreeTournamentsPosition(string memory userId, TournamentIdAndType[] memory data)
+        public
+        view
+        returns (string[3] memory)
+    {
+        string[3] memory placements;
+
+        for (uint256 i = 0; i < 3; i++) {
+            Tournament memory tournament = getTournament(data[i].id, data[i].gameType);
+            uint256 lastIndex = findLastIndexOfPlayer(tournament.id, data[i].gameType, userId);
+            uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
+
+            if (lastIndex == maxNumberOfPlaces) {
+                placements[i] = "Tournament Winner!";
+            } else if (lastIndex >= maxNumberOfPlaces - 2 && lastIndex <= maxNumberOfPlaces - 1) {
+                placements[i] = "Final";
+            } else if (lastIndex >= maxNumberOfPlaces - 6 && lastIndex <= maxNumberOfPlaces - 3) {
+                placements[i] = "Semi-final";
+            } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
+                placements[i] = "Quarter-final";
+            } else if (maxNumberOfPlaces > 14) {
+                uint256 nbrRound = MAX_PARTICIPANTS;
+                uint256 tier = nbrRound;
+
+                while (lastIndex < tier) {
+                    nbrRound /= 2;
+                    tier += nbrRound;
+                }
+
+                string memory strRoundName = "Round of ";
+                string memory strRoundNumber = nbrRound.toString();
+
+                placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
+            }
+        }
+        return placements;
+    }
+
+    function getNumberOfTournamentsParticipatedByPlayer(string memory _playerName, gameType _gameType)
+        public
+        view
+        returns (uint256)
+    {
         uint256 tournamentsParticipated = 0;
+        uint256 tournamentLength = 0;
+        Tournament[] storage tournaments;
 
-        for (uint8 i = 0; i < tournaments.length; i++) {
+        if (_gameType == gameType.CLASSIC) {
+            tournamentLength = classicTournaments.length;
+            tournaments = classicTournaments;
+        } else {
+            tournamentLength = crazyTournaments.length;
+            tournaments = crazyTournaments;
+        }
+
+        for (uint8 i = 0; i < tournamentLength; i++) {
             for (uint8 j = 0; j < MAX_PARTICIPANTS; j++) {
                 if (
-                    keccak256(abi.encodePacked(tournaments[i].matchedParticipants[j]))
+                    keccak256(abi.encodePacked(tournaments[i].matchedParticipants[j].uniqueId))
                         == keccak256(abi.encodePacked(_playerName))
                 ) {
                     tournamentsParticipated++;
@@ -72,13 +171,23 @@ contract TournamentsStorage {
         return tournamentsParticipated;
     }
 
-    function getTournamentsWonByPlayer(string memory _playerName) public view returns (uint256) {
+    function getTournamentsWonByPlayer(string memory _playerName, gameType _gameType) public view returns (uint256) {
         uint256 tournamentsWon = 0;
+        uint256 tournamentLength = 0;
+        Tournament[] storage tournaments;
         uint256 winnersIndex = (MAX_PARTICIPANTS - 1) * 2;
 
-        for (uint8 i = 0; i < tournaments.length; i++) {
+        if (_gameType == gameType.CLASSIC) {
+            tournamentLength = classicTournaments.length;
+            tournaments = classicTournaments;
+        } else {
+            tournamentLength = crazyTournaments.length;
+            tournaments = crazyTournaments;
+        }
+
+        for (uint8 i = 0; i < tournamentLength; i++) {
             if (
-                keccak256(abi.encodePacked(tournaments[i].matchedParticipants[winnersIndex]))
+                keccak256(abi.encodePacked(tournaments[i].matchedParticipants[winnersIndex].uniqueId))
                     == keccak256(abi.encodePacked(_playerName))
             ) {
                 tournamentsWon++;
@@ -90,91 +199,143 @@ contract TournamentsStorage {
 
     // ACTION FUNCTIONS *********************************************************
 
-    function createTournament() public {
-        string[MAX_PARTICIPANTS] memory emptyParticipants;
+    function createTournament(gameType _gameType) public {
+        Tournament[] storage tournaments;
+
+        if (_gameType == gameType.CLASSIC) {
+            tournaments = classicTournaments;
+        } else {
+            tournaments = crazyTournaments;
+        }
+
+        tournaments.push();
+        Tournament storage newTournament = tournaments[tournaments.length - 1];
+
+        newTournament.id = tournaments.length - 1;
+        newTournament.date = getCurrentDate();
+        newTournament.time = getCurrentTime();
+        newTournament.maxParticipants = MAX_PARTICIPANTS;
+
         for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
-            emptyParticipants[i] = "";
+            newTournament.participants[i].uniqueId = "";
+            newTournament.participants[i].userAlias = "";
+            newTournament.participants[i].character = "";
         }
 
-        string[MAX_PARTICIPANTS * 2 - 1] memory emptyMatchedParticipants;
         for (uint8 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
-            emptyMatchedParticipants[i] = "";
+            newTournament.matchedParticipants[i].uniqueId = "";
+            newTournament.matchedParticipants[i].userAlias = "";
+            newTournament.matchedParticipants[i].character = "";
         }
 
-        uint8[(MAX_PARTICIPANTS - 1) * 2] memory emptyScores;
         for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
-            emptyScores[i] = 0;
+            newTournament.scores[i] = 0;
         }
-
-        tournaments.push(
-            Tournament({
-                id: tournaments.length,
-                date: getCurrentDate(),
-                time: getCurrentTime(),
-                maxParticipants: MAX_PARTICIPANTS,
-                participants: emptyParticipants,
-                matchedParticipants: emptyMatchedParticipants,
-                scores: emptyScores
-            })
-        );
     }
 
-    function joinTournament(uint256 _tournamentId, string memory _participantName) public onlyOwner {
-        uint8 tournamentLength = 0;
+    function joinTournament(uint256 _tournamentId, gameType _gameType, Participant[] memory _participants)
+        public
+        onlyOwner
+    {
+        Tournament[] storage tournaments;
 
-        if (isTournamentFull(_tournamentId)) {
-            createTournament();
+        if (_gameType == gameType.CLASSIC) {
+            tournaments = classicTournaments;
+        } else {
+            tournaments = crazyTournaments;
+        }
+
+        if (isTournamentFull(_tournamentId, _gameType)) {
+            createTournament(_gameType);
             _tournamentId++;
         }
 
-        while (
-            keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength]))
-                != keccak256(abi.encodePacked(""))
-        ) tournamentLength++;
+        for (uint8 i = 0; i < _participants.length; i++) {
+            tournaments[_tournamentId].participants[i].uniqueId = _participants[i].uniqueId;
+            tournaments[_tournamentId].participants[i].userAlias = _participants[i].userAlias;
+            tournaments[_tournamentId].participants[i].character = _participants[i].character;
 
-        tournaments[_tournamentId].participants[tournamentLength] = _participantName;
-        tournaments[_tournamentId].matchedParticipants[tournamentLength] = _participantName;
-        console.log(_participantName, "joined tournament", _tournamentId);
+            tournaments[_tournamentId].matchedParticipants[i].uniqueId = _participants[i].uniqueId;
+            tournaments[_tournamentId].matchedParticipants[i].userAlias = _participants[i].userAlias;
+            tournaments[_tournamentId].matchedParticipants[i].character = _participants[i].character;
+
+            console.log(_participants[i].uniqueId, "joined tournament", _tournamentId);
+        }
     }
 
-    function addWinner(uint8 _tournamentId, string memory _winnerName) public onlyOwner {
-        uint8 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winnerName) / 2 + MAX_PARTICIPANTS;
+    function addWinner(uint8 _tournamentId, gameType _gameType, string memory _winnerName) public onlyOwner {
+        uint8 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _winnerName) / 2 + MAX_PARTICIPANTS;
+        Tournament[] storage tournaments;
 
-        tournaments[_tournamentId].matchedParticipants[winnerNextIndex] = _winnerName;
+        if (_gameType == gameType.CLASSIC) {
+            tournaments = classicTournaments;
+        } else {
+            tournaments = crazyTournaments;
+        }
+
+        tournaments[_tournamentId].matchedParticipants[winnerNextIndex].uniqueId = _winnerName;
         console.log("Added winner", _winnerName, "to tournament", _tournamentId);
     }
 
     function saveScore(
         uint8 _tournamentId,
+        gameType _gameType,
         string memory _playerOneName,
         uint8 _playerOneScore,
         string memory _playerTwoName,
         uint8 _playerTwoScore
     ) public onlyOwner {
-        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _playerOneName);
+        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _playerOneName);
+        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _playerTwoName);
+        Tournament[] storage tournaments;
 
-        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _playerTwoName);
+        if (_gameType == gameType.CLASSIC) {
+            tournaments = classicTournaments;
+        } else {
+            tournaments = crazyTournaments;
+        }
 
         tournaments[_tournamentId].scores[updatedPlayerOneIndex] = _playerOneScore;
         tournaments[_tournamentId].scores[updatedPlayerTwoIndex] = _playerTwoScore;
-        console.log("Scores saved for Tournament");
-        console.logUint(_tournamentId);
-        console.log("Player One:");
-        console.log(_playerOneName);
+        console.log("Scores saved for Tournament:", _tournamentId);
+        console.log("Player One:", _playerOneName);
         console.logUint(_playerOneScore);
-        console.log("Player Two:");
-        console.log(_playerTwoName);
+        console.log("Player Two:", _playerTwoName);
         console.logUint(_playerTwoScore);
+    }
+
+    function saveScoreAndAddWinner(
+        uint8 _tournamentId,
+        gameType _gameType,
+        string memory _playerOneName,
+        uint8 _playerOneScore,
+        string memory _playerTwoName,
+        uint8 _playerTwoScore
+    ) public onlyOwner {
+        saveScore(_tournamentId, _gameType, _playerOneName, _playerOneScore, _playerTwoName, _playerTwoScore);
+
+        if (_playerOneScore > _playerTwoScore) {
+            addWinner(_tournamentId, _gameType, _playerOneName);
+        } else {
+            addWinner(_tournamentId, _gameType, _playerTwoName);
+        }
     }
 
     //HELPER FUNCTIONS **********************************************************
     /* Check if a tournament is full */
-    function isTournamentFull(uint256 _tournamentId) public view returns (bool) {
+    function isTournamentFull(uint256 _tournamentId, gameType _gameType) public view returns (bool) {
         uint8 tournamentLength = 0;
+        Tournament[] storage tournaments;
+
+        if (_gameType == gameType.CLASSIC) {
+            tournaments = classicTournaments;
+        } else {
+            tournaments = crazyTournaments;
+        }
 
         while (
             tournamentLength < MAX_PARTICIPANTS
-                && keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength]))
+                && keccak256(abi.encodePacked(tournaments[_tournamentId].participants[tournamentLength].uniqueId))
                     != keccak256(abi.encodePacked(""))
         ) tournamentLength++;
 
@@ -186,13 +347,24 @@ contract TournamentsStorage {
         return keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
     }
 
-    function findLastIndexOfPlayer(uint8 _tournamentId, string memory _playerName) public view returns (uint8) {
+    function findLastIndexOfPlayer(uint256 _tournamentId, gameType _gameType, string memory _playerName)
+        public
+        view
+        returns (uint8)
+    {
         uint8 lastIndex = 0;
         uint8 tournamentLength = MAX_PARTICIPANTS * 2 - 1;
+        Tournament[] storage tournaments;
+
+        if (_gameType == gameType.CLASSIC) {
+            tournaments = classicTournaments;
+        } else {
+            tournaments = crazyTournaments;
+        }
 
         for (uint8 i = 0; i < tournamentLength; i++) {
             if (
-                keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[i]))
+                keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[i].uniqueId))
                     == keccak256(abi.encodePacked(_playerName))
             ) {
                 lastIndex = i;
@@ -200,7 +372,7 @@ contract TournamentsStorage {
         }
 
         require(
-            keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[lastIndex]))
+            keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[lastIndex].uniqueId))
                 == keccak256(abi.encodePacked(_playerName)),
             "Player not found"
         );
