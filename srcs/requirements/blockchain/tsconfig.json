@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node"],
     "target": "ES2018" /* Specify ECMAScript target version */,
     "module": "CommonJS" /* Specify module system */,
     "outDir": "./dist" /* Output directory for compiled files */,
@@ -8,6 +9,6 @@
     "strict": true /* Enable strict type-checking */,
     "skipLibCheck": true /* Skip type checking of declaration files */
   },
-  "include": ["src/**/*", "src/fastify.d.ts", "scripts/*", "../blockchain/tools/frontend/blockchain.ts"] /* Specify the files to be included in compilation */,
+  "include": ["tools/frontend/scripts/**/*"] /* Specify the files to be included in compilation */,
   "exclude": ["node_modules"] /* Specify the files to be excluded from compilation */
 }

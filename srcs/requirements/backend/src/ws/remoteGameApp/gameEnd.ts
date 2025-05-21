@@ -5,6 +5,7 @@ import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
 import { gameTypeToGameMode } from '../../utils/helpers';
 import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
+import { contract } from '../../api/services/blockchain.services';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -90,18 +91,24 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.isEnding = true;
   gameArea.stop();
   if (gameArea.settings.playType === 'Tournament Play') {
-    // TODO: Add advance on tournament logic
-    // Blockchain: { gameType, user1ID, score1, user2ID, score2, tournamentID }
-    // const data = {
-    //   gameType: gameArea.settings.gameType,
-    //   user1Id: gameArea.leftPlayer.id,
-    //   score1: gameArea.leftPlayer.score, // hard-coded win
-    //   user2Id: gameArea.rightPlayer.id,
-    //   score2: gameArea.rightPlayer.score,
-    //   tournamentId: gameArea.tournamentId,
-    // };
+    const data = {
+      gameType: gameArea.settings.gameType,
+      user1Id: gameArea.leftPlayer.id,
+      score1: gameArea.leftPlayer.score,
+      user2Id: gameArea.rightPlayer.id,
+      score2: gameArea.rightPlayer.score,
+      tournamentId: gameArea.tournament!.id,
+    };
+    const tx = await contract.saveScoreAndAddWinner(
+      data.tournamentId,
+      data.gameType,
+      data.user1Id,
+      data.score1,
+      data.user2Id,
+      data.score2,
+    );
+    await tx.wait();
     gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
-    // TODO: What to do with losing player?
     return;
   }
   const gameEndMsg = {
