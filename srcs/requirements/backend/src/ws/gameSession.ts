@@ -18,7 +18,7 @@ export class GameSession {
 
   // TODO: Review placeholders
   constructor(ws: WebSocket, player1settings: leanGameSettings) {
-    this.round = 0;
+    this.round = 1;
     this.type = player1settings.playType;
     this.gameArea = null;
     this.tournamentId = null;

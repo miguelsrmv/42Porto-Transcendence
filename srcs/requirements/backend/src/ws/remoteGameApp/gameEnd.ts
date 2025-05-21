@@ -20,7 +20,7 @@ const characterNameToCharacter: Record<string, Character> = {
   'Donkey Kong': Character.DK,
 };
 
-function getCharacters(settings: gameSettings) {
+export function getCharacters(settings: gameSettings) {
   let character1: Character;
   let character2: Character;
   if (!settings.character1) {
@@ -45,6 +45,24 @@ function filterGameSettings(settings: gameSettings) {
     paddleColour1: settings.paddleColour1,
     paddleColour2: settings.paddleColour2,
     background: settings.background.name,
+  });
+}
+
+export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: GameArea) {
+  const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
+  const [character1, character2] = getCharacters(gameArea.settings);
+  await prisma.match.create({
+    data: {
+      user1Id: gameArea.leftPlayer.id,
+      user2Id: gameArea.rightPlayer.id,
+      user1Character: character1,
+      user2Character: character2,
+      winnerId: winningPlayer.id,
+      user1Score: gameArea.leftPlayer === winningPlayer ? 5 : gameArea.stats.left.goals,
+      user2Score: gameArea.rightPlayer === winningPlayer ? 5 : gameArea.stats.right.goals,
+      mode: gameMode,
+      settings: filterGameSettings(gameArea.settings),
+    },
   });
 }
 
