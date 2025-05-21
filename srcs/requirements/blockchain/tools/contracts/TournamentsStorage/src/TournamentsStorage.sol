@@ -2,12 +2,13 @@
 pragma solidity ^0.8.19;
 
 import {console} from "forge-std/Script.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
-
     uint8 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
+
+    using Strings for uint256;
 
     enum gameType {
         CLASSIC,
@@ -100,31 +101,33 @@ contract TournamentsStorage {
         return crazyTournaments[_id].scores;
     }
 
-    // Only works for tournaments of 8 partciants
     function getLastThreeTournamentsPosition(string memory userId, TournamentIdAndType[] memory data)
         public
         view
-        returns (string[] memory)
+        returns (string[3] memory)
     {
-        string[] memory placements;
+        string[3] memory placements;
 
         for (uint256 i = 0; i < 3; i++) {
             Tournament memory tournament = getTournament(data[i].id, data[i].gameType);
             uint256 lastIndex = findLastIndexOfPlayer(tournament.id, data[i].gameType, userId);
+            uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
 
-            if (lastIndex == MAX_PARTICIPANTS) {
+            if (lastIndex == maxNumberOfPlaces) {
                 placements[i] = "Tournament Winner!";
-            } else if (lastIndex >= MAX_PARTICIPANTS - 2 || lastIndex <= MAX_PARTICIPANTS - 1) {
+            } else if (lastIndex >= maxNumberOfPlaces - 2 && lastIndex <= maxNumberOfPlaces - 1) {
                 placements[i] = "Final";
-            } else if (lastIndex >= MAX_PARTICIPANTS - 6 || lastIndex <= MAX_PARTICIPANTS - 3) {
-                placements[i] = "Semi-inal";
-            } else if (lastIndex >= MAX_PARTICIPANTS - 14 || lastIndex <= MAX_PARTICIPANTS - 7) {
+            } else if (lastIndex >= maxNumberOfPlaces - 6 && lastIndex <= maxNumberOfPlaces - 3) {
+                placements[i] = "Semi-final";
+            } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
                 placements[i] = "Quarter-final";
-            } else if (MAX_PARTICIPANTS > 8) {
+            } else if (maxNumberOfPlaces > 14) {
                 uint256 nbrRound = MAX_PARTICIPANTS;
+                uint256 tier = nbrRound;
 
-                while (lastIndex >= nbrRound) {
+                while (lastIndex < tier) {
                     nbrRound /= 2;
+                    tier += nbrRound;
                 }
 
                 string memory strRoundName = "Round of ";
@@ -132,15 +135,6 @@ contract TournamentsStorage {
 
                 placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
             }
-            // if (lastIndex >= 0 || lastIndex <= 7) {
-            //     placements[i] = "Quarter-final";
-            // } else if (lastIndex >= 8 || lastIndex <= 11) {
-            //     placements[i] = "Semi-final";
-            // } else if (lastIndex >= 12 || lastIndex <= 13) {
-            //     placements[i] = "Final";
-            // } else {
-            //     placements[i] = "Tournament Winner!";
-            // }
         }
         return placements;
     }
