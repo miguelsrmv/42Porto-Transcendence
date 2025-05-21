@@ -236,20 +236,11 @@ describe('users', () => {
     expect(response.json()).toEqual(
       expect.objectContaining({
         stats: expect.objectContaining({
-          classic: expect.objectContaining({
-            totalMatches: 0,
-            wins: 0,
-            losses: 0,
-            points: 0,
-            winRate: 0,
-          }),
-          crazy: expect.objectContaining({
-            totalMatches: 0,
-            wins: 0,
-            losses: 0,
-            points: 0,
-            winRate: 0,
-          }),
+          totalMatches: 0,
+          wins: 0,
+          losses: 0,
+          points: 0,
+          winRate: 0,
           rank: 1,
         }),
       }),
