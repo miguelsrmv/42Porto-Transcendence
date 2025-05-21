@@ -380,6 +380,8 @@ async function updateNodeWithLeaderboardPlayer(
  * @param rank The rank of the player to highlight.
  * @param colour The color to use for highlighting.
  */
+// TODO: If multiple players are #1, highlight all of them in gold
+// TODO: Make sure only own player is highlighted in green
 function highlightPlayer(rank: number, colour: string): void {
   const targetPlayer = document.querySelector(`[data-ranking="${rank}"]`);
   if (!targetPlayer) {
