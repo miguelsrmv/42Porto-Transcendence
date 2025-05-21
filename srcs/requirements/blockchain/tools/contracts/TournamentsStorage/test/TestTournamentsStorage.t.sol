@@ -313,6 +313,135 @@ contract TournamentsStorageTest is Test {
         tournamentsStorage.findLastIndexOfPlayer(0, TournamentsStorage.gameType.CRAZY, "Non_participant");
     }
 
+    function testGetLastThreeTournamentsPosition() public {
+        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        TournamentsStorage.Participant[] memory participants =
+            new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
+
+        // Create 3 equal tournaments
+        for (uint8 i = 0; i < 3; i++) {
+            // 1. Join all players
+            for (uint8 j = 0; j < n; j++) {
+                string memory playerName = string(abi.encodePacked("P", vm.toString(j)));
+                participants[j] = TournamentsStorage.Participant({uniqueId: playerName, userAlias: playerName, character: playerName});
+            }
+            tournamentsStorage.joinTournament(i, TournamentsStorage.gameType.CLASSIC, participants);
+            tournamentsStorage.joinTournament(i, TournamentsStorage.gameType.CRAZY, participants);
+
+            // 2. Simulate bracket wins (left-side always wins)
+            // matchedParticipants[0..n-1] are initial players
+            for (uint8 round = 1; round < n; round *= 2) {
+                for (uint8 j = 0; j < n; j += round * 2) {
+                    // Pick the left-side player of the current match
+                    uint8 leftIdx = j;
+                    string memory classicWinner = tournamentsStorage.getMatchedParticipants(
+                        i, TournamentsStorage.gameType.CLASSIC
+                    )[leftIdx].uniqueId;
+                    string memory crazyWinner = tournamentsStorage.getMatchedParticipants(
+                        i, TournamentsStorage.gameType.CRAZY
+                    )[leftIdx].uniqueId;
+
+                    // Compute winner index in tree
+                    tournamentsStorage.addWinner(i, TournamentsStorage.gameType.CLASSIC, classicWinner);
+                    tournamentsStorage.addWinner(i, TournamentsStorage.gameType.CRAZY, crazyWinner);
+                }
+            }
+            tournamentsStorage.createTournament(TournamentsStorage.gameType.CLASSIC);
+            tournamentsStorage.createTournament(TournamentsStorage.gameType.CRAZY);
+        }
+
+        TournamentsStorage.TournamentIdAndType[3] memory classicData;
+        TournamentsStorage.TournamentIdAndType[3] memory crazyData;
+
+        for (uint8 i = 0; i < 3; i++) {
+            classicData[i].id = i;
+            classicData[i].gameType = TournamentsStorage.gameType.CLASSIC;
+            crazyData[i].id = i;
+            crazyData[i].gameType = TournamentsStorage.gameType.CRAZY;
+        }
+
+        string memory name = "P0";
+        string[3] memory positions;
+        positions[0] = "Tournament Winner!";
+        positions[1] = "Tournament Winner!";
+        positions[2] = "Tournament Winner!";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+
+        name = "P1";
+        positions[0] = "Quarter-final";
+        positions[1] = "Quarter-final";
+        positions[2] = "Quarter-final";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+
+        name = "P2";
+        positions[0] = "Semi-final";
+        positions[1] = "Semi-final";
+        positions[2] = "Semi-final";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+
+        name = "P3";
+        positions[0] = "Quarter-final";
+        positions[1] = "Quarter-final";
+        positions[2] = "Quarter-final";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+
+        name = "P4";
+        positions[0] = "Final";
+        positions[1] = "Final";
+        positions[2] = "Final";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+
+        name = "P5";
+        positions[0] = "Quarter-final";
+        positions[1] = "Quarter-final";
+        positions[2] = "Quarter-final";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+
+        name = "P6";
+        positions[0] = "Semi-final";
+        positions[1] = "Semi-final";
+        positions[2] = "Semi-final";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+
+        name = "P7";
+        positions[0] = "Quarter-final";
+        positions[1] = "Quarter-final";
+        positions[2] = "Quarter-final";
+
+        for (uint8 i = 0; i < 3; i++) {
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+        }
+    }
+
     function testGetTournamentsWonByPlayer() public {
         uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =

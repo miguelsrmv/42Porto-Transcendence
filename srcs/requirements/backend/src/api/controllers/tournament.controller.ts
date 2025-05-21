@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
-import { contractSigner, contractProvider } from '../services/blockchain.services';
+import { Character, GameMode } from '@prisma/client';
+import { contractSigner, contractProvider } from '../services/blockchain.services'
 
 export type TournamentPlayer = {
   tournamentId: string;
@@ -18,11 +19,17 @@ export type MatchInfo = {
   scoreTwo: number;
 };
 
+export type TournamentAndType = {
+  tournamentId: number;
+  type: GameMode;
+}
+
 export type TournamentsFromPlayer = {
   userId: string;
   classicTournamentsIds: number[];
   crazyTournamentsIds: number[];
-};
+  tournamentsIdsandTypes: TournamentAndType[];
+}
 
 export type WinnerInfo = {
   tournamentId: string;
@@ -78,7 +85,22 @@ export async function addMatchWinner(
 }
 
 export async function getUserLastThreeTournaments(
-  request: FastifyRequest<{ Body: TournamentsFromPlayer; Params: IParams }>,
+  request: FastifyRequest<{ Body: TournamentsFromPlayer, Params: IParams}>,
+  reply: FastifyReply,
+) {
+  try {
+    const tx = await contractProvider.getLastThreeTournamentsPosition(BigInt(request.params.id), request.body.tournamentsIdsandTypes);
+    await tx.wait();
+
+    reply.send("OK");
+  } catch (error) {
+    console.error('Error in addWinner:', error);
+    reply.status(500).send({ error: 'Failed to add winner' });
+  }
+}
+
+export async function getUserTournaments(
+  request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
   try {
@@ -99,4 +121,3 @@ export async function getUserLastThreeTournaments(
   }
 }
 
-// quarter-finals, semi-finals, final, winner
