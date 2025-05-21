@@ -17,4 +17,35 @@ export async function initializeView(): Promise<void> {
     navigate('landing-page');
     return;
   }
+  initializeLeftPanel();
+  initializeRightPanel();
 }
+
+function initializeLeftPanel(): void {
+  initializeTopLeftBoard();
+  initializeBottomLeftBoard();
+}
+
+async function initializeTopLeftBoard(): Promise<void> {
+  const userId = window.localStorage.getItem('ID');
+
+  try {
+    const response = await fetch(`api/users/${userId}/stats`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching user stats:', response.status);
+      return;
+    }
+    const stats = await response.json();
+    console.dir(stats);
+  } catch (error) {
+    console.error('Network error fetching user stats:', error);
+    return;
+  }
+}
+
+function initializeBottomLeftBoard(): void {}
+
+function initializeRightPanel(): void {}
