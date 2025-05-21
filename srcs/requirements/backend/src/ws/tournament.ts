@@ -7,6 +7,7 @@ import { prisma } from '../utils/prisma';
 import { gameTypeToGameMode } from '../utils/helpers';
 
 const NBR_PARTICIPANTS = 8;
+const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
 
 export enum tournamentState {
   creating,
@@ -70,13 +71,14 @@ export class Tournament {
   }
 
   isFull() {
-    const availableSession = this.sessions.find((session) => !session.isFull());
-    return availableSession === undefined && this.sessions.length === NBR_PARTICIPANTS;
+    return (
+      this.sessions.length === NBR_SESSIONS_FIRST_ROUND &&
+      this.sessions.every((session) => session.isFull())
+    );
   }
 
   isEmpty() {
-    const availableSession = this.sessions.find((session) => !session.isEmpty());
-    return this.sessions.length === 0 || !availableSession;
+    return this.sessions.length === 0 || this.sessions.every((session) => session.isEmpty());
   }
 
   broadcastToAll(message: string) {
@@ -90,11 +92,10 @@ export class Tournament {
     }
   }
 
-  getAllPlayerIds() {
-    const playerIds = this.sessions.map((session) => {
-      return session.getPlayers();
-    });
-    return playerIds.flat();
+  getAllPlayerIds(): string[] {
+    // NOTE: Set removes any duplicates
+    const ids = new Set<string>(this.sessions.flatMap((session) => session.getPlayers()));
+    return Array.from(ids);
   }
 
   async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
