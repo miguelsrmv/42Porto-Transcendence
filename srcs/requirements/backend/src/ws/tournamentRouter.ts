@@ -21,19 +21,15 @@ function getTournamentCreateData(tournament: Tournament) {
         userId: session.gameArea.leftPlayer.id,
         alias: session.gameArea.settings.alias1,
         character: session.gameArea.settings.character1?.name,
-        gameType: tournament.type,
-        tournamentId: tournament.id,
       },
       {
         userId: session.gameArea.rightPlayer.id,
         alias: session.gameArea.settings.alias2,
         character: session.gameArea.settings.character2?.name,
-        gameType: tournament.type,
-        tournamentId: tournament.id,
       },
     ];
   });
-  return playersData;
+  return { tournamentId: tournament.id, gameType: tournament.type, participants: playersData };
 }
 
 async function joinGameHandler(
