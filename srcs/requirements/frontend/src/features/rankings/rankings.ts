@@ -20,6 +20,7 @@ export async function initializeView(): Promise<void> {
   }
   await initializeLeftPanel();
   await initializeRightPanel();
+  setupLeaderboardSearch();
 }
 
 async function initializeLeftPanel(): Promise<void> {
@@ -118,11 +119,11 @@ async function initializeMatchesBoard(): Promise<void> {
     }
     const recentMatchesJson: matchData[] = await response.json();
     const recentMatchesArray: matchData[] = recentMatchesJson.slice(0, 3);
-    recentMatchesArray.forEach(async (element: matchData) => {
+    for (let index: number = 0; index < 3; index++) {
       const clone = recentMatchTemplate.content.cloneNode(true) as DocumentFragment;
-      await updateNodeWithRecentMatchesData(clone, element);
+      await updateNodeWithRecentMatchesData(clone, recentMatchesArray[index]);
       recentMatchesSection.appendChild(clone);
-    });
+    }
   } catch (error) {
     console.error('Network error fetching recent matches:', error);
     return;
@@ -238,44 +239,44 @@ async function updateNodeWithLeaderboardPlayer(
   clone: DocumentFragment,
   element: leaderboardData,
 ): Promise<void> {
-  const user = clone.querySelector('#leaderboard-player') as HTMLDivElement;
+  const user = clone.querySelector('.leaderboard-player') as HTMLDivElement;
   if (!user) {
     console.log("Couldn't find player");
     return;
   }
 
-  const userAvatar = clone.querySelector('#leaderboard-player-avatar') as HTMLImageElement;
+  const userAvatar = clone.querySelector('.leaderboard-player-avatar') as HTMLImageElement;
   if (!userAvatar) {
     console.log("Couldn't find avatar");
     return;
   }
 
-  const userRank = clone.querySelector('#leaderboard-player-ranking') as HTMLSpanElement;
+  const userRank = clone.querySelector('.leaderboard-player-ranking') as HTMLSpanElement;
   if (!userRank) {
     console.log("Couldn't find leaderboard rank element");
     return;
   }
 
-  const userName = clone.querySelector('#leaderboard-player-username') as HTMLSpanElement;
+  const userName = clone.querySelector('.leaderboard-player-username') as HTMLSpanElement;
   if (!userName) {
     console.log("Couldn't find leaderboard username element");
     return;
   }
 
-  const userPoints = clone.querySelector('#leaderboard-player-points') as HTMLDivElement;
+  const userPoints = clone.querySelector('.leaderboard-player-points') as HTMLDivElement;
   if (!userPoints) {
     console.log("Couldn't find leaderboard points element");
     return;
   }
 
-  const userWL = clone.querySelector('#leaderboard-player-wl') as HTMLDivElement;
+  const userWL = clone.querySelector('.leaderboard-player-wl') as HTMLDivElement;
   if (!userWL) {
     console.log("Couldn't find leaderboard leaderboard wl element");
     return;
   }
 
   const userTournamentsWon = clone.querySelector(
-    '#leaderboard-player-tournaments-won',
+    '.leaderboard-player-tournaments-won',
   ) as HTMLDivElement;
   if (!userTournamentsWon) {
     console.log("Couldn't find leaderboard leaderboard tournamentsWon element");
@@ -312,8 +313,6 @@ async function updateNodeWithLeaderboardPlayer(
     const userData = await userDataResponse.json();
     userName.innerText = userData.username;
     userAvatar.src = userData.avatarUrl;
-    console.log('UserData', userData);
-    console.log('Stats Data', stats);
   } catch (error) {
     console.error('Network error fetching user stats:', error);
     return;
@@ -327,13 +326,13 @@ function highlightPlayer(rank: number, colour: string): void {
     return;
   }
 
-  const targetPlayerRanking = targetPlayer.querySelector('#leaderboard-player-ranking');
+  const targetPlayerRanking = targetPlayer.querySelector('.leaderboard-player-ranking');
   if (!targetPlayerRanking) {
     console.log('Target player ranking not found');
     return;
   }
 
-  const targetPlayerCircle = targetPlayer.querySelector('#leaderboard-player-round-circle');
+  const targetPlayerCircle = targetPlayer.querySelector('.leaderboard-player-round-circle');
   if (!targetPlayerCircle) {
     console.log('Target player circle spot not found');
     return;
@@ -346,8 +345,34 @@ function highlightPlayer(rank: number, colour: string): void {
   targetPlayerCircle.classList.add(`border-${colour}-400`);
 }
 
-// TODO: Replace for each by proper for loops
-// TODO: Update leaderboard avatars
-// TODO: Search bar
+function setupLeaderboardSearch(): void {
+  const searchInput = document.getElementById('leaderboard-search') as HTMLInputElement;
+  if (!searchInput) {
+    console.log('Leaderboard Search element not found');
+    return;
+  }
+  const rankingsList = document.getElementById('rankings-list');
+  if (!rankingsList) {
+    console.log('Rankings list not found');
+    return;
+  }
+
+  searchInput.addEventListener('input', () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    const players = rankingsList.querySelectorAll('.leaderboard-player');
+
+    players.forEach((player) => {
+      const nameElem = player.querySelector('.leaderboard-player-username');
+      if (!nameElem) return;
+
+      const name = nameElem.textContent?.toLowerCase() || '';
+      if (name.includes(searchTerm)) {
+        (player as HTMLElement).style.display = '';
+      } else {
+        (player as HTMLElement).style.display = 'none';
+      }
+    });
+  });
+}
+
 // TODO: Make usernames clickable
-// TODO: Edit colours appropriately
