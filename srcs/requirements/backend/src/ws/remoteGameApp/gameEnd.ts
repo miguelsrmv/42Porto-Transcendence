@@ -4,6 +4,7 @@ import { Player } from './player';
 import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
 import { gameTypeToGameMode } from '../../utils/helpers';
+import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -82,23 +83,6 @@ async function createMatch(winningPlayer: Player, gameArea: GameArea) {
       settings: filterGameSettings(gameArea.settings),
     },
   });
-}
-
-async function updateLeaderboardRemote(winningPlayer: Player, losingPlayer: Player) {
-  await prisma.leaderboard.update({
-    where: { userId: winningPlayer.id },
-    data: { score: { increment: 3 } },
-  });
-
-  const losingPlayerRecord = await prisma.leaderboard.findUnique({
-    where: { userId: losingPlayer.id },
-  });
-  if (losingPlayerRecord && losingPlayerRecord.score > 0) {
-    await prisma.leaderboard.update({
-      where: { userId: losingPlayer.id },
-      data: { score: { decrement: 1 } },
-    });
-  }
 }
 
 export async function endGame(winningPlayer: Player, gameArea: GameArea) {

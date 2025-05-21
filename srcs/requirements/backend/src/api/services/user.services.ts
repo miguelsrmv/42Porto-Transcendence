@@ -1,5 +1,5 @@
 import { Match } from '@prisma/client';
-import { prisma } from '../../utils/prisma';
+import { getUserRank, getUserScore } from './leaderboard.services';
 
 export async function getUserGlobalStats(matches: Match[], userId: string) {
   const totalMatches = matches.length;
@@ -14,22 +14,4 @@ export async function getUserGlobalStats(matches: Match[], userId: string) {
     points: await getUserScore(userId),
     rank: await getUserRank(userId),
   };
-}
-
-export async function getUserRank(id: string) {
-  const userLeaderboard = await prisma.leaderboard.findUniqueOrThrow({
-    where: { userId: id },
-  });
-  const userScore = userLeaderboard.score;
-  const betterPlayers = await prisma.leaderboard.count({
-    where: { score: { gt: userScore } },
-  });
-  return betterPlayers + 1;
-}
-
-export async function getUserScore(id: string) {
-  const userLeaderboard = await prisma.leaderboard.findUniqueOrThrow({
-    where: { userId: id },
-  });
-  return userLeaderboard.score;
 }
