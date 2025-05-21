@@ -10,12 +10,15 @@ import {
 export class GameSession {
   type: playType;
   players: Map<WebSocket, string>;
+  winner?: string;
+  round: number;
   settings: gameSettings;
   gameArea: GameArea | null;
   tournamentId: string | null;
 
   // TODO: Review placeholders
   constructor(ws: WebSocket, player1settings: leanGameSettings) {
+    this.round = 0;
     this.type = player1settings.playType;
     this.gameArea = null;
     this.tournamentId = null;
