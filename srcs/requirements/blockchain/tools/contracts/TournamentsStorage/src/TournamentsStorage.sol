@@ -29,6 +29,11 @@ contract TournamentsStorage {
         uint8[(MAX_PARTICIPANTS - 1) * 2] scores;
     }
 
+    struct TournamentIdAndType {
+        uint256 id;
+        TournamentsStorage.gameType gameType;
+    }
+
     Tournament[] public classicTournaments;
     Tournament[] public crazyTournaments;
 
@@ -92,6 +97,25 @@ contract TournamentsStorage {
             return classicTournaments[_id].scores;
         }
         return crazyTournaments[_id].scores;
+    }
+
+    function getLastThreeTournamentsPosition(string memory userId, TournamentIdAndType[] memory data) public view returns (string[] memory) {
+        string[] memory placements;
+        
+        for (uint256 i = 0; i < 3; i++) {
+            Tournament memory tournament = getTournament(data[i].id, data[i].gameType);
+            uint256 lastTier = findLastIndexOfPlayer(tournament.id, data[i].gameType, userId);
+            if (lastTier >= 0 || lastTier <= 7) {
+                placements[i] = "Quarter-finals";
+            } else if (lastTier >= 8 || lastTier <= 11) {
+                placements[i] = "Semi-finals";
+            } else if (lastTier >= 12 || lastTier <= 13) {
+                placements[i] = "Final";
+            } else {
+                placements[i] = "Winner!";
+            }
+        }
+        return placements;
     }
 
     function getNumberOfTournamentsParticipatedByPlayer(string memory _playerName, gameType _gameType)
@@ -302,7 +326,7 @@ contract TournamentsStorage {
         return keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
     }
 
-    function findLastIndexOfPlayer(uint8 _tournamentId, gameType _gameType, string memory _playerName)
+    function findLastIndexOfPlayer(uint256 _tournamentId, gameType _gameType, string memory _playerName)
         public
         view
         returns (uint8)
