@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
-import { getUserClassicStats, getUserCrazyStats, getUserRank } from '../services/user.services';
+import { getUserGlobalStats, getUserRank } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
@@ -306,13 +306,8 @@ export async function getUserStats(
     const userMatches = await prisma.match.findMany({
       where: { OR: [{ user1Id: request.params.id }, { user2Id: request.params.id }] },
     });
-    const stats = {
-      classic: getUserClassicStats(userMatches, request.params.id),
-      crazy: getUserCrazyStats(userMatches, request.params.id),
-      rank: await getUserRank(request.params.id),
-    };
 
-    reply.send({ stats });
+    reply.send({ stats: await getUserGlobalStats(userMatches, request.params.id) });
   } catch (error) {
     handleError(error, reply);
   }
