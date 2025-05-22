@@ -22,7 +22,7 @@ export interface background {
   imagePath: string;
 }
 
-export type playType = 'Local Play' | 'Remote Play' | 'Tournament Play';
+export type playType = 'Remote Play' | 'Tournament Play';
 
 export type gameType = 'Classic Pong' | 'Crazy Pong';
 
