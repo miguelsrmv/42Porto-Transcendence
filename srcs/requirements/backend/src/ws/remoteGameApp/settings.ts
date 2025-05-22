@@ -48,3 +48,10 @@ export interface leanGameSettings {
   paddleColour: string;
   character: character | null;
 }
+
+export interface playerSettings {
+  playerID: string;
+  alias: string;
+  paddleColour: string;
+  character: character | null;
+}
