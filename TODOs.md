@@ -17,3 +17,4 @@
 - Test waiting player to remote and then remove a player in the match. Does the third player go into the match?
 - Tournament brackets management
 - Connect tournament logic to Blockchain
+- Make remote and tournament session management more similar
