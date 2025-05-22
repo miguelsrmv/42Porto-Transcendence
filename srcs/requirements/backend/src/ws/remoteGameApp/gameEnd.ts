@@ -91,24 +91,14 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.isEnding = true;
   gameArea.stop();
   if (gameArea.settings.playType === 'Tournament Play') {
-    const data = {
-      gameType: gameArea.settings.gameType,
-      user1Id: gameArea.leftPlayer.id,
-      score1: gameArea.leftPlayer.score,
-      user2Id: gameArea.rightPlayer.id,
-      score2: gameArea.rightPlayer.score,
-      tournamentId: gameArea.tournament!.id,
-    };
-    await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
-    // TODO: Add tournament tree info
-    gameArea.session.broadcastEndGameMessage(winningPlayer);
+    await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer);
     const tx = await contractSigner.saveScoreAndAddWinner(
-      data.tournamentId,
-      data.gameType,
-      data.user1Id,
-      data.score1,
-      data.user2Id,
-      data.score2,
+      gameArea.tournament!.id,
+      gameArea.settings.gameType,
+      gameArea.leftPlayer.id,
+      gameArea.leftPlayer.score,
+      gameArea.rightPlayer.id,
+      gameArea.rightPlayer.score,
     );
     await tx.wait();
     return;
