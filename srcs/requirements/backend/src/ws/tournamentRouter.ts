@@ -17,7 +17,11 @@ async function joinGameHandler(
   playerSettings: leanGameSettings,
 ) {
   if (getPlayerTournament(socket)) return;
-  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
+  if (
+    !areGameSettingsValid(socket, userId, playerSettings) ||
+    playerSettings.playType !== 'Tournament Play'
+  )
+    return;
   await attributePlayerToTournament(socket, playerSettings);
   const playerTournament = getPlayerTournament(socket);
   if (playerTournament && playerTournament.isFull()) await playerTournament.start();

@@ -49,7 +49,11 @@ async function joinGameHandler(
   playerSettings: leanGameSettings,
 ) {
   if (playerIsInASession(playerSettings.playerID)) return;
-  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
+  if (
+    !areGameSettingsValid(socket, userId, playerSettings) ||
+    playerSettings.playType !== 'Remote Play'
+  )
+    return;
   await attributePlayerToSession(socket, playerSettings);
   const playerSession = getGameSession(socket);
   if (playerSession && playerSession.isFull()) playerSession.startGame();
