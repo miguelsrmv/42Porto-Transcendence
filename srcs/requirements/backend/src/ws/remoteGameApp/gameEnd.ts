@@ -99,6 +99,8 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
       score2: gameArea.rightPlayer.score,
       tournamentId: gameArea.tournament!.id,
     };
+    await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
     const tx = await contractSigner.saveScoreAndAddWinner(
       data.tournamentId,
       data.gameType,
@@ -108,20 +110,9 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
       data.score2,
     );
     await tx.wait();
-    gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
     return;
   }
-  const gameEndMsg = {
-    type: 'game_end',
-    winningPlayer: winningPlayer.side,
-    ownSide: 'left',
-    stats: gameArea.stats,
-  };
   await createMatch(winningPlayer, gameArea);
   await updateLeaderboardRemote(winningPlayer, gameArea.getOtherPlayer(winningPlayer));
-  if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
-  gameEndMsg.ownSide = 'right';
-  if (gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
+  gameArea.session.broadcastEndGameMessage(winningPlayer);
 }

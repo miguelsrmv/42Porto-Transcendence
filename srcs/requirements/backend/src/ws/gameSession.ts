@@ -7,6 +7,7 @@ import {
   getRandomBackground,
 } from './remoteGameApp/sessionManagement';
 import { Tournament } from './tournament';
+import { Player } from './remoteGameApp/player';
 
 export class GameSession {
   type: playType;
@@ -72,5 +73,20 @@ export class GameSession {
         socket.send(message);
       }
     }
+  }
+
+  broadcastEndGameMessage(winningPlayer: Player) {
+    if (!this.gameArea) return;
+    const gameEndMsg = {
+      type: 'game_end',
+      winningPlayer: winningPlayer.side,
+      ownSide: 'left',
+      stats: this.gameArea.stats,
+    };
+    if (this.gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
+      this.gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
+    gameEndMsg.ownSide = 'right';
+    if (this.gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
+      this.gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
   }
 }
