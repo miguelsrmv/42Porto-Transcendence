@@ -8,29 +8,8 @@ import {
 } from './tournamentManagement';
 import { areGameSettingsValid } from './remoteGameRouter';
 import { leanGameSettings } from './remoteGameApp/settings';
-import { initializeRemoteGame } from './remoteGameApp/game';
 import { isPlayerInput } from './remoteGameApp/helpers';
-import { Tournament } from './tournament';
 import { contractSigner } from '../api/services/blockchain.services';
-
-function getTournamentCreateData(tournament: Tournament) {
-  const playersData = tournament.sessions.map((session) => {
-    if (!session.gameArea) return;
-    return [
-      {
-        userId: session.gameArea.leftPlayer.id,
-        alias: session.gameArea.settings.alias1,
-        character: session.gameArea.settings.character1?.name,
-      },
-      {
-        userId: session.gameArea.rightPlayer.id,
-        alias: session.gameArea.settings.alias2,
-        character: session.gameArea.settings.character2?.name,
-      },
-    ];
-  });
-  return { tournamentId: tournament.id, gameType: tournament.type, participants: playersData };
-}
 
 async function joinGameHandler(
   socket: WebSocket,
@@ -41,25 +20,7 @@ async function joinGameHandler(
   if (!areGameSettingsValid(socket, userId, playerSettings)) return;
   await attributePlayerToTournament(socket, playerSettings);
   const playerTournament = getPlayerTournament(socket);
-  if (playerTournament && playerTournament.isFull()) {
-    playerTournament.broadcastSettingsToSessions();
-    for (const session of playerTournament.sessions) initializeRemoteGame(session);
-    const data = getTournamentCreateData(playerTournament);
-    const tx = await contractSigner.joinTournament(
-      data.tournamentId,
-      data.gameType,
-      data.participants,
-    );
-    await tx.wait();
-    await playerTournament.addTournamentToDB(
-      playerTournament.id,
-      playerTournament.type,
-      playerTournament.getAllPlayerIds(),
-    );
-    for (const session of playerTournament.sessions) initializeRemoteGame(session);
-    const gameStartMsg: ServerMessage = { type: 'game_start' };
-    playerTournament.broadcastToAll(JSON.stringify(gameStartMsg));
-  }
+  if (playerTournament && playerTournament.isFull()) await playerTournament.start();
 }
 
 async function stopGameHandler(socket: WebSocket) {
@@ -72,7 +33,7 @@ async function stopGameHandler(socket: WebSocket) {
   const playerWhoLeft = gameArea.getPlayerByWebSocket(socket);
   removePlayerTournament(socket);
   const playerWhoStayed = gameArea.getOtherPlayer(playerWhoLeft);
-  // TODO: Update data on Blockchain
+  // TODO: Check if order of users matter
   const data = {
     gameType: gameArea.settings.gameType,
     user1Id: playerWhoStayed.id,
@@ -83,9 +44,9 @@ async function stopGameHandler(socket: WebSocket) {
   };
   if (playerWhoStayed.socket.readyState === WebSocket.OPEN)
     playerWhoStayed.socket.send(JSON.stringify(playerLeft));
-  // TODO: Advance tournament to next match
-  // TODO: set other player as winner (score to 5 ?)
-  // TODO: Get variables to add to bellow function
+  await gameArea.tournament!.updateSessionScore(gameArea.session, playerWhoStayed.id);
+  // TODO: Add tournament tree info
+  gameArea.session.broadcastEndGameMessage(playerWhoStayed);
   const tx = await contractSigner.saveScoreAndAddWinner(
     data.tournamentId,
     data.gameType,
@@ -95,7 +56,6 @@ async function stopGameHandler(socket: WebSocket) {
     data.score2,
   );
   await tx.wait();
-  // { gameType, user1ID, score1, user2ID, score2, tournamentID }
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
