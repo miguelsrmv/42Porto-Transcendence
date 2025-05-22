@@ -6,9 +6,8 @@ import {
   removePlayer,
   removePlayerBySocket,
   removeSession,
-} from './remoteGameApp/sessionManagement';
+} from './sessionManagement';
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
-import { initializeRemoteGame } from './remoteGameApp/game';
 import { FastifyRequest } from 'fastify';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isGameType, isPlayerInput, isPlayType } from './remoteGameApp/helpers';
@@ -55,12 +54,14 @@ async function joinGameHandler(
   await attributePlayerToSession(socket, playerSettings);
   const playerSession = getGameSession(socket);
   if (playerSession && playerSession.isFull()) {
-    const response: ServerMessage = { type: 'game_setup', settings: playerSession.settings };
-    const [ws1, ws2] = Array.from(playerSession.players.keys());
-    broadcastMessageTo(ws1, ws2, JSON.stringify(response));
-    initializeRemoteGame(playerSession);
+    const response: ServerMessage = {
+      type: 'game_setup',
+      settings: playerSession.getJointSettings(),
+    };
+    playerSession.broadcastMessage(JSON.stringify(response));
+    playerSession.startGame();
     const gameStartMsg: ServerMessage = { type: 'game_start' };
-    broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
+    playerSession.broadcastMessage(JSON.stringify(gameStartMsg));
   }
 }
 

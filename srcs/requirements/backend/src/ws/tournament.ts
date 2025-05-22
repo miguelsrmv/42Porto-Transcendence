@@ -1,11 +1,12 @@
 import { randomUUID } from 'crypto';
-import { GameSession } from './gameSession';
+import { GameSession, PlayerInfo } from './gameSession';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
-import { GameSessionSerializable, ServerMessage } from './remoteGameApp/types';
+import { ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
 import { gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
+import { contractSigner } from '../api/services/blockchain.services';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -16,57 +17,46 @@ export enum tournamentState {
   ongoing,
   ended,
 }
-
 export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
   type: gameType;
   id: string = randomUUID();
   currentRound: number = 1;
+  players: PlayerInfo[] = [];
 
   constructor(type: gameType) {
     this.type = type;
   }
 
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
-    const newSession = new GameSession(ws, playerSettings);
+    const newSession = new GameSession(playerSettings.gameType, playerSettings.playType);
     newSession.tournament = this;
-    await newSession.updateAvatar1(playerSettings.playerID);
+    await newSession.setPlayer(ws, playerSettings);
 
-    // For testing purposes
-    const serializableSession: GameSessionSerializable = {
-      players: [...newSession.players.values()], // only the IDs
-      settings: newSession.settings,
-    };
-    console.log(
-      `New ${playerSettings.gameType} GameSession created: `,
-      JSON.stringify(serializableSession),
-    );
+    console.log(`New ${playerSettings.gameType} GameSession created: `, JSON.stringify(newSession));
     this.sessions.push(newSession);
   }
 
   async attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
     for (const session of this.sessions) {
-      if (session.players.size === 1) {
-        session.players.set(ws, playerSettings.playerID);
-        await session.mergePlayer2IntoGameSettings(playerSettings);
-
-        // For testing purposes
-        const serializableSession: GameSessionSerializable = {
-          players: [...session.players.values()], // only the IDs
-          settings: session.settings,
-        };
+      if (session.players.length === 1) {
+        await session.setPlayer(ws, playerSettings);
 
         console.log(
           `Player matched to a ${playerSettings.gameType} GameSession: `,
-          JSON.stringify(serializableSession),
+          JSON.stringify(session),
         );
       } else this.createSession(ws, playerSettings);
     }
   }
 
+  setPlayersTournamentStart() {
+    this.players = this.getAllPlayers();
+  }
+
   getPlayerSession(ws: WebSocket) {
-    return this.sessions.find((session) => session.players.get(ws));
+    return this.sessions.find((session) => session.players.some((p) => p.socket === ws));
   }
 
   isFull() {
@@ -86,15 +76,36 @@ export class Tournament {
 
   broadcastSettingsToSessions() {
     for (const session of this.sessions) {
-      const message: ServerMessage = { type: 'game_setup', settings: session.settings };
+      const message: ServerMessage = { type: 'game_setup', settings: session.getJointSettings() };
       session.broadcastMessage(JSON.stringify(message));
     }
   }
 
   getAllPlayerIds(): string[] {
     // NOTE: Set removes any duplicates
-    const ids = new Set<string>(this.sessions.flatMap((session) => session.getPlayers()));
+    const ids = new Set<string>(this.sessions.flatMap((session) => session.getPlayerIds()));
     return Array.from(ids);
+  }
+
+  getAllPlayers() {
+    const ids = new Set<PlayerInfo>(this.sessions.flatMap((session) => session.getPlayers()));
+    return Array.from(ids);
+  }
+
+  async start() {
+    const data = this.getTournamentCreateData();
+    const tx = await contractSigner.joinTournament(
+      data.tournamentId,
+      data.gameType,
+      data.participants,
+    );
+    await tx.wait();
+    await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
+    this.broadcastSettingsToSessions();
+    this.sessions.forEach((session) => session.startGame());
+    const gameStartMsg: ServerMessage = { type: 'game_start' };
+    // TODO: Add tournament tree info
+    this.broadcastToAll(JSON.stringify(gameStartMsg));
   }
 
   async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
@@ -128,8 +139,36 @@ export class Tournament {
     if (winners.length <= 1) {
       this.state = tournamentState.ended;
       // TODO: send message to all players
-      // this.broadcastToAll('Tournament has ended');
+      this.broadcastToAll(JSON.stringify({ message: 'Tournament has ended' }));
     }
     ++this.currentRound;
+    this.createNextRoundSessions(winners);
+  }
+
+  createNextRoundSessions(playerIds: string[]) {}
+
+  removePlayer(socket: WebSocket) {
+    this.sessions.forEach((session) => {
+      session.removePlayer(socket);
+    });
+  }
+
+  getTournamentCreateData() {
+    const playersData = this.sessions.map((session) => {
+      if (!session.gameArea) return;
+      return [
+        {
+          userId: session.gameArea.leftPlayer.id,
+          alias: session.gameArea.settings.alias1,
+          character: session.gameArea.settings.character1?.name,
+        },
+        {
+          userId: session.gameArea.rightPlayer.id,
+          alias: session.gameArea.settings.alias2,
+          character: session.gameArea.settings.character2?.name,
+        },
+      ];
+    });
+    return { tournamentId: this.id, gameType: this.type, participants: playersData };
   }
 }

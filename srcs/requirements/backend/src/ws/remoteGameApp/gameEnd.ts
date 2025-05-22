@@ -100,6 +100,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
       tournamentId: gameArea.tournament!.id,
     };
     await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
+    // TODO: Add tournament tree info
     gameArea.session.broadcastEndGameMessage(winningPlayer);
     const tx = await contractSigner.saveScoreAndAddWinner(
       data.tournamentId,
