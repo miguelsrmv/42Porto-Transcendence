@@ -91,7 +91,8 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.isEnding = true;
   gameArea.stop();
   if (gameArea.settings.playType === 'Tournament Play') {
-    await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer);
+    await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
     const tx = await contractSigner.saveScoreAndAddWinner(
       gameArea.tournament!.id,
       gameArea.settings.gameType,
