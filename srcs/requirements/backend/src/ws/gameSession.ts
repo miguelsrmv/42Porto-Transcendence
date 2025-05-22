@@ -92,6 +92,21 @@ export class GameSession {
       this.gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
   }
 
+  broadcastPlayerLeftMessage(winningPlayer: Player) {
+    if (!this.gameArea) return;
+    const gameEndMsg = {
+      type: 'game_end_give_up',
+      winningPlayer: winningPlayer.side,
+      ownSide: 'left',
+      stats: this.gameArea.stats,
+    };
+    if (this.gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
+      this.gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
+    gameEndMsg.ownSide = 'right';
+    if (this.gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
+      this.gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
+  }
+
   getJointSettings(): gameSettings {
     const player1 = this.players[0];
     const player2 = this.players[1];

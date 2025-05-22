@@ -37,7 +37,7 @@ async function stopGameHandler(socket: WebSocket) {
     playerWhoStayed.socket.send(JSON.stringify(playerLeft));
   await gameArea.tournament!.updateSessionScore(gameArea.session, playerWhoStayed.id);
   // TODO: Add tournament tree info
-  gameArea.session.broadcastEndGameMessage(playerWhoStayed);
+  gameArea.session.broadcastPlayerLeftMessage(playerWhoStayed);
   // TODO: Check if order of users matter
   const tx = await contractSigner.saveScoreAndAddWinner(
     playerTournament.id,
