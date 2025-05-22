@@ -3,7 +3,6 @@ import {
   attributePlayerToSession,
   getGameSession,
   playerIsInASession,
-  removePlayer,
   removePlayerBySocket,
   removeSession,
 } from './sessionManagement';
