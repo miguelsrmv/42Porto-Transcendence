@@ -172,6 +172,7 @@ export class Tournament {
 
   // TODO: Check matchup logic
   async createNextRoundSessions(playerIds: string[]) {
+    // TODO: Advance round if winner quits before next round
     const nextRoundPlayers = playerIds
       .map((id) => this.getPlayerInfoFromId(id))
       .filter((p): p is PlayerInfo => !!p);
