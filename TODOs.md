@@ -6,6 +6,7 @@
 - Hide password as it is being inserted in settings form // NOTE: Done?
 - Lead user to login again after JWT cookie expires?
 - When submitting empty username, no error and header gets updated
+- Send { type: 'player_left' } when a player leaves the game
 
 # Backend
 - Make responses more uniform

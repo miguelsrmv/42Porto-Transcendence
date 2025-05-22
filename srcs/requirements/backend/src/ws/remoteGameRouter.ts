@@ -53,16 +53,7 @@ async function joinGameHandler(
   if (!areGameSettingsValid(socket, userId, playerSettings)) return;
   await attributePlayerToSession(socket, playerSettings);
   const playerSession = getGameSession(socket);
-  if (playerSession && playerSession.isFull()) {
-    const response: ServerMessage = {
-      type: 'game_setup',
-      settings: playerSession.getJointSettings(),
-    };
-    playerSession.broadcastMessage(JSON.stringify(response));
-    playerSession.startGame();
-    const gameStartMsg: ServerMessage = { type: 'game_start' };
-    playerSession.broadcastMessage(JSON.stringify(gameStartMsg));
-  }
+  if (playerSession && playerSession.isFull()) playerSession.startGame();
 }
 
 async function stopGameHandler(socket: WebSocket) {
@@ -71,12 +62,10 @@ async function stopGameHandler(socket: WebSocket) {
   if (!gameSession || !gameSession.gameArea) return;
   const gameArea = gameSession.gameArea;
   gameArea.stop();
-  const player1 = gameArea.getPlayerByWebSocket(socket);
-  removePlayer(player1);
-  const player2 = gameArea.getOtherPlayer(player1);
+  const player2 = gameArea.getOtherPlayer(gameArea.getPlayerByWebSocket(socket));
   await createMatchPlayerLeft(player2, gameArea);
   if (player2.socket.readyState === WebSocket.OPEN) player2.socket.send(JSON.stringify(playerLeft));
-  removePlayer(player2);
+  gameSession.clear();
   removeSession(gameSession);
 }
 

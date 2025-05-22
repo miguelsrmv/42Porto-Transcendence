@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import { GameSession, PlayerInfo } from './gameSession';
-import { gameType, leanGameSettings } from './remoteGameApp/settings';
+import { gameType, leanGameSettings, playerSettings } from './remoteGameApp/settings';
 import { ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
@@ -17,6 +17,17 @@ export enum tournamentState {
   ongoing,
   ended,
 }
+
+// NOTE: playerID, playType and gameType not needed (new type?)
+export function playerInfoToPlayerSettings(player: PlayerInfo): playerSettings {
+  return {
+    playerID: player.id,
+    alias: player.alias,
+    character: player.character,
+    paddleColour: player.paddleColour,
+  };
+}
+
 export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
@@ -57,6 +68,13 @@ export class Tournament {
 
   getPlayerSession(ws: WebSocket) {
     return this.sessions.find((session) => session.players.some((p) => p.socket === ws));
+  }
+
+  clear() {
+    this.sessions.forEach((session) => session.clear());
+    this.sessions.length = 0;
+    this.players.forEach((player) => this.removePlayer(player.socket));
+    this.players.length = 0;
   }
 
   isFull() {
@@ -127,10 +145,10 @@ export class Tournament {
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
 
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
-    if (roundSessions.every((session) => session.winner)) this.advanceRound();
+    if (roundSessions.every((session) => session.winner)) await this.advanceRound();
   }
 
-  advanceRound() {
+  async advanceRound() {
     const winners = this.sessions
       .filter((session) => session.round === this.currentRound)
       .map((s) => s.winner)
@@ -140,12 +158,36 @@ export class Tournament {
       this.state = tournamentState.ended;
       // TODO: send message to all players
       this.broadcastToAll(JSON.stringify({ message: 'Tournament has ended' }));
+      return;
     }
     ++this.currentRound;
-    this.createNextRoundSessions(winners);
+    await this.createNextRoundSessions(winners);
+    // TODO: Call wait
+    this.sessions
+      .filter((session) => session.round === this.currentRound)
+      .forEach((session) => session.startGame());
   }
 
-  createNextRoundSessions(playerIds: string[]) {}
+  // TODO: Check matchup logic
+  async createNextRoundSessions(playerIds: string[]) {
+    const nextRoundPlayers = playerIds
+      .map((id) => this.getPlayerInfoFromId(id))
+      .filter((p): p is PlayerInfo => !!p);
+    for (let i = 0; i < nextRoundPlayers.length; i += 2) {
+      const player1 = nextRoundPlayers[i];
+      const player2 = nextRoundPlayers[i + 1];
+
+      const newSession = new GameSession(this.type, 'Tournament Play');
+      await newSession.setPlayer(player1.socket, playerInfoToPlayerSettings(player1));
+      await newSession.setPlayer(player1.socket, playerInfoToPlayerSettings(player2));
+      newSession.round = this.currentRound;
+      this.sessions.push(newSession);
+    }
+  }
+
+  getPlayerInfoFromId(playerId: string) {
+    return this.players.find((player) => player.id === playerId);
+  }
 
   removePlayer(socket: WebSocket) {
     this.sessions.forEach((session) => {

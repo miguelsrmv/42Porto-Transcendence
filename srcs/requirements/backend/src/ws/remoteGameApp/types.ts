@@ -1,5 +1,4 @@
 import { Ball } from './ball';
-import { GameArea } from './gameArea';
 import { gameStats } from './gameStats';
 import { Paddle } from './paddle';
 import { gameSettings, leanGameSettings } from './settings';
