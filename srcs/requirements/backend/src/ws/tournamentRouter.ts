@@ -33,27 +33,19 @@ async function stopGameHandler(socket: WebSocket) {
   const playerWhoLeft = gameArea.getPlayerByWebSocket(socket);
   removePlayerTournament(socket);
   const playerWhoStayed = gameArea.getOtherPlayer(playerWhoLeft);
-  // TODO: Check if order of users matter
-  const data = {
-    gameType: gameArea.settings.gameType,
-    user1Id: playerWhoStayed.id,
-    score1: 5, // hard-coded win
-    user2Id: playerWhoLeft.id,
-    score2: playerWhoLeft.score,
-    tournamentId: playerTournament.id,
-  };
   if (playerWhoStayed.socket.readyState === WebSocket.OPEN)
     playerWhoStayed.socket.send(JSON.stringify(playerLeft));
   await gameArea.tournament!.updateSessionScore(gameArea.session, playerWhoStayed.id);
   // TODO: Add tournament tree info
   gameArea.session.broadcastEndGameMessage(playerWhoStayed);
+  // TODO: Check if order of users matter
   const tx = await contractSigner.saveScoreAndAddWinner(
-    data.tournamentId,
-    data.gameType,
-    data.user1Id,
-    data.score1,
-    data.user2Id,
-    data.score2,
+    playerTournament.id,
+    gameSession.gameType,
+    playerWhoStayed.id,
+    5, // hard-coded win
+    playerWhoLeft.id,
+    playerWhoLeft.score,
   );
   await tx.wait();
 }
