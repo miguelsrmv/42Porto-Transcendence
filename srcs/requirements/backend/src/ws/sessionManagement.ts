@@ -85,7 +85,5 @@ export function removePlayerBySocket(socket: WebSocket) {
 export function removeSession(sessionToRemove: GameSession) {
   const sessions = gameTypeToSessions(sessionToRemove.gameType);
   const index = sessions.indexOf(sessionToRemove);
-  if (index !== -1) {
-    sessions.splice(index, 1);
-  }
+  if (index !== -1) sessions.splice(index, 1);
 }

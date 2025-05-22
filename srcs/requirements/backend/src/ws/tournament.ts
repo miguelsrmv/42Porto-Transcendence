@@ -111,6 +111,7 @@ export class Tournament {
   }
 
   async start() {
+    this.state = tournamentState.ongoing;
     const data = this.getTournamentCreateData();
     const tx = await contractSigner.joinTournament(
       data.tournamentId,
@@ -158,6 +159,7 @@ export class Tournament {
       this.state = tournamentState.ended;
       // TODO: send message to all players
       this.broadcastToAll(JSON.stringify({ message: 'Tournament has ended' }));
+      this.clear();
       return;
     }
     ++this.currentRound;
