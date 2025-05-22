@@ -3,7 +3,7 @@ import {
   character,
   gameSettings,
   gameType,
-  leanGameSettings,
+  playerSettings,
   playType,
 } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
@@ -11,6 +11,7 @@ import { getAvatarFromPlayer, getRandomBackground } from './sessionManagement';
 import { Tournament } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
+import { ServerMessage } from './remoteGameApp/types';
 
 export interface PlayerInfo {
   id: string;
@@ -35,7 +36,7 @@ export class GameSession {
     this.playType = playType;
   }
 
-  async setPlayer(ws: WebSocket, playerSettings: leanGameSettings) {
+  async setPlayer(ws: WebSocket, playerSettings: playerSettings) {
     this.players.push({
       id: playerSettings.playerID,
       socket: ws,
@@ -111,6 +112,11 @@ export class GameSession {
 
   // TODO: Review if all these parameters are necessary
   startGame() {
+    const response: ServerMessage = {
+      type: 'game_setup',
+      settings: this.getJointSettings(),
+    };
+    this.broadcastMessage(JSON.stringify(response));
     this.gameArea = new GameArea(
       this.players[0].id,
       this.players[1].id,
@@ -125,5 +131,12 @@ export class GameSession {
       this.gameArea!.gameLoop();
     }, 20);
     this.gameArea.intervals.push(gameInterval);
+    const gameStartMsg: ServerMessage = { type: 'game_start' };
+    this.broadcastMessage(JSON.stringify(gameStartMsg));
+  }
+
+  clear() {
+    this.players.forEach((player) => this.removePlayer(player.socket));
+    this.players.length = 0;
   }
 }
