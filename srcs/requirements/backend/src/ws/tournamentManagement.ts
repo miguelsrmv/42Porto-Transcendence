@@ -46,11 +46,7 @@ export async function attributePlayerToTournament(ws: WebSocket, playerSettings:
 export function removePlayerTournament(playerSocket: WebSocket) {
   const tournament = playerTournamentMap.get(playerSocket);
   if (!tournament) return;
-  for (const session of tournament.sessions) {
-    if (session.players.get(playerSocket)) {
-      session.players.delete(playerSocket);
-    }
-  }
+  tournament.removePlayer(playerSocket);
   playerTournamentMap.delete(playerSocket);
 }
 
