@@ -36,13 +36,6 @@
 | `GET`    | `/matches/:id`             |    `id` match id    |                                              | Get a specific match                                            |
 | `POST`   | `/matches`                 |                     |             user1Id and user2Id              | Create a match                                                  |
 | `PATCH`  | `/matches/:id`             |    `id` match id    |                data to update                | Update data on a specific match                                 |
-| `GET`    | `/tournaments`             |                     |                                              | Get all tournaments                                             |
-| `GET`    | `/tournaments/user/:id`    |    `id` user id     |                                              | Get all tournaments from a specific user                        |
-| `GET`    | `/tournaments/:id`         | `id` tournaments id |                                              | Get a specific tournament                                       |
-| `POST`   | `/tournaments`             |                     |        maxParticipants and createdBy         | Create a tournament                                             |
-| `PATCH`  | `/tournaments/:id`         | `id` tournaments id |                data to update                | Update data on a specific tournament                            |
-| `DELETE` | `/tournaments/:id`         | `id` tournaments id |                                              | Delete a tournament                                             |
-| `POST`   | `/tournaments/participant` |                     | tournamentId, userId, alias and character    | Create a tournamentParticipant entry                            |
 
 ## Base
 
@@ -182,43 +175,6 @@ Content-Type: application/json
   "winnerId": "<id>",
   "user1Score": 3,
   "user2Score": 2
-}
-```
-
-## Tournaments
-
-- **Get all tournaments:** `GET /tournaments`
-- **Get all tournaments from a specific user:** `GET /tournaments/user/:id`
-- **Get a specific tournament:** `GET /tournaments/:id`
-- **Create a new tournament:** `POST /tournaments`
-
-```json
-{
-  "maxParticipants": 4, // default is 8
-  "createdBy": "<id>",
-  "name": "Tournament1", // optional
-  "settings": "{\"map\":\"map3\",\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
-}
-```
-
-- **Update a tournament:** `PATCH /tournaments/:id`
-
-```json
-{
-  "status": "ACTIVE", // or "PENDING", or "COMPLETED"
-  "currentRound": 2
-}
-```
-
-- **Delete a tournament:** `DELETE /tournaments/:id`
-- **Creates a tournamentParticipant:** `POST /tournaments/participant`
-
-```json
-{
-  "tournamentId": "<id>", // optional, if not present, a new tournament is created
-  "userId": "<id>",
-  "alias": "newAlias",
-  "character": "NONE" // MARIO, LINK, PIKACHU, SONIC, KIRBY, YOSHI, SAMUS, DK, MEWTWO
 }
 ```
 
