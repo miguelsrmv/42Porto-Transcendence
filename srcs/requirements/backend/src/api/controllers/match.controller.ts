@@ -1,10 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
-import { MatchMode } from '@prisma/client';
+import { GameMode } from '@prisma/client';
 
 export type MatchCreate = {
-  mode: MatchMode;
+  mode: GameMode;
   user1Id: string;
   user2Id: string;
   settings: string;
@@ -36,6 +36,7 @@ export async function getUserMatches(
       where: {
         OR: [{ user1Id: request.params.id }, { user2Id: request.params.id }],
       },
+      orderBy: { updatedAt: 'desc' },
     });
     reply.send(matches);
   } catch (error) {

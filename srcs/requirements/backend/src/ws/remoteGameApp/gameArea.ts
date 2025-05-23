@@ -1,3 +1,5 @@
+import { GameSession } from '../gameSession';
+import { Tournament } from '../tournament';
 import { Ball } from './ball';
 import { updateGameArea } from './game';
 import { gameStats } from './gameStats';
@@ -34,6 +36,8 @@ export class GameArea {
   intervals: NodeJS.Timeout[] = [];
   settings: gameSettings;
   isEnding: boolean;
+  session: GameSession;
+  tournament?: Tournament;
 
   constructor(
     p1id: string,
@@ -41,7 +45,9 @@ export class GameArea {
     p1socket: WebSocket,
     p2socket: WebSocket,
     gameSettings: gameSettings,
+    session: GameSession,
   ) {
+    this.session = session;
     this.settings = gameSettings;
     this.isEnding = false;
     this.ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
@@ -106,6 +112,14 @@ export class GameArea {
     if (this.leftPlayer.socket.readyState === WebSocket.OPEN) this.leftPlayer.socket.send(message);
     if (this.rightPlayer.socket.readyState === WebSocket.OPEN)
       this.rightPlayer.socket.send(message);
+  }
+
+  getPlayerByWebSocket(socket: WebSocket) {
+    return socket === this.leftPlayer.socket ? this.leftPlayer : this.rightPlayer;
+  }
+
+  getOtherPlayer(player: Player) {
+    return player === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
   }
 
   async gameLoop() {

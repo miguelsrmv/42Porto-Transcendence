@@ -1,9 +1,13 @@
+import { randomUUID } from 'crypto';
 import { GameSession } from './gameSession';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { GameSessionSerializable, ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
+import { prisma } from '../utils/prisma';
+import { gameTypeToGameMode } from '../utils/helpers';
 
 const NBR_PARTICIPANTS = 8;
+const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
 
 export enum tournamentState {
   creating,
@@ -13,18 +17,19 @@ export enum tournamentState {
 }
 
 export class Tournament {
-  sessions: GameSession[];
-  state: tournamentState;
+  sessions: GameSession[] = [];
+  state: tournamentState = tournamentState.creating;
   type: gameType;
+  id: string = randomUUID();
+  currentRound: number = 1;
 
   constructor(type: gameType) {
-    this.state = tournamentState.creating;
-    this.sessions = [];
     this.type = type;
   }
 
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     const newSession = new GameSession(ws, playerSettings);
+    newSession.tournament = this;
     await newSession.updateAvatar1(playerSettings.playerID);
 
     // For testing purposes
@@ -64,13 +69,14 @@ export class Tournament {
   }
 
   isFull() {
-    const availableSession = this.sessions.find((session) => !session.isFull());
-    return availableSession === undefined && this.sessions.length === NBR_PARTICIPANTS;
+    return (
+      this.sessions.length === NBR_SESSIONS_FIRST_ROUND &&
+      this.sessions.every((session) => session.isFull())
+    );
   }
 
   isEmpty() {
-    const availableSession = this.sessions.find((session) => !session.isEmpty());
-    return this.sessions.length === 0 || !availableSession;
+    return this.sessions.length === 0 || this.sessions.every((session) => session.isEmpty());
   }
 
   broadcastToAll(message: string) {
@@ -82,5 +88,46 @@ export class Tournament {
       const message: ServerMessage = { type: 'game_setup', settings: session.settings };
       session.broadcastMessage(JSON.stringify(message));
     }
+  }
+
+  getAllPlayerIds(): string[] {
+    // NOTE: Set removes any duplicates
+    const ids = new Set<string>(this.sessions.flatMap((session) => session.getPlayers()));
+    return Array.from(ids);
+  }
+
+  async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
+    // TODO: Check for repeated alias
+    playerIds.forEach(async (id) => {
+      await prisma.tournamentParticipant.create({
+        data: {
+          tournamentId: tournamentId,
+          userId: id,
+          tournamentType: gameTypeToGameMode(gameType),
+        },
+      });
+    });
+  }
+
+  updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+    if (sessionToUpdate.winner) return;
+    sessionToUpdate.winner = winner;
+
+    const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
+    if (roundSessions.every((session) => session.winner)) this.advanceRound();
+  }
+
+  advanceRound() {
+    const winners = this.sessions
+      .filter((session) => session.round === this.currentRound)
+      .map((s) => s.winner)
+      .filter((winner): winner is string => !!winner);
+
+    if (winners.length <= 1) {
+      this.state = tournamentState.ended;
+      // TODO: send message to all players
+      // this.broadcastToAll('Tournament has ended');
+    }
+    ++this.currentRound;
   }
 }
