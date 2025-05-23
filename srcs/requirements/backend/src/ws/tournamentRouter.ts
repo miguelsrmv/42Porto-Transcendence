@@ -50,15 +50,19 @@ async function stopGameHandler(socket: WebSocket) {
   // TODO: Add tournament tree info
   gameArea.session.broadcastPlayerLeftMessage(playerWhoStayed);
   // TODO: Check if order of users matter
-  const tx = await contractSigner.saveScoreAndAddWinner(
-    playerTournament.id,
-    gameSession.gameType,
-    playerWhoStayed.id,
-    5, // hard-coded win
-    playerWhoLeft.id,
-    playerWhoLeft.score,
-  );
-  await tx.wait();
+  try {
+    const tx = await contractSigner.saveScoreAndAddWinner(
+      playerTournament.id,
+      gameSession.gameType,
+      playerWhoStayed.id,
+      5, // hard-coded win
+      playerWhoLeft.id,
+      playerWhoLeft.score,
+    );
+    await tx.wait();
+  } catch (err) {
+    console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
+  }
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
