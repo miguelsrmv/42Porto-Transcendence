@@ -275,8 +275,8 @@ async function initializeRightPanel(): Promise<void> {
       return;
     }
     const userData: userData = await response.json();
-    highlightPlayer(userData.rank, 'green');
-    highlightPlayer(1, 'yellow');
+    highlightCurrentPlayer();
+    highlightBestPlayers();
   } catch (error) {
     console.error('Network error fetching opponent data', error);
     return;
@@ -374,6 +374,24 @@ async function updateNodeWithLeaderboardPlayer(
   }
 }
 
+function highlightCurrentPlayer(): void {
+  const userId = window.localStorage.getItem('ID') as string;
+
+  const targetPlayer = document.querySelector(`[data-user-id="${userId}"]`) as HTMLElement;
+
+  highlightPlayer(targetPlayer, 'green');
+}
+
+function highlightBestPlayers(): void {
+  const targetPlayers = document.querySelectorAll(`[data-ranking="1"]`);
+  if (targetPlayers.length == 0) {
+    console.log('Target player not found');
+    return;
+  }
+
+  targetPlayers.forEach((element) => highlightPlayer(element as HTMLElement, 'yellow'));
+}
+
 /**
  * @brief Highlights a player in the leaderboard.
  *
@@ -382,13 +400,7 @@ async function updateNodeWithLeaderboardPlayer(
  */
 // TODO: If multiple players are #1, highlight all of them in gold
 // TODO: Make sure only own player is highlighted in green
-function highlightPlayer(rank: number, colour: string): void {
-  const targetPlayer = document.querySelector(`[data-ranking="${rank}"]`);
-  if (!targetPlayer) {
-    console.log('Target player not found', rank);
-    return;
-  }
-
+function highlightPlayer(targetPlayer: HTMLElement, colour: string): void {
   const targetPlayerRanking = targetPlayer.querySelector('.leaderboard-player-ranking');
   if (!targetPlayerRanking) {
     console.log('Target player ranking not found');
