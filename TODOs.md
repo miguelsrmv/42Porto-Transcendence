@@ -17,3 +17,4 @@
 - Review game_end_give_up (sending to both but one has left)
 - Check ts --watch is working properly
 - On socket close, apply player_left logic
+- Review player id/socket management in game sessions to check if player is present
