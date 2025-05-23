@@ -60,14 +60,11 @@ async function joinGameHandler(
 }
 
 async function stopGameHandler(socket: WebSocket) {
-  const playerLeft: ServerMessage = { type: 'player_left' };
   const gameSession = getGameSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const gameArea = gameSession.gameArea;
-  gameArea.stop();
   const player2 = gameArea.getOtherPlayer(gameArea.getPlayerByWebSocket(socket));
   await createMatchPlayerLeft(player2, gameArea);
-  if (player2.socket.readyState === WebSocket.OPEN) player2.socket.send(JSON.stringify(playerLeft));
   gameSession.clear();
   removeSession(gameSession);
 }

@@ -11,6 +11,11 @@ export class gameStats {
     this.maxSpeed = Math.sqrt(SPEED ** 2 + SPEED ** 2); // Done
   }
 
+  setMaxGoals(side: string) {
+    if (side === 'left') this.left.goals = 5;
+    else if (side === 'right') this.right.goals = 5;
+  }
+
   updateMaxSpeed(newSpeed: number) {
     this.maxSpeed = newSpeed;
   }

@@ -81,6 +81,11 @@ export class GameSession {
     if (!playerToRemove) return;
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
+    if (!this.gameArea) return;
+    this.gameArea.stop();
+    this.broadcastPlayerLeftMessage(
+      this.gameArea.getOtherPlayer(this.gameArea.getPlayerByWebSocket(ws)),
+    );
   }
 
   isFull(): boolean {
@@ -123,17 +128,17 @@ export class GameSession {
 
   broadcastPlayerLeftMessage(winningPlayer: Player) {
     if (!this.gameArea) return;
+    // Goals automatically set to 5 for remaining player
+    this.gameArea.stats.setMaxGoals(winningPlayer.side);
+    // TODO: Differentiate from normal game_end message?
     const gameEndMsg = {
-      type: 'game_end_give_up',
+      type: 'game_end',
       winningPlayer: winningPlayer.side,
-      ownSide: 'left',
+      ownSide: winningPlayer.side,
       stats: this.gameArea.stats,
     };
-    if (this.gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
-      this.gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
-    gameEndMsg.ownSide = 'right';
-    if (this.gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
-      this.gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
+    if (winningPlayer.socket.readyState === WebSocket.OPEN)
+      winningPlayer.socket.send(JSON.stringify(gameEndMsg));
   }
 
   getJointSettings(): gameSettings {
