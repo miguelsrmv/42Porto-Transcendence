@@ -4,6 +4,7 @@ import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types
 import {
   attributePlayerToTournament,
   getPlayerTournament,
+  playerIsInATournament,
   removePlayerTournament,
 } from './tournamentManagement';
 import { areGameSettingsValid } from './remoteGameRouter';
@@ -16,7 +17,13 @@ async function joinGameHandler(
   userId: string,
   playerSettings: leanGameSettings,
 ) {
-  if (getPlayerTournament(socket)) return;
+  if (playerIsInATournament(userId)) {
+    if (socket.readyState === WebSocket.OPEN)
+      socket.send(JSON.stringify({ type: 'error', message: 'Player already in a tournament' }));
+    socket.close();
+    return;
+  }
+  console.log('Player not in the tournament yet');
   if (
     !areGameSettingsValid(socket, userId, playerSettings) ||
     playerSettings.playType !== 'Tournament Play'
@@ -43,15 +50,19 @@ async function stopGameHandler(socket: WebSocket) {
   // TODO: Add tournament tree info
   gameArea.session.broadcastPlayerLeftMessage(playerWhoStayed);
   // TODO: Check if order of users matter
-  const tx = await contractSigner.saveScoreAndAddWinner(
-    playerTournament.id,
-    gameSession.gameType,
-    playerWhoStayed.id,
-    5, // hard-coded win
-    playerWhoLeft.id,
-    playerWhoLeft.score,
-  );
-  await tx.wait();
+  try {
+    const tx = await contractSigner.saveScoreAndAddWinner(
+      playerTournament.id,
+      gameSession.gameType,
+      playerWhoStayed.id,
+      5, // hard-coded win
+      playerWhoLeft.id,
+      playerWhoLeft.score,
+    );
+    await tx.wait();
+  } catch (err) {
+    console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
+  }
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
@@ -112,7 +123,6 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
     const currentTime = Date.now() / 1000;
     if (currentTime - clientLastActive > 30) socket.close();
   }, 15000); // every 15 seconds
-
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
     console.log('Received message:', message.toString());
