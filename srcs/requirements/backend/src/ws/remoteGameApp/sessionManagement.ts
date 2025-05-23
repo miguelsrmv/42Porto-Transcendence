@@ -5,6 +5,7 @@ import { GameSessionSerializable } from './types';
 import { prisma } from '../../utils/prisma';
 import app from '../../app';
 import { GameSession } from '../gameSession';
+import { Player } from './player';
 
 const classicPongSessions: GameSession[] = [];
 const crazyPongSessions: GameSession[] = [];
@@ -101,9 +102,14 @@ export function playerIsInASession(playerId: string): boolean {
   return false;
 }
 
-export function removePlayer(playerSocket: WebSocket) {
-  const playerSession = getGameSession(playerSocket);
-  if (playerSession) playerSession.players.delete(playerSocket);
+export function removePlayer(player: Player) {
+  const playerSession = getGameSession(player.socket);
+  if (playerSession) playerSession.players.delete(player.socket);
+}
+
+export function removePlayerBySocket(socket: WebSocket) {
+  const playerSession = getGameSession(socket);
+  if (playerSession) playerSession.players.delete(socket);
 }
 
 export function removeSession(sessionToRemove: GameSession) {

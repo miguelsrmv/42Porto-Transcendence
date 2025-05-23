@@ -6,17 +6,20 @@ import {
   getAvatarFromPlayer,
   getRandomBackground,
 } from './remoteGameApp/sessionManagement';
+import { Tournament } from './tournament';
 
 export class GameSession {
   type: playType;
-  players: Map<WebSocket, string>;
+  players: Map<WebSocket, string> = new Map();
+  winner?: string;
+  round: number = 1;
   settings: gameSettings;
-  gameArea: GameArea | null;
+  gameArea: GameArea | null = null;
+  tournament?: Tournament;
 
   // TODO: Review placeholders
   constructor(ws: WebSocket, player1settings: leanGameSettings) {
     this.type = player1settings.playType;
-    this.gameArea = null;
     this.settings = {
       playType: player1settings.playType,
       gameType: player1settings.gameType,
@@ -30,7 +33,6 @@ export class GameSession {
       character2: player1settings.character,
       background: getRandomBackground(),
     };
-    this.players = new Map();
     this.players.set(ws, player1settings.playerID);
   }
 
@@ -40,6 +42,15 @@ export class GameSession {
 
   isEmpty(): boolean {
     return this.players.size === 0;
+  }
+
+  getPlayers() {
+    const iterator = this.players.values();
+    const playerIds = [];
+    for (const value of iterator) {
+      playerIds.push(value);
+    }
+    return playerIds;
   }
 
   async mergePlayer2IntoGameSettings(playerSettings: leanGameSettings) {
