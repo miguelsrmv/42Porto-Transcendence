@@ -151,6 +151,7 @@ export class Tournament {
   }
 
   async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+    console.log(`Match ended, winner: ${this.players.find((p) => p.id === winner)?.alias}`);
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
@@ -160,6 +161,7 @@ export class Tournament {
   }
 
   async advanceRound() {
+    console.log(`Advancing to round ${this.currentRound + 1}`);
     const winners = this.sessions
       .filter((session) => session.round === this.currentRound)
       .map((s) => s.winner)
