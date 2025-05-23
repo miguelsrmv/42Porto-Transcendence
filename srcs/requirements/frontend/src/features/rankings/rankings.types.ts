@@ -1,3 +1,11 @@
+/**
+ * @file rankings.types.ts
+ * @brief Defines the types used for leaderboard creating data in the application.
+ */
+
+/**
+ * Represents the data for a match.
+ */
 export interface matchData {
   createdAt: string;
   id: string;
@@ -13,11 +21,17 @@ export interface matchData {
   winnerId: string;
 }
 
+/**
+ * Represents the data for a leaderboard entry.
+ */
 export interface leaderboardData {
   userId: string;
   score: number;
 }
 
+/**
+ * Represents the statistics data for a user.
+ */
 export interface statsData {
   totalMatches: number;
   wins: number;
@@ -27,6 +41,9 @@ export interface statsData {
   rank: number;
 }
 
+/**
+ * Represents the data for a user.
+ */
 export interface userData {
   username: string;
   lastActiveAt: string;
