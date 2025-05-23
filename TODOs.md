@@ -12,9 +12,8 @@
 - Test waiting player to remote and then remove a player in the match. Does the third player go into the match?
 - Tournament brackets management
 - Connect tournament logic to Blockchain
-- Make remote and tournament session management more similar
 - Check user stats match leaderboard
 - Review game_end_give_up (sending to both but one has left)
-- Check ts --watch is working properly
 - On socket close, apply player_left logic
 - Review player id/socket management in game sessions to check if player is present
+- Add ready for next round logic
