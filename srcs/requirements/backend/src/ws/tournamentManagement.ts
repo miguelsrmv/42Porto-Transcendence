@@ -59,10 +59,10 @@ export async function attributePlayerToTournament(ws: WebSocket, playerSettings:
   }
 }
 
-export function removePlayerTournament(playerSocket: WebSocket) {
+export async function removePlayerTournament(playerSocket: WebSocket) {
   const tournament = playerTournamentMap.get(playerSocket);
   if (!tournament) return;
-  tournament.removePlayer(playerSocket);
+  await tournament.removePlayer(playerSocket);
   playerTournamentMap.delete(playerSocket);
 }
 

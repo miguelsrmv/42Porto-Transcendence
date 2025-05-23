@@ -4,13 +4,11 @@ import {
   getGameSession,
   playerIsInASession,
   removePlayerBySocket,
-  removeSession,
 } from './sessionManagement';
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
 import { FastifyRequest } from 'fastify';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isGameType, isPlayerInput, isPlayType } from './remoteGameApp/helpers';
-import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 
 export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, message: string) {
   if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
@@ -59,16 +57,6 @@ async function joinGameHandler(
   if (playerSession && playerSession.isFull()) playerSession.startGame();
 }
 
-async function stopGameHandler(socket: WebSocket) {
-  const gameSession = getGameSession(socket);
-  if (!gameSession || !gameSession.gameArea) return;
-  const gameArea = gameSession.gameArea;
-  const player2 = gameArea.getOtherPlayer(gameArea.getPlayerByWebSocket(socket));
-  await createMatchPlayerLeft(player2, gameArea);
-  gameSession.clear();
-  removeSession(gameSession);
-}
-
 function movementHandler(socket: WebSocket, direction: string) {
   if (!isPlayerInput(direction)) {
     console.log(`Not a valid player movement: ${direction}`);
@@ -99,10 +87,6 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
       await joinGameHandler(socket, userId, message.playerSettings);
       break;
     }
-    case 'stop_game': {
-      await stopGameHandler(socket);
-      break;
-    }
     case 'movement': {
       movementHandler(socket, message.direction);
       break;
@@ -131,8 +115,8 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
     await messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
   });
 
-  socket.on('close', () => {
-    removePlayerBySocket(socket);
+  socket.on('close', async () => {
+    await removePlayerBySocket(socket);
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });

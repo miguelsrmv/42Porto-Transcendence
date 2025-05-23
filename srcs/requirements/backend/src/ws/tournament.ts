@@ -75,10 +75,10 @@ export class Tournament {
     return this.sessions.find((session) => session.players.some((p) => p.socket === ws));
   }
 
-  clear() {
-    this.sessions.forEach((session) => session.clear());
+  async clear() {
+    this.sessions.forEach(async (session) => await session.clear());
     this.sessions.length = 0;
-    this.players.forEach((player) => this.removePlayer(player.socket));
+    this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
   }
 
@@ -171,7 +171,7 @@ export class Tournament {
       this.state = tournamentState.ended;
       // TODO: send message to all players
       this.broadcastToAll(JSON.stringify({ message: 'Tournament has ended' }));
-      this.clear();
+      await this.clear();
       return;
     }
     ++this.currentRound;
@@ -204,9 +204,9 @@ export class Tournament {
     return this.players.find((player) => player.id === playerId);
   }
 
-  removePlayer(socket: WebSocket) {
-    this.sessions.forEach((session) => {
-      session.removePlayer(socket);
+  async removePlayer(socket: WebSocket) {
+    this.sessions.forEach(async (session) => {
+      await session.removePlayer(socket);
     });
   }
 
