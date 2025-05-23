@@ -14,3 +14,4 @@
 - Connect tournament logic to Blockchain
 - Make remote and tournament session management more similar
 - Check user stats match leaderboard
+- Review game_end_give_up (sending to both but one has left)
