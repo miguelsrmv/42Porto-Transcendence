@@ -374,6 +374,12 @@ async function updateNodeWithLeaderboardPlayer(
   }
 }
 
+/**
+ * @brief Highlights the current player in the UI.
+ *
+ * Retrieves the current user's ID from local storage, finds the corresponding player element,
+ * and applies a green highlight to it.
+ */
 function highlightCurrentPlayer(): void {
   const userId = window.localStorage.getItem('ID') as string;
 
@@ -382,6 +388,12 @@ function highlightCurrentPlayer(): void {
   highlightPlayer(targetPlayer, 'green');
 }
 
+/**
+ * @brief Highlights all players with the top ranking.
+ *
+ * Finds all player elements with a ranking of 1 and applies a yellow highlight to each.
+ * Logs a message if no such players are found.
+ */
 function highlightBestPlayers(): void {
   const targetPlayers = document.querySelectorAll(`[data-ranking="1"]`);
   if (targetPlayers.length == 0) {
@@ -398,8 +410,6 @@ function highlightBestPlayers(): void {
  * @param rank The rank of the player to highlight.
  * @param colour The color to use for highlighting.
  */
-// TODO: If multiple players are #1, highlight all of them in gold
-// TODO: Make sure only own player is highlighted in green
 function highlightPlayer(targetPlayer: HTMLElement, colour: string): void {
   const targetPlayerRanking = targetPlayer.querySelector('.leaderboard-player-ranking');
   if (!targetPlayerRanking) {
