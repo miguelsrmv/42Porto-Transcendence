@@ -25,13 +25,16 @@ export type TournamentAndType = {
 }
 
 export type TournamentsFromPlayer = {
+  userId: string;
+  classicTournamentsIds: number[];
+  crazyTournamentsIds: number[];
   tournamentsIdsandTypes: TournamentAndType[];
 }
 
 export type WinnerInfo = {
   tournamentId: string;
   userId: string;
-}
+};
 
 export async function saveTournamentScore(
   request: FastifyRequest<{ Body: MatchInfo }>,
@@ -41,18 +44,22 @@ export async function saveTournamentScore(
     const { tournamentId, userOneId, userTwoId, scoreOne, scoreTwo } = request.body;
 
     if (!tournamentId) {
-      return reply
-        .status(400)
-        .send({ error: 'tournamentId must be provided (starting point)' });
+      return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
     }
 
-    const tx = await contractSigner.saveScore(BigInt(tournamentId), BigInt(userOneId), BigInt(scoreOne), BigInt(userTwoId), BigInt(scoreTwo));
+    const tx = await contractSigner.saveScore(
+      BigInt(tournamentId),
+      BigInt(userOneId),
+      BigInt(scoreOne),
+      BigInt(userTwoId),
+      BigInt(scoreTwo),
+    );
     await tx.wait();
 
-    reply.send("OK");
+    reply.send('OK');
   } catch (error) {
     console.error('Error in saveTournamentScore:', error);
-    reply.status(500).send({ error: 'Failed to save scores' });
+    handleError(error, reply);
   }
 }
 
@@ -64,18 +71,16 @@ export async function addMatchWinner(
     const { tournamentId, userId } = request.body;
 
     if (!tournamentId) {
-      return reply
-        .status(400)
-        .send({ error: 'tournamentId must be provided (starting point)' });
+      return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
     }
 
     const tx = await contractSigner.addWinner(BigInt(tournamentId), BigInt(userId));
     await tx.wait();
 
-    reply.send("OK");
+    reply.send('OK');
   } catch (error) {
     console.error('Error in addWinner:', error);
-    reply.status(500).send({ error: 'Failed to add winner' });
+    handleError(error, reply);
   }
 }
 
@@ -105,8 +110,13 @@ export async function getUserTournaments(
       orderBy: { createdAt: 'desc' },
       take: 3,
     });
-    reply.send();
+    // TODO: Update with right function
+    // const tx = await contractProvider.addWinner(BigInt(tournamentId), BigInt(request.params.id));
+    // await tx.wait();
+
+    reply.send('OK');
   } catch (error) {
+    console.error('Error in addWinner:', error);
     handleError(error, reply);
   }
 }

@@ -3,12 +3,10 @@ import {
   attributePlayerToSession,
   getGameSession,
   playerIsInASession,
-  removePlayer,
   removePlayerBySocket,
   removeSession,
-} from './remoteGameApp/sessionManagement';
+} from './sessionManagement';
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
-import { initializeRemoteGame } from './remoteGameApp/game';
 import { FastifyRequest } from 'fastify';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isGameType, isPlayerInput, isPlayType } from './remoteGameApp/helpers';
@@ -51,17 +49,14 @@ async function joinGameHandler(
   playerSettings: leanGameSettings,
 ) {
   if (playerIsInASession(playerSettings.playerID)) return;
-  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
+  if (
+    !areGameSettingsValid(socket, userId, playerSettings) ||
+    playerSettings.playType !== 'Remote Play'
+  )
+    return;
   await attributePlayerToSession(socket, playerSettings);
   const playerSession = getGameSession(socket);
-  if (playerSession && playerSession.isFull()) {
-    const response: ServerMessage = { type: 'game_setup', settings: playerSession.settings };
-    const [ws1, ws2] = Array.from(playerSession.players.keys());
-    broadcastMessageTo(ws1, ws2, JSON.stringify(response));
-    initializeRemoteGame(playerSession);
-    const gameStartMsg: ServerMessage = { type: 'game_start' };
-    broadcastMessageTo(ws1, ws2, JSON.stringify(gameStartMsg));
-  }
+  if (playerSession && playerSession.isFull()) playerSession.startGame();
 }
 
 async function stopGameHandler(socket: WebSocket) {
@@ -70,12 +65,10 @@ async function stopGameHandler(socket: WebSocket) {
   if (!gameSession || !gameSession.gameArea) return;
   const gameArea = gameSession.gameArea;
   gameArea.stop();
-  const player1 = gameArea.getPlayerByWebSocket(socket);
-  removePlayer(player1);
-  const player2 = gameArea.getOtherPlayer(player1);
+  const player2 = gameArea.getOtherPlayer(gameArea.getPlayerByWebSocket(socket));
   await createMatchPlayerLeft(player2, gameArea);
   if (player2.socket.readyState === WebSocket.OPEN) player2.socket.send(JSON.stringify(playerLeft));
-  removePlayer(player2);
+  gameSession.clear();
   removeSession(gameSession);
 }
 
