@@ -61,8 +61,10 @@ export class Tournament {
           `Player matched to a ${playerSettings.gameType} GameSession: `,
           JSON.stringify(session.print()),
         );
-      } else this.createSession(ws, playerSettings);
+        return;
+      }
     }
+    await this.createSession(ws, playerSettings);
   }
 
   setPlayersTournamentStart() {
@@ -114,14 +116,19 @@ export class Tournament {
   }
 
   async start() {
+    console.log('Starting tournament');
     this.state = tournamentState.ongoing;
     const data = this.getTournamentCreateData();
-    const tx = await contractSigner.joinTournament(
-      data.tournamentId,
-      data.gameType,
-      data.participants,
-    );
-    await tx.wait();
+    try {
+      const tx = await contractSigner.joinTournament(
+        data.tournamentId,
+        data.gameType,
+        data.participants,
+      );
+      await tx.wait();
+    } catch (err) {
+      console.log(`Error in joinTournament BLockchain call: ${err}`);
+    }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
     this.broadcastSettingsToSessions();
     this.sessions.forEach((session) => session.startGame());
@@ -222,7 +229,7 @@ export class Tournament {
 
   print() {
     return {
-      sessions: this.sessions.map((s) => s.print()),
+      sessions: this.sessions.map((s) => s.players.map((p) => p.id)),
       state: this.state,
       type: this.type,
       id: this.id,
