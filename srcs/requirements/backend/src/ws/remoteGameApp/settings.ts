@@ -22,7 +22,7 @@ export interface background {
   imagePath: string;
 }
 
-export type playType = 'Local Play' | 'Remote Play' | 'Tournament Play';
+export type playType = 'Remote Play' | 'Tournament Play';
 
 export type gameType = 'Classic Pong' | 'Crazy Pong';
 
@@ -44,6 +44,13 @@ export interface leanGameSettings {
   playerID: string;
   playType: playType;
   gameType: gameType;
+  alias: string;
+  paddleColour: string;
+  character: character | null;
+}
+
+export interface playerSettings {
+  playerID: string;
   alias: string;
   paddleColour: string;
   character: character | null;

@@ -4,8 +4,8 @@ import { Player } from './player';
 import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
 import { gameTypeToGameMode } from '../../utils/helpers';
-import { contractSigner } from '../../api/services/blockchain.services'
 import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
+import { contractSigner } from '../../api/services/blockchain.services';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -91,31 +91,20 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.isEnding = true;
   gameArea.stop();
   if (gameArea.settings.playType === 'Tournament Play') {
-    const data = {
-      gameType: gameArea.settings.gameType,
-      user1Id: gameArea.leftPlayer.id,
-      score1: gameArea.leftPlayer.score,
-      user2Id: gameArea.rightPlayer.id,
-      score2: gameArea.rightPlayer.score,
-      tournamentId: gameArea.tournament!.id,
-    };
-    const tx = await contractSigner.saveScoreAndAddWinner(data.tournamentId, data.gameType, data.user1Id, data.score1, data.user2Id, data.score2);
+    await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
+    const tx = await contractSigner.saveScoreAndAddWinner(
+      gameArea.tournament!.id,
+      gameArea.settings.gameType,
+      gameArea.leftPlayer.id,
+      gameArea.leftPlayer.score,
+      gameArea.rightPlayer.id,
+      gameArea.rightPlayer.score,
+    );
     await tx.wait();
-    gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
-
     return;
   }
-  const gameEndMsg = {
-    type: 'game_end',
-    winningPlayer: winningPlayer.side,
-    ownSide: 'left',
-    stats: gameArea.stats,
-  };
   await createMatch(winningPlayer, gameArea);
   await updateLeaderboardRemote(winningPlayer, gameArea.getOtherPlayer(winningPlayer));
-  if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
-  gameEndMsg.ownSide = 'right';
-  if (gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
+  gameArea.session.broadcastEndGameMessage(winningPlayer);
 }

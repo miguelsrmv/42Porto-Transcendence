@@ -26,6 +26,7 @@ function getOpenTournament(tournaments: Tournament[]) {
 async function foundTournament(ws: WebSocket, playerSettings: leanGameSettings) {
   const tournament = getOpenTournament(gameTypeToTournaments(playerSettings.gameType));
   if (tournament) {
+    playerTournamentMap.set(ws, tournament);
     await tournament.attributePlayerToSession(ws, playerSettings);
     if (tournament.isFull()) tournament.state = tournamentState.full;
     console.log(
@@ -37,7 +38,19 @@ async function foundTournament(ws: WebSocket, playerSettings: leanGameSettings) 
   return false;
 }
 
+function clearEndedTournaments(tournaments: Tournament[]) {
+  const endedTournaments = tournaments.filter(
+    (tournament) => tournament.state === tournamentState.ended,
+  );
+  endedTournaments.forEach((t) => {
+    const index = endedTournaments.indexOf(t);
+    if (index !== -1) endedTournaments.splice(index, 1);
+  });
+}
+
 export async function attributePlayerToTournament(ws: WebSocket, playerSettings: leanGameSettings) {
+  clearEndedTournaments(classicTournaments);
+  clearEndedTournaments(crazyTournaments);
   if (!(await foundTournament(ws, playerSettings))) {
     await createTournament(ws, playerSettings);
   }
@@ -46,11 +59,7 @@ export async function attributePlayerToTournament(ws: WebSocket, playerSettings:
 export function removePlayerTournament(playerSocket: WebSocket) {
   const tournament = playerTournamentMap.get(playerSocket);
   if (!tournament) return;
-  for (const session of tournament.sessions) {
-    if (session.players.get(playerSocket)) {
-      session.players.delete(playerSocket);
-    }
-  }
+  tournament.removePlayer(playerSocket);
   playerTournamentMap.delete(playerSocket);
 }
 
