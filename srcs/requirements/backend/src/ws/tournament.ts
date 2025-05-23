@@ -59,7 +59,7 @@ export class Tournament {
 
         console.log(
           `Player matched to a ${playerSettings.gameType} GameSession: `,
-          JSON.stringify(session),
+          JSON.stringify(session.print()),
         );
       } else this.createSession(ws, playerSettings);
     }
