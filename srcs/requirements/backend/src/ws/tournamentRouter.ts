@@ -35,20 +35,15 @@ async function joinGameHandler(
 }
 
 async function stopGameHandler(socket: WebSocket) {
-  const playerLeft: ServerMessage = { type: 'player_left' };
   const playerTournament = getPlayerTournament(socket);
   const gameSession = playerTournament?.getPlayerSession(socket);
   if (!playerTournament || !gameSession || !gameSession.gameArea) return;
   const gameArea = gameSession.gameArea;
-  gameArea.stop();
   const playerWhoLeft = gameArea.getPlayerByWebSocket(socket);
   removePlayerTournament(socket);
   const playerWhoStayed = gameArea.getOtherPlayer(playerWhoLeft);
-  if (playerWhoStayed.socket.readyState === WebSocket.OPEN)
-    playerWhoStayed.socket.send(JSON.stringify(playerLeft));
   await gameArea.tournament!.updateSessionScore(gameArea.session, playerWhoStayed.id);
-  // TODO: Add tournament tree info
-  gameArea.session.broadcastPlayerLeftMessage(playerWhoStayed);
+  // TODO: Send tournament tree info ?
   // TODO: Check if order of users matter
   try {
     const tx = await contractSigner.saveScoreAndAddWinner(
