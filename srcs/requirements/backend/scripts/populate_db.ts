@@ -59,6 +59,16 @@ async function seedUsers() {
       avatarUrl: getRandomAvatarPath(),
     },
   });
+  for (let index = 0; index < 6; index++) {
+    await prisma.user.create({
+      data: {
+        username: `test${index + 1}`,
+        email: `test${index + 1}@example.com`,
+        hashedPassword: TEST_PASSWORD2,
+        avatarUrl: getRandomAvatarPath(),
+      },
+    });
+  }
 }
 
 async function createFriends(users: User[]) {

@@ -32,7 +32,7 @@ async function foundSession(ws: WebSocket, playerSettings: leanGameSettings) {
 
       console.log(
         `Player matched to a ${playerSettings.gameType} GameSession: `,
-        JSON.stringify(session),
+        JSON.stringify(session.print()),
       );
       return true;
     }
@@ -45,7 +45,10 @@ async function createSession(ws: WebSocket, playerSettings: leanGameSettings) {
   await newSession.setPlayer(ws, playerSettings);
 
   gameTypeToSessions(playerSettings.gameType).push(newSession);
-  console.log(`New ${playerSettings.gameType} GameSession created: `, JSON.stringify(newSession));
+  console.log(
+    `New ${playerSettings.gameType} GameSession created: `,
+    JSON.stringify(newSession.print()),
+  );
 }
 
 export async function attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
