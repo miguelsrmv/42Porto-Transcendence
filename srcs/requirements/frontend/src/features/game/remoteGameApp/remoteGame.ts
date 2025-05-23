@@ -13,7 +13,13 @@ import type {
 } from '../gameSettings/gameSettings.types.js';
 import { updateHUD } from '../gameSetup.js';
 import { loadView } from '../../../core/viewLoader.js';
-import { updateBackground, renderGame } from './renderGame.js';
+import {
+  updateBackground,
+  startGameArea,
+  renderGame,
+  renderGoal,
+  resetVariables,
+} from './renderGame.js';
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
 
 /**
@@ -82,7 +88,21 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       addKeyEventListeners(gameSettings.gameType);
     } else if (messageData.type === 'game_start') {
       gameIsRunning = true;
-      renderGame(webSocket);
+      startGameArea();
+    } else if (messageData.type === 'game_state' && gameIsRunning) {
+      renderGame(messageData);
+    } else if (messageData.type === 'game_goal' && gameIsRunning) {
+      renderGoal(messageData.scoringSide);
+    } else if (messageData.type === 'game_end' && gameIsRunning) {
+      triggerEndGameMenu(
+        messageData.winningPlayer,
+        messageData.ownSide,
+        messageData.stats,
+        leanGameSettings.playType,
+      );
+      gameIsRunning = false;
+      resetVariables();
+      webSocket.close();
     }
   };
 }

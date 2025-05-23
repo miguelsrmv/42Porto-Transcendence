@@ -6,14 +6,11 @@
 import type { gameType } from '../game/gameSettings/gameSettings.types.js';
 import {
   getGameType,
-  createBackgroundLoop,
   createCharacterLoop,
   setGameSettings,
   getLeanGameSettings,
-  updateHUD,
 } from '../game/gameSetup.js';
 import { initializeRemoteGame } from '../game/remoteGameApp/remoteGame.js';
-import { loadView } from '../../core/viewLoader.js';
 import { fadeIn, fadeOut } from '../../ui/animations.js';
 import { checkLoginStatus, wait } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
