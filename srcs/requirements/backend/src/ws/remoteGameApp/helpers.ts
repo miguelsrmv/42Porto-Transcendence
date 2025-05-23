@@ -15,6 +15,6 @@ export function isGameType(type: string) {
 }
 
 export function isPlayType(type: string) {
-  const types: playType[] = ['Local Play', 'Remote Play', 'Tournament Play'];
+  const types: playType[] = ['Remote Play', 'Tournament Play'];
   return types.includes(type as playType);
 }
