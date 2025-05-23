@@ -1,6 +1,6 @@
 import { FastifyRequest } from 'fastify';
 import WebSocket from 'ws';
-import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
+import { ClientMessage, PlayerInput } from './remoteGameApp/types';
 import {
   attributePlayerToTournament,
   getPlayerTournament,
@@ -10,7 +10,6 @@ import {
 import { areGameSettingsValid } from './remoteGameRouter';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isPlayerInput } from './remoteGameApp/helpers';
-import { contractSigner } from '../api/services/blockchain.services';
 
 async function joinGameHandler(
   socket: WebSocket,
@@ -32,32 +31,6 @@ async function joinGameHandler(
   await attributePlayerToTournament(socket, playerSettings);
   const playerTournament = getPlayerTournament(socket);
   if (playerTournament && playerTournament.isFull()) await playerTournament.start();
-}
-
-async function stopGameHandler(socket: WebSocket) {
-  const playerTournament = getPlayerTournament(socket);
-  const gameSession = playerTournament?.getPlayerSession(socket);
-  if (!playerTournament || !gameSession || !gameSession.gameArea) return;
-  const gameArea = gameSession.gameArea;
-  const playerWhoLeft = gameArea.getPlayerByWebSocket(socket);
-  removePlayerTournament(socket);
-  const playerWhoStayed = gameArea.getOtherPlayer(playerWhoLeft);
-  await gameArea.tournament!.updateSessionScore(gameArea.session, playerWhoStayed.id);
-  // TODO: Send tournament tree info ?
-  // TODO: Check if order of users matter
-  try {
-    const tx = await contractSigner.saveScoreAndAddWinner(
-      playerTournament.id,
-      gameSession.gameType,
-      playerWhoStayed.id,
-      5, // hard-coded win
-      playerWhoLeft.id,
-      playerWhoLeft.score,
-    );
-    await tx.wait();
-  } catch (err) {
-    console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
-  }
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
@@ -96,10 +69,6 @@ async function messageTypeHandlerTournament(
       await joinGameHandler(socket, userId, message.playerSettings);
       break;
     }
-    case 'stop_game': {
-      await stopGameHandler(socket);
-      break;
-    }
     case 'movement': {
       movementHandler(socket, message.direction);
       break;
@@ -124,8 +93,8 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
     await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
   });
 
-  socket.on('close', () => {
-    removePlayerTournament(socket);
+  socket.on('close', async () => {
+    await removePlayerTournament(socket);
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });

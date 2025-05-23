@@ -7,11 +7,13 @@ import {
   playType,
 } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
-import { getAvatarFromPlayer, getRandomBackground } from './sessionManagement';
+import { getAvatarFromPlayer, getRandomBackground, removeSession } from './sessionManagement';
 import { Tournament } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
 import { ServerMessage } from './remoteGameApp/types';
+import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
+import { contractSigner } from '../api/services/blockchain.services';
 
 export class PlayerInfo {
   id: string;
@@ -76,16 +78,37 @@ export class GameSession {
     );
   }
 
-  removePlayer(ws: WebSocket) {
+  async removePlayer(ws: WebSocket) {
     const playerToRemove = this.players.find((player) => player.socket === ws);
     if (!playerToRemove) return;
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
     if (!this.gameArea) return;
+    const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
+    const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
     this.gameArea.stop();
-    this.broadcastPlayerLeftMessage(
-      this.gameArea.getOtherPlayer(this.gameArea.getPlayerByWebSocket(ws)),
-    );
+    this.broadcastPlayerLeftMessage(playerWhoStayed);
+    if (this.tournament) {
+      await this.tournament.updateSessionScore(this, playerWhoStayed.id);
+      // TODO: Check if order of users matter
+      try {
+        const tx = await contractSigner.saveScoreAndAddWinner(
+          this.tournament.id,
+          this.tournament.type,
+          playerWhoStayed.id,
+          5, // hard-coded win
+          playerWhoLeft.id,
+          playerWhoLeft.score,
+        );
+        await tx.wait();
+      } catch (err) {
+        console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
+      }
+    } else {
+      await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
+      await this.clear();
+      removeSession(this);
+    }
   }
 
   isFull(): boolean {
@@ -184,8 +207,8 @@ export class GameSession {
     this.broadcastMessage(JSON.stringify(gameStartMsg));
   }
 
-  clear() {
-    this.players.forEach((player) => this.removePlayer(player.socket));
+  async clear() {
+    this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
   }
 
