@@ -16,7 +16,10 @@ async function createTournament(ws: WebSocket, playerSettings: leanGameSettings)
   await newTournament.createSession(ws, playerSettings);
   gameTypeToTournaments(playerSettings.gameType).push(newTournament);
   playerTournamentMap.set(ws, newTournament);
-  console.log(`New ${playerSettings.gameType} Tournament created: `, JSON.stringify(newTournament));
+  console.log(
+    `New ${playerSettings.gameType} Tournament created: `,
+    JSON.stringify(newTournament.print()),
+  );
 }
 
 function getOpenTournament(tournaments: Tournament[]) {
@@ -31,7 +34,7 @@ async function foundTournament(ws: WebSocket, playerSettings: leanGameSettings) 
     if (tournament.isFull()) tournament.state = tournamentState.full;
     console.log(
       `Player joined ${playerSettings.gameType} Tournament: `,
-      JSON.stringify(tournament),
+      JSON.stringify(tournament.print()),
     );
     return true;
   }

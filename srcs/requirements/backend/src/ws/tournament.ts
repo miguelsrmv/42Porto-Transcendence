@@ -12,10 +12,10 @@ const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
 
 export enum tournamentState {
-  creating,
-  full,
-  ongoing,
-  ended,
+  creating = 'creating',
+  full = 'full',
+  ongoing = 'ongoing',
+  ended = 'ended',
 }
 
 // NOTE: playerID, playType and gameType not needed (new type?)
@@ -45,7 +45,10 @@ export class Tournament {
     newSession.tournament = this;
     await newSession.setPlayer(ws, playerSettings);
 
-    console.log(`New ${playerSettings.gameType} GameSession created: `, JSON.stringify(newSession));
+    console.log(
+      `New ${playerSettings.gameType} GameSession created: `,
+      JSON.stringify(newSession.print()),
+    );
     this.sessions.push(newSession);
   }
 
@@ -215,5 +218,16 @@ export class Tournament {
       ];
     });
     return { tournamentId: this.id, gameType: this.type, participants: playersData };
+  }
+
+  print() {
+    return {
+      sessions: this.sessions.map((s) => s.print()),
+      state: this.state,
+      type: this.type,
+      id: this.id,
+      currentRound: this.currentRound,
+      players: this.players.map((p) => p.toJSON()),
+    };
   }
 }
