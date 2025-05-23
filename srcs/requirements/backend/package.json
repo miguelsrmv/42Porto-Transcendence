@@ -12,7 +12,6 @@
     "build-dev": "tsc --watch",
     "test": "vitest",
     "test-db": "npx tsx scripts/test_db.ts",
-    "migrate": "npx prisma migrate dev",
     "db-reset": "npx prisma migrate reset"
   },
   "keywords": [],
