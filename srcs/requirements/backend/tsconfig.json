@@ -8,6 +8,9 @@
     "strict": true /* Enable strict type-checking */,
     "skipLibCheck": true /* Skip type checking of declaration files */
   },
-  "include": ["src/**/*", "src/fastify.d.ts", "scripts/*", "../blockchain/tools/frontend/blockchain.ts"] /* Specify the files to be included in compilation */,
+  "include": [
+    "src/**/*",
+    "scripts/*",
+  ] /* Specify the files to be included in compilation */,
   "exclude": ["node_modules"] /* Specify the files to be excluded from compilation */
 }
