@@ -14,6 +14,9 @@
     "test-db": "npx tsx scripts/test_db.ts",
     "db-reset": "npx prisma migrate reset"
   },
+  "prisma": {
+    "seed": "npx tsx scripts/populate_db.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
