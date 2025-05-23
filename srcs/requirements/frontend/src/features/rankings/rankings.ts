@@ -8,9 +8,10 @@ import { navigate } from '../../core/router.js';
 import { matchData, leaderboardData, statsData, userData } from './rankings.types.js';
 
 /**
- * @brief Initializes view for rankings
+ * @brief Initializes the view for the rankings page.
  *
- * This function sets up the view for rankings
+ * This function checks the login status, sets up the left and right panels,
+ * and initializes leaderboard-related functionality.
  */
 export async function initializeView(): Promise<void> {
   if (!checkLoginStatus()) {
@@ -27,6 +28,11 @@ export async function initializeView(): Promise<void> {
   setupLeaderboardClick();
 }
 
+/**
+ * @brief Renders the left panel of the rankings page.
+ *
+ * @param userId The ID of the user whose data will be displayed.
+ */
 async function renderLeftPanel(userId: string): Promise<void> {
   cleanLeftPanel();
   await renderTopLeftBoard(userId);
@@ -34,6 +40,11 @@ async function renderLeftPanel(userId: string): Promise<void> {
   await renderTournamentBoard(userId);
 }
 
+/**
+ * @brief Renders the top-left board with user information.
+ *
+ * @param userId The ID of the user whose data will be fetched and displayed.
+ */
 async function renderTopLeftBoard(userId: string): Promise<void> {
   const userAvatar = document.getElementById('user-avatar-rankings') as HTMLImageElement;
   if (!userAvatar) {
@@ -109,6 +120,11 @@ async function renderTopLeftBoard(userId: string): Promise<void> {
   }
 }
 
+/**
+ * @brief Renders the recent matches board.
+ *
+ * @param userId The ID of the user whose recent matches will be displayed.
+ */
 async function renderMatchesBoard(userId: string): Promise<void> {
   const recentMatchesSection = document.getElementById('recent-matches');
   if (!recentMatchesSection) {
@@ -145,6 +161,12 @@ async function renderMatchesBoard(userId: string): Promise<void> {
   }
 }
 
+/**
+ * @brief Updates a DOM node with recent match data.
+ *
+ * @param clone The DOM fragment to update.
+ * @param recentMatch The data of the recent match to display.
+ */
 async function updateNodeWithRecentMatchesData(
   clone: DocumentFragment,
   recentMatch: matchData,
@@ -194,8 +216,18 @@ async function updateNodeWithRecentMatchesData(
   recentMatchResult.classList.add(`text-${colour}-400`);
 }
 
+/**
+ * @brief Renders the tournament board.
+ *
+ * @param userId The ID of the user whose tournament data will be displayed.
+ */
 async function renderTournamentBoard(userId: string): Promise<void> {}
 
+/**
+ * @brief Initializes the right panel of the rankings page.
+ *
+ * This function fetches leaderboard data and highlights specific players.
+ */
 async function initializeRightPanel(): Promise<void> {
   const rankingsList = document.getElementById('rankings-list');
   if (!rankingsList) {
@@ -251,6 +283,12 @@ async function initializeRightPanel(): Promise<void> {
   }
 }
 
+/**
+ * @brief Updates a DOM node with leaderboard player data.
+ *
+ * @param clone The DOM fragment to update.
+ * @param element The leaderboard data to display.
+ */
 async function updateNodeWithLeaderboardPlayer(
   clone: DocumentFragment,
   element: leaderboardData,
@@ -336,6 +374,14 @@ async function updateNodeWithLeaderboardPlayer(
   }
 }
 
+/**
+ * @brief Highlights a player in the leaderboard.
+ *
+ * @param rank The rank of the player to highlight.
+ * @param colour The color to use for highlighting.
+ */
+// TODO: If multiple players are #1, highlight all of them in gold
+// TODO: Make sure only own player is highlighted in green
 function highlightPlayer(rank: number, colour: string): void {
   const targetPlayer = document.querySelector(`[data-ranking="${rank}"]`);
   if (!targetPlayer) {
@@ -362,6 +408,12 @@ function highlightPlayer(rank: number, colour: string): void {
   targetPlayerCircle.classList.add(`border-${colour}-400`);
 }
 
+/**
+ *
+ * @brief Sets up the leaderboard search functionality.
+ *
+ * Filters the leaderboard based on user input.
+ */
 function setupLeaderboardSearch(): void {
   const searchInput = document.getElementById('leaderboard-search') as HTMLInputElement;
   if (!searchInput) {
@@ -392,6 +444,11 @@ function setupLeaderboardSearch(): void {
   });
 }
 
+/**
+ * @brief Sets up click functionality for leaderboard players.
+ *
+ * Clicking on a player updates the left panel with their data.
+ */
 function setupLeaderboardClick(): void {
   const leaderboardList = document.getElementById('rankings-list');
   if (!leaderboardList) {
@@ -411,6 +468,10 @@ function setupLeaderboardClick(): void {
   });
 }
 
+/**
+ * @brief Cleans the left panel by removing recent matches.
+ * TODO: Also clean tournaments
+ */
 function cleanLeftPanel(): void {
   const recentMatchList = document.getElementById('recent-matches');
   if (!recentMatchList) {
