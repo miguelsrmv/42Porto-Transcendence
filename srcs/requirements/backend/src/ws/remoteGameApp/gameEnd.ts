@@ -93,15 +93,19 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.settings.playType === 'Tournament Play') {
     await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
     gameArea.session.broadcastEndGameMessage(winningPlayer);
-    const tx = await contractSigner.saveScoreAndAddWinner(
-      gameArea.tournament!.id,
-      gameArea.settings.gameType,
-      gameArea.leftPlayer.id,
-      gameArea.leftPlayer.score,
-      gameArea.rightPlayer.id,
-      gameArea.rightPlayer.score,
-    );
-    await tx.wait();
+    try {
+      const tx = await contractSigner.saveScoreAndAddWinner(
+        gameArea.tournament!.id,
+        gameArea.settings.gameType,
+        gameArea.leftPlayer.id,
+        gameArea.leftPlayer.score,
+        gameArea.rightPlayer.id,
+        gameArea.rightPlayer.score,
+      );
+      await tx.wait();
+    } catch (err) {
+      console.log(`Error calling saveScoreAndAddWinner in gameEnd: ${err}`);
+    }
     return;
   }
   await createMatch(winningPlayer, gameArea);

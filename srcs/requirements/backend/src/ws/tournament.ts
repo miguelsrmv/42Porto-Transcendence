@@ -12,10 +12,10 @@ const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
 
 export enum tournamentState {
-  creating,
-  full,
-  ongoing,
-  ended,
+  creating = 'creating',
+  full = 'full',
+  ongoing = 'ongoing',
+  ended = 'ended',
 }
 
 // NOTE: playerID, playType and gameType not needed (new type?)
@@ -45,7 +45,10 @@ export class Tournament {
     newSession.tournament = this;
     await newSession.setPlayer(ws, playerSettings);
 
-    console.log(`New ${playerSettings.gameType} GameSession created: `, JSON.stringify(newSession));
+    console.log(
+      `New ${playerSettings.gameType} GameSession created: `,
+      JSON.stringify(newSession.print()),
+    );
     this.sessions.push(newSession);
   }
 
@@ -56,10 +59,12 @@ export class Tournament {
 
         console.log(
           `Player matched to a ${playerSettings.gameType} GameSession: `,
-          JSON.stringify(session),
+          JSON.stringify(session.print()),
         );
-      } else this.createSession(ws, playerSettings);
+        return;
+      }
     }
+    await this.createSession(ws, playerSettings);
   }
 
   setPlayersTournamentStart() {
@@ -111,14 +116,19 @@ export class Tournament {
   }
 
   async start() {
+    console.log('Starting tournament');
     this.state = tournamentState.ongoing;
     const data = this.getTournamentCreateData();
-    const tx = await contractSigner.joinTournament(
-      data.tournamentId,
-      data.gameType,
-      data.participants,
-    );
-    await tx.wait();
+    try {
+      const tx = await contractSigner.joinTournament(
+        data.tournamentId,
+        data.gameType,
+        data.participants,
+      );
+      await tx.wait();
+    } catch (err) {
+      console.log(`Error in joinTournament BLockchain call: ${err}`);
+    }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
     this.broadcastSettingsToSessions();
     this.sessions.forEach((session) => session.startGame());
@@ -215,5 +225,16 @@ export class Tournament {
       ];
     });
     return { tournamentId: this.id, gameType: this.type, participants: playersData };
+  }
+
+  print() {
+    return {
+      sessions: this.sessions.map((s) => s.players.map((p) => p.id)),
+      state: this.state,
+      type: this.type,
+      id: this.id,
+      currentRound: this.currentRound,
+      players: this.players.map((p) => p.toJSON()),
+    };
   }
 }
