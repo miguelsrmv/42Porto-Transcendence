@@ -47,9 +47,3 @@ export type ServerMessage =
     }
   | { type: 'player_left' }
   | { type: 'error'; message: string };
-
-// To be able to print
-export interface GameSessionSerializable {
-  players: string[]; // just the player IDs
-  settings: gameSettings;
-}

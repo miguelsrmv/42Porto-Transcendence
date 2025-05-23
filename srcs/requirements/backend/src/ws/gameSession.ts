@@ -13,13 +13,40 @@ import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
 import { ServerMessage } from './remoteGameApp/types';
 
-export interface PlayerInfo {
+export class PlayerInfo {
   id: string;
   socket: WebSocket;
   alias: string;
   avatar: string;
   paddleColour: string;
   character: character | null;
+
+  constructor(
+    id: string,
+    socket: WebSocket,
+    alias: string,
+    avatar: string,
+    paddleColour: string,
+    character: character | null,
+  ) {
+    this.id = id;
+    this.socket = socket;
+    this.alias = alias;
+    this.avatar = avatar;
+    this.paddleColour = paddleColour;
+    this.character = character;
+  }
+
+  toJSON() {
+    // Exclude the socket when serializing
+    return {
+      id: this.id,
+      alias: this.alias,
+      avatar: this.avatar,
+      paddleColour: this.paddleColour,
+      character: this.character?.name,
+    };
+  }
 }
 
 export class GameSession {
@@ -37,14 +64,16 @@ export class GameSession {
   }
 
   async setPlayer(ws: WebSocket, playerSettings: playerSettings) {
-    this.players.push({
-      id: playerSettings.playerID,
-      socket: ws,
-      alias: playerSettings.alias,
-      avatar: await getAvatarFromPlayer(playerSettings.playerID),
-      paddleColour: playerSettings.paddleColour,
-      character: playerSettings.character,
-    });
+    this.players.push(
+      new PlayerInfo(
+        playerSettings.playerID,
+        ws,
+        playerSettings.alias,
+        await getAvatarFromPlayer(playerSettings.playerID),
+        playerSettings.paddleColour,
+        playerSettings.character,
+      ),
+    );
   }
 
   removePlayer(ws: WebSocket) {
@@ -153,5 +182,17 @@ export class GameSession {
   clear() {
     this.players.forEach((player) => this.removePlayer(player.socket));
     this.players.length = 0;
+  }
+
+  print() {
+    return {
+      gameType: this.gameType,
+      playType: this.playType,
+      players: this.players.map((player) => player.toJSON()),
+      winner: this.winner,
+      round: this.round,
+      gameArea: this.gameArea !== null ? 'yes' : 'no',
+      tournament: this.tournament !== undefined ? 'yes' : 'no',
+    };
   }
 }
