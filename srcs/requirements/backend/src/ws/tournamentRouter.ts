@@ -1,5 +1,6 @@
 import { FastifyRequest } from 'fastify';
 import WebSocket from 'ws';
+import { contractSigner } from '../api/services/blockchain.services'
 import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
 import {
   attributePlayerToTournament,
@@ -42,10 +43,10 @@ async function joinGameHandler(
   const playerTournament = getPlayerTournament(socket);
   if (playerTournament && playerTournament.isFull()) {
     playerTournament.broadcastSettingsToSessions();
-    const tournamentPlayersData = getTournamentCreateData(playerTournament);
-    // { alias, userID, character, gameType, tournamentID }
-    // TODO: Create tournament in the Blockchain
-    // TODO: Save tournamentId on each User
+    for (const session of playerTournament.sessions) initializeRemoteGame(session);
+    const data = getTournamentCreateData(playerTournament);
+    const tx = await contractSigner.joinTournament(data.tournamentId, data.gameType, data.participants);
+    await tx.wait();
     await playerTournament.addTournamentToDB(
       playerTournament.id,
       playerTournament.type,
@@ -57,7 +58,7 @@ async function joinGameHandler(
   }
 }
 
-function stopGameHandler(socket: WebSocket) {
+async function stopGameHandler(socket: WebSocket) {
   const playerLeft: ServerMessage = { type: 'player_left' };
   const playerTournament = getPlayerTournament(socket);
   const gameSession = playerTournament?.getPlayerSession(socket);
@@ -68,17 +69,22 @@ function stopGameHandler(socket: WebSocket) {
   removePlayerTournament(socket);
   const playerWhoStayed = gameArea.getOtherPlayer(playerWhoLeft);
   // TODO: Update data on Blockchain
-  // const data = {
-  //   gameType: gameArea.settings.gameType,
-  //   user1Id: playerWhoStayed.id,
-  //   score1: 5, // hard-coded win
-  //   user2Id: playerWhoLeft.id,
-  //   score2: playerWhoLeft.score,
-  //   tournamentId: playerTournament.id,
-  // };
+  const data = {
+    gameType: gameArea.settings.gameType,
+    user1Id: playerWhoStayed.id,
+    score1: 5, // hard-coded win
+    user2Id: playerWhoLeft.id,
+    score2: playerWhoLeft.score,
+    tournamentId: playerTournament.id,
+  };
   if (playerWhoStayed.socket.readyState === WebSocket.OPEN)
     playerWhoStayed.socket.send(JSON.stringify(playerLeft));
   // TODO: Advance tournament to next match
+  // TODO: set other player as winner (score to 5 ?)
+  // TODO: Get variables to add to bellow function
+  const tx = await contractSigner.saveScoreAndAddWinner(data.tournamentId, data.gameType, data.user1Id, data.score1, data.user2Id, data.score2);
+  await tx.wait();
+  // { gameType, user1ID, score1, user2ID, score2, tournamentID }
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
@@ -118,7 +124,7 @@ async function messageTypeHandlerTournament(
       break;
     }
     case 'stop_game': {
-      stopGameHandler(socket);
+      await stopGameHandler(socket);
       break;
     }
     case 'movement': {
