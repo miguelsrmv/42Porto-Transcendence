@@ -69,3 +69,10 @@ export function removePlayerTournament(playerSocket: WebSocket) {
 export function getPlayerTournament(socket: WebSocket) {
   return playerTournamentMap.get(socket);
 }
+
+export function playerIsInATournament(playerId: string): boolean {
+  const allTournaments = classicTournaments.concat(crazyTournaments);
+  return allTournaments.some((t) =>
+    t.sessions.some((s) => s.players.some((p) => p.id === playerId)),
+  );
+}

@@ -4,6 +4,7 @@ import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types
 import {
   attributePlayerToTournament,
   getPlayerTournament,
+  playerIsInATournament,
   removePlayerTournament,
 } from './tournamentManagement';
 import { areGameSettingsValid } from './remoteGameRouter';
@@ -16,7 +17,13 @@ async function joinGameHandler(
   userId: string,
   playerSettings: leanGameSettings,
 ) {
-  if (getPlayerTournament(socket)) return;
+  if (playerIsInATournament(userId)) {
+    if (socket.readyState === WebSocket.OPEN)
+      socket.send(JSON.stringify({ type: 'error', message: 'Player already in a tournament' }));
+    socket.close();
+    return;
+  }
+  console.log('Player not in the tournament yet');
   if (
     !areGameSettingsValid(socket, userId, playerSettings) ||
     playerSettings.playType !== 'Tournament Play'
@@ -112,7 +119,6 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
     const currentTime = Date.now() / 1000;
     if (currentTime - clientLastActive > 30) socket.close();
   }, 15000); // every 15 seconds
-
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
     console.log('Received message:', message.toString());
