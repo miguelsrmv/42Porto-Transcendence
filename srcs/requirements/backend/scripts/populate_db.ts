@@ -1,6 +1,7 @@
 import { Character, FriendshipStatus, GameMode, User } from '@prisma/client';
 import { prisma } from '../src/utils/prisma';
 import { faker } from '@faker-js/faker';
+import { getRandomAvatarPath } from './avatarData';
 
 const NUMBER_OF_USERS = 16;
 
@@ -38,6 +39,7 @@ async function seedUsers() {
         username: username,
         email: email,
         hashedPassword: faker.internet.password(),
+        avatarUrl: getRandomAvatarPath(),
       },
     });
   }
@@ -46,6 +48,7 @@ async function seedUsers() {
       username: USERNAME,
       email: EMAIL,
       hashedPassword: TEST_PASSWORD,
+      avatarUrl: getRandomAvatarPath(),
     },
   });
   await prisma.user.create({
@@ -53,6 +56,7 @@ async function seedUsers() {
       username: USERNAME2,
       email: EMAIL2,
       hashedPassword: TEST_PASSWORD2,
+      avatarUrl: getRandomAvatarPath(),
     },
   });
 }
@@ -113,8 +117,10 @@ async function createMatches(users: User[]) {
     const participants = users.slice(i, i + matchSize);
     if (participants.length === matchSize) {
       let score1 = Math.round(Math.random() * 5);
-      const score2 = Math.round(Math.random() * 5);
+      let score2 = Math.round(Math.random() * 5);
       if (score1 === score2) --score1;
+      if (score1 > score2) score1 = 5;
+      else score2 = 5;
       const match = await prisma.match.create({
         data: {
           settings: '',
@@ -137,10 +143,21 @@ async function createMatches(users: User[]) {
           },
         });
       }
+      const winner = score1 > score2 ? participants[0].id : participants[1].id;
+      const loser = score1 > score2 ? participants[1].id : participants[0].id;
       await prisma.leaderboard.update({
-        where: { userId: score1 > score2 ? participants[0].id : participants[1].id },
+        where: { userId: winner },
         data: { score: { increment: 3 } },
       });
+      const losingPlayerRecord = await prisma.leaderboard.findUnique({
+        where: { userId: loser },
+      });
+      if (losingPlayerRecord && losingPlayerRecord.score > 0) {
+        await prisma.leaderboard.update({
+          where: { userId: loser },
+          data: { score: { decrement: 1 } },
+        });
+      }
     }
   }
 }
@@ -150,8 +167,10 @@ async function createTestUserMatches(users: User[]) {
   for (let i = 0; i < users.length; i += 1) {
     if (users[i].id === testUser!.id) continue;
     let score1 = Math.round(Math.random() * 5);
-    const score2 = Math.round(Math.random() * 5);
+    let score2 = Math.round(Math.random() * 5);
     if (score1 === score2) --score1;
+    if (score1 > score2) score1 = 5;
+    else score2 = 5;
     await prisma.match.create({
       data: {
         settings: '',
@@ -165,10 +184,21 @@ async function createTestUserMatches(users: User[]) {
         mode: GameMode.CRAZY,
       },
     });
+    const winner = score1 > score2 ? testUser!.id : users[i].id;
+    const loser = score1 > score2 ? users[i].id : testUser!.id;
     await prisma.leaderboard.update({
-      where: { userId: score1 > score2 ? testUser!.id : users[i].id },
+      where: { userId: winner },
       data: { score: { increment: 3 } },
     });
+    const losingPlayerRecord = await prisma.leaderboard.findUnique({
+      where: { userId: loser },
+    });
+    if (losingPlayerRecord && losingPlayerRecord.score > 0) {
+      await prisma.leaderboard.update({
+        where: { userId: loser },
+        data: { score: { decrement: 1 } },
+      });
+    }
   }
 }
 

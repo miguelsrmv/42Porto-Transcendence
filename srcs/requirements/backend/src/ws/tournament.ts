@@ -5,6 +5,7 @@ import { GameSessionSerializable, ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
 import { gameTypeToGameMode } from '../utils/helpers';
+import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -109,9 +110,10 @@ export class Tournament {
     });
   }
 
-  updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+  async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
+    await updateLeaderboardTournament(winner, sessionToUpdate.round);
 
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
     if (roundSessions.every((session) => session.winner)) this.advanceRound();
