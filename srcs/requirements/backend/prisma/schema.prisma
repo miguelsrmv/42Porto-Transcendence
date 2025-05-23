@@ -16,7 +16,7 @@ model User {
   salt            String                  @default("")
   createdAt       DateTime                @default(now())
   lastActiveAt    DateTime                @default(now())
-  avatarUrl       String?
+  avatarUrl       String                  @default("../../../../static/avatar/default/mario.png")
   secret2FA       String?
   enabled2FA      Boolean                 @default(false)
   friendsSent     Friendship[]            @relation("SentRequests")
