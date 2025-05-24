@@ -1,5 +1,7 @@
 import { Match } from '@prisma/client';
 import { getUserRank, getUserScore } from './leaderboard.services';
+import { prisma } from '../../utils/prisma';
+import app from '../../app';
 
 export async function getUserGlobalStats(matches: Match[], userId: string) {
   const totalMatches = matches.length;
@@ -14,4 +16,10 @@ export async function getUserGlobalStats(matches: Match[], userId: string) {
     points: await getUserScore(userId),
     rank: await getUserRank(userId),
   };
+}
+
+export async function getAvatarFromPlayer(playerID: string) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: playerID } });
+  if (!user) app.log.error('User not found in getAvatarFromPlayer');
+  return user.avatarUrl;
 }

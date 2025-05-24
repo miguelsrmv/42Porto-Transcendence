@@ -7,9 +7,9 @@ import {
   playerIsInATournament,
   removePlayerTournament,
 } from './tournamentManagement';
-import { areGameSettingsValid } from './remoteGameRouter';
+import { areGameSettingsValid } from './helpers';
 import { leanGameSettings } from './remoteGameApp/settings';
-import { isPlayerInput } from './remoteGameApp/helpers';
+import { isPlayerInput } from './helpers';
 
 async function joinGameHandler(
   socket: WebSocket,
