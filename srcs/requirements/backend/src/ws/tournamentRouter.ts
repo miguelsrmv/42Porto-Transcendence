@@ -1,36 +1,31 @@
 import { FastifyRequest } from 'fastify';
 import WebSocket from 'ws';
 import { ClientMessage, PlayerInput } from './remoteGameApp/types';
-import {
-  attributePlayerToTournament,
-  getPlayerTournament,
-  playerIsInATournament,
-  removePlayerTournament,
-} from './tournamentManagement';
-import { areGameSettingsValid } from './helpers';
+import { areGameSettingsValid, sendErrorMessage } from './helpers';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isPlayerInput } from './helpers';
+import { TournamentManager } from './tournamentManager';
+
+const tournamentManager = new TournamentManager();
 
 async function joinGameHandler(
   socket: WebSocket,
   userId: string,
   playerSettings: leanGameSettings,
 ) {
-  if (playerIsInATournament(userId)) {
-    if (socket.readyState === WebSocket.OPEN)
-      socket.send(JSON.stringify({ type: 'error', message: 'Player already in a tournament' }));
+  if (tournamentManager.isPlayerInATournament(userId)) {
+    sendErrorMessage(socket, 'Player already in a tournament');
     socket.close();
     return;
   }
   console.log('Player not in the tournament yet');
-  if (
-    !areGameSettingsValid(socket, userId, playerSettings) ||
-    playerSettings.playType !== 'Tournament Play'
-  )
+  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
+  if (playerSettings.playType !== 'Tournament Play') {
+    sendErrorMessage(socket, 'Attempting to join a Remote Game through the wrong route');
+    socket.close();
     return;
-  await attributePlayerToTournament(socket, playerSettings);
-  const playerTournament = getPlayerTournament(socket);
-  if (playerTournament && playerTournament.isFull()) await playerTournament.start();
+  }
+  await tournamentManager.attributePlayerToTournament(socket, playerSettings);
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
@@ -38,7 +33,7 @@ function movementHandler(socket: WebSocket, direction: string) {
     console.log(`Not a valid player movement: ${direction}`);
     return;
   }
-  const playerTournament = getPlayerTournament(socket);
+  const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
   const gameSession = playerTournament?.getPlayerSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
@@ -49,7 +44,7 @@ function movementHandler(socket: WebSocket, direction: string) {
 }
 
 function powerUpHandler(socket: WebSocket) {
-  const playerTournament = getPlayerTournament(socket);
+  const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
   const gameSession = playerTournament?.getPlayerSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
@@ -94,7 +89,7 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
   });
 
   socket.on('close', async () => {
-    await removePlayerTournament(socket);
+    await tournamentManager.removePlayerTournament(socket);
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });
