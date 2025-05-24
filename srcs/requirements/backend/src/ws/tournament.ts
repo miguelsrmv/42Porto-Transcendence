@@ -1,12 +1,13 @@
 import { randomUUID } from 'crypto';
 import { GameSession, PlayerInfo } from './gameSession';
-import { gameType, leanGameSettings, playerSettings } from './remoteGameApp/settings';
+import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
 import { gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
+import { playerInfoToPlayerSettings } from './helpers';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -16,16 +17,6 @@ export enum tournamentState {
   full = 'full',
   ongoing = 'ongoing',
   ended = 'ended',
-}
-
-// NOTE: playerID, playType and gameType not needed (new type?)
-export function playerInfoToPlayerSettings(player: PlayerInfo): playerSettings {
-  return {
-    playerID: player.id,
-    alias: player.alias,
-    character: player.character,
-    paddleColour: player.paddleColour,
-  };
 }
 
 export class Tournament {
@@ -204,10 +195,13 @@ export class Tournament {
     return this.players.find((player) => player.id === playerId);
   }
 
+  // NOTE: only removing player from session from current round
   async removePlayer(socket: WebSocket) {
-    this.sessions.forEach(async (session) => {
-      await session.removePlayer(socket);
-    });
+    const playerSession = this.sessions
+      .filter((s) => s.playerIsInSession(socket))
+      .find((s) => s.round === this.currentRound);
+    // Should only be one session
+    if (playerSession) await playerSession.removePlayer(socket);
   }
 
   getTournamentCreateData() {
