@@ -28,7 +28,7 @@ export class TournamentManager {
   }
 
   public async attributePlayerToTournament(ws: WebSocket, settings: leanGameSettings) {
-    await this.clearEndedTournaments();
+    await this.clearEndedTournaments(this.getTournaments(settings.gameType));
     const { playerID } = settings;
     this.playerSockets.set(playerID, ws);
     this.socketToPlayerId.set(ws, playerID);
@@ -82,15 +82,8 @@ export class TournamentManager {
     this.socketToPlayerId.delete(ws);
   }
 
-  private getAllTournaments() {
-    const classicTournaments = this.tournaments.get('Classic Pong')!;
-    const crazyTournaments = this.tournaments.get('Crazy Pong')!;
-    return classicTournaments.concat(crazyTournaments);
-  }
-
-  private async clearEndedTournaments() {
-    const allTournaments = this.getAllTournaments();
-    const endedTournaments = allTournaments.filter((t) => t.state === tournamentState.ended);
+  private async clearEndedTournaments(tournaments: Tournament[]) {
+    const endedTournaments = tournaments.filter((t) => t.state === tournamentState.ended);
     endedTournaments.forEach(async (t) => {
       this.removeTournament(t);
     });
