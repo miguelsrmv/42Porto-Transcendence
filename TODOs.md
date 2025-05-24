@@ -15,3 +15,4 @@
 - Review player id/socket management in game sessions to check if player is present
 - Add ready for next round logic
 - Add centralized manager class that instantiates either tournaments or sessions
+- Uniformize search by socket or playerId
