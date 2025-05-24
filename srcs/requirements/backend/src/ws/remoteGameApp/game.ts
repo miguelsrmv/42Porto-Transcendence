@@ -66,7 +66,3 @@ export async function updateGameArea(dt: number, gameArea: GameArea) {
 export function getGameVersion(gameArea: GameArea): number {
   return gameArea.leftPlayer.getScore() + gameArea.rightPlayer.getScore();
 }
-
-export function endGameIfRunning(gameArea: GameArea): void {
-  if (gameArea.runningState !== gameRunningState.ended) gameArea.stop();
-}

@@ -1,7 +1,6 @@
 import { Ball } from './ball.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, PADDLE_LEN, GameArea } from './gameArea.js';
-import { MAX_BALL_SPEED } from './collisions.js';
-import { wait } from './helpers.js';
+import { wait } from '../helpers.js';
 import { gameStats } from './gameStats.js';
 import { Paddle } from './paddle.js';
 import { getGameVersion } from './game.js';
