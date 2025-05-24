@@ -101,8 +101,48 @@ const myGameArea: GameArea = {
  * @brief Renders the game and handles WebSocket messages.
  * @param webSocket The WebSocket connection for receiving game state updates.
  */
-export function renderGame(webSocket: WebSocket) {
+// export function renderGame(webSocket: WebSocket) {
+//   myGameArea.start();
+//   const leftPowerBar = document.getElementById('left-character-power-bar-fill');
+//   if (!leftPowerBar) {
+//     console.warn('left-character player bar not found');
+//     return;
+//   }
+//   const rightPowerBar = document.getElementById('right-character-power-bar-fill');
+//   if (!rightPowerBar) {
+//     console.warn('right-character player bar not found');
+//     return;
+//   }
+//   webSocket.onmessage = (event) => {
+//     const messageData = JSON.parse(event.data);
+//     if (messageData.type === 'game_state') {
+//       myGameArea.clear();
+//       drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state as GameState);
+//       drawPowerBar(messageData.state.leftPowerBarFill, leftPowerBar, 'left');
+//       drawPowerBar(messageData.state.rightPowerBarFill, rightPowerBar, 'right');
+//       triggerAnimation(messageData.state);
+//       triggerSound(myGameArea.context as CanvasRenderingContext2D, messageData.state);
+//     } else if (messageData.type === 'game_goal') {
+//       renderGoal(messageData.scoringSide);
+//     } else if (messageData.type === 'game_end') {
+//       triggerEndGameMenu(
+//         messageData.winningPlayer,
+//         messageData.ownSide,
+//         messageData.stats,
+//         'Remote Play', // TODO: replace by messageData.playType
+//       );
+//       resetVariables();
+//       webSocket.close();
+//     }
+//   };
+// }
+
+export function startGameArea(): void {
   myGameArea.start();
+}
+
+// TODO : Check messageData.state type
+export function renderGame(messageData: any): void {
   const leftPowerBar = document.getElementById('left-character-power-bar-fill');
   if (!leftPowerBar) {
     console.warn('left-character player bar not found');
@@ -113,28 +153,12 @@ export function renderGame(webSocket: WebSocket) {
     console.warn('right-character player bar not found');
     return;
   }
-  webSocket.onmessage = (event) => {
-    const messageData = JSON.parse(event.data);
-    if (messageData.type === 'game_state') {
-      myGameArea.clear();
-      drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state as GameState);
-      drawPowerBar(messageData.state.leftPowerBarFill, leftPowerBar, 'left');
-      drawPowerBar(messageData.state.rightPowerBarFill, rightPowerBar, 'right');
-      triggerAnimation(messageData.state);
-      triggerSound(myGameArea.context as CanvasRenderingContext2D, messageData.state);
-    } else if (messageData.type === 'game_goal') {
-      renderGoal(messageData.scoringSide);
-    } else if (messageData.type === 'game_end') {
-      triggerEndGameMenu(
-        messageData.winningPlayer,
-        messageData.ownSide,
-        messageData.stats,
-        'Remote Play', // TODO: replace by messageData.playType
-      );
-      resetVariables();
-      webSocket.close();
-    }
-  };
+
+  myGameArea.clear();
+  drawBoard(myGameArea.context as CanvasRenderingContext2D, messageData.state as GameState);
+  drawPowerBar(messageData.state.leftPowerBarFill, leftPowerBar, 'left');
+  drawPowerBar(messageData.state.rightPowerBarFill, rightPowerBar, 'right');
+  triggerAnimation(messageData.state);
 }
 
 /**
@@ -204,7 +228,7 @@ function drawPowerBar(value: number, powerBar: HTMLElement, side: string): void 
  * @brief Renders a goal and updates the score.
  * @param scoringSide The side that scored ('left' or 'right').
  */
-function renderGoal(scoringSide: string) {
+export function renderGoal(scoringSide: string) {
   let scorePoint: number;
   if (scoringSide === 'left') {
     leftSideGoal++;
@@ -246,7 +270,7 @@ function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
 /**
  * @brief Resets game-related variables to their initial state.
  */
-function resetVariables(): void {
+export function resetVariables(): void {
   leftSideGoal = 0;
   rightSideGoal = 0;
   leftPowerBarAnimation = false;
