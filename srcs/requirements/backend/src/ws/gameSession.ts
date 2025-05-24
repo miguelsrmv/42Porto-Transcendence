@@ -7,13 +7,14 @@ import {
   playType,
 } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
-import { getAvatarFromPlayer, getRandomBackground, removeSession } from './sessionManagement';
-import { Tournament } from './tournament';
+import { Tournament, tournamentState } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
-import { ServerMessage } from './remoteGameApp/types';
+import { gameRunningState, ServerMessage } from './remoteGameApp/types';
 import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 import { contractSigner } from '../api/services/blockchain.services';
+import { getAvatarFromPlayer } from '../api/services/user.services';
+import { getRandomBackground } from './remoteGameApp/backgroundData';
 
 export class PlayerInfo {
   id: string;
@@ -78,17 +79,19 @@ export class GameSession {
     );
   }
 
+  // TODO: only call score saving functions once
   async removePlayer(ws: WebSocket) {
     const playerToRemove = this.players.find((player) => player.socket === ws);
     if (!playerToRemove) return;
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
     if (!this.gameArea) return;
+    if (this.players.length === 0) return;
+    if (this.gameArea.runningState !== gameRunningState.ended) this.gameArea.stop();
     const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
-    this.gameArea.stop();
     this.broadcastPlayerLeftMessage(playerWhoStayed);
-    if (this.tournament) {
+    if (this.tournament && this.tournament.state === tournamentState.ongoing) {
       await this.tournament.updateSessionScore(this, playerWhoStayed.id);
       // TODO: Check if order of users matter
       try {
@@ -107,7 +110,6 @@ export class GameSession {
     } else {
       await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
       await this.clear();
-      removeSession(this);
     }
   }
 
@@ -184,6 +186,7 @@ export class GameSession {
 
   // TODO: Review if all these parameters are necessary
   startGame() {
+    console.log('Starting game');
     const response: ServerMessage = {
       type: 'game_setup',
       settings: this.getJointSettings(),
@@ -210,6 +213,10 @@ export class GameSession {
   async clear() {
     this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
+  }
+
+  playerIsInSession(ws: WebSocket) {
+    return this.players.some((p) => p.socket === ws);
   }
 
   print() {
