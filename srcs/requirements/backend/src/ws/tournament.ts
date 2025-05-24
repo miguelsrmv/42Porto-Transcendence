@@ -159,9 +159,10 @@ export class Tournament {
       .filter((winner): winner is string => !!winner);
 
     if (winners.length <= 1) {
-      this.state = tournamentState.ended;
+      console.log('Tournament has ended');
       // TODO: send message to all players
-      this.broadcastToAll(JSON.stringify({ message: 'Tournament has ended' }));
+      this.broadcastToAll(JSON.stringify({ type: 'tournament_end' }));
+      this.state = tournamentState.ended;
       await this.clear();
       return;
     }
