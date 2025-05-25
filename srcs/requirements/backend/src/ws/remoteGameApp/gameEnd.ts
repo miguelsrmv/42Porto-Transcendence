@@ -98,9 +98,9 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
         gameArea.tournament!.id,
         gameArea.settings.gameType,
         gameArea.leftPlayer.id,
-        gameArea.leftPlayer.score,
+        BigInt(gameArea.leftPlayer.score),
         gameArea.rightPlayer.id,
-        gameArea.rightPlayer.score,
+        BigInt(gameArea.rightPlayer.score),
       );
       await tx.wait();
     } catch (err) {

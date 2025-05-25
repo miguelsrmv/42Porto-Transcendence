@@ -99,9 +99,9 @@ export class GameSession {
           this.tournament.id,
           this.tournament.type,
           playerWhoStayed.id,
-          5, // hard-coded win
+          5n, // hard-coded win 
           playerWhoLeft.id,
-          playerWhoLeft.score,
+          BigInt(playerWhoLeft.score),
         );
         await tx.wait();
       } catch (err) {
