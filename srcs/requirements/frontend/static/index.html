@@ -1426,4 +1426,92 @@
     </div>
   </template>
 
+  <template id="tournament-tree">
+    <div class="m-2 p-4">
+      <div class="mb-4 grid grid-flow-col grid-cols-3 items-center border-0 border-b-2 border-gray-200 text-center text-lg font-bold uppercase">
+        <div>Quarterfinals</div>
+        <div>Semifinals</div>
+        <div>Finals</div>
+      </div>
+      <div class="grid grid-flow-col grid-cols-3 items-center">
+        <div class="grid grid-flow-row grid-rows-3">
+          <div class="mb-4 rounded-md bg-gray-200 px-4 py-2 text-gray-900">
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TournamentPlayer1">Player A</p>
+              <p class="text-right" id="TournamentPlayer1Score">2</p>
+            </div>
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TournamentPlayer2">Player 2</p>
+              <p class="text-right" id="TournamentPlayer2Score">1</p>
+            </div>
+          </div>
+          <div class="mb-4 rounded-md bg-gray-200 px-4 py-2 text-gray-900">
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TournamentPlayer3">Player 3</p>
+              <p class="text-right" id="TournamentPlayer3Score">2</p>
+            </div>
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TournamentPlayer4">Player 4</p>
+              <p class="text-right" id="TournamentPlayer4Score">1</p>
+            </div>
+          </div>
+          <div class="mb-4 rounded-md bg-gray-200 px-4 py-2 text-gray-900">
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TournamentPlayer5">Player 5</p>
+              <p class="text-right" id="TournamentPlayer5Score">2</p>
+            </div>
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TournamentPlayer6">Player 6</p>
+              <p class="text-right" id="TourmanetPlayer6Score">1</p>
+            </div>
+          </div>
+          <div class="mb-4 rounded-md bg-gray-200 px-4 py-2 text-gray-900">
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TournamentPlayer7">Player 7</p>
+              <p class="text-right" id="TournamentPlayer7Score">2</p>
+            </div>
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="TourmanentPlayer8">Player 8</p>
+              <p class="text-right" id="TournamentPlayer8Score">1</p>
+            </div>
+          </div>
+        </div>
+        <div class="mx-2 grid h-1/2 grid-flow-row grid-rows-2">
+          <div class="mb-4 rounded-md bg-gray-200 px-4 py-2 text-gray-900">
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="QF1Winner">Player 1</p>
+              <p class="text-right" id="QF1WinnerScore">2</p>
+            </div>
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="QF2Winner">Player 3</p>
+              <p class="text-right" id="QF2WinnerScore">1</p>
+            </div>
+          </div>
+          <div class="mb-4 rounded-md bg-gray-200 px-4 py-2 text-gray-900">
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="QF3Winner">Player 5</p>
+              <p class="text-right" id="QF3WinnerScore">2</p>
+            </div>
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="QF4Winner">Player 7</p>
+              <p class="text-right" id="QF4WinnerScore">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="mx-2 grid h-1/4 grid-flow-row grid-rows-1">
+          <div class="mb-4 rounded-md bg-gray-200 px-4 py-2 text-gray-900">
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="SF1Winner">Player 1</p>
+              <p class="text-right" id="SF1WinnerScore">0</p>
+            </div>
+            <div class="grid grid-flow-col grid-cols-2">
+              <p class="font-semibold" id="SF2Winner">Player 5</p>
+              <p class="text-right" id="SF2WinnerScore">2</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
 </html>
