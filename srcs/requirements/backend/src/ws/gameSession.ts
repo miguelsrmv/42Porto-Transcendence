@@ -7,11 +7,14 @@ import {
   playType,
 } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
-import { getAvatarFromPlayer, getRandomBackground } from './sessionManagement';
-import { Tournament } from './tournament';
+import { Tournament, tournamentState } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
-import { ServerMessage } from './remoteGameApp/types';
+import { gameRunningState, ServerMessage } from './remoteGameApp/types';
+import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
+import { contractSigner } from '../api/services/blockchain.services';
+import { getAvatarFromPlayer } from '../api/services/user.services';
+import { getRandomBackground } from './remoteGameApp/backgroundData';
 
 export class PlayerInfo {
   id: string;
@@ -76,11 +79,38 @@ export class GameSession {
     );
   }
 
-  removePlayer(ws: WebSocket) {
+  // TODO: only call score saving functions once
+  async removePlayer(ws: WebSocket) {
     const playerToRemove = this.players.find((player) => player.socket === ws);
     if (!playerToRemove) return;
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
+    if (!this.gameArea) return;
+    if (this.players.length === 0) return;
+    if (this.gameArea.runningState !== gameRunningState.ended) this.gameArea.stop();
+    const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
+    const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
+    this.broadcastPlayerLeftMessage(playerWhoStayed);
+    if (this.tournament && this.tournament.state === tournamentState.ongoing) {
+      await this.tournament.updateSessionScore(this, playerWhoStayed.id);
+      // TODO: Check if order of users matter
+      try {
+        const tx = await contractSigner.saveScoreAndAddWinner(
+          this.tournament.id,
+          this.tournament.type,
+          playerWhoStayed.id,
+          5, // hard-coded win
+          playerWhoLeft.id,
+          playerWhoLeft.score,
+        );
+        await tx.wait();
+      } catch (err) {
+        console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
+      }
+    } else {
+      await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
+      await this.clear();
+    }
   }
 
   isFull(): boolean {
@@ -123,17 +153,17 @@ export class GameSession {
 
   broadcastPlayerLeftMessage(winningPlayer: Player) {
     if (!this.gameArea) return;
+    // Goals automatically set to 5 for remaining player
+    this.gameArea.stats.setMaxGoals(winningPlayer.side);
+    // TODO: Differentiate from normal game_end message?
     const gameEndMsg = {
-      type: 'game_end_give_up',
+      type: 'game_end',
       winningPlayer: winningPlayer.side,
-      ownSide: 'left',
+      ownSide: winningPlayer.side,
       stats: this.gameArea.stats,
     };
-    if (this.gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
-      this.gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
-    gameEndMsg.ownSide = 'right';
-    if (this.gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
-      this.gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
+    if (winningPlayer.socket.readyState === WebSocket.OPEN)
+      winningPlayer.socket.send(JSON.stringify(gameEndMsg));
   }
 
   getJointSettings(): gameSettings {
@@ -156,6 +186,7 @@ export class GameSession {
 
   // TODO: Review if all these parameters are necessary
   startGame() {
+    console.log('Starting game');
     const response: ServerMessage = {
       type: 'game_setup',
       settings: this.getJointSettings(),
@@ -179,9 +210,13 @@ export class GameSession {
     this.broadcastMessage(JSON.stringify(gameStartMsg));
   }
 
-  clear() {
-    this.players.forEach((player) => this.removePlayer(player.socket));
+  async clear() {
+    this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
+  }
+
+  playerIsInSession(ws: WebSocket) {
+    return this.players.some((p) => p.socket === ws);
   }
 
   print() {

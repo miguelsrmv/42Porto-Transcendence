@@ -1,7 +1,7 @@
 import { Ball } from './ball.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, GameArea, SPEED } from './gameArea.js';
 import { endGame } from './gameEnd.js';
-import { wait } from './helpers.js';
+import { wait } from '../helpers.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
 import { gameRunningState, ServerMessage } from './types.js';
