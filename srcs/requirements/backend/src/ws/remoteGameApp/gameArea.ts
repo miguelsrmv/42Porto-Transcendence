@@ -101,6 +101,7 @@ export class GameArea {
   stop() {
     this.runningState = gameRunningState.ended;
     this.clear();
+    console.log('Stopping game');
   }
 
   clear() {

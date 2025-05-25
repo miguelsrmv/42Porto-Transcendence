@@ -1,83 +1,37 @@
 import WebSocket from 'ws';
-import {
-  attributePlayerToSession,
-  getGameSession,
-  playerIsInASession,
-  removePlayerBySocket,
-  removeSession,
-} from './sessionManagement';
-import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
+import { ClientMessage, PlayerInput } from './remoteGameApp/types';
 import { FastifyRequest } from 'fastify';
 import { leanGameSettings } from './remoteGameApp/settings';
-import { isGameType, isPlayerInput, isPlayType } from './remoteGameApp/helpers';
-import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
+import { areGameSettingsValid, isPlayerInput, sendErrorMessage } from './helpers';
+import { GameSessionManager } from './gameSessionManager';
 
-export function broadcastMessageTo(p1socket: WebSocket, p2socket: WebSocket, message: string) {
-  if (p1socket.readyState === WebSocket.OPEN) p1socket.send(message);
-  if (p2socket.readyState === WebSocket.OPEN) p2socket.send(message);
-}
-
-export function areGameSettingsValid(
-  socket: WebSocket,
-  userId: string,
-  playerSettings: leanGameSettings,
-) {
-  if (playerSettings.playerID !== userId) {
-    console.log(
-      `UserId: ${userId} does not match the request playerId: ${playerSettings.playerID}`,
-    );
-    const errorMessage: ServerMessage = { type: 'error', message: '401 Unauthorized' };
-    if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
-    socket.close();
-    return false;
-  }
-  if (!isGameType(playerSettings.gameType) || !isPlayType(playerSettings.playType)) {
-    console.log(
-      `gameType: '${playerSettings.gameType}' or playType: '${playerSettings.playType}' not valid`,
-    );
-    const errorMessage: ServerMessage = { type: 'error', message: '400 Game settings not valid' };
-    if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(errorMessage));
-    socket.close();
-    return false;
-  }
-  return true;
-}
+const sessionManager = new GameSessionManager();
 
 async function joinGameHandler(
   socket: WebSocket,
   userId: string,
   playerSettings: leanGameSettings,
 ) {
-  if (playerIsInASession(playerSettings.playerID)) return;
-  if (
-    !areGameSettingsValid(socket, userId, playerSettings) ||
-    playerSettings.playType !== 'Remote Play'
-  )
+  if (sessionManager.isPlayerInSession(playerSettings.playerID)) {
+    sendErrorMessage(socket, 'Player already in a session');
+    socket.close();
     return;
-  await attributePlayerToSession(socket, playerSettings);
-  const playerSession = getGameSession(socket);
-  if (playerSession && playerSession.isFull()) playerSession.startGame();
-}
-
-async function stopGameHandler(socket: WebSocket) {
-  const playerLeft: ServerMessage = { type: 'player_left' };
-  const gameSession = getGameSession(socket);
-  if (!gameSession || !gameSession.gameArea) return;
-  const gameArea = gameSession.gameArea;
-  gameArea.stop();
-  const player2 = gameArea.getOtherPlayer(gameArea.getPlayerByWebSocket(socket));
-  await createMatchPlayerLeft(player2, gameArea);
-  if (player2.socket.readyState === WebSocket.OPEN) player2.socket.send(JSON.stringify(playerLeft));
-  gameSession.clear();
-  removeSession(gameSession);
+  }
+  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
+  if (playerSettings.playType !== 'Remote Play') {
+    sendErrorMessage(socket, 'Attempting to join a Tournament through the wrong route');
+    socket.close();
+    return;
+  }
+  await sessionManager.attributePlayerToSession(socket, playerSettings);
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
   if (!isPlayerInput(direction)) {
-    console.log(`Not a valid player movement: ${direction}`);
+    sendErrorMessage(socket, `Not a valid player movement: ${direction}`);
     return;
   }
-  const gameSession = getGameSession(socket);
+  const gameSession = sessionManager.getSessionBySocket(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
     gameSession.gameArea.leftPlayer.socket === socket
@@ -87,7 +41,7 @@ function movementHandler(socket: WebSocket, direction: string) {
 }
 
 function powerUpHandler(socket: WebSocket) {
-  const gameSession = getGameSession(socket);
+  const gameSession = sessionManager.getSessionBySocket(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
     gameSession.gameArea.leftPlayer.socket === socket
@@ -100,10 +54,6 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
   switch (message.type) {
     case 'join_game': {
       await joinGameHandler(socket, userId, message.playerSettings);
-      break;
-    }
-    case 'stop_game': {
-      await stopGameHandler(socket);
       break;
     }
     case 'movement': {
@@ -134,8 +84,8 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
     await messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
   });
 
-  socket.on('close', () => {
-    removePlayerBySocket(socket);
+  socket.on('close', async () => {
+    await sessionManager.removePlayerBySocket(socket);
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });
