@@ -8,6 +8,7 @@ import type { playType } from '../gameSettings/gameSettings.types.js';
 import { fadeOut, fadeIn } from '../../../ui/animations.js';
 import { loadView } from '../../../core/viewLoader.js';
 import { forceRouteChange } from '../../../core/router.js';
+import { showWaitingModal } from '../../remotePlay/remotePlay.js';
 
 /**
  * @brief Triggers the end game menu for the winning player.
@@ -21,6 +22,7 @@ export function triggerEndGameMenu(
   playerSide: string,
   stats: gameStats,
   playType: playType,
+  tournamentIsRunning: boolean,
 ): void {
   const HUDSideToShow = playType === 'Local Play' ? winningPlayerSide : playerSide;
 
@@ -42,7 +44,7 @@ export function triggerEndGameMenu(
 
   hideGameElements();
   showStatsMenu(HUDSideToShow, stats, playerHUDcopy, colour, HUDSideToShow === winningPlayerSide);
-  updateButtons(playType);
+  updateButtons(playType, tournamentIsRunning);
 }
 
 /**
@@ -198,21 +200,31 @@ function copyHUD(winnerHUD: Node): void {
  * @brief Updates the buttons in the end game menu, such as the "Play Again" button.
  * @param playType The type of play (e.g., Local Play, Remote Play).
  */
-function updateButtons(playType: playType): void {
-  let targetPage: string;
+function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
+  const playAgainButton = document.getElementById('play-again-button');
+  if (!playAgainButton) {
+    console.log("Couldn't find Play Again Button");
+    return;
+  }
+
+  let targetPage: string | null;
   if (playType === 'Local Play') targetPage = 'local-play-page';
   else if (playType === 'Remote Play') targetPage = 'remote-play-page';
-  // TODO: What if tournament?
-  //
+  else if (playType === 'Tournament Play') {
+    targetPage = null;
+    if (tournamentIsRunning) playAgainButton.innerText = 'Next game!';
+    else playAgainButton.classList.add('hidden');
+  }
 
-  const playAgainButton = document.getElementById('play-again-button');
-  if (playAgainButton) {
-    playAgainButton.addEventListener('click', () => {
-      restoreGameElements();
+  playAgainButton.addEventListener('click', () => {
+    restoreGameElements();
+    if (targetPage) {
       loadView(targetPage);
       forceRouteChange(targetPage);
-    });
-  } else console.warn('Play Again Button not found');
+    } else {
+      showWaitingModal();
+    }
+  });
 }
 
 /**
@@ -251,3 +263,5 @@ function restoreGameElements(): void {
     }
   }
 }
+
+function showTournamentStatus(): void {}
