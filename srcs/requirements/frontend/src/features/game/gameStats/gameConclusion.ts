@@ -22,7 +22,7 @@ export function triggerEndGameMenu(
   playerSide: string,
   stats: gameStats,
   playType: playType,
-  tournamentIsRunning: boolean,
+  tournamentIsRunning: boolean = false,
 ): void {
   const HUDSideToShow = playType === 'Local Play' ? winningPlayerSide : playerSide;
 
