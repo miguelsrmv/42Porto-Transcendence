@@ -84,3 +84,8 @@ const backgroundList: background[] = [
 export function getBackgroundList(): background[] {
   return backgroundList;
 }
+
+export function getRandomBackground(): background {
+  const backgroundList = getBackgroundList();
+  return backgroundList[Math.floor(Math.random() * backgroundList.length)];
+}

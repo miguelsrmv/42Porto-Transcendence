@@ -1,12 +1,13 @@
 import { randomUUID } from 'crypto';
 import { GameSession, PlayerInfo } from './gameSession';
-import { gameType, leanGameSettings, playerSettings } from './remoteGameApp/settings';
+import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
 import { gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
+import { playerInfoToPlayerSettings } from './helpers';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -16,16 +17,6 @@ export enum tournamentState {
   full = 'full',
   ongoing = 'ongoing',
   ended = 'ended',
-}
-
-// NOTE: playerID, playType and gameType not needed (new type?)
-export function playerInfoToPlayerSettings(player: PlayerInfo): playerSettings {
-  return {
-    playerID: player.id,
-    alias: player.alias,
-    character: player.character,
-    paddleColour: player.paddleColour,
-  };
 }
 
 export class Tournament {
@@ -75,10 +66,10 @@ export class Tournament {
     return this.sessions.find((session) => session.players.some((p) => p.socket === ws));
   }
 
-  clear() {
-    this.sessions.forEach((session) => session.clear());
+  async clear() {
+    this.sessions.forEach(async (session) => await session.clear());
     this.sessions.length = 0;
-    this.players.forEach((player) => this.removePlayer(player.socket));
+    this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
   }
 
@@ -151,6 +142,7 @@ export class Tournament {
   }
 
   async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+    console.log(`Match ended, winner: ${this.players.find((p) => p.id === winner)?.alias}`);
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
@@ -160,16 +152,18 @@ export class Tournament {
   }
 
   async advanceRound() {
+    console.log(`Advancing to round ${this.currentRound + 1}`);
     const winners = this.sessions
       .filter((session) => session.round === this.currentRound)
       .map((s) => s.winner)
       .filter((winner): winner is string => !!winner);
 
     if (winners.length <= 1) {
-      this.state = tournamentState.ended;
+      console.log('Tournament has ended');
       // TODO: send message to all players
-      this.broadcastToAll(JSON.stringify({ message: 'Tournament has ended' }));
-      this.clear();
+      this.broadcastToAll(JSON.stringify({ type: 'tournament_end' }));
+      this.state = tournamentState.ended;
+      await this.clear();
       return;
     }
     ++this.currentRound;
@@ -202,10 +196,13 @@ export class Tournament {
     return this.players.find((player) => player.id === playerId);
   }
 
-  removePlayer(socket: WebSocket) {
-    this.sessions.forEach((session) => {
-      session.removePlayer(socket);
-    });
+  // NOTE: only removing player from session from current round
+  async removePlayer(socket: WebSocket) {
+    const playerSession = this.sessions
+      .filter((s) => s.playerIsInSession(socket))
+      .find((s) => s.round === this.currentRound);
+    // Should only be one session
+    if (playerSession) await playerSession.removePlayer(socket);
   }
 
   getTournamentCreateData() {
