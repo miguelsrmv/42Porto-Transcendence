@@ -7,15 +7,7 @@ import {
   deactivatePowerBarAnimation,
   powerUpAnimation,
 } from '../animations/animations.js';
-import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
-import type {
-  GameArea,
-  GameState,
-  Paddle,
-  Ball,
-  playerStats,
-  gameStats,
-} from '../gameStats/gameStatsTypes.js';
+import type { GameArea, GameState, Paddle, Ball } from '../gameStats/gameStatsTypes.js';
 
 /** @brief The color of the ball. */
 const BALL_COLOUR = 'white';
@@ -258,13 +250,6 @@ function triggerAnimation(state: GameState) {
   if (state.leftAnimation) powerUpAnimation('left');
   if (state.rightAnimation) powerUpAnimation('right');
 }
-
-/**
- * @brief Triggers sound effects based on the game state.
- * @param ctx The canvas rendering context.
- * @param state The current game state.
- */
-function triggerSound(ctx: CanvasRenderingContext2D, state: GameState) {}
 
 /**
  * @brief Resets game-related variables to their initial state.
