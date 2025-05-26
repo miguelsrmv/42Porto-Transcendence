@@ -263,5 +263,3 @@ function restoreGameElements(): void {
     }
   }
 }
-
-function showTournamentStatus(): void {}
