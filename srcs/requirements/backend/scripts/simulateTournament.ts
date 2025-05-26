@@ -19,12 +19,11 @@ async function simulateClient(browser: Browser, index: number) {
   const page = await context.newPage();
 
   try {
-    await page.goto(BASE_URL, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(1000);
+    await page.goto(BASE_URL);
+    await page.waitForTimeout(2000);
     await page.click('button#enter-button', { force: true });
-    await page.waitForTimeout(500);
-
-    await page.fill('#login-email', `test${index}@example.com`);
+    await page.waitForTimeout(1000);
+    await page.locator('#login-email').fill(`test${index}@example.com`);
     await page.fill('#login-password', MOCK_PASSWORD);
     await page.click('button#login-submit-button');
 
