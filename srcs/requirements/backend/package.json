@@ -45,10 +45,11 @@
     "eslint-plugin-prettier": "^5.2.3",
     "ethers-types": "^3.18.1",
     "nodemon": "^3.1.9",
+    "playwright": "^1.52.0",
     "prettier": "^3.5.3",
     "prisma": "^6.5.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.26.1",
     "vitest": "^3.0.9"
   }

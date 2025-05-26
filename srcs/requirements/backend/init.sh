@@ -1,7 +1,6 @@
 #!/bin/bash
 
-npx prisma migrate dev                    # Apply migrations to the database and generate prisma client
+npx prisma migrate dev                    # Apply migrations to the database, generate prisma client and run seed script
 npm run build                             # Generate the .js files in dist/
-npm run populate						  # Populate the database with test data
 chmod -R 755 ./dist                       # Give execution permission to dist/
 exec npm run start-dev                    # Execute dist/app.js
