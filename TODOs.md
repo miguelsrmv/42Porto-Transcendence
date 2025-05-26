@@ -7,6 +7,7 @@
 # Backend
 - Make responses more uniform
 - Protect all routes in the end (except login/sign up related)
+- Remove populate from running automatically on project delivery
 - Test server-side pong through CLI
 - Tournament brackets management
 - Connect tournament logic to Blockchain

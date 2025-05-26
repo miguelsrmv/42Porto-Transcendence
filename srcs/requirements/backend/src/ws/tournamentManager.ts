@@ -35,6 +35,7 @@ export class TournamentManager {
     if (!(await this.foundTournament(ws, settings))) {
       await this.createTournament(ws, settings);
     }
+    // TODO: Pass start logic to Tournament
     const playerTournament = this.getPlayerTournamentBySocket(ws);
     if (playerTournament && playerTournament.isFull()) await playerTournament.start();
   }
