@@ -76,7 +76,7 @@ export async function initializeView(): Promise<void> {
   } else console.warn('Play Button not found');
 }
 
-async function showWaitingModal(): Promise<void> {
+export async function showWaitingModal(): Promise<void> {
   const gameSettingsMenu = document.getElementById('game-settings-menu');
   if (!gameSettingsMenu) {
     console.log('Game settings menu not found');
