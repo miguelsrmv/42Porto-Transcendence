@@ -86,10 +86,10 @@ export class Tournament {
   }
 
   public broadcastSettingsToSessions() {
-    for (const session of this.sessions) {
-      const message: ServerMessage = { type: 'game_setup', settings: session.getJointSettings() };
-      session.broadcastMessage(JSON.stringify(message));
-    }
+    this.sessions.forEach((s) => {
+      const message: ServerMessage = { type: 'game_setup', settings: s.getJointSettings() };
+      s.broadcastMessage(JSON.stringify(message));
+    });
   }
 
   private getAllPlayerIds(): string[] {
@@ -119,11 +119,7 @@ export class Tournament {
       console.log(`Error in joinTournament BLockchain call: ${err}`);
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
-    this.broadcastSettingsToSessions();
     this.sessions.forEach((session) => session.startGame());
-    const gameStartMsg: ServerMessage = { type: 'game_start' };
-    // TODO: Add tournament tree info
-    this.broadcastToAll(JSON.stringify(gameStartMsg));
   }
 
   private async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {

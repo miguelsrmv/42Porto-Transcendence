@@ -18,7 +18,6 @@ async function joinGameHandler(
     socket.close();
     return;
   }
-  console.log('Player not in the tournament yet');
   if (!areGameSettingsValid(socket, userId, playerSettings)) return;
   if (playerSettings.playType !== 'Tournament Play') {
     sendErrorMessage(socket, 'Attempting to join a Remote Game through the wrong route');
