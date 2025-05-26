@@ -49,7 +49,7 @@ async function simulateClient(browser: Browser, index: number) {
         cookie: `access_token=${token}`,
       },
     });
-
+    let heartbeat: NodeJS.Timeout;
     ws.on('open', () => {
       console.log(`[${index}] WebSocket connected`);
       const joinMessage = {
@@ -64,17 +64,26 @@ async function simulateClient(browser: Browser, index: number) {
         },
       };
       ws.send(JSON.stringify(joinMessage));
+      heartbeat = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'ping' }));
+        }
+      }, 30000);
     });
 
     ws.on('message', (msg) => {
       const data = JSON.parse(msg.toString());
-      if (data.type !== 'game_state') {
-        console.log(`[${index}] Received:`, data);
-      }
+      if (data.type === 'game_state' || data.type === 'game_goal') return;
+      console.log(`[${index}] Received:`, data);
     });
 
     ws.on('error', (err) => {
       console.error(`[${index}] WebSocket error:`, err.message);
+    });
+
+    ws.on('close', () => {
+      console.error(`[${index}] WebSocket closed`);
+      clearInterval(heartbeat);
     });
   } catch (err) {
     console.error(`[${index}] Error:`, err);
