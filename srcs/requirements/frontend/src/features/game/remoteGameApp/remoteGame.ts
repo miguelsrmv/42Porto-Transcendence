@@ -105,6 +105,7 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       gameIsRunning
     ) {
       gameIsRunning = false;
+      if (messageData.type === 'tournament_end') tournamentIsRunning = false;
       triggerEndGameMenu(
         messageData.winningPlayer,
         messageData.ownSide,
@@ -112,7 +113,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
         leanGameSettings.playType,
         tournamentIsRunning,
       );
-      if (messageData.type === 'tournament_end') tournamentIsRunning = false;
       resetVariables();
       webSocket.close();
     } else if (messageData.type === 'tournament_status') {
