@@ -84,16 +84,17 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
+    console.log('I got', messageData);
     if (messageData.type === 'game_setup') {
       const gameSettings = messageData.settings;
       loadView('game-page');
       updateHUD(gameSettings, gameSettings.gameType);
       updateBackground(gameSettings.background.imagePath);
       addKeyEventListeners(gameSettings.gameType);
+      if (gameSettings.gameType === 'Tournament play') tournamentIsRunning = true;
     } else if (messageData.type === 'game_start') {
       gameIsRunning = true;
       // TODO: Check if this is the proper gameType
-      if (messageData.settings.gameType === 'Tournament play') tournamentIsRunning = true;
       startGameArea();
     } else if (messageData.type === 'game_state' && gameIsRunning) {
       renderGame(messageData);
