@@ -180,7 +180,7 @@ export class Tournament {
     const nextRoundPlayers = playerIds
       .map((id) => this.getPlayerInfoFromId(id))
       .filter((p): p is PlayerInfo => !!p);
-    console.log(`Creating new round session with: ${nextRoundPlayers.map((p) => p.id)}`);
+    console.log(`Creating new round session with: ${nextRoundPlayers.map((p) => p.alias)}`);
     for (let i = 0; i < nextRoundPlayers.length; i += 2) {
       const player1 = nextRoundPlayers[i];
       const player2 = nextRoundPlayers[i + 1];
