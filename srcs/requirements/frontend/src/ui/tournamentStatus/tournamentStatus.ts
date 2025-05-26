@@ -53,5 +53,25 @@ function fillParticipants(
     }
 
     playerEl.innerText = participants[i].userAlias;
+
+    const scoreEl = tournamentBlock.querySelector(
+      `.TournamentPlayer${i + 1}Score`,
+    ) as HTMLParagraphElement;
+    if (!scoreEl) {
+      console.log(`Couldn't find Tournament Player ${i + 1} Score`);
+      return;
+    }
+
+    // TODO: Uncomment and adjust variable name once I know what gets sent
+    // if (participants[i].score != null) {
+    //   scoreEl.innerText = participants[i].score;
+    //   if (
+    //     (i % 2 && participants[i].score > participants[i + 1].score) ||
+    //     (!(i % 2) && participants[i].score < participants[i + 1].score)
+    //   ) {
+    //     playerEl.classList.add('text-green-500');
+    //     scoreEl.classList.add('text-green-500');
+    //   }
+    // }
   }
 }
