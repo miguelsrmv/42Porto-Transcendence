@@ -90,9 +90,10 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
   gameArea.stop();
-  if (gameArea.settings.playType === 'Tournament Play') {
+  if (gameArea.tournament) {
     await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
     gameArea.session.broadcastEndGameMessage(winningPlayer);
+    await gameArea.tournament.removePlayer(gameArea.getOtherPlayer(winningPlayer).socket);
     try {
       const tx = await contractSigner.saveScoreAndAddWinner(
         gameArea.tournament!.id,
@@ -106,9 +107,10 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     } catch (err) {
       console.log(`Error calling saveScoreAndAddWinner in gameEnd: ${err}`);
     }
-    return;
+  } else {
+    await createMatch(winningPlayer, gameArea);
+    await updateLeaderboardRemote(winningPlayer, gameArea.getOtherPlayer(winningPlayer));
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
+    await gameArea.session.clear();
   }
-  await createMatch(winningPlayer, gameArea);
-  await updateLeaderboardRemote(winningPlayer, gameArea.getOtherPlayer(winningPlayer));
-  gameArea.session.broadcastEndGameMessage(winningPlayer);
 }
