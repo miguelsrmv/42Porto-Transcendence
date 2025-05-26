@@ -105,6 +105,7 @@ export class GameSession {
         );
         await tx.wait();
       } catch (err) {
+        // Got error: TypeError: blockchain_services_1.contractSigner.saveScoreAndAddWinner is not a function
         console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
       }
     } else {
@@ -187,11 +188,13 @@ export class GameSession {
   // TODO: Review if all these parameters are necessary
   startGame() {
     console.log('Starting game');
-    const response: ServerMessage = {
-      type: 'game_setup',
-      settings: this.getJointSettings(),
-    };
-    this.broadcastMessage(JSON.stringify(response));
+    if (this.tournament && this.round === 1) {
+      const response: ServerMessage = {
+        type: 'game_setup',
+        settings: this.getJointSettings(),
+      };
+      this.broadcastMessage(JSON.stringify(response));
+    }
     this.gameArea = new GameArea(
       this.players[0].id,
       this.players[1].id,
@@ -206,8 +209,10 @@ export class GameSession {
       this.gameArea!.gameLoop();
     }, 20);
     this.gameArea.intervals.push(gameInterval);
-    const gameStartMsg: ServerMessage = { type: 'game_start' };
-    this.broadcastMessage(JSON.stringify(gameStartMsg));
+    if (this.tournament && this.round === 1) {
+      const gameStartMsg: ServerMessage = { type: 'game_start' };
+      this.broadcastMessage(JSON.stringify(gameStartMsg));
+    }
   }
 
   async clear() {

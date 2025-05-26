@@ -31,6 +31,7 @@ export class Tournament {
     this.type = type;
   }
 
+  // TODO: Create first session on Tournament constructor
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     const newSession = new GameSession(playerSettings.gameType, playerSettings.playType);
     newSession.tournament = this;
@@ -43,7 +44,7 @@ export class Tournament {
     this.sessions.push(newSession);
   }
 
-  async attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
+  public async attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
     for (const session of this.sessions) {
       if (session.players.length === 1) {
         await session.setPlayer(ws, playerSettings);
@@ -58,58 +59,55 @@ export class Tournament {
     await this.createSession(ws, playerSettings);
   }
 
-  setPlayersTournamentStart() {
+  private setPlayersTournamentStart() {
     this.players = this.getAllPlayers();
   }
 
-  getPlayerSession(ws: WebSocket) {
+  public getPlayerSession(ws: WebSocket) {
     return this.sessions.find((session) => session.players.some((p) => p.socket === ws));
   }
 
-  async clear() {
+  private async clear() {
     this.sessions.forEach(async (session) => await session.clear());
     this.sessions.length = 0;
     this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
   }
 
-  isFull() {
+  public isFull() {
     return (
       this.sessions.length === NBR_SESSIONS_FIRST_ROUND &&
       this.sessions.every((session) => session.isFull())
     );
   }
 
-  isEmpty() {
-    return this.sessions.length === 0 || this.sessions.every((session) => session.isEmpty());
-  }
-
-  broadcastToAll(message: string) {
+  public broadcastToAll(message: string) {
     for (const session of this.sessions) session.broadcastMessage(message);
   }
 
-  broadcastSettingsToSessions() {
-    for (const session of this.sessions) {
-      const message: ServerMessage = { type: 'game_setup', settings: session.getJointSettings() };
-      session.broadcastMessage(JSON.stringify(message));
-    }
+  public broadcastSettingsToSessions() {
+    this.sessions.forEach((s) => {
+      const message: ServerMessage = { type: 'game_setup', settings: s.getJointSettings() };
+      s.broadcastMessage(JSON.stringify(message));
+    });
   }
 
-  getAllPlayerIds(): string[] {
+  private getAllPlayerIds(): string[] {
     // NOTE: Set removes any duplicates
     const ids = new Set<string>(this.sessions.flatMap((session) => session.getPlayerIds()));
     return Array.from(ids);
   }
 
-  getAllPlayers() {
+  private getAllPlayers() {
     const ids = new Set<PlayerInfo>(this.sessions.flatMap((session) => session.getPlayers()));
     return Array.from(ids);
   }
 
   async start() {
-    console.log('Starting tournament');
     this.state = tournamentState.ongoing;
+    this.setPlayersTournamentStart();
     const data = this.getTournamentCreateData();
+    console.log(`Starting tournament: ${JSON.stringify(data)}`);
     try {
       const tx = await contractSigner.joinTournament(
         data.tournamentId,
@@ -121,14 +119,10 @@ export class Tournament {
       console.log(`Error in joinTournament BLockchain call: ${err}`);
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
-    this.broadcastSettingsToSessions();
     this.sessions.forEach((session) => session.startGame());
-    const gameStartMsg: ServerMessage = { type: 'game_start' };
-    // TODO: Add tournament tree info
-    this.broadcastToAll(JSON.stringify(gameStartMsg));
   }
 
-  async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
+  private async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
     // TODO: Check for repeated alias
     playerIds.forEach(async (id) => {
       await prisma.tournamentParticipant.create({
@@ -141,17 +135,19 @@ export class Tournament {
     });
   }
 
-  async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+  public async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
     console.log(`Match ended, winner: ${this.players.find((p) => p.id === winner)?.alias}`);
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
 
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
+    // TODO: Send tournament_status message
+    // TODO: wait for advance_round message
     if (roundSessions.every((session) => session.winner)) await this.advanceRound();
   }
 
-  async advanceRound() {
+  private async advanceRound() {
     console.log(`Advancing to round ${this.currentRound + 1}`);
     const winners = this.sessions
       .filter((session) => session.round === this.currentRound)
@@ -175,11 +171,12 @@ export class Tournament {
   }
 
   // TODO: Check matchup logic
-  async createNextRoundSessions(playerIds: string[]) {
+  private async createNextRoundSessions(playerIds: string[]) {
     // TODO: Advance round if winner quits before next round
     const nextRoundPlayers = playerIds
       .map((id) => this.getPlayerInfoFromId(id))
       .filter((p): p is PlayerInfo => !!p);
+    console.log(`Creating new round session with: ${nextRoundPlayers.map((p) => p.alias)}`);
     for (let i = 0; i < nextRoundPlayers.length; i += 2) {
       const player1 = nextRoundPlayers[i];
       const player2 = nextRoundPlayers[i + 1];
@@ -192,12 +189,12 @@ export class Tournament {
     }
   }
 
-  getPlayerInfoFromId(playerId: string) {
+  private getPlayerInfoFromId(playerId: string) {
     return this.players.find((player) => player.id === playerId);
   }
 
   // NOTE: only removing player from session from current round
-  async removePlayer(socket: WebSocket) {
+  public async removePlayer(socket: WebSocket) {
     const playerSession = this.sessions
       .filter((s) => s.playerIsInSession(socket))
       .find((s) => s.round === this.currentRound);
@@ -205,26 +202,20 @@ export class Tournament {
     if (playerSession) await playerSession.removePlayer(socket);
   }
 
-  getTournamentCreateData() {
-    const playersData = this.sessions.map((session) => {
-      if (!session.gameArea) return;
+  private getTournamentCreateData() {
+    const playersData = this.players.flatMap((p) => {
       return [
         {
-          userId: session.gameArea.leftPlayer.id,
-          alias: session.gameArea.settings.alias1,
-          character: session.gameArea.settings.character1?.name,
-        },
-        {
-          userId: session.gameArea.rightPlayer.id,
-          alias: session.gameArea.settings.alias2,
-          character: session.gameArea.settings.character2?.name,
+          userId: p.id,
+          alias: p.alias,
+          character: p.character?.name,
         },
       ];
     });
     return { tournamentId: this.id, gameType: this.type, participants: playersData };
   }
 
-  print() {
+  public print() {
     return {
       sessions: this.sessions.map((s) => s.players.map((p) => p.id)),
       state: this.state,

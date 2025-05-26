@@ -59,7 +59,7 @@ async function seedUsers() {
       avatarUrl: getRandomAvatarPath(),
     },
   });
-  for (let index = 0; index < 6; index++) {
+  for (let index = 0; index < 8; index++) {
     await prisma.user.create({
       data: {
         username: `test${index + 1}`,
