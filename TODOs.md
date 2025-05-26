@@ -16,3 +16,4 @@
 - Add centralized manager class that instantiates either tournaments or sessions
 - Review player id/socket management in game sessions to check if player is present
 - Uniformize search by socket or playerId
+- Sending game_setup and game_start twice
