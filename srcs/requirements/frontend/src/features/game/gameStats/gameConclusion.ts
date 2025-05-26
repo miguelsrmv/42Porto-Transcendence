@@ -8,7 +8,7 @@ import type { playType } from '../gameSettings/gameSettings.types.js';
 import { fadeOut, fadeIn } from '../../../ui/animations.js';
 import { loadView } from '../../../core/viewLoader.js';
 import { forceRouteChange } from '../../../core/router.js';
-import { waitForNextGame } from '../../../features/remotePlay/remotePlay.js';
+import { waitForNextGame } from '../../../ui/waitingNextGame.js';
 
 /**
  * @brief Triggers the end game menu for the winning player.
