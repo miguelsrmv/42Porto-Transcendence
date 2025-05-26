@@ -79,15 +79,17 @@ export class GameSession {
     );
   }
 
-  // TODO: only call score saving functions once
+  // TODO: Move saving score somewhere else
   async removePlayer(ws: WebSocket) {
     const playerToRemove = this.players.find((player) => player.socket === ws);
     if (!playerToRemove) return;
+    console.log(`Removing ${playerToRemove.alias} who left`);
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
     if (!this.gameArea) return;
     if (this.players.length === 0) return;
     if (this.gameArea.runningState !== gameRunningState.ended) this.gameArea.stop();
+
     const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
     this.broadcastPlayerLeftMessage(playerWhoStayed);
@@ -187,14 +189,12 @@ export class GameSession {
 
   // TODO: Review if all these parameters are necessary
   startGame() {
-    console.log('Starting game');
-    if (this.tournament && this.round === 1) {
-      const response: ServerMessage = {
-        type: 'game_setup',
-        settings: this.getJointSettings(),
-      };
-      this.broadcastMessage(JSON.stringify(response));
-    }
+    console.log(`Starting game between: ${this.players[0].alias} and ${this.players[1].alias}`);
+    const response: ServerMessage = {
+      type: 'game_setup',
+      settings: this.getJointSettings(),
+    };
+    this.broadcastMessage(JSON.stringify(response));
     this.gameArea = new GameArea(
       this.players[0].id,
       this.players[1].id,
@@ -209,13 +209,12 @@ export class GameSession {
       this.gameArea!.gameLoop();
     }, 20);
     this.gameArea.intervals.push(gameInterval);
-    if (this.tournament && this.round === 1) {
-      const gameStartMsg: ServerMessage = { type: 'game_start' };
-      this.broadcastMessage(JSON.stringify(gameStartMsg));
-    }
+    const gameStartMsg: ServerMessage = { type: 'game_start' };
+    this.broadcastMessage(JSON.stringify(gameStartMsg));
   }
 
   async clear() {
+    console.log('Clearing session');
     this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
   }
