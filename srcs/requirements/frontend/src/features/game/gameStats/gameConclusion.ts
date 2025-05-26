@@ -45,6 +45,7 @@ export function triggerEndGameMenu(
 
   hideGameElements();
   showStatsMenu(HUDSideToShow, stats, playerHUDcopy, colour, HUDSideToShow === winningPlayerSide);
+  if (tournamentIsRunning) tournamentIsRunning = winningPlayerSide === playerSide;
   updateButtons(playType, tournamentIsRunning);
 }
 
