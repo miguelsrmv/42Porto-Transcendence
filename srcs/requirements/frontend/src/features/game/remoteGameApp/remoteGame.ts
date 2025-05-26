@@ -6,11 +6,7 @@
  * and receiving messages via WebSocket to control game flow and player interactions.
  */
 
-import type {
-  gameSettings,
-  leanGameSettings,
-  gameType,
-} from '../gameSettings/gameSettings.types.js';
+import type { leanGameSettings, gameType } from '../gameSettings/gameSettings.types.js';
 import { updateHUD } from '../gameSetup.js';
 import { loadView } from '../../../core/viewLoader.js';
 import {
@@ -21,6 +17,7 @@ import {
   resetVariables,
 } from './renderGame.js';
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
+import { showTournamentStatus } from 'ui/tournamentStatus/tournamentStatus.js';
 
 /**
  * @brief Indicates whether a game or tournamet is currently running.
@@ -48,7 +45,6 @@ let webSocket: WebSocket;
  * @param leanGameSettings The settings for the game, including player preferences and game type.
  */
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
-  // HACK: Should it be this way??
   if (leanGameSettings.playType === 'Remote Play')
     webSocket = new WebSocket(`wss:/${window.location.host}/ws`);
   else webSocket = new WebSocket(`wss:/${window.location.host}/ws/tournament`);
@@ -115,7 +111,7 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       resetVariables();
       webSocket.close();
     } else if (messageData.type === 'tournament_status') {
-      alert('INSERT TOURNAMENT STATS HERE');
+      showTournamentStatus(messageData.participants);
     }
   };
 }
