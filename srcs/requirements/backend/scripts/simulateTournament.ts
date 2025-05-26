@@ -1,8 +1,8 @@
-import puppeteer from 'puppeteer';
+import { Browser, Cookie, firefox } from 'playwright';
+import https from 'https';
+import WebSocket from 'ws';
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
-const NUM_CLIENTS = 1;
+const NUM_CLIENTS = 8;
 const BASE_URL = 'https://padaria.42.pt';
 const CHARACTER = {
   name: 'Mario',
@@ -12,69 +12,85 @@ const CHARACTER = {
   accentColour: 'red',
   selectHelpMessage: "Eat one to increase your paddle's size!",
 };
-const SETTINGS = {
-  playerID: 'd0a58832-e2ce-4cfa-91de-8eba2816e8fd',
-  playType: 'Tournament Play',
-  gameType: 'Crazy Pong',
-  alias: 'ana123',
-  paddleColour: '#ff0000',
-  character: CHARACTER,
-};
 const MOCK_PASSWORD = '123456789';
 
-async function simulateClient(index: number) {
-  const browser = await puppeteer.launch({
-    headless: false, // change to true if you don't want UI
-    args: ['--no-sandbox'],
-  });
-
-  const page = await browser.newPage();
+async function simulateClient(browser: Browser, index: number) {
+  const context = await browser.newContext({ ignoreHTTPSErrors: true });
+  const page = await context.newPage();
 
   try {
-    // Navigate to login page and perform login
-    await page.goto(`${BASE_URL}/#login`);
+    await page.goto(BASE_URL, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1000);
+    await page.click('button#enter-button', { force: true });
+    await page.waitForTimeout(500);
 
-    // Simulate form input (if your frontend has login UI)
-    await page.type('input[name="email"]', `test${index}@example.com`);
-    await page.type('input[name="password"]', MOCK_PASSWORD);
-    await page.click('button[type="submit"]');
+    await page.fill('#login-email', `test${index}@example.com`);
+    await page.fill('#login-password', MOCK_PASSWORD);
+    await page.click('button#login-submit-button');
 
-    // Wait for navigation or successful login indicator
-    await page.waitForNavigation({ timeout: 5000 }).catch(() => {});
-    console.log(`Client ${index}: Logged in`);
+    // Wait for localStorage ID to be set
+    await page.waitForFunction(() => localStorage.getItem('ID') !== null, {}, { timeout: 5000 });
 
-    // Inject code to connect to WebSocket
-    await page.evaluate(() => {
-      const ws = new WebSocket(`ws://${window.location.host}/ws/tournament`);
+    const [playerId, host] = await Promise.all([
+      page.evaluate(() => localStorage.getItem('ID')),
+      page.evaluate(() => window.location.host),
+    ]);
 
-      ws.onopen = () => {
-        console.log('Connected to tournament');
-        ws.send(JSON.stringify({ type: 'join_game', playerSettings: SETTINGS }));
-      };
+    const cookies = await context.cookies();
+    const token = cookies.find((c: Cookie) => c.name === 'access_token')?.value;
 
-      ws.onmessage = (event) => {
-        console.log('Received from server:', event.data);
-      };
+    console.log(`[${index}] Logged in - ID: ${playerId}, token: ${token?.slice(0, 10)}...`);
 
-      ws.onerror = (err) => {
-        console.error('WebSocket error:', err);
-      };
+    await context.close(); // optional, closes tab and frees memory
 
-      ws.onclose = () => {
-        console.log('WebSocket closed');
-      };
+    // Connect WebSocket
+    const ws = new WebSocket(`wss://${host}/ws/tournament`, {
+      agent: new https.Agent({ rejectUnauthorized: false }),
+      headers: {
+        cookie: `access_token=${token}`,
+      },
     });
 
-    // Keep client connected
-    await new Promise((resolve) => setTimeout(resolve, 10000));
-  } catch (error) {
-    console.error(`Client ${index} failed:`, error);
-  } finally {
-    await browser.close();
+    ws.on('open', () => {
+      console.log(`[${index}] WebSocket connected`);
+      const joinMessage = {
+        type: 'join_game',
+        playerSettings: {
+          playerID: playerId,
+          playType: 'Tournament Play',
+          gameType: 'Crazy Pong',
+          alias: `test${index}`,
+          paddleColour: '#ff0000',
+          character: CHARACTER,
+        },
+      };
+      ws.send(JSON.stringify(joinMessage));
+    });
+
+    ws.on('message', (msg) => {
+      const data = JSON.parse(msg.toString());
+      if (data.type !== 'game_state') {
+        console.log(`[${index}] Received:`, data);
+      }
+    });
+
+    ws.on('error', (err) => {
+      console.error(`[${index}] WebSocket error:`, err.message);
+    });
+  } catch (err) {
+    console.error(`[${index}] Error:`, err);
   }
 }
 
 (async () => {
-  const clients = Array.from({ length: NUM_CLIENTS }, (_, i) => simulateClient(i + 1));
+  const browser = await firefox.launch({ headless: true });
+  const clients = [];
+
+  for (let i = 1; i <= NUM_CLIENTS; i++) {
+    clients.push(simulateClient(browser, i));
+    await new Promise((res) => setTimeout(res, 300)); // stagger launch (optional)
+  }
+
   await Promise.all(clients);
+  await browser.close();
 })();
