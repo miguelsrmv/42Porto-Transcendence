@@ -105,6 +105,7 @@ export class GameSession {
         );
         await tx.wait();
       } catch (err) {
+        // Got error: TypeError: blockchain_services_1.contractSigner.saveScoreAndAddWinner is not a function
         console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
       }
     } else {

@@ -107,9 +107,10 @@ export class Tournament {
   }
 
   async start() {
-    console.log('Starting tournament');
     this.state = tournamentState.ongoing;
+    this.setPlayersTournamentStart();
     const data = this.getTournamentCreateData();
+    console.log(`Starting tournament: ${JSON.stringify(data)}`);
     try {
       const tx = await contractSigner.joinTournament(
         data.tournamentId,
@@ -128,7 +129,7 @@ export class Tournament {
     this.broadcastToAll(JSON.stringify(gameStartMsg));
   }
 
-  async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
+  private async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
     // TODO: Check for repeated alias
     playerIds.forEach(async (id) => {
       await prisma.tournamentParticipant.create({
@@ -141,17 +142,19 @@ export class Tournament {
     });
   }
 
-  async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+  public async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
     console.log(`Match ended, winner: ${this.players.find((p) => p.id === winner)?.alias}`);
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
 
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
+    // TODO: Send tournament_status message
+    // TODO: wait for advance_round message
     if (roundSessions.every((session) => session.winner)) await this.advanceRound();
   }
 
-  async advanceRound() {
+  private async advanceRound() {
     console.log(`Advancing to round ${this.currentRound + 1}`);
     const winners = this.sessions
       .filter((session) => session.round === this.currentRound)
@@ -175,11 +178,12 @@ export class Tournament {
   }
 
   // TODO: Check matchup logic
-  async createNextRoundSessions(playerIds: string[]) {
+  private async createNextRoundSessions(playerIds: string[]) {
     // TODO: Advance round if winner quits before next round
     const nextRoundPlayers = playerIds
       .map((id) => this.getPlayerInfoFromId(id))
       .filter((p): p is PlayerInfo => !!p);
+    console.log(`Creating new round session with: ${nextRoundPlayers.map((p) => p.id)}`);
     for (let i = 0; i < nextRoundPlayers.length; i += 2) {
       const player1 = nextRoundPlayers[i];
       const player2 = nextRoundPlayers[i + 1];
@@ -205,26 +209,20 @@ export class Tournament {
     if (playerSession) await playerSession.removePlayer(socket);
   }
 
-  getTournamentCreateData() {
-    const playersData = this.sessions.map((session) => {
-      if (!session.gameArea) return;
+  private getTournamentCreateData() {
+    const playersData = this.players.flatMap((p) => {
       return [
         {
-          userId: session.gameArea.leftPlayer.id,
-          alias: session.gameArea.settings.alias1,
-          character: session.gameArea.settings.character1?.name,
-        },
-        {
-          userId: session.gameArea.rightPlayer.id,
-          alias: session.gameArea.settings.alias2,
-          character: session.gameArea.settings.character2?.name,
+          userId: p.id,
+          alias: p.alias,
+          character: p.character?.name,
         },
       ];
     });
     return { tournamentId: this.id, gameType: this.type, participants: playersData };
   }
 
-  print() {
+  public print() {
     return {
       sessions: this.sessions.map((s) => s.players.map((p) => p.id)),
       state: this.state,
