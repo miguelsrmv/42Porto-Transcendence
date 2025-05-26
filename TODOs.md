@@ -8,11 +8,10 @@
 - Make responses more uniform
 - Protect all routes in the end (except login/sign up related)
 - Test server-side pong through CLI
-- Test waiting player to remote and then remove a player in the match. Does the third player go into the match?
 - Tournament brackets management
 - Connect tournament logic to Blockchain
 - Check user stats match leaderboard
-- Review player id/socket management in game sessions to check if player is present
 - Add ready for next round logic
 - Add centralized manager class that instantiates either tournaments or sessions
+- Review player id/socket management in game sessions to check if player is present
 - Uniformize search by socket or playerId
