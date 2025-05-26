@@ -79,7 +79,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
-    console.log('I got', messageData);
     if (messageData.type === 'game_setup') {
       const gameSettings = messageData.settings;
       loadView('game-page');
@@ -115,6 +114,11 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   };
 }
 
+/**
+ * @brief Stops the game
+ *
+ * This function sends message to backend for when a game is over. It also closes the websocket.
+ * */
 function stopGame(): void {
   const stopMessage = JSON.stringify({ type: 'stop_game' });
 
@@ -159,4 +163,11 @@ function addKeyEventListeners(gameType: gameType): void {
 
   window.addEventListener('keydown', keyDownHandler);
   window.addEventListener('keyup', keyUpHandler);
+}
+
+/**
+ * @brief Sends message to Websocket signaling being ready for the next game
+ */
+export function readyForNextGame(): void {
+  webSocket.send(JSON.stringify({ type: 'ready_for_next_game' }));
 }

@@ -9,6 +9,7 @@ import { fadeOut, fadeIn } from '../../../ui/animations.js';
 import { loadView } from '../../../core/viewLoader.js';
 import { forceRouteChange } from '../../../core/router.js';
 import { waitForNextGame } from '../../../ui/waitingNextGame.js';
+import { readyForNextGame } from '../remoteGameApp/remoteGame.js';
 
 /**
  * @brief Triggers the end game menu for the winning player.
@@ -216,15 +217,20 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
     else playAgainButton.classList.add('hidden');
   }
 
-  playAgainButton.addEventListener('click', () => {
-    restoreGameElements();
-    if (targetPage) {
-      loadView(targetPage);
-      forceRouteChange(targetPage);
-    } else {
-      waitForNextGame();
-    }
-  });
+  playAgainButton.addEventListener(
+    'click',
+    () => {
+      restoreGameElements();
+      if (targetPage) {
+        loadView(targetPage);
+        forceRouteChange(targetPage);
+      } else {
+        readyForNextGame();
+        waitForNextGame();
+      }
+    },
+    { once: true },
+  );
 }
 
 /**
