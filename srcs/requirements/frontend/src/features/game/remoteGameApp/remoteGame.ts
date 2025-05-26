@@ -23,12 +23,13 @@ import {
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
 
 /**
- * @brief Indicates whether a game is currently running.
+ * @brief Indicates whether a game or tournamet is currently running.
  *
- * This variable is used to track the state of the game and ensure proper handling
+ * These variables are used to track the state of the game and ensure proper handling
  * of game-related events and WebSocket communication.
  */
 let gameIsRunning: boolean = false;
+let tournamentIsRunning: boolean = false;
 
 /**
  * @brief WebSocket connection for the remote game.
@@ -47,7 +48,10 @@ let webSocket: WebSocket;
  * @param leanGameSettings The settings for the game, including player preferences and game type.
  */
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
-  webSocket = new WebSocket(`wss:/${window.location.host}/ws`);
+  // HACK: Should it be this way??
+  if (leanGameSettings.playType === 'Remote Play')
+    webSocket = new WebSocket(`wss:/${window.location.host}/ws`);
+  else webSocket = new WebSocket(`wss:/${window.location.host}/ws/tournament`);
 
   const joinGameMsg = { type: 'join_game', playerSettings: leanGameSettings };
 
@@ -88,21 +92,30 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       addKeyEventListeners(gameSettings.gameType);
     } else if (messageData.type === 'game_start') {
       gameIsRunning = true;
+      // TODO: Check if this is the proper gameType
+      if (messageData.settings.gameType === 'Tournament play') tournamentIsRunning = true;
       startGameArea();
     } else if (messageData.type === 'game_state' && gameIsRunning) {
       renderGame(messageData);
     } else if (messageData.type === 'game_goal' && gameIsRunning) {
       renderGoal(messageData.scoringSide);
-    } else if (messageData.type === 'game_end' && gameIsRunning) {
+    } else if (
+      (messageData.type === 'game_end' || messageData.type === 'tournament_end') &&
+      gameIsRunning
+    ) {
+      gameIsRunning = false;
+      if (messageData.type === 'tournament_end') tournamentIsRunning = false;
       triggerEndGameMenu(
         messageData.winningPlayer,
         messageData.ownSide,
         messageData.stats,
         leanGameSettings.playType,
+        tournamentIsRunning,
       );
-      gameIsRunning = false;
       resetVariables();
       webSocket.close();
+    } else if (messageData.type === 'tournament_status') {
+      alert('INSERT TOURNAMENT STATS HERE');
     }
   };
 }
