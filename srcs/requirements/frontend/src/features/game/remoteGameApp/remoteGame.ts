@@ -75,7 +75,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
   window.addEventListener('beforeunload', (event) => {
     stopGame();
     event.preventDefault();
-    event.returnValue = '';
   });
 
   webSocket.onmessage = (event) => {
