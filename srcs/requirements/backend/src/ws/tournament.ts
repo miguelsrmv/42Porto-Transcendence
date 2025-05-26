@@ -68,9 +68,9 @@ export class Tournament {
   }
 
   private async clear() {
+    console.log('Clearing tournament');
     this.sessions.forEach(async (session) => await session.clear());
     this.sessions.length = 0;
-    this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
   }
 
@@ -82,7 +82,14 @@ export class Tournament {
   }
 
   public broadcastToAll(message: string) {
-    for (const session of this.sessions) session.broadcastMessage(message);
+    this.sessions
+      .filter((s) => s.round === this.currentRound)
+      .forEach((s) => s.broadcastMessage(message));
+  }
+
+  private sendToPlayer(playerId: string, message: string) {
+    const socket = this.getPlayerInfoFromId(playerId)?.socket;
+    if (socket && socket.readyState === WebSocket.OPEN) socket.send(message);
   }
 
   public broadcastSettingsToSessions() {
@@ -116,7 +123,7 @@ export class Tournament {
       );
       await tx.wait();
     } catch (err) {
-      console.log(`Error in joinTournament BLockchain call: ${err}`);
+      console.log(`Error in joinTournament Blockchain call: ${err}`);
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
     this.sessions.forEach((session) => session.startGame());
@@ -156,8 +163,7 @@ export class Tournament {
 
     if (winners.length <= 1) {
       console.log('Tournament has ended');
-      // TODO: send message to all players
-      this.broadcastToAll(JSON.stringify({ type: 'tournament_end' }));
+      this.sendToPlayer(winners[0], JSON.stringify({ type: 'tournament_end' } as ServerMessage));
       this.state = tournamentState.ended;
       await this.clear();
       return;
@@ -183,8 +189,9 @@ export class Tournament {
 
       const newSession = new GameSession(this.type, 'Tournament Play');
       await newSession.setPlayer(player1.socket, playerInfoToPlayerSettings(player1));
-      await newSession.setPlayer(player1.socket, playerInfoToPlayerSettings(player2));
+      await newSession.setPlayer(player2.socket, playerInfoToPlayerSettings(player2));
       newSession.round = this.currentRound;
+      newSession.tournament = this;
       this.sessions.push(newSession);
     }
   }
@@ -195,6 +202,7 @@ export class Tournament {
 
   // NOTE: only removing player from session from current round
   public async removePlayer(socket: WebSocket) {
+    console.log('Removing player in tournament');
     const playerSession = this.sessions
       .filter((s) => s.playerIsInSession(socket))
       .find((s) => s.round === this.currentRound);
