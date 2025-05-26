@@ -17,7 +17,7 @@ import {
   resetVariables,
 } from './renderGame.js';
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
-import { showTournamentStatus } from 'ui/tournamentStatus/tournamentStatus.js';
+import { showTournamentStatus } from '../../../ui/tournamentStatus/tournamentStatus.js';
 
 /**
  * @brief Indicates whether a game or tournamet is currently running.
