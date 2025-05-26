@@ -8,7 +8,7 @@ import type { playType } from '../gameSettings/gameSettings.types.js';
 import { fadeOut, fadeIn } from '../../../ui/animations.js';
 import { loadView } from '../../../core/viewLoader.js';
 import { forceRouteChange } from '../../../core/router.js';
-import { showWaitingModal } from '../../remotePlay/remotePlay.js';
+import { waitForNextGame } from '../../../features/remotePlay/remotePlay.js';
 
 /**
  * @brief Triggers the end game menu for the winning player.
@@ -222,7 +222,7 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
       loadView(targetPage);
       forceRouteChange(targetPage);
     } else {
-      showWaitingModal();
+      waitForNextGame();
     }
   });
 }
