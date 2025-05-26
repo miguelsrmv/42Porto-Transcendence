@@ -91,10 +91,9 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       updateHUD(gameSettings, gameSettings.gameType);
       updateBackground(gameSettings.background.imagePath);
       addKeyEventListeners(gameSettings.gameType);
-      if (gameSettings.gameType === 'Tournament play') tournamentIsRunning = true;
+      if (gameSettings.playType === 'Tournament Play') tournamentIsRunning = true;
     } else if (messageData.type === 'game_start') {
       gameIsRunning = true;
-      // TODO: Check if this is the proper gameType
       startGameArea();
     } else if (messageData.type === 'game_state' && gameIsRunning) {
       renderGame(messageData);
