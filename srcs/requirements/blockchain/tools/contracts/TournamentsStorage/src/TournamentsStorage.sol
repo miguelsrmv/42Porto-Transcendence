@@ -6,7 +6,7 @@ pragma solidity ^0.8.19;
 
 contract TournamentsStorage {
     address private immutable i_owner;
-    uint8 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
+    uint256 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
     // using Strings for uint256;
 
@@ -23,12 +23,12 @@ contract TournamentsStorage {
 
     struct Tournament {
         uint256 id;
-        uint16[3] date;
-        uint8[3] time;
-        uint8 maxParticipants;
+        uint256[3] date;
+        uint256[3] time;
+        uint256 maxParticipants;
         Participant[MAX_PARTICIPANTS] participants;
         Participant[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
-        uint8[(MAX_PARTICIPANTS - 1) * 2] scores;
+        uint256[(MAX_PARTICIPANTS - 1) * 2] scores;
     }
 
     struct TournamentIdAndType {
@@ -93,7 +93,7 @@ contract TournamentsStorage {
     function getScores(uint256 _id, gameType _gameType)
         public
         view
-        returns (uint8[(MAX_PARTICIPANTS - 1) * 2] memory)
+        returns (uint256[(MAX_PARTICIPANTS - 1) * 2] memory)
     {
         if (_gameType == gameType.CLASSIC) {
             return classicTournaments[_id].scores;
@@ -118,8 +118,8 @@ contract TournamentsStorage {
             tournaments = crazyTournaments;
         }
 
-        for (uint8 i = 0; i < tournamentLength; i++) {
-            for (uint8 j = 0; j < MAX_PARTICIPANTS; j++) {
+        for (uint256 i = 0; i < tournamentLength; i++) {
+            for (uint256 j = 0; j < MAX_PARTICIPANTS; j++) {
                 if (
                     keccak256(abi.encodePacked(tournaments[i].matchedParticipants[j].uniqueId))
                         == keccak256(abi.encodePacked(_playerName))
@@ -147,7 +147,7 @@ contract TournamentsStorage {
             tournaments = crazyTournaments;
         }
 
-        for (uint8 i = 0; i < tournamentLength; i++) {
+        for (uint256 i = 0; i < tournamentLength; i++) {
             if (
                 keccak256(abi.encodePacked(tournaments[i].matchedParticipants[winnersIndex].uniqueId))
                     == keccak256(abi.encodePacked(_playerName))
@@ -178,19 +178,19 @@ contract TournamentsStorage {
         newTournament.time = getCurrentTime();
         newTournament.maxParticipants = MAX_PARTICIPANTS;
 
-        for (uint8 i = 0; i < MAX_PARTICIPANTS; i++) {
+        for (uint256 i = 0; i < MAX_PARTICIPANTS; i++) {
             newTournament.participants[i].uniqueId = "";
             newTournament.participants[i].userAlias = "";
             newTournament.participants[i].character = "";
         }
 
-        for (uint8 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
+        for (uint256 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
             newTournament.matchedParticipants[i].uniqueId = "";
             newTournament.matchedParticipants[i].userAlias = "";
             newTournament.matchedParticipants[i].character = "";
         }
 
-        for (uint8 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
+        for (uint256 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
             newTournament.scores[i] = 0;
         }
     }
@@ -212,7 +212,7 @@ contract TournamentsStorage {
             _tournamentId++;
         }
 
-        for (uint8 i = 0; i < _participants.length; i++) {
+        for (uint256 i = 0; i < _participants.length; i++) {
             tournaments[_tournamentId].participants[i].uniqueId = _participants[i].uniqueId;
             tournaments[_tournamentId].participants[i].userAlias = _participants[i].userAlias;
             tournaments[_tournamentId].participants[i].character = _participants[i].character;
@@ -225,8 +225,8 @@ contract TournamentsStorage {
         }
     }
 
-    function addWinner(uint8 _tournamentId, gameType _gameType, string memory _winnerName) public onlyOwner {
-        uint8 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _winnerName) / 2 + MAX_PARTICIPANTS;
+    function addWinner(uint256 _tournamentId, gameType _gameType, string memory _winnerName) public onlyOwner {
+        uint256 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _winnerName) / 2 + MAX_PARTICIPANTS;
         Tournament[] storage tournaments;
 
         if (_gameType == gameType.CLASSIC) {
@@ -240,15 +240,15 @@ contract TournamentsStorage {
     }
 
     function saveScore(
-        uint8 _tournamentId,
+        uint256 _tournamentId,
         gameType _gameType,
         string memory _playerOneName,
-        uint8 _playerOneScore,
+        uint256 _playerOneScore,
         string memory _playerTwoName,
-        uint8 _playerTwoScore
+        uint256 _playerTwoScore
     ) public onlyOwner {
-        uint8 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _playerOneName);
-        uint8 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _playerTwoName);
+        uint256 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _playerOneName);
+        uint256 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _gameType, _playerTwoName);
         Tournament[] storage tournaments;
 
         if (_gameType == gameType.CLASSIC) {
@@ -267,12 +267,12 @@ contract TournamentsStorage {
     }
 
     function saveScoreAndAddWinner(
-        uint8 _tournamentId,
+        uint256 _tournamentId,
         gameType _gameType,
         string memory _playerOneName,
-        uint8 _playerOneScore,
+        uint256 _playerOneScore,
         string memory _playerTwoName,
-        uint8 _playerTwoScore
+        uint256 _playerTwoScore
     ) public onlyOwner {
         saveScore(_tournamentId, _gameType, _playerOneName, _playerOneScore, _playerTwoName, _playerTwoScore);
 
@@ -286,7 +286,7 @@ contract TournamentsStorage {
     //HELPER FUNCTIONS **********************************************************
     /* Check if a tournament is full */
     function isTournamentFull(uint256 _tournamentId, gameType _gameType) public view returns (bool) {
-        uint8 tournamentLength = 0;
+        uint256 tournamentLength = 0;
         Tournament[] storage tournaments;
 
         if (_gameType == gameType.CLASSIC) {
@@ -312,10 +312,10 @@ contract TournamentsStorage {
     function findLastIndexOfPlayer(uint256 _tournamentId, gameType _gameType, string memory _playerName)
         public
         view
-        returns (uint8)
+        returns (uint256)
     {
-        uint8 lastIndex = 0;
-        uint8 tournamentLength = MAX_PARTICIPANTS * 2 - 1;
+        uint256 lastIndex = 0;
+        uint256 tournamentLength = MAX_PARTICIPANTS * 2 - 1;
         Tournament[] storage tournaments;
 
         if (_gameType == gameType.CLASSIC) {
@@ -324,7 +324,7 @@ contract TournamentsStorage {
             tournaments = crazyTournaments;
         }
 
-        for (uint8 i = 0; i < tournamentLength; i++) {
+        for (uint256 i = 0; i < tournamentLength; i++) {
             if (
                 keccak256(abi.encodePacked(tournaments[_tournamentId].matchedParticipants[i].uniqueId))
                     == keccak256(abi.encodePacked(_playerName))
@@ -425,22 +425,22 @@ contract TournamentsStorage {
         return (year, month, day, hour, minute, second);
     }
 
-    function getCurrentDate() internal view returns (uint16[3] memory date) {
+    function getCurrentDate() internal view returns (uint256[3] memory date) {
         (uint256 year, uint256 month, uint256 day,,,) = getCurrentDateTimeUTC();
 
-        date[0] = uint16(day);
-        date[1] = uint16(month);
-        date[2] = uint16(year);
+        date[0] = uint256(day);
+        date[1] = uint256(month);
+        date[2] = uint256(year);
 
         return date;
     }
 
-    function getCurrentTime() internal view returns (uint8[3] memory time) {
+    function getCurrentTime() internal view returns (uint256[3] memory time) {
         (,,, uint256 hour, uint256 minute, uint256 second) = getCurrentDateTimeUTC();
 
-        time[0] = uint8(hour);
-        time[1] = uint8(minute);
-        time[2] = uint8(second);
+        time[0] = uint256(hour);
+        time[1] = uint256(minute);
+        time[2] = uint256(second);
 
         return time;
     }
