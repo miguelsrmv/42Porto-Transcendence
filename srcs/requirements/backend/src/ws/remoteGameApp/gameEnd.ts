@@ -92,6 +92,9 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.isEnding = true;
   gameArea.stop();
   const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
+  gameArea.session.broadcastEndGameMessage(winningPlayer);
+  losingPlayer.isEliminated = true;
+  closeSocket(losingPlayer.socket);
   if (gameArea.tournament) {
     const data: BlockchainScoreData = {
       tournamentId: gameArea.tournament.id,
@@ -107,7 +110,4 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     await createMatch(winningPlayer, gameArea);
     await updateLeaderboardRemote(winningPlayer, losingPlayer);
   }
-  gameArea.session.broadcastEndGameMessage(winningPlayer);
-  losingPlayer.isEliminated = true;
-  closeSocket(losingPlayer.socket);
 }
