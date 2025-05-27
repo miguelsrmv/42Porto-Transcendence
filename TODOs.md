@@ -16,4 +16,5 @@
 - Add centralized manager class that instantiates either tournaments or sessions ?
 - Review player id/socket management in game sessions to check if player is present
 - Uniformize search by socket or playerId
+- Review heartbeat times
 - Deal with re-connections and lag 
