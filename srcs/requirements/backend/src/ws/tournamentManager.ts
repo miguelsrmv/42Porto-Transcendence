@@ -1,8 +1,6 @@
 import WebSocket from 'ws';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { Tournament, tournamentState } from './tournament';
-import { contractProvider } from '../api/services/blockchain.services';
-import { gameTypeToEnum } from '../utils/helpers';
 
 export class TournamentManager {
   private tournaments: Map<gameType, Tournament[]> = new Map();
@@ -95,9 +93,7 @@ export class TournamentManager {
 
   private async clearEndedTournaments(tournaments: Tournament[]) {
     const endedTournaments = tournaments.filter((t) => t.state === tournamentState.ended);
-    endedTournaments.forEach(async (t) => {
-      this.removeTournament(t);
-    });
+    await Promise.all(endedTournaments.map((t) => this.removeTournament(t)));
   }
 
   private removeTournament(tournament: Tournament) {
