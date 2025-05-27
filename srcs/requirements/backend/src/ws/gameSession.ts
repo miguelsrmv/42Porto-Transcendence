@@ -154,6 +154,7 @@ export class GameSession {
     // Goals automatically set to 5 for remaining player
     this.gameArea.stats.setMaxGoals(winningPlayer.side);
     // TODO: Differentiate from normal game_end message?
+    console.log(`Player left from match with ${winningPlayer.alias}`);
     const gameEndMsg = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,
