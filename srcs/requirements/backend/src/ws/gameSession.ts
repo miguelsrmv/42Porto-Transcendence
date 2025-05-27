@@ -79,15 +79,17 @@ export class GameSession {
     );
   }
 
-  // TODO: only call score saving functions once
+  // TODO: Move saving score somewhere else
   async removePlayer(ws: WebSocket) {
     const playerToRemove = this.players.find((player) => player.socket === ws);
     if (!playerToRemove) return;
+    console.log(`Removing ${playerToRemove.alias} who left`);
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
     if (!this.gameArea) return;
     if (this.players.length === 0) return;
     if (this.gameArea.runningState !== gameRunningState.ended) this.gameArea.stop();
+
     const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
     this.broadcastPlayerLeftMessage(playerWhoStayed);
@@ -105,6 +107,7 @@ export class GameSession {
         );
         await tx.wait();
       } catch (err) {
+        // Got error: TypeError: blockchain_services_1.contractSigner.saveScoreAndAddWinner is not a function
         console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
       }
     } else {
@@ -186,7 +189,7 @@ export class GameSession {
 
   // TODO: Review if all these parameters are necessary
   startGame() {
-    console.log('Starting game');
+    console.log(`Starting game between: ${this.players[0].alias} and ${this.players[1].alias}`);
     const response: ServerMessage = {
       type: 'game_setup',
       settings: this.getJointSettings(),
@@ -211,6 +214,7 @@ export class GameSession {
   }
 
   async clear() {
+    console.log('Clearing session');
     this.players.forEach(async (player) => await this.removePlayer(player.socket));
     this.players.length = 0;
   }

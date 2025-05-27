@@ -18,7 +18,6 @@ async function joinGameHandler(
     socket.close();
     return;
   }
-  console.log('Player not in the tournament yet');
   if (!areGameSettingsValid(socket, userId, playerSettings)) return;
   if (playerSettings.playType !== 'Tournament Play') {
     sendErrorMessage(socket, 'Attempting to join a Remote Game through the wrong route');
@@ -80,7 +79,10 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
   let clientLastActive = Date.now() / 1000;
   const keepAlive = setInterval(() => {
     const currentTime = Date.now() / 1000;
-    if (currentTime - clientLastActive > 30) socket.close();
+    if (currentTime - clientLastActive > 30) {
+      console.log('Client inactive for too long. Disconnecting...');
+      socket.close();
+    }
   }, 15000); // every 15 seconds
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
