@@ -4,7 +4,7 @@ import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
-import { gameTypeToGameMode } from '../utils/helpers';
+import { gameTypeToEnum, gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
 import { closeSocket, playerInfoToPlayerSettings } from './helpers';
@@ -20,8 +20,9 @@ export enum tournamentState {
 }
 
 export interface BlockchainScoreData {
+  // TODO: change to number
   tournamentId: string;
-  gameType: gameType;
+  gameType: number;
   player1Id: string;
   score1: number;
   player2Id: string;
@@ -32,6 +33,8 @@ export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
   type: gameType;
+  // TODO: Get id as nbr of tournaments on blockchain
+  // id: number = 0;
   id: string = randomUUID();
   currentRound: number = 1;
   players: PlayerInfo[] = [];
@@ -251,11 +254,15 @@ export class Tournament {
         {
           userId: p.id,
           alias: p.alias,
-          character: p.character?.name,
+          character: p.character?.name ?? 'NONE',
         },
       ];
     });
-    return { tournamentId: this.id, gameType: this.type, participants: playersData };
+    return {
+      tournamentId: this.id,
+      gameType: gameTypeToEnum(this.type),
+      participants: playersData,
+    };
   }
 
   public print() {
