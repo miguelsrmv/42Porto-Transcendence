@@ -19,6 +19,15 @@ export enum tournamentState {
   ended = 'ended',
 }
 
+export interface BlockchainScoreData {
+  tournamentId: string;
+  gameType: gameType;
+  player1Id: string;
+  score1: number;
+  player2Id: string;
+  score2: number;
+}
+
 export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
@@ -63,8 +72,14 @@ export class Tournament {
     this.players = this.getAllPlayers();
   }
 
+  public getPlayerInfo(id: string) {
+    return this.players.find((p) => p.id === id);
+  }
+
   public getPlayerSession(ws: WebSocket) {
-    return this.sessions.find((session) => session.players.some((p) => p.socket === ws));
+    return this.sessions
+      .filter((s) => s.round === this.currentRound)
+      .find((session) => session.players.some((p) => p.socket === ws));
   }
 
   private async clear() {
@@ -142,10 +157,28 @@ export class Tournament {
     });
   }
 
-  public async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
+  public async updateSessionScore(
+    sessionToUpdate: GameSession,
+    winner: string,
+    data: BlockchainScoreData,
+  ) {
     console.log(`Match ended, winner: ${this.players.find((p) => p.id === winner)?.alias}`);
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
+    try {
+      // TODO: Check if order of users matter
+      const tx = await contractSigner.saveScoreAndAddWinner(
+        data.tournamentId,
+        data.gameType,
+        data.player1Id,
+        data.score1,
+        data.player2Id,
+        data.score2,
+      );
+      await tx.wait();
+    } catch (err) {
+      console.log(`Error calling saveScoreAndAddWinner: ${err}`);
+    }
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
 
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
@@ -203,11 +236,8 @@ export class Tournament {
   // NOTE: only removing player from session from current round
   public async removePlayer(socket: WebSocket) {
     console.log('Removing player in tournament');
-    const playerSession = this.sessions
-      .filter((s) => s.playerIsInSession(socket))
-      .find((s) => s.round === this.currentRound);
-    // Should only be one session
-    if (playerSession) await playerSession.removePlayer(socket);
+    const playerSessions = this.sessions.filter((s) => s.playerIsInSession(socket));
+    playerSessions.forEach(async (s) => await s.removePlayer(socket));
   }
 
   private getTournamentCreateData() {

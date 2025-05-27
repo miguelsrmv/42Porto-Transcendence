@@ -75,6 +75,7 @@ export class GameSessionManager {
     const session = this.getSessionByPlayerId(playerId);
     if (!session) return;
     await session.removePlayer(ws);
+    await session.clear();
     this.cleanupPlayer(playerId, ws);
     if (session.players.length === 0) {
       this.removeSession(session);

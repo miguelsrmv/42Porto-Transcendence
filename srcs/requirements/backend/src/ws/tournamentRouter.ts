@@ -1,7 +1,7 @@
 import { FastifyRequest } from 'fastify';
 import WebSocket from 'ws';
 import { ClientMessage, PlayerInput } from './remoteGameApp/types';
-import { areGameSettingsValid, sendErrorMessage } from './helpers';
+import { areGameSettingsValid, closeSocket, sendErrorMessage } from './helpers';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isPlayerInput } from './helpers';
 import { TournamentManager } from './tournamentManager';
@@ -15,13 +15,13 @@ async function joinGameHandler(
 ) {
   if (tournamentManager.isPlayerInATournament(userId)) {
     sendErrorMessage(socket, 'Player already in a tournament');
-    socket.close();
+    closeSocket(socket);
     return;
   }
   if (!areGameSettingsValid(socket, userId, playerSettings)) return;
   if (playerSettings.playType !== 'Tournament Play') {
     sendErrorMessage(socket, 'Attempting to join a Remote Game through the wrong route');
-    socket.close();
+    closeSocket(socket);
     return;
   }
   await tournamentManager.attributePlayerToTournament(socket, playerSettings);
@@ -81,7 +81,7 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
     const currentTime = Date.now() / 1000;
     if (currentTime - clientLastActive > 30) {
       console.log('Client inactive for too long. Disconnecting...');
-      socket.close();
+      closeSocket(socket);
     }
   }, 15000); // every 15 seconds
   socket.on('message', async (message) => {
