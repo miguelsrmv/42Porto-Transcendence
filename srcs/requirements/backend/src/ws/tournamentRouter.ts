@@ -87,11 +87,20 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
     console.log('Received message:', message.toString());
-    await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
+    try {
+      await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
+    } catch (err) {
+      console.error('Error handling message:', err);
+      // closeSocket(socket);
+    }
   });
 
   socket.on('close', async () => {
-    await tournamentManager.removePlayerTournament(socket);
+    try {
+      await tournamentManager.removePlayerTournament(socket);
+    } catch (err) {
+      console.error('Error closing socket:', err);
+    }
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });
