@@ -7,14 +7,14 @@ import {
   playType,
 } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
-import { Tournament, tournamentState } from './tournament';
+import { BlockchainScoreData, Tournament, tournamentState } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
 import { gameRunningState, ServerMessage } from './remoteGameApp/types';
 import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
-import { contractSigner } from '../api/services/blockchain.services';
 import { getAvatarFromPlayer } from '../api/services/user.services';
 import { getRandomBackground } from './remoteGameApp/backgroundData';
+import { updateLeaderboardRemote } from '../api/services/leaderboard.services';
 
 export class PlayerInfo {
   id: string;
@@ -79,11 +79,10 @@ export class GameSession {
     );
   }
 
-  // TODO: Move saving score somewhere else
   async removePlayer(ws: WebSocket) {
     const playerToRemove = this.players.find((player) => player.socket === ws);
     if (!playerToRemove) return;
-    console.log(`Removing ${playerToRemove.alias} who left`);
+    console.log(`Removing ${playerToRemove.alias}`);
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
     if (!this.gameArea) return;
@@ -91,28 +90,24 @@ export class GameSession {
     if (this.gameArea.runningState !== gameRunningState.ended) this.gameArea.stop();
 
     const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
+    if (playerWhoLeft.isEliminated) return; // score already saved in endGame
+
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
     this.broadcastPlayerLeftMessage(playerWhoStayed);
     if (this.tournament && this.tournament.state === tournamentState.ongoing) {
-      await this.tournament.updateSessionScore(this, playerWhoStayed.id);
       // TODO: Check if order of users matter
-      try {
-        const tx = await contractSigner.saveScoreAndAddWinner(
-          this.tournament.id,
-          this.tournament.type,
-          playerWhoStayed.id,
-          5n, // hard-coded win 
-          playerWhoLeft.id,
-          BigInt(playerWhoLeft.score),
-        );
-        await tx.wait();
-      } catch (err) {
-        // Got error: TypeError: blockchain_services_1.contractSigner.saveScoreAndAddWinner is not a function
-        console.log(`Error calling saveScoreAndAddWinner in stopGameHandler: ${err}`);
-      }
+      const data: BlockchainScoreData = {
+        tournamentId: this.tournament.id,
+        gameType: this.tournament.type,
+        player1Id: playerWhoStayed.id,
+        score1: 5, // hard-coded win
+        player2Id: playerWhoLeft.id,
+        score2: playerWhoLeft.score,
+      };
+      await this.tournament.updateSessionScore(this, playerWhoStayed.id, data);
     } else {
       await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
-      await this.clear();
+      await updateLeaderboardRemote(playerWhoStayed, playerWhoLeft);
     }
   }
 
@@ -159,6 +154,7 @@ export class GameSession {
     // Goals automatically set to 5 for remaining player
     this.gameArea.stats.setMaxGoals(winningPlayer.side);
     // TODO: Differentiate from normal game_end message?
+    console.log(`Player left from match with ${winningPlayer.alias}`);
     const gameEndMsg = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,

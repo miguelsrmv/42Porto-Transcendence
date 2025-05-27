@@ -18,6 +18,7 @@ export class Player {
   socket: WebSocket;
   input: PlayerInput;
   powerBarFill: number;
+  isEliminated: boolean = false;
 
   constructor(
     id: string,

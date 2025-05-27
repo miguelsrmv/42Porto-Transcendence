@@ -5,7 +5,8 @@ import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
 import { gameTypeToGameMode } from '../../utils/helpers';
 import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
-import { contractSigner } from '../../api/services/blockchain.services';
+import { BlockchainScoreData } from '../tournament';
+import { closeSocket } from '../helpers';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -90,27 +91,23 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.isEnding) return;
   gameArea.isEnding = true;
   gameArea.stop();
+  const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
   if (gameArea.tournament) {
-    await gameArea.tournament!.updateSessionScore(gameArea.session, winningPlayer.id);
-    gameArea.session.broadcastEndGameMessage(winningPlayer);
-    await gameArea.tournament.removePlayer(gameArea.getOtherPlayer(winningPlayer).socket);
-    try {
-      const tx = await contractSigner.saveScoreAndAddWinner(
-        gameArea.tournament!.id,
-        gameArea.settings.gameType,
-        gameArea.leftPlayer.id,
-        BigInt(gameArea.leftPlayer.score),
-        gameArea.rightPlayer.id,
-        BigInt(gameArea.rightPlayer.score),
-      );
-      await tx.wait();
-    } catch (err) {
-      console.log(`Error calling saveScoreAndAddWinner in gameEnd: ${err}`);
-    }
+    const data: BlockchainScoreData = {
+      tournamentId: gameArea.tournament.id,
+      gameType: gameArea.tournament.type,
+      player1Id: winningPlayer.id,
+      score1: winningPlayer.score,
+      player2Id: losingPlayer.id,
+      score2: losingPlayer.score,
+    };
+    console.log(`Game ended, winner: ${winningPlayer.alias}`);
+    await gameArea.tournament.updateSessionScore(gameArea.session, winningPlayer.id, data);
   } else {
     await createMatch(winningPlayer, gameArea);
-    await updateLeaderboardRemote(winningPlayer, gameArea.getOtherPlayer(winningPlayer));
-    gameArea.session.broadcastEndGameMessage(winningPlayer);
-    await gameArea.session.clear();
+    await updateLeaderboardRemote(winningPlayer, losingPlayer);
   }
+  gameArea.session.broadcastEndGameMessage(winningPlayer);
+  losingPlayer.isEliminated = true;
+  closeSocket(losingPlayer.socket);
 }

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-// import {console} from "forge-std/Script.sol";
-// import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {console} from "forge-std/Script.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
     uint256 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
-    // using Strings for uint256;
+    using Strings for uint256;
 
     enum gameType {
         CLASSIC,
@@ -199,6 +199,29 @@ contract TournamentsStorage {
         public
         onlyOwner
     {
+        console.log(
+            string(
+                abi.encodePacked(
+                    "TournamentId: ",
+                    _tournamentId.toString(),
+                    ", GameType: ",
+                    uint256(_gameType).toString(),
+                    ", Participants:"
+                )
+            )
+        );
+        console.log(
+            string(
+                abi.encodePacked(
+                    "UserId: ",
+                    _participants[0].uniqueId,
+                    ", Alias: ",
+                    _participants[0].userAlias,
+                    ", Character: ",
+                    _participants[0].character
+                )
+            )
+        );
         Tournament[] storage tournaments;
 
         if (_gameType == gameType.CLASSIC) {
