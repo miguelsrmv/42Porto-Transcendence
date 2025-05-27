@@ -12,6 +12,7 @@
     "build-dev": "tsc --watch",
     "test": "vitest",
     "test-db": "npx tsx scripts/test_db.ts",
+    "tournament": "node dist/scripts/simulateTournament.js",
     "db-reset": "npx prisma migrate reset"
   },
   "prisma": {
