@@ -212,7 +212,7 @@ export class GameSession {
 
   async clear() {
     console.log('Clearing session');
-    this.players.forEach(async (player) => await this.removePlayer(player.socket));
+    await Promise.all(this.players.map((player) => this.removePlayer(player.socket)));
     this.players.length = 0;
   }
 
