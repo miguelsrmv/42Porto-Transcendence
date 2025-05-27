@@ -15,6 +15,7 @@ import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 import { getAvatarFromPlayer } from '../api/services/user.services';
 import { getRandomBackground } from './remoteGameApp/backgroundData';
 import { updateLeaderboardRemote } from '../api/services/leaderboard.services';
+import { gameTypeToEnum } from '../utils/helpers';
 
 export class PlayerInfo {
   id: string;
@@ -98,7 +99,7 @@ export class GameSession {
       // TODO: Check if order of users matter
       const data: BlockchainScoreData = {
         tournamentId: this.tournament.id,
-        gameType: this.tournament.type,
+        gameType: gameTypeToEnum(this.tournament.type),
         player1Id: playerWhoStayed.id,
         score1: 5, // hard-coded win
         player2Id: playerWhoLeft.id,

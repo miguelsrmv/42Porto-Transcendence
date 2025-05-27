@@ -1,6 +1,8 @@
 import WebSocket from 'ws';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { Tournament, tournamentState } from './tournament';
+import { contractProvider } from '../api/services/blockchain.services';
+import { gameTypeToEnum } from '../utils/helpers';
 
 export class TournamentManager {
   private tournaments: Map<gameType, Tournament[]> = new Map();
@@ -59,6 +61,14 @@ export class TournamentManager {
 
   private async createTournament(ws: WebSocket, settings: leanGameSettings) {
     const newTournament = new Tournament(settings.gameType);
+    // try {
+    //   const BCtournaments = await contractProvider.getAllTournaments(
+    //     gameTypeToEnum(settings.gameType),
+    //   );
+    //   newTournament.id = BCtournaments.length;
+    // } catch (err) {
+    //   console.log(`Error in getAllTournaments Blockchain call: ${err}`);
+    // }
     await newTournament.createSession(ws, settings);
     this.getTournaments(settings.gameType).push(newTournament);
     this.playerTournaments.set(settings.playerID, newTournament);
