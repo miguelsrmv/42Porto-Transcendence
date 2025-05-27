@@ -1,5 +1,5 @@
 # Frontend
-- When submitting empty username, no error and header gets updated
+- When submitting '' as username, no error and header gets updated
 - If change username and not insert oldPassword (click outside box), it changes in the header
 - If change email and not insert oldPassword (click outside box), username in the header disappears
 - If no oldPassword input and click confirm, crash (cannot get out of box until right password is submitted and then get a 405 from NGINX)
