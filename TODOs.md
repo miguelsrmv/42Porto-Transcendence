@@ -8,7 +8,6 @@
 - Make responses more uniform
 - Protect all routes in the end (except login/sign up related)
 - Remove populate from running automatically on project delivery
-- Test server-side pong through CLI
 - Tournament brackets management
 - Connect tournament logic to Blockchain
 - Check user stats match leaderboard
@@ -18,3 +17,4 @@
 - Uniformize search by socket or playerId
 - Review heartbeat times
 - Deal with re-connections and lag 
+- Parse player settings ?
