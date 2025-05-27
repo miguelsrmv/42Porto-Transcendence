@@ -54,7 +54,7 @@ contract TournamentsStorageTest is Test {
     function testSuccessfullyJoinedTournament() public {
         TournamentsStorage.Participant[] memory participantsA =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
-        for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
+        for (uint256 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             string memory enterName = string(abi.encodePacked("Mario", vm.toString(i)));
 
             participantsA[i] =
@@ -64,7 +64,7 @@ contract TournamentsStorageTest is Test {
         tournamentsStorage.joinTournament(0, TournamentsStorage.gameType.CLASSIC, participantsA);
         tournamentsStorage.joinTournament(0, TournamentsStorage.gameType.CRAZY, participantsA);
 
-        for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
+        for (uint256 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             string memory checkName = string(abi.encodePacked("Mario", vm.toString(i)));
 
             assertEq(tournamentsStorage.getParticipants(0, TournamentsStorage.gameType.CLASSIC)[i].uniqueId, checkName);
@@ -80,7 +80,7 @@ contract TournamentsStorageTest is Test {
 
         TournamentsStorage.Participant[] memory participantsB =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
-        for (uint8 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
+        for (uint256 i = 0; i < tournamentsStorage.MAX_PARTICIPANTS(); i++) {
             string memory enterName = string(abi.encodePacked("Bowser", vm.toString(i)));
 
             participantsB[i] =
@@ -99,12 +99,12 @@ contract TournamentsStorageTest is Test {
     }
 
     function testAddWinner() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         uint256 totalNodes = n * 2 - 1;
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
         // 1. Join all players
-        for (uint8 i = 0; i < n; i++) {
+        for (uint256 i = 0; i < n; i++) {
             string memory name = string(abi.encodePacked("P", vm.toString(i)));
             participants[i] = TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
         }
@@ -113,10 +113,10 @@ contract TournamentsStorageTest is Test {
 
         // 2. Simulate bracket wins (left-side always wins)
         // matchedParticipants[0..n-1] are initial players
-        for (uint8 round = 1; round < n; round *= 2) {
-            for (uint8 i = 0; i < n; i += round * 2) {
+        for (uint256 round = 1; round < n; round *= 2) {
+            for (uint256 i = 0; i < n; i += round * 2) {
                 // Pick the left-side player of the current match
-                uint8 leftIdx = i;
+                uint256 leftIdx = i;
                 string memory classicWinner =
                     tournamentsStorage.getMatchedParticipants(0, TournamentsStorage.gameType.CLASSIC)[leftIdx].uniqueId;
                 string memory crazyWinner =
@@ -143,12 +143,12 @@ contract TournamentsStorageTest is Test {
     }
 
     function testSaveScore() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
 
         // 1. Join all players
-        for (uint8 i = 0; i < n; i++) {
+        for (uint256 i = 0; i < n; i++) {
             string memory name = string(abi.encodePacked("P", vm.toString(i)));
             participants[i] = TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
         }
@@ -157,14 +157,14 @@ contract TournamentsStorageTest is Test {
 
         // 2. Simulate bracket wins (right-side always wins)
         // matchedParticipants[0..n-1] are initial players
-        uint8 score = 1;
+        uint256 score = 1;
 
-        for (uint8 i = 0; i < (tournamentsStorage.MAX_PARTICIPANTS() - 1) * 2; i += 2) {
+        for (uint256 i = 0; i < (tournamentsStorage.MAX_PARTICIPANTS() - 1) * 2; i += 2) {
             // Pick the right-side player of the current match
-            uint8 leftIdx = i;
-            uint8 rightIdx = leftIdx + 1;
-            uint8 loserScore = score++;
-            uint8 winnerScore = score++;
+            uint256 leftIdx = i;
+            uint256 rightIdx = leftIdx + 1;
+            uint256 loserScore = score++;
+            uint256 winnerScore = score++;
             string memory classicWinner =
                 tournamentsStorage.getMatchedParticipants(0, TournamentsStorage.gameType.CLASSIC)[rightIdx].uniqueId;
             string memory classicLoser =
@@ -185,7 +185,7 @@ contract TournamentsStorageTest is Test {
         }
 
         // 3. Final assertion: scores should co from 0 to (MAX_PARTICIPANTS - 1) * 2
-        for (uint8 i = 0; i < (tournamentsStorage.MAX_PARTICIPANTS() - 1) * 2; i++) {
+        for (uint256 i = 0; i < (tournamentsStorage.MAX_PARTICIPANTS() - 1) * 2; i++) {
             assertEq(
                 tournamentsStorage.getScores(0, TournamentsStorage.gameType.CLASSIC)[i],
                 i + 1,
@@ -200,11 +200,11 @@ contract TournamentsStorageTest is Test {
     }
 
     function testSaveScoreAndAddWinner() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
 
-        for (uint8 i = 0; i < n; i++) {
+        for (uint256 i = 0; i < n; i++) {
             string memory name = string(abi.encodePacked("P", vm.toString(i)));
             participants[i] = TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
         }
@@ -232,14 +232,14 @@ contract TournamentsStorageTest is Test {
     }
 
     function testIsTournamentFull() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
         assertFalse(tournamentsStorage.isTournamentFull(0, TournamentsStorage.gameType.CLASSIC));
         assertFalse(tournamentsStorage.isTournamentFull(0, TournamentsStorage.gameType.CRAZY));
 
         // 1. Join all players
-        for (uint8 i = 0; i < n; i++) {
+        for (uint256 i = 0; i < n; i++) {
             string memory name = string(abi.encodePacked("P", vm.toString(i)));
             participants[i] = TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
         }
@@ -251,28 +251,28 @@ contract TournamentsStorageTest is Test {
     }
 
     function testFindLastIndexOfPlayer() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
 
         // 1. Join all players
-        for (uint8 i = 0; i < n; i++) {
+        for (uint256 i = 0; i < n; i++) {
             string memory name = string(abi.encodePacked("P", vm.toString(i)));
             participants[i] = TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
         }
         tournamentsStorage.joinTournament(0, TournamentsStorage.gameType.CLASSIC, participants);
         tournamentsStorage.joinTournament(0, TournamentsStorage.gameType.CRAZY, participants);
 
-        for (uint8 round = 1; round < n; round *= 2) {
-            for (uint8 i = 0; i < n; i += round * 2) {
-                uint8 leftIdx = i;
+        for (uint256 round = 1; round < n; round *= 2) {
+            for (uint256 i = 0; i < n; i += round * 2) {
+                uint256 leftIdx = i;
                 string memory classicWinner =
                     tournamentsStorage.getMatchedParticipants(0, TournamentsStorage.gameType.CLASSIC)[leftIdx].uniqueId;
                 string memory crazyWinner =
                     tournamentsStorage.getMatchedParticipants(0, TournamentsStorage.gameType.CRAZY)[leftIdx].uniqueId;
-                uint8 classicWinnerLastKnownIndex =
+                uint256 classicWinnerLastKnownIndex =
                     tournamentsStorage.findLastIndexOfPlayer(0, TournamentsStorage.gameType.CLASSIC, classicWinner);
-                uint8 crazyWinnerLastKnownIndex =
+                uint256 crazyWinnerLastKnownIndex =
                     tournamentsStorage.findLastIndexOfPlayer(0, TournamentsStorage.gameType.CRAZY, crazyWinner);
 
                 assertEq(
@@ -314,26 +314,27 @@ contract TournamentsStorageTest is Test {
     }
 
     function testGetLastThreeTournamentsPosition() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
 
         // Create 3 equal tournaments
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             // 1. Join all players
-            for (uint8 j = 0; j < n; j++) {
+            for (uint256 j = 0; j < n; j++) {
                 string memory playerName = string(abi.encodePacked("P", vm.toString(j)));
-                participants[j] = TournamentsStorage.Participant({uniqueId: playerName, userAlias: playerName, character: playerName});
+                participants[j] =
+                    TournamentsStorage.Participant({uniqueId: playerName, userAlias: playerName, character: playerName});
             }
             tournamentsStorage.joinTournament(i, TournamentsStorage.gameType.CLASSIC, participants);
             tournamentsStorage.joinTournament(i, TournamentsStorage.gameType.CRAZY, participants);
 
             // 2. Simulate bracket wins (left-side always wins)
             // matchedParticipants[0..n-1] are initial players
-            for (uint8 round = 1; round < n; round *= 2) {
-                for (uint8 j = 0; j < n; j += round * 2) {
+            for (uint256 round = 1; round < n; round *= 2) {
+                for (uint256 j = 0; j < n; j += round * 2) {
                     // Pick the left-side player of the current match
-                    uint8 leftIdx = j;
+                    uint256 leftIdx = j;
                     string memory classicWinner = tournamentsStorage.getMatchedParticipants(
                         i, TournamentsStorage.gameType.CLASSIC
                     )[leftIdx].uniqueId;
@@ -353,7 +354,7 @@ contract TournamentsStorageTest is Test {
         TournamentsStorage.TournamentIdAndType[3] memory classicData;
         TournamentsStorage.TournamentIdAndType[3] memory crazyData;
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             classicData[i].id = i;
             classicData[i].gameType = TournamentsStorage.gameType.CLASSIC;
             crazyData[i].id = i;
@@ -366,9 +367,9 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Tournament Winner!";
         positions[2] = "Tournament Winner!";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
 
         name = "P1";
@@ -376,9 +377,9 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Quarter-final";
         positions[2] = "Quarter-final";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
 
         name = "P2";
@@ -386,9 +387,9 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Semi-final";
         positions[2] = "Semi-final";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
 
         name = "P3";
@@ -396,9 +397,9 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Quarter-final";
         positions[2] = "Quarter-final";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
 
         name = "P4";
@@ -406,9 +407,9 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Final";
         positions[2] = "Final";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
 
         name = "P5";
@@ -416,9 +417,9 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Quarter-final";
         positions[2] = "Quarter-final";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
 
         name = "P6";
@@ -426,9 +427,9 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Semi-final";
         positions[2] = "Semi-final";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
 
         name = "P7";
@@ -436,21 +437,21 @@ contract TournamentsStorageTest is Test {
         positions[1] = "Quarter-final";
         positions[2] = "Quarter-final";
 
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint256 i = 0; i < 3; i++) {
             assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, classicData))[i], positions[i]);
-            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);  
+            assertEq((tournamentsStorage.getLastThreeTournamentsPosition(name, crazyData))[i], positions[i]);
         }
     }
 
     function testGetTournamentsWonByPlayer() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
 
         // Create 10 equal tournaments
-        for (uint8 i = 0; i < 10; i++) {
+        for (uint256 i = 0; i < 10; i++) {
             // 1. Join all players
-            for (uint8 j = 0; j < n; j++) {
+            for (uint256 j = 0; j < n; j++) {
                 string memory name = string(abi.encodePacked("P", vm.toString(j)));
                 participants[j] = TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
             }
@@ -459,10 +460,10 @@ contract TournamentsStorageTest is Test {
 
             // 2. Simulate bracket wins (left-side always wins)
             // matchedParticipants[0..n-1] are initial players
-            for (uint8 round = 1; round < n; round *= 2) {
-                for (uint8 j = 0; j < n; j += round * 2) {
+            for (uint256 round = 1; round < n; round *= 2) {
+                for (uint256 j = 0; j < n; j += round * 2) {
                     // Pick the left-side player of the current match
-                    uint8 leftIdx = j;
+                    uint256 leftIdx = j;
                     string memory classicWinner = tournamentsStorage.getMatchedParticipants(
                         i, TournamentsStorage.gameType.CLASSIC
                     )[leftIdx].uniqueId;
@@ -481,7 +482,7 @@ contract TournamentsStorageTest is Test {
         // 3. Assertion: Player P0 has 10 tournaments won and the remaining 7 have none
         assertEq(tournamentsStorage.getTournamentsWonByPlayer("P0", TournamentsStorage.gameType.CLASSIC), 10);
         assertEq(tournamentsStorage.getTournamentsWonByPlayer("P0", TournamentsStorage.gameType.CRAZY), 10);
-        for (uint8 j = 1; j < n; j++) {
+        for (uint256 j = 1; j < n; j++) {
             string memory playerName = string(abi.encodePacked("P", vm.toString(j)));
             assertEq(tournamentsStorage.getTournamentsWonByPlayer(playerName, TournamentsStorage.gameType.CLASSIC), 0);
             assertEq(tournamentsStorage.getTournamentsWonByPlayer(playerName, TournamentsStorage.gameType.CRAZY), 0);
@@ -489,14 +490,14 @@ contract TournamentsStorageTest is Test {
     }
 
     function testGetNumberOfTournamentsParticipatedByPlayer() public {
-        uint8 n = tournamentsStorage.MAX_PARTICIPANTS();
+        uint256 n = tournamentsStorage.MAX_PARTICIPANTS();
         TournamentsStorage.Participant[] memory participants =
             new TournamentsStorage.Participant[](tournamentsStorage.MAX_PARTICIPANTS());
 
         // Create 10 equal tournaments
-        for (uint8 i = 0; i < 10; i++) {
+        for (uint256 i = 0; i < 10; i++) {
             // 1. Join all players
-            for (uint8 j = 0; j < n; j++) {
+            for (uint256 j = 0; j < n; j++) {
                 string memory name = string(abi.encodePacked("P", vm.toString(j)));
                 participants[j] = TournamentsStorage.Participant({uniqueId: name, userAlias: name, character: name});
             }
@@ -505,10 +506,10 @@ contract TournamentsStorageTest is Test {
 
             // 2. Simulate bracket wins (left-side always wins)
             // matchedParticipants[0..n-1] are initial players
-            for (uint8 round = 1; round < n; round *= 2) {
-                for (uint8 j = 0; j < n; j += round * 2) {
+            for (uint256 round = 1; round < n; round *= 2) {
+                for (uint256 j = 0; j < n; j += round * 2) {
                     // Pick the left-side player of the current match
-                    uint8 leftIdx = j;
+                    uint256 leftIdx = j;
                     string memory clasicWinner = tournamentsStorage.getMatchedParticipants(
                         i, TournamentsStorage.gameType.CLASSIC
                     )[leftIdx].uniqueId;
@@ -526,7 +527,7 @@ contract TournamentsStorageTest is Test {
         }
         // 3. Assertion: Players from P0 to <MAX_PARTICIPANTS - 1> have participated in 10 tournaments
         // and a fictitious player didn't participate in any
-        for (uint8 j = 1; j < n; j++) {
+        for (uint256 j = 1; j < n; j++) {
             string memory playerName = string(abi.encodePacked("P", vm.toString(j)));
 
             assertEq(

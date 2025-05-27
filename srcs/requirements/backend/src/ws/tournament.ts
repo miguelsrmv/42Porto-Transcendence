@@ -7,7 +7,7 @@ import { prisma } from '../utils/prisma';
 import { gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
-import { playerInfoToPlayerSettings } from './helpers';
+import { closeSocket, playerInfoToPlayerSettings } from './helpers';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -17,6 +17,15 @@ export enum tournamentState {
   full = 'full',
   ongoing = 'ongoing',
   ended = 'ended',
+}
+
+export interface BlockchainScoreData {
+  tournamentId: string;
+  gameType: gameType;
+  player1Id: string;
+  score1: number;
+  player2Id: string;
+  score2: number;
 }
 
 export class Tournament {
@@ -63,8 +72,14 @@ export class Tournament {
     this.players = this.getAllPlayers();
   }
 
+  public getPlayerInfo(id: string) {
+    return this.players.find((p) => p.id === id);
+  }
+
   public getPlayerSession(ws: WebSocket) {
-    return this.sessions.find((session) => session.players.some((p) => p.socket === ws));
+    return this.sessions
+      .filter((s) => s.round === this.currentRound)
+      .find((session) => session.players.some((p) => p.socket === ws));
   }
 
   private async clear() {
@@ -87,9 +102,12 @@ export class Tournament {
       .forEach((s) => s.broadcastMessage(message));
   }
 
-  private sendToPlayer(playerId: string, message: string) {
+  private sendToPlayerCloseSocket(playerId: string, message: string) {
     const socket = this.getPlayerInfoFromId(playerId)?.socket;
-    if (socket && socket.readyState === WebSocket.OPEN) socket.send(message);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(message);
+      closeSocket(socket);
+    }
   }
 
   public broadcastSettingsToSessions() {
@@ -142,10 +160,27 @@ export class Tournament {
     });
   }
 
-  public async updateSessionScore(sessionToUpdate: GameSession, winner: string) {
-    console.log(`Match ended, winner: ${this.players.find((p) => p.id === winner)?.alias}`);
+  public async updateSessionScore(
+    sessionToUpdate: GameSession,
+    winner: string,
+    data: BlockchainScoreData,
+  ) {
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
+    try {
+      // TODO: Check if order of users matter
+      const tx = await contractSigner.saveScoreAndAddWinner(
+        data.tournamentId,
+        data.gameType,
+        data.player1Id,
+        data.score1,
+        data.player2Id,
+        data.score2,
+      );
+      await tx.wait();
+    } catch (err) {
+      console.log(`Error calling saveScoreAndAddWinner: ${err}`);
+    }
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
 
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
@@ -163,7 +198,10 @@ export class Tournament {
 
     if (winners.length <= 1) {
       console.log('Tournament has ended');
-      this.sendToPlayer(winners[0], JSON.stringify({ type: 'tournament_end' } as ServerMessage));
+      this.sendToPlayerCloseSocket(
+        winners[0],
+        JSON.stringify({ type: 'tournament_end' } as ServerMessage),
+      );
       this.state = tournamentState.ended;
       await this.clear();
       return;
@@ -203,11 +241,8 @@ export class Tournament {
   // NOTE: only removing player from session from current round
   public async removePlayer(socket: WebSocket) {
     console.log('Removing player in tournament');
-    const playerSession = this.sessions
-      .filter((s) => s.playerIsInSession(socket))
-      .find((s) => s.round === this.currentRound);
-    // Should only be one session
-    if (playerSession) await playerSession.removePlayer(socket);
+    const playerSessions = this.sessions.filter((s) => s.playerIsInSession(socket));
+    playerSessions.forEach(async (s) => await s.removePlayer(socket));
   }
 
   private getTournamentCreateData() {
