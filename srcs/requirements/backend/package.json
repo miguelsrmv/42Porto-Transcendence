@@ -8,7 +8,7 @@
     "populate": "npx tsx scripts/populate_db.ts",
     "start": "node dist/src/server.js",
     "dev": "npx tsx src/server.ts",
-    "start-dev": "npx nodemon --signal SIGTERM dist/src/server.js",
+    "start-dev": "npx nodemon --legacy-watch --signal SIGTERM dist/src/server.js",
     "build-dev": "tsc --watch",
     "test": "vitest",
     "test-db": "npx tsx scripts/test_db.ts",
