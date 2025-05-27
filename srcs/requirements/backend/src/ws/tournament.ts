@@ -7,7 +7,7 @@ import { prisma } from '../utils/prisma';
 import { gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
-import { playerInfoToPlayerSettings } from './helpers';
+import { closeSocket, playerInfoToPlayerSettings } from './helpers';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -102,9 +102,12 @@ export class Tournament {
       .forEach((s) => s.broadcastMessage(message));
   }
 
-  private sendToPlayer(playerId: string, message: string) {
+  private sendToPlayerCloseSocket(playerId: string, message: string) {
     const socket = this.getPlayerInfoFromId(playerId)?.socket;
-    if (socket && socket.readyState === WebSocket.OPEN) socket.send(message);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(message);
+      closeSocket(socket);
+    }
   }
 
   public broadcastSettingsToSessions() {
@@ -162,7 +165,6 @@ export class Tournament {
     winner: string,
     data: BlockchainScoreData,
   ) {
-    console.log(`Match ended, winner: ${this.players.find((p) => p.id === winner)?.alias}`);
     if (sessionToUpdate.winner) return;
     sessionToUpdate.winner = winner;
     try {
@@ -196,7 +198,10 @@ export class Tournament {
 
     if (winners.length <= 1) {
       console.log('Tournament has ended');
-      this.sendToPlayer(winners[0], JSON.stringify({ type: 'tournament_end' } as ServerMessage));
+      this.sendToPlayerCloseSocket(
+        winners[0],
+        JSON.stringify({ type: 'tournament_end' } as ServerMessage),
+      );
       this.state = tournamentState.ended;
       await this.clear();
       return;
