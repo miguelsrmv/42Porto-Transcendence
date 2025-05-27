@@ -46,4 +46,5 @@ export type ServerMessage =
       stats: gameStats;
     }
   | { type: 'player_left' }
+  | { type: 'tournament_end' }
   | { type: 'error'; message: string };
