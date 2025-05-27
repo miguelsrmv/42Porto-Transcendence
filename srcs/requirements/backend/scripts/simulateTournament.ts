@@ -68,7 +68,7 @@ async function simulateClient(browser: Browser, index: number) {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ type: 'ping' }));
         }
-      }, 30000);
+      }, 20000);
     });
 
     ws.on('message', (msg) => {
