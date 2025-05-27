@@ -28,7 +28,7 @@ export function areGameSettingsValid(
 ) {
   if (playerSettings.playerID !== userId) {
     sendErrorMessage(socket, `Request user does not match settings playerId`);
-    socket.close();
+    closeSocket(socket);
     return false;
   }
   if (!isGameType(playerSettings.gameType) || !isPlayType(playerSettings.playType)) {
@@ -36,7 +36,7 @@ export function areGameSettingsValid(
       socket,
       `gameType: '${playerSettings.gameType}' or playType: '${playerSettings.playType}' not valid`,
     );
-    socket.close();
+    closeSocket(socket);
     return false;
   }
   return true;
@@ -54,4 +54,10 @@ export function playerInfoToPlayerSettings(player: PlayerInfo): playerSettings {
     character: player.character,
     paddleColour: player.paddleColour,
   };
+}
+
+export function closeSocket(ws: WebSocket) {
+  if (ws.readyState !== WebSocket.CLOSED) {
+    ws.close();
+  }
 }

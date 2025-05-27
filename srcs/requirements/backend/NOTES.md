@@ -71,6 +71,11 @@ backend/
 - `npm run start` to launch the app (js)
 - `npm run start-dev` to launch the app with nodemon (js)
 
+### Simulate Tournament script
+**Note:** The first time running the script, first run `npm install` to install dependencies and `npx playwright install firefox`. 
+Then run `npm run populate` inside the backend container (alternatively, run `make` on the root of the project directory).
+- Run `npm run dev-build` (to compile the ts file into js) and then run `npm run tournament` to run the script.
+
 ## Notes
 
 - When testing locally, an `.env` file is required with the DATABASE_URL key, in the project root directory `.`
