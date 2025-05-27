@@ -95,4 +95,9 @@ export class TournamentManager {
     const index = tournaments.indexOf(tournament);
     if (index !== -1) tournaments.splice(index, 1);
   }
+
+  printTournaments(tournaments: Tournament[]) {
+    console.log(`Existing tournaments:`);
+    tournaments.forEach((t) => console.log(t.print()));
+  }
 }
