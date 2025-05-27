@@ -101,6 +101,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
       player2Id: losingPlayer.id,
       score2: losingPlayer.score,
     };
+    console.log(`Game ended, winner: ${winningPlayer.alias}`);
     await gameArea.tournament.updateSessionScore(gameArea.session, winningPlayer.id, data);
   } else {
     await createMatch(winningPlayer, gameArea);
