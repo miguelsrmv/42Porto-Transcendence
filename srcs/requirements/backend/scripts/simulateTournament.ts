@@ -91,7 +91,7 @@ async function simulateClient(browser: Browser, index: number) {
   const clients = [];
   try {
     for (let i = 1; i <= NUM_CLIENTS; i++) {
-      clients.push(simulateClient(browser, i));
+      clients.push(await simulateClient(browser, i));
       await new Promise((res) => setTimeout(res, 300)); // stagger launch (optional)
     }
     await Promise.all(clients);
@@ -99,4 +99,6 @@ async function simulateClient(browser: Browser, index: number) {
     console.error(`Error:`, err);
   }
   await browser.close();
-})();
+})().catch((err) => {
+  console.error('Unhandled error in IIFE:', err);
+});
