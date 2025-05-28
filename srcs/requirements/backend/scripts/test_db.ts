@@ -6,8 +6,10 @@ async function main() {
   } catch (e) {
     console.error(e);
   } finally {
-    prisma.$disconnect();
+    await prisma.$disconnect();
   }
 }
 
-main();
+main().catch((err) => {
+  console.error('Error in main():', err);
+});
