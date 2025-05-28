@@ -40,14 +40,14 @@ function movementHandler(socket: WebSocket, direction: string) {
   ownPlayer.input = direction as PlayerInput;
 }
 
-function powerUpHandler(socket: WebSocket) {
+async function powerUpHandler(socket: WebSocket) {
   const gameSession = sessionManager.getSessionBySocket(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
     gameSession.gameArea.leftPlayer.socket === socket
       ? gameSession.gameArea.leftPlayer
       : gameSession.gameArea.rightPlayer;
-  ownPlayer.attack?.attack();
+  await ownPlayer.attack?.attack();
 }
 
 async function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
@@ -61,7 +61,7 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
       break;
     }
     case 'power_up': {
-      powerUpHandler(socket);
+      await powerUpHandler(socket);
       break;
     }
   }

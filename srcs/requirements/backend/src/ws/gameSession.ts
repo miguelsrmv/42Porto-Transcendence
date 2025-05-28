@@ -202,8 +202,12 @@ export class GameSession {
     );
     this.gameArea.tournament = this.tournament;
     setPowerUpBar(this.gameArea);
-    const gameInterval = setInterval(() => {
-      this.gameArea!.gameLoop();
+    const gameInterval = setInterval(async () => {
+      try {
+        await this.gameArea!.gameLoop();
+      } catch (err) {
+        console.error('Game loop error:', err);
+      }
     }, 20);
     this.gameArea.intervals.push(gameInterval);
     const gameStartMsg: ServerMessage = { type: 'game_start' };
