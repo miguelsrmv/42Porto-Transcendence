@@ -1,5 +1,14 @@
-import { tournamentPlayer } from './tourmanetStatusNew.types.js';
+/**
+ * Imports necessary types for tournament player and phase.
+ */
+import { tournamentPlayer, TournamentPhase } from './tournamentStatusNew.types.js';
 
+/**
+ * Displays the tournament status by populating the tournament tree with participant data.
+ *
+ * @param participants - Array of tournament players.
+ * @returns A cloned Node containing the tournament tree, or undefined if the tournament block is not found.
+ */
 export function showTournamentStatus(participants: tournamentPlayer[]): Node | undefined {
   const tournamentBlock = document.getElementById('tournament-tree') as HTMLTemplateElement;
   if (!tournamentBlock) {
@@ -9,71 +18,94 @@ export function showTournamentStatus(participants: tournamentPlayer[]): Node | u
 
   const clone = tournamentBlock.content.cloneNode(true) as DocumentFragment;
 
-  fillWithParticipants(clone, participants);
+  fillParticipants(clone, participants, TournamentPhase.Quarter);
+  fillParticipants(clone, participants, TournamentPhase.Semi);
+  fillParticipants(clone, participants, TournamentPhase.Final);
+
   return clone;
 }
 
-function fillWithParticipants(
+/**
+ * Populates the tournament block with participant data for a specific phase.
+ *
+ * @param tournamentBlock - The cloned tournament tree block.
+ * @param participants - Array of tournament players.
+ * @param phase - The current tournament phase.
+ */
+function fillParticipants(
   tournamentBlock: DocumentFragment,
   participants: tournamentPlayer[],
+  phase: TournamentPhase,
 ): void {
-  fillQFparticipants(tournamentBlock, participants);
+  const trimmedParticipants: tournamentPlayer[] = getPhaseParticipants(phase, participants);
+  const playerElements = tournamentBlock.querySelectorAll(`.${phase}`);
+  const scoreElements = tournamentBlock.querySelectorAll(`.${phase}Score`);
+
+  for (let i = 0; i < trimmedParticipants.length; i++) {
+    const playerEl = playerElements[i] as HTMLParagraphElement;
+    playerEl.innerText = trimmedParticipants[i].userAlias;
+
+    const scoreEl = scoreElements[i] as HTMLParagraphElement;
+    scoreEl.innerText = getMatchScore(trimmedParticipants[i], phase) ?? '';
+
+    if (playerHasWon(trimmedParticipants, i, phase)) {
+      playerEl.classList.add('text-green-500');
+      scoreEl.classList.add('text-green-500');
+    }
+  }
 }
 
-function fillQFparticipants(
-  tournamentBlock: DocumentFragment,
+/**
+ * Filters participants based on the current tournament phase.
+ *
+ * @param phase - The current tournament phase.
+ * @param participants - Array of tournament players.
+ * @returns An array of participants relevant to the given phase.
+ */
+function getPhaseParticipants(
+  phase: TournamentPhase,
   participants: tournamentPlayer[],
-): void {
-  for (let i = 0; i < 8; i++) {
-    const playerEl = tournamentBlock.querySelector(
-      `.TournamentPlayer${i + 1}`,
-    ) as HTMLParagraphElement;
-    if (!playerEl) {
-      console.log(`Couldn't find Tournament Player ${i + 1}`);
-      return;
-    }
+): tournamentPlayer[] {
+  if (phase === TournamentPhase.Semi) {
+    return participants.filter((participant) => participant.semiFinalScore !== null);
+  } else if (phase === TournamentPhase.Final) {
+    return participants.filter((participant) => participant.finalScore !== null);
+  } else return participants;
+}
 
-    playerEl.innerText = participants[i].userAlias;
+/**
+ * Retrieves the match score for a participant based on the phase identifier.
+ *
+ * @param participant - A tournament player.
+ * @param identifier - The phase identifier.
+ * @returns The match score as a string, or null if not available.
+ */
+function getMatchScore(participant: tournamentPlayer, identifier: string): string | null {
+  if (identifier === 'TournamentPlayer') return participant.quarterFinalScore;
+  else if (identifier === 'QFWinner') return participant.semiFinalScore;
+  else return participant.finalScore;
+}
 
-    const scoreEl = tournamentBlock.querySelector(
-      `.TournamentPlayer${i + 1}Score`,
-    ) as HTMLParagraphElement;
-    if (!scoreEl) {
-      console.log(`Couldn't find Tournament Player ${i + 1} Score`);
-      return;
-    }
-  }
+/**
+ * Determines if a participant has won their match in the given phase.
+ *
+ * @param trimmedParticipants - Array of participants relevant to the current phase.
+ * @param i - Index of the participant in the array.
+ * @param phase - The current tournament phase.
+ * @returns True if the participant has won, false otherwise.
+ */
+function playerHasWon(
+  trimmedParticipants: tournamentPlayer[],
+  i: number,
+  phase: TournamentPhase,
+): boolean {
+  const player: tournamentPlayer = trimmedParticipants[i];
+  const opponent: tournamentPlayer =
+    i % 2 ? trimmedParticipants[i - 1] : trimmedParticipants[i + 1];
 
-  function fillSFparticipants(
-    tournamentBlock: DocumentFragment,
-    participants: tournamentPlayer[],
-  ): void {
-    fillParticipants(tournamentBlock, participants, 4, 6);
-  }
+  const playerScore = getMatchScore(player, phase);
+  const opponentScore = getMatchScore(opponent, phase);
 
-  function fillFinalParticipants(
-    tournamentBlock: DocumentFragment,
-    participants: tournamentPlayer[],
-  ) {
-    fillParticipants(tournamentBlock, participants, 7, 8);
-  }
-
-  function fillParticipants(
-    tournamentBlock: DocumentFragment,
-    participants: tournamentPlayer[],
-    startingIndex: number,
-    endingIndex: number,
-  ): void {
-    // TODO: Uncomment and adjust variable name once I know what gets sent
-    // if (participants[i].score != null) {
-    //   scoreEl.innerText = participants[i].score;
-    //   if (
-    //     (i % 2 && participants[i].score > participants[i + 1].score) ||
-    //     (!(i % 2) && participants[i].score < participants[i + 1].score)
-    //   ) {
-    //     playerEl.classList.add('text-green-500');
-    //     scoreEl.classList.add('text-green-500');
-    //   }
-    // }
-  }
+  if (playerScore === null || opponentScore === null) return false;
+  else return Number(playerScore) > Number(opponentScore);
 }
