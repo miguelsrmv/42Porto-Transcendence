@@ -29,11 +29,11 @@ export enum PlayerInput {
 
 export interface tournamentPlayer {
   id: string;
-  alias: string;
-  avatar: string;
-  scoreQuarterFinals?: number;
-  scoreSemiFinals?: number;
-  scoreFinals?: number;
+  userAlias: string;
+  avatarPath: string;
+  quarterFinalScore?: number;
+  semiFinalScore?: number;
+  finalScore?: number;
 }
 
 export type ClientMessage =
