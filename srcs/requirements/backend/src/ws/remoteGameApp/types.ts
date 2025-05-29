@@ -27,12 +27,22 @@ export enum PlayerInput {
   stop = 'stop',
 }
 
+export interface tournamentPlayer {
+  id: string;
+  alias: string;
+  avatar: string;
+  scoreQuarterFinals?: number;
+  scoreSemiFinals?: number;
+  scoreFinals?: number;
+}
+
 export type ClientMessage =
   | { type: 'join_game'; playerSettings: leanGameSettings }
   | { type: 'movement'; direction: PlayerInput }
   | { type: 'power_up' }
   | { type: 'ping' }
-  | { type: 'stop_game' };
+  | { type: 'stop_game' }
+  | { type: 'ready_for_next_game' };
 
 export type ServerMessage =
   | { type: 'game_setup'; settings: gameSettings }
@@ -47,4 +57,5 @@ export type ServerMessage =
     }
   | { type: 'player_left' }
   | { type: 'tournament_end' }
+  | { type: 'tournament_status'; participants: tournamentPlayer[] }
   | { type: 'error'; message: string };
