@@ -15,6 +15,7 @@ import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 import { getAvatarFromPlayer } from '../api/services/user.services';
 import { getRandomBackground } from './remoteGameApp/backgroundData';
 import { updateLeaderboardRemote } from '../api/services/leaderboard.services';
+import { gameTypeToEnum } from '../utils/helpers';
 
 export class PlayerInfo {
   id: string;
@@ -23,6 +24,10 @@ export class PlayerInfo {
   avatar: string;
   paddleColour: string;
   character: character | null;
+  readyForNextRound: boolean = false;
+  scoreQuarterFinals?: number;
+  scoreSemiFinals?: number;
+  scoreFinals?: number;
 
   constructor(
     id: string,
@@ -98,7 +103,7 @@ export class GameSession {
       // TODO: Check if order of users matter
       const data: BlockchainScoreData = {
         tournamentId: this.tournament.id,
-        gameType: this.tournament.type,
+        gameType: gameTypeToEnum(this.tournament.type),
         player1Id: playerWhoStayed.id,
         score1: 5, // hard-coded win
         player2Id: playerWhoLeft.id,
@@ -201,8 +206,12 @@ export class GameSession {
     );
     this.gameArea.tournament = this.tournament;
     setPowerUpBar(this.gameArea);
-    const gameInterval = setInterval(() => {
-      this.gameArea!.gameLoop();
+    const gameInterval = setInterval(async () => {
+      try {
+        await this.gameArea!.gameLoop();
+      } catch (err) {
+        console.error('Game loop error:', err);
+      }
     }, 20);
     this.gameArea.intervals.push(gameInterval);
     const gameStartMsg: ServerMessage = { type: 'game_start' };
@@ -211,7 +220,7 @@ export class GameSession {
 
   async clear() {
     console.log('Clearing session');
-    this.players.forEach(async (player) => await this.removePlayer(player.socket));
+    await Promise.allSettled(this.players.map((player) => this.removePlayer(player.socket)));
     this.players.length = 0;
   }
 

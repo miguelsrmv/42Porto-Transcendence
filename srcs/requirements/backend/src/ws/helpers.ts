@@ -1,6 +1,6 @@
 import { PlayerInfo } from './gameSession';
 import { gameType, leanGameSettings, playerSettings, playType } from './remoteGameApp/settings';
-import { PlayerInput, ServerMessage } from './remoteGameApp/types';
+import { PlayerInput, ServerMessage, tournamentPlayer } from './remoteGameApp/types';
 import WebSocket from 'ws';
 
 export function wait(seconds: number): Promise<void> {
@@ -60,4 +60,17 @@ export function closeSocket(ws: WebSocket) {
   if (ws.readyState !== WebSocket.CLOSED) {
     ws.close();
   }
+}
+
+export function playerInfoToTournamentPlayer(players: PlayerInfo[]) {
+  return players.map((p) => {
+    return {
+      id: p.id,
+      userAlias: p.alias,
+      avatarPath: p.avatar,
+      quarterFinalScore: p.scoreQuarterFinals?.toString() ?? '',
+      semiFinalScore: p.scoreSemiFinals?.toString() ?? '',
+      finalScore: p.scoreFinals?.toString() ?? '',
+    };
+  }) as tournamentPlayer[];
 }
