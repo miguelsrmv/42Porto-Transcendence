@@ -7,7 +7,7 @@ import { prisma } from '../utils/prisma';
 import { gameTypeToEnum, gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
-import { closeSocket, playerInfoToPlayerSettings } from './helpers';
+import { closeSocket, playerInfoToPlayerSettings, playerInfoToTournamentPlayer } from './helpers';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -38,6 +38,8 @@ export class Tournament {
   id: string = randomUUID();
   currentRound: number = 1;
   players: PlayerInfo[] = [];
+  roundWinners: PlayerInfo[] = [];
+  roundStarting: boolean = false;
 
   constructor(type: gameType) {
     this.type = type;
@@ -95,6 +97,7 @@ export class Tournament {
     await Promise.all(this.sessions.map((session) => session.clear()));
     this.sessions.length = 0;
     this.players.length = 0;
+    this.roundWinners.length = 0;
   }
 
   public isFull() {
@@ -108,6 +111,12 @@ export class Tournament {
     this.sessions
       .filter((s) => s.round === this.currentRound)
       .forEach((s) => s.broadcastMessage(message));
+  }
+
+  private broadcastToRoundWinners(message: string) {
+    this.roundWinners.forEach((w) => {
+      if (w.socket.readyState === WebSocket.OPEN) w.socket.send(message);
+    });
   }
 
   private sendToPlayerCloseSocket(playerId: string, message: string) {
@@ -176,7 +185,6 @@ export class Tournament {
     data: BlockchainScoreData,
   ) {
     if (sessionToUpdate.winner) return;
-    sessionToUpdate.winner = winner;
     try {
       // TODO: Check if order of users matter
       const tx = await contractSigner.saveScoreAndAddWinner(
@@ -192,48 +200,109 @@ export class Tournament {
       console.log(`Error calling saveScoreAndAddWinner: ${err}`);
     }
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
-
+    this.setPlayerScore(data.player1Id, data.score1);
+    this.setPlayerScore(data.player2Id, data.score2);
+    sessionToUpdate.winner = winner;
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
-    // TODO: Send tournament_status message
-    // TODO: wait for advance_round message
     if (roundSessions.every((session) => session.winner)) await this.advanceRound();
   }
 
-  private async advanceRound() {
-    const winners = this.sessions
-      .filter((session) => session.round === this.currentRound)
-      .map((s) => s.winner)
-      .filter((winner): winner is string => !!winner);
+  private setPlayerScore(playerId: string, score: number) {
+    const player = this.getPlayerInfoFromId(playerId)!;
+    switch (this.currentRound) {
+      case 1: {
+        player.scoreQuarterFinals = score;
+        break;
+      }
+      case 2: {
+        player.scoreSemiFinals = score;
+        break;
+      }
+      case 3: {
+        player.scoreFinals = score;
+        break;
+      }
+    }
+  }
 
-    if (winners.length <= 1) {
+  private async advanceRound() {
+    this.roundWinners = this.determineRoundWinners();
+    if (this.roundWinners.length <= 1) {
       console.log('Tournament has ended');
+      // TODO: send winner score ?
       this.sendToPlayerCloseSocket(
-        winners[0],
+        this.roundWinners[0].id,
         JSON.stringify({ type: 'tournament_end' } as ServerMessage),
       );
       this.state = tournamentState.ended;
       await this.clear();
       return;
     }
-    console.log(`Advancing to round ${this.currentRound + 1}`);
+    await this.checkIfAllWinnersReady();
+  }
+
+  private determineRoundWinners() {
+    return this.sessions
+      .filter((session) => session.round === this.currentRound)
+      .filter((s) => s.winner)
+      .map((s) => this.getPlayerInfoFromId(s.winner!))
+      .filter((w): w is PlayerInfo => !!w);
+  }
+
+  public async setReadyForNextRound(ws: WebSocket) {
+    const player = this.players.find((p) => p.socket === ws);
+    if (player && !player.readyForNextRound) player.readyForNextRound = true;
+    if (!this.roundWinners || this.roundWinners.length === 0) return;
+
+    await this.checkIfAllWinnersReady();
+  }
+
+  private async checkIfAllWinnersReady() {
+    if (!this.roundWinners || this.roundStarting) return;
+
+    const allReady = this.roundWinners.every((winner) => {
+      const player = this.players.find((p) => p.id === winner.id);
+      return player?.readyForNextRound;
+    });
+
+    if (allReady) {
+      this.roundStarting = true;
+      try {
+        await this.startRound();
+      } finally {
+        this.roundStarting = false;
+      }
+    }
+  }
+
+  private async startRound() {
     ++this.currentRound;
-    await this.createNextRoundSessions(winners);
-    // TODO: Call wait
+    console.log(`Advancing to round ${this.currentRound}`);
+    await this.createNextRoundSessions();
+    this.sendTournamentStatus();
+    this.roundWinners.length = 0;
+    // await wait(10);
     this.sessions
       .filter((session) => session.round === this.currentRound)
-      .forEach((session) => session.startGame());
+      .forEach((session) => {
+        session.startGame();
+      });
+  }
+
+  private sendTournamentStatus() {
+    // TODO: get data from Blockchain
+    const playersStats = playerInfoToTournamentPlayer(this.players);
+    const message: ServerMessage = { type: 'tournament_status', participants: playersStats };
+    this.broadcastToRoundWinners(JSON.stringify(message));
   }
 
   // TODO: Check matchup logic
-  private async createNextRoundSessions(playerIds: string[]) {
+  private async createNextRoundSessions() {
     // TODO: Advance round if winner quits before next round
-    const nextRoundPlayers = playerIds
-      .map((id) => this.getPlayerInfoFromId(id))
-      .filter((p): p is PlayerInfo => !!p);
-    console.log(`Creating new round session with: ${nextRoundPlayers.map((p) => p.alias)}`);
-    for (let i = 0; i < nextRoundPlayers.length; i += 2) {
-      const player1 = nextRoundPlayers[i];
-      const player2 = nextRoundPlayers[i + 1];
+    console.log(`Creating new round session with: ${this.roundWinners.map((p) => p.alias)}`);
+    for (let i = 0; i < this.roundWinners.length; i += 2) {
+      const player1 = this.roundWinners[i];
+      const player2 = this.roundWinners[i + 1];
 
       const newSession = new GameSession(this.type, 'Tournament Play');
       await newSession.setPlayer(player1.socket, playerInfoToPlayerSettings(player1));

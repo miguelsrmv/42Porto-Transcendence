@@ -53,6 +53,12 @@ async function powerUpHandler(socket: WebSocket) {
   await ownPlayer.attack?.attack();
 }
 
+async function readyForNextRoundHandler(socket: WebSocket) {
+  const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
+  if (!playerTournament) return;
+  await playerTournament.setReadyForNextRound(socket);
+}
+
 async function messageTypeHandlerTournament(
   message: ClientMessage,
   socket: WebSocket,
@@ -69,6 +75,10 @@ async function messageTypeHandlerTournament(
     }
     case 'power_up': {
       await powerUpHandler(socket);
+      break;
+    }
+    case 'ready_for_next_game': {
+      await readyForNextRoundHandler(socket);
       break;
     }
   }
