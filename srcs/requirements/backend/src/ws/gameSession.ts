@@ -24,6 +24,10 @@ export class PlayerInfo {
   avatar: string;
   paddleColour: string;
   character: character | null;
+  readyForNextRound: boolean = false;
+  scoreQuarterFinals: number = 0;
+  scoreSemiFinals?: number;
+  scoreFinals?: number;
 
   constructor(
     id: string,
@@ -216,7 +220,7 @@ export class GameSession {
 
   async clear() {
     console.log('Clearing session');
-    await Promise.all(this.players.map((player) => this.removePlayer(player.socket)));
+    await Promise.allSettled(this.players.map((player) => this.removePlayer(player.socket)));
     this.players.length = 0;
   }
 
