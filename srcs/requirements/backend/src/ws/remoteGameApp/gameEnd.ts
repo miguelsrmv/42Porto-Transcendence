@@ -3,7 +3,7 @@ import { GameArea } from './gameArea';
 import { Player } from './player';
 import { Character } from '@prisma/client';
 import { gameSettings } from './settings';
-import { gameTypeToGameMode } from '../../utils/helpers';
+import { gameTypeToEnum, gameTypeToGameMode } from '../../utils/helpers';
 import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
 import { BlockchainScoreData } from '../tournament';
 import { closeSocket } from '../helpers';
@@ -92,10 +92,13 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.isEnding = true;
   gameArea.stop();
   const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
+  gameArea.session.broadcastEndGameMessage(winningPlayer);
+  losingPlayer.isEliminated = true;
+  closeSocket(losingPlayer.socket);
   if (gameArea.tournament) {
     const data: BlockchainScoreData = {
       tournamentId: gameArea.tournament.id,
-      gameType: gameArea.tournament.type,
+      gameType: gameTypeToEnum(gameArea.tournament.type),
       player1Id: winningPlayer.id,
       score1: winningPlayer.score,
       player2Id: losingPlayer.id,
@@ -107,7 +110,4 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     await createMatch(winningPlayer, gameArea);
     await updateLeaderboardRemote(winningPlayer, losingPlayer);
   }
-  gameArea.session.broadcastEndGameMessage(winningPlayer);
-  losingPlayer.isEliminated = true;
-  closeSocket(losingPlayer.socket);
 }

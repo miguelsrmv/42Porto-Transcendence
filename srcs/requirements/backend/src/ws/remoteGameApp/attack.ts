@@ -131,7 +131,7 @@ export class Attack {
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
 
-  attack(): void {
+  async attack() {
     if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable) return;
 
     this.lastUsed = Date.now();
@@ -146,7 +146,7 @@ export class Attack {
       this.gameArea.rightPlayer.powerBarFill = 0;
     }
 
-    this.activeAttack();
+    await this.activeAttack();
 
     this.attackIsAvailable = false;
   }

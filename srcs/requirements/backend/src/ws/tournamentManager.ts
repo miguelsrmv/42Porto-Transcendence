@@ -59,6 +59,14 @@ export class TournamentManager {
 
   private async createTournament(ws: WebSocket, settings: leanGameSettings) {
     const newTournament = new Tournament(settings.gameType);
+    // try {
+    //   const BCtournaments = await contractProvider.getAllTournaments(
+    //     gameTypeToEnum(settings.gameType),
+    //   );
+    //   newTournament.id = BCtournaments.length;
+    // } catch (err) {
+    //   console.log(`Error in getAllTournaments Blockchain call: ${err}`);
+    // }
     await newTournament.createSession(ws, settings);
     this.getTournaments(settings.gameType).push(newTournament);
     this.playerTournaments.set(settings.playerID, newTournament);
@@ -85,9 +93,7 @@ export class TournamentManager {
 
   private async clearEndedTournaments(tournaments: Tournament[]) {
     const endedTournaments = tournaments.filter((t) => t.state === tournamentState.ended);
-    endedTournaments.forEach(async (t) => {
-      this.removeTournament(t);
-    });
+    await Promise.all(endedTournaments.map((t) => this.removeTournament(t)));
   }
 
   private removeTournament(tournament: Tournament) {

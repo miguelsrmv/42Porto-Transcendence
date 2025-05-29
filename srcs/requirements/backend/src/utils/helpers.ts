@@ -22,3 +22,7 @@ export function transformUserUpdate(data: UserUpdate): TransformedUserUpdate {
 export function gameTypeToGameMode(gameType: gameType) {
   return gameType === 'Classic Pong' ? GameMode.CLASSIC : GameMode.CRAZY;
 }
+
+export function gameTypeToEnum(gameType: gameType) {
+  return gameType === 'Classic Pong' ? 0 : 1;
+}
