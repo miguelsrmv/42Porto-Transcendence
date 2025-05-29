@@ -31,9 +31,9 @@ export interface tournamentPlayer {
   id: string;
   userAlias: string;
   avatarPath: string;
-  quarterFinalScore?: number;
-  semiFinalScore?: number;
-  finalScore?: number;
+  quarterFinalScore?: string;
+  semiFinalScore?: string;
+  finalScore?: string;
 }
 
 export type ClientMessage =

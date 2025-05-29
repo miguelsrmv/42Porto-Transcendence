@@ -25,7 +25,7 @@ export class PlayerInfo {
   paddleColour: string;
   character: character | null;
   readyForNextRound: boolean = false;
-  scoreQuarterFinals: number = 0;
+  scoreQuarterFinals?: number;
   scoreSemiFinals?: number;
   scoreFinals?: number;
 

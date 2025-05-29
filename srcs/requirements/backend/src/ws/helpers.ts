@@ -68,9 +68,9 @@ export function playerInfoToTournamentPlayer(players: PlayerInfo[]) {
       id: p.id,
       userAlias: p.alias,
       avatarPath: p.avatar,
-      quarterFinalScore: p.scoreQuarterFinals,
-      semiFinalScore: p.scoreSemiFinals,
-      finalScore: p.scoreFinals,
+      quarterFinalScore: p.scoreQuarterFinals?.toString() ?? '',
+      semiFinalScore: p.scoreSemiFinals?.toString() ?? '',
+      finalScore: p.scoreFinals?.toString() ?? '',
     };
   }) as tournamentPlayer[];
 }
