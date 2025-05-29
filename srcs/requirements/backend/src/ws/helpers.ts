@@ -66,11 +66,11 @@ export function playerInfoToTournamentPlayer(players: PlayerInfo[]) {
   return players.map((p) => {
     return {
       id: p.id,
-      alias: p.alias,
-      avatar: p.avatar,
-      scoreQuarterFinals: p.scoreQuarterFinals,
-      scoreSemiFinals: p.scoreSemiFinals,
-      scoreFinals: p.scoreFinals,
+      userAlias: p.alias,
+      avatarPath: p.avatar,
+      quarterFinalScore: p.scoreQuarterFinals,
+      semiFinalScore: p.scoreSemiFinals,
+      finalScore: p.scoreFinals,
     };
   }) as tournamentPlayer[];
 }
