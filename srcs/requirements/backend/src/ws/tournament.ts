@@ -112,18 +112,6 @@ export class Tournament {
     );
   }
 
-  public broadcastToAll(message: string) {
-    this.sessions
-      .filter((s) => s.round === this.currentRound)
-      .forEach((s) => s.broadcastMessage(message));
-  }
-
-  private broadcastToRoundWinners(message: string) {
-    this.roundWinners.forEach((w) => {
-      if (w.socket.readyState === WebSocket.OPEN) w.socket.send(message);
-    });
-  }
-
   private sendToPlayerCloseSocket(playerId: string, message: string) {
     const socket = this.getPlayerInfoFromId(playerId)?.socket;
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -153,6 +141,7 @@ export class Tournament {
   async start() {
     this.state = tournamentState.ongoing;
     this.setPlayersTournamentStart();
+    this.broadcastStatus(this.players);
     const data = this.getTournamentCreateData();
     console.log(`Starting tournament: ${JSON.stringify(data)}`);
     try {
@@ -166,6 +155,7 @@ export class Tournament {
       console.log(`Error in joinTournament Blockchain call: ${err}`);
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
+    await wait(10);
     this.sessions.forEach((session) => session.startGame());
   }
 
@@ -284,7 +274,7 @@ export class Tournament {
     ++this.currentRound;
     console.log(`Advancing to round ${this.currentRound}`);
     await this.createNextRoundSessions();
-    this.sendTournamentStatus();
+    this.broadcastStatus(this.roundWinners);
     this.roundWinners.length = 0;
     await wait(10);
     this.sessions
@@ -294,11 +284,12 @@ export class Tournament {
       });
   }
 
-  private sendTournamentStatus() {
-    // TODO: get data from Blockchain
+  private broadcastStatus(players: PlayerInfo[]) {
     const playersStats = playerInfoToTournamentPlayer(this.players);
     const message: ServerMessage = { type: 'tournament_status', participants: playersStats };
-    this.broadcastToRoundWinners(JSON.stringify(message));
+    for (const player of players) {
+      if (player.socket.readyState === WebSocket.OPEN) player.socket.send(JSON.stringify(message));
+    }
   }
 
   // TODO: Check matchup logic
