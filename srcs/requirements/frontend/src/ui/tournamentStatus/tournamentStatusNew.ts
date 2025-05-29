@@ -41,6 +41,9 @@ function fillParticipants(
   const playerElements = tournamentBlock.querySelectorAll(`.${phase}`);
   const scoreElements = tournamentBlock.querySelectorAll(`.${phase}Score`);
 
+  console.log('Trimmed participants: ', trimmedParticipants);
+  console.log(phase, ' ', playerElements);
+
   for (let i = 0; i < trimmedParticipants.length; i++) {
     const playerEl = playerElements[i] as HTMLParagraphElement;
     playerEl.innerText = trimmedParticipants[i].userAlias;
@@ -67,9 +70,9 @@ function getPhaseParticipants(
   participants: tournamentPlayer[],
 ): tournamentPlayer[] {
   if (phase === TournamentPhase.Semi) {
-    return participants.filter((participant) => participant.semiFinalScore !== null);
+    return participants.filter((participant) => participant.semiFinalScore !== '');
   } else if (phase === TournamentPhase.Final) {
-    return participants.filter((participant) => participant.finalScore !== null);
+    return participants.filter((participant) => participant.finalScore !== '');
   } else return participants;
 }
 
