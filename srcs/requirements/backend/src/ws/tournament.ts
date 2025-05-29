@@ -7,7 +7,12 @@ import { prisma } from '../utils/prisma';
 import { gameTypeToEnum, gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
-import { closeSocket, playerInfoToPlayerSettings, playerInfoToTournamentPlayer } from './helpers';
+import {
+  closeSocket,
+  playerInfoToPlayerSettings,
+  playerInfoToTournamentPlayer,
+  wait,
+} from './helpers';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -281,7 +286,7 @@ export class Tournament {
     await this.createNextRoundSessions();
     this.sendTournamentStatus();
     this.roundWinners.length = 0;
-    // await wait(10);
+    await wait(10);
     this.sessions
       .filter((session) => session.round === this.currentRound)
       .forEach((session) => {
