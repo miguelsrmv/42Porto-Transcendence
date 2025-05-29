@@ -223,8 +223,10 @@ async function main() {
   } catch (e) {
     console.error(e);
   } finally {
-    prisma.$disconnect();
+    await prisma.$disconnect();
   }
 }
 
-main();
+main().catch((err) => {
+  console.error('Unhandled error in main:', err);
+});

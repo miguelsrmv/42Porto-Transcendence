@@ -1,6 +1,7 @@
 import { Browser, Cookie, firefox } from 'playwright';
 import https from 'https';
 import WebSocket from 'ws';
+import { wait } from '../src/ws/helpers';
 
 const NUM_CLIENTS = 8;
 const BASE_URL = 'https://padaria.42.pt';
@@ -39,8 +40,6 @@ async function simulateClient(browser: Browser, index: number) {
 
   console.log(`[${index}] Logged in - ID: ${playerId}, token: ${token?.slice(0, 10)}...`);
 
-  await context.close(); // optional, closes tab and frees memory
-
   // Connect WebSocket
   const ws = new WebSocket(`wss://${host}/ws/tournament`, {
     agent: new https.Agent({ rejectUnauthorized: false }),
@@ -70,9 +69,20 @@ async function simulateClient(browser: Browser, index: number) {
     }, 20000);
   });
 
-  ws.on('message', (msg) => {
+  ws.on('message', async (msg) => {
     const data = JSON.parse(msg.toString());
-    if (data.type === 'game_state' || data.type === 'game_goal') return;
+    switch (data.type) {
+      case 'game_goal':
+      case 'game_state': {
+        return;
+      }
+      case 'game_end': {
+        await wait(1);
+        if (ws.readyState === WebSocket.OPEN)
+          ws.send(JSON.stringify({ type: 'ready_for_next_game' }));
+      }
+    }
+
     console.log(`[${index}] Received:`, data);
   });
 
@@ -84,6 +94,7 @@ async function simulateClient(browser: Browser, index: number) {
     console.error(`[${index}] WebSocket closed`);
     clearInterval(heartbeat);
   });
+  await context.close(); // optional, closes tab and frees memory
 }
 
 (async () => {
@@ -91,7 +102,7 @@ async function simulateClient(browser: Browser, index: number) {
   const clients = [];
   try {
     for (let i = 1; i <= NUM_CLIENTS; i++) {
-      clients.push(simulateClient(browser, i));
+      clients.push(await simulateClient(browser, i));
       await new Promise((res) => setTimeout(res, 300)); // stagger launch (optional)
     }
     await Promise.all(clients);
@@ -99,4 +110,6 @@ async function simulateClient(browser: Browser, index: number) {
     console.error(`Error:`, err);
   }
   await browser.close();
-})();
+})().catch((err) => {
+  console.error('Unhandled error in IIFE:', err);
+});

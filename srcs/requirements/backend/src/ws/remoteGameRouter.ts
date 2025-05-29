@@ -40,14 +40,14 @@ function movementHandler(socket: WebSocket, direction: string) {
   ownPlayer.input = direction as PlayerInput;
 }
 
-function powerUpHandler(socket: WebSocket) {
+async function powerUpHandler(socket: WebSocket) {
   const gameSession = sessionManager.getSessionBySocket(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
     gameSession.gameArea.leftPlayer.socket === socket
       ? gameSession.gameArea.leftPlayer
       : gameSession.gameArea.rightPlayer;
-  ownPlayer.attack?.attack();
+  await ownPlayer.attack?.attack();
 }
 
 async function messageTypeHandler(message: ClientMessage, socket: WebSocket, userId: string) {
@@ -61,7 +61,7 @@ async function messageTypeHandler(message: ClientMessage, socket: WebSocket, use
       break;
     }
     case 'power_up': {
-      powerUpHandler(socket);
+      await powerUpHandler(socket);
       break;
     }
   }
@@ -81,11 +81,20 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
     console.log('Received message:', message.toString());
-    await messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
+    try {
+      await messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
+    } catch (err) {
+      console.error('Error handling message:', err);
+      // closeSocket(socket);
+    }
   });
 
   socket.on('close', async () => {
-    await sessionManager.removePlayerBySocket(socket);
+    try {
+      await sessionManager.removePlayerBySocket(socket);
+    } catch (err) {
+      console.error('Error closing socket:', err);
+    }
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });

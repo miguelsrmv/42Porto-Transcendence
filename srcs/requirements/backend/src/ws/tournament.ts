@@ -4,10 +4,15 @@ import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
-import { gameTypeToGameMode } from '../utils/helpers';
+import { gameTypeToEnum, gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
 import { contractSigner } from '../api/services/blockchain.services';
-import { closeSocket, playerInfoToPlayerSettings } from './helpers';
+import {
+  closeSocket,
+  playerInfoToPlayerSettings,
+  playerInfoToTournamentPlayer,
+  wait,
+} from './helpers';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
@@ -20,8 +25,9 @@ export enum tournamentState {
 }
 
 export interface BlockchainScoreData {
+  // TODO: change to number
   tournamentId: string;
-  gameType: gameType;
+  gameType: number;
   player1Id: string;
   score1: number;
   player2Id: string;
@@ -32,9 +38,13 @@ export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
   type: gameType;
+  // TODO: Get id as nbr of tournaments on blockchain
+  // id: number = 0;
   id: string = randomUUID();
   currentRound: number = 1;
   players: PlayerInfo[] = [];
+  roundWinners: PlayerInfo[] = [];
+  roundStarting: boolean = false;
 
   constructor(type: gameType) {
     this.type = type;
@@ -42,7 +52,7 @@ export class Tournament {
 
   // TODO: Create first session on Tournament constructor
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
-    const newSession = new GameSession(playerSettings.gameType, playerSettings.playType);
+    const newSession = new GameSession(this.type, 'Tournament Play');
     newSession.tournament = this;
     await newSession.setPlayer(ws, playerSettings);
 
@@ -76,6 +86,11 @@ export class Tournament {
     return this.players.find((p) => p.id === id);
   }
 
+  private removeSession(session: GameSession) {
+    const index = this.sessions.indexOf(session);
+    if (index !== -1) this.sessions.splice(index, 1);
+  }
+
   public getPlayerSession(ws: WebSocket) {
     return this.sessions
       .filter((s) => s.round === this.currentRound)
@@ -84,9 +99,10 @@ export class Tournament {
 
   private async clear() {
     console.log('Clearing tournament');
-    this.sessions.forEach(async (session) => await session.clear());
+    await Promise.all(this.sessions.map((session) => session.clear()));
     this.sessions.length = 0;
     this.players.length = 0;
+    this.roundWinners.length = 0;
   }
 
   public isFull() {
@@ -94,12 +110,6 @@ export class Tournament {
       this.sessions.length === NBR_SESSIONS_FIRST_ROUND &&
       this.sessions.every((session) => session.isFull())
     );
-  }
-
-  public broadcastToAll(message: string) {
-    this.sessions
-      .filter((s) => s.round === this.currentRound)
-      .forEach((s) => s.broadcastMessage(message));
   }
 
   private sendToPlayerCloseSocket(playerId: string, message: string) {
@@ -131,6 +141,7 @@ export class Tournament {
   async start() {
     this.state = tournamentState.ongoing;
     this.setPlayersTournamentStart();
+    this.broadcastStatus(this.players);
     const data = this.getTournamentCreateData();
     console.log(`Starting tournament: ${JSON.stringify(data)}`);
     try {
@@ -144,20 +155,23 @@ export class Tournament {
       console.log(`Error in joinTournament Blockchain call: ${err}`);
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
+    await wait(10);
     this.sessions.forEach((session) => session.startGame());
   }
 
   private async addTournamentToDB(tournamentId: string, gameType: gameType, playerIds: string[]) {
     // TODO: Check for repeated alias
-    playerIds.forEach(async (id) => {
-      await prisma.tournamentParticipant.create({
-        data: {
-          tournamentId: tournamentId,
-          userId: id,
-          tournamentType: gameTypeToGameMode(gameType),
-        },
-      });
-    });
+    await Promise.all(
+      playerIds.map((id) =>
+        prisma.tournamentParticipant.create({
+          data: {
+            tournamentId: tournamentId,
+            userId: id,
+            tournamentType: gameTypeToGameMode(gameType),
+          },
+        }),
+      ),
+    );
   }
 
   public async updateSessionScore(
@@ -166,7 +180,6 @@ export class Tournament {
     data: BlockchainScoreData,
   ) {
     if (sessionToUpdate.winner) return;
-    sessionToUpdate.winner = winner;
     try {
       // TODO: Check if order of users matter
       const tx = await contractSigner.saveScoreAndAddWinner(
@@ -182,48 +195,110 @@ export class Tournament {
       console.log(`Error calling saveScoreAndAddWinner: ${err}`);
     }
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
-
+    this.setPlayerScore(data.player1Id, data.score1);
+    this.setPlayerScore(data.player2Id, data.score2);
+    sessionToUpdate.winner = winner;
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
-    // TODO: Send tournament_status message
-    // TODO: wait for advance_round message
     if (roundSessions.every((session) => session.winner)) await this.advanceRound();
   }
 
-  private async advanceRound() {
-    console.log(`Advancing to round ${this.currentRound + 1}`);
-    const winners = this.sessions
-      .filter((session) => session.round === this.currentRound)
-      .map((s) => s.winner)
-      .filter((winner): winner is string => !!winner);
+  private setPlayerScore(playerId: string, score: number) {
+    const player = this.getPlayerInfoFromId(playerId)!;
+    switch (this.currentRound) {
+      case 1: {
+        player.scoreQuarterFinals = score;
+        break;
+      }
+      case 2: {
+        player.scoreSemiFinals = score;
+        break;
+      }
+      case 3: {
+        player.scoreFinals = score;
+        break;
+      }
+    }
+  }
 
-    if (winners.length <= 1) {
+  private async advanceRound() {
+    this.roundWinners = this.determineRoundWinners();
+    if (this.roundWinners.length <= 1) {
       console.log('Tournament has ended');
+      // TODO: send winner score ?
       this.sendToPlayerCloseSocket(
-        winners[0],
+        this.roundWinners[0].id,
         JSON.stringify({ type: 'tournament_end' } as ServerMessage),
       );
       this.state = tournamentState.ended;
       await this.clear();
       return;
     }
+    await this.checkIfAllWinnersReady();
+  }
+
+  private determineRoundWinners() {
+    return this.sessions
+      .filter((session) => session.round === this.currentRound)
+      .filter((s) => s.winner)
+      .map((s) => this.getPlayerInfoFromId(s.winner!))
+      .filter((w): w is PlayerInfo => !!w);
+  }
+
+  public async setReadyForNextRound(ws: WebSocket) {
+    const player = this.players.find((p) => p.socket === ws);
+    if (player && !player.readyForNextRound) player.readyForNextRound = true;
+    if (!this.roundWinners || this.roundWinners.length === 0) return;
+
+    await this.checkIfAllWinnersReady();
+  }
+
+  private async checkIfAllWinnersReady() {
+    if (!this.roundWinners || this.roundStarting) return;
+
+    const allReady = this.roundWinners.every((winner) => {
+      const player = this.players.find((p) => p.id === winner.id);
+      return player?.readyForNextRound;
+    });
+
+    if (allReady) {
+      this.roundStarting = true;
+      try {
+        await this.startRound();
+      } finally {
+        this.roundStarting = false;
+      }
+    }
+  }
+
+  private async startRound() {
     ++this.currentRound;
-    await this.createNextRoundSessions(winners);
-    // TODO: Call wait
+    console.log(`Advancing to round ${this.currentRound}`);
+    await this.createNextRoundSessions();
+    this.broadcastStatus(this.roundWinners);
+    this.roundWinners.length = 0;
+    await wait(10);
     this.sessions
       .filter((session) => session.round === this.currentRound)
-      .forEach((session) => session.startGame());
+      .forEach((session) => {
+        session.startGame();
+      });
+  }
+
+  private broadcastStatus(players: PlayerInfo[]) {
+    const playersStats = playerInfoToTournamentPlayer(this.players);
+    const message: ServerMessage = { type: 'tournament_status', participants: playersStats };
+    for (const player of players) {
+      if (player.socket.readyState === WebSocket.OPEN) player.socket.send(JSON.stringify(message));
+    }
   }
 
   // TODO: Check matchup logic
-  private async createNextRoundSessions(playerIds: string[]) {
+  private async createNextRoundSessions() {
     // TODO: Advance round if winner quits before next round
-    const nextRoundPlayers = playerIds
-      .map((id) => this.getPlayerInfoFromId(id))
-      .filter((p): p is PlayerInfo => !!p);
-    console.log(`Creating new round session with: ${nextRoundPlayers.map((p) => p.alias)}`);
-    for (let i = 0; i < nextRoundPlayers.length; i += 2) {
-      const player1 = nextRoundPlayers[i];
-      const player2 = nextRoundPlayers[i + 1];
+    console.log(`Creating new round session with: ${this.roundWinners.map((p) => p.alias)}`);
+    for (let i = 0; i < this.roundWinners.length; i += 2) {
+      const player1 = this.roundWinners[i];
+      const player2 = this.roundWinners[i + 1];
 
       const newSession = new GameSession(this.type, 'Tournament Play');
       await newSession.setPlayer(player1.socket, playerInfoToPlayerSettings(player1));
@@ -242,7 +317,10 @@ export class Tournament {
   public async removePlayer(socket: WebSocket) {
     console.log('Removing player in tournament');
     const playerSessions = this.sessions.filter((s) => s.playerIsInSession(socket));
-    playerSessions.forEach(async (s) => await s.removePlayer(socket));
+    for (const session of playerSessions) {
+      await session.removePlayer(socket);
+      if (session.isEmpty()) this.removeSession(session);
+    }
   }
 
   private getTournamentCreateData() {
@@ -251,11 +329,15 @@ export class Tournament {
         {
           userId: p.id,
           alias: p.alias,
-          character: p.character?.name,
+          character: p.character?.name ?? 'NONE',
         },
       ];
     });
-    return { tournamentId: this.id, gameType: this.type, participants: playersData };
+    return {
+      tournamentId: this.id,
+      gameType: gameTypeToEnum(this.type),
+      participants: playersData,
+    };
   }
 
   public print() {

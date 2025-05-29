@@ -42,7 +42,7 @@ function movementHandler(socket: WebSocket, direction: string) {
   ownPlayer.input = direction as PlayerInput;
 }
 
-function powerUpHandler(socket: WebSocket) {
+async function powerUpHandler(socket: WebSocket) {
   const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
   const gameSession = playerTournament?.getPlayerSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
@@ -50,7 +50,13 @@ function powerUpHandler(socket: WebSocket) {
     gameSession.gameArea.leftPlayer.socket === socket
       ? gameSession.gameArea.leftPlayer
       : gameSession.gameArea.rightPlayer;
-  ownPlayer.attack?.attack();
+  await ownPlayer.attack?.attack();
+}
+
+async function readyForNextRoundHandler(socket: WebSocket) {
+  const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
+  if (!playerTournament) return;
+  await playerTournament.setReadyForNextRound(socket);
 }
 
 async function messageTypeHandlerTournament(
@@ -68,7 +74,11 @@ async function messageTypeHandlerTournament(
       break;
     }
     case 'power_up': {
-      powerUpHandler(socket);
+      await powerUpHandler(socket);
+      break;
+    }
+    case 'ready_for_next_game': {
+      await readyForNextRoundHandler(socket);
       break;
     }
   }
@@ -87,11 +97,20 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
     console.log('Received message:', message.toString());
-    await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
+    try {
+      await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
+    } catch (err) {
+      console.error('Error handling message:', err);
+      // closeSocket(socket);
+    }
   });
 
   socket.on('close', async () => {
-    await tournamentManager.removePlayerTournament(socket);
+    try {
+      await tournamentManager.removePlayerTournament(socket);
+    } catch (err) {
+      console.error('Error closing socket:', err);
+    }
     clearInterval(keepAlive);
     console.log('Client disconnected');
   });
