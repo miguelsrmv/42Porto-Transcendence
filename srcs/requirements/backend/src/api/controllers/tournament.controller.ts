@@ -90,7 +90,6 @@ export async function getUserLastThreeTournaments(
 ) {
   try {
     const tx = await contractProvider.getLastThreeTournamentsPosition(BigInt(request.params.id), request.body.tournamentsIdsandTypes);
-    await tx.wait();
 
     reply.send("OK");
   } catch (error) {
