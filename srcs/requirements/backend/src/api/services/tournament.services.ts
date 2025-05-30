@@ -1,14 +1,18 @@
 // import { TournamentPlayer } from '../controllers/tournament.controller';
-// import { prisma } from '../../utils/prisma';
-
-import { randomUUID } from 'crypto';
 import { tournamentPlayer } from '../../ws/remoteGameApp/types';
+import { prisma } from '../../utils/prisma';
 
-export function generateTournamentData(tournamentId: string) {
-
+export async function generateTournamentData(tournamentId: string) {
+  const users = await prisma.user.findMany({
+    take: 8,
+    select: {
+      id: true,
+    },
+  });
+  if (users.length < 8) throw 'Less than 8 users in the database';
   const tournamentData: tournamentPlayer[] = [
     {
-      id: randomUUID(),
+      id: users[0].id,
       userAlias: 'alias1',
       avatarPath: '../../../../static/avatar/default/mario.png',
       quarterFinalScore: '5',
@@ -16,7 +20,7 @@ export function generateTournamentData(tournamentId: string) {
       finalScore: '',
     },
     {
-      id: randomUUID(),
+      id: users[1].id,
       userAlias: 'alias2',
       avatarPath: '../../../../static/avatar/default/bowser.png',
       quarterFinalScore: '5',
@@ -24,7 +28,7 @@ export function generateTournamentData(tournamentId: string) {
       finalScore: '2',
     },
     {
-      id: randomUUID(),
+      id: users[2].id,
       userAlias: 'alias3',
       avatarPath: '../../../../static/avatar/default/cloud.png',
       quarterFinalScore: '5',
@@ -32,7 +36,7 @@ export function generateTournamentData(tournamentId: string) {
       finalScore: '5',
     },
     {
-      id: randomUUID(),
+      id: users[3].id,
       userAlias: 'alias4',
       avatarPath: '../../../../static/avatar/default/chrom.png',
       quarterFinalScore: '3',
@@ -40,7 +44,7 @@ export function generateTournamentData(tournamentId: string) {
       finalScore: '',
     },
     {
-      id: randomUUID(),
+      id: users[4].id,
       userAlias: 'alias5',
       avatarPath: '../../../../static/avatar/default/corrin.png',
       quarterFinalScore: '2',
@@ -48,7 +52,7 @@ export function generateTournamentData(tournamentId: string) {
       finalScore: '',
     },
     {
-      id: randomUUID(),
+      id: users[5].id,
       userAlias: 'alias6',
       avatarPath: '../../../../static/avatar/default/daisy.png',
       quarterFinalScore: '5',
@@ -56,7 +60,7 @@ export function generateTournamentData(tournamentId: string) {
       finalScore: '',
     },
     {
-      id: randomUUID(),
+      id: users[6].id,
       userAlias: 'alias7',
       avatarPath: '../../../../static/avatar/default/bowser_jr.png',
       quarterFinalScore: '4',
@@ -64,7 +68,7 @@ export function generateTournamentData(tournamentId: string) {
       finalScore: '',
     },
     {
-      id: randomUUID(),
+      id: users[7].id,
       userAlias: 'alias8',
       avatarPath: '../../../../static/avatar/default/bayonetta.png',
       quarterFinalScore: '1',
