@@ -99,7 +99,6 @@ async function renderTopLeftBoard(userId: string): Promise<void> {
     const userProfileResponse = await fetch(`api/users/${userId}`, {
       method: 'GET',
       credentials: 'include',
-      w,
     });
     if (!userProfileResponse.ok) {
       console.error('Error fetching uder profile data:', userProfileResponse.status);
@@ -290,6 +289,16 @@ async function renderTournamentBoard(userId: string): Promise<void> {
   addTournamentModal();
 }
 
+/**
+ * @brief Adds event listeners to recent tournament elements to open a modal and display tournament data.
+ *
+ * This function selects all elements with the class 'recent-tournament' and attaches click event listeners to them.
+ * When clicked, the modal for the tournament is opened, and the tournament data is displayed based on the element's data-id attribute.
+ *
+ * @note If no elements with the class 'recent-tournament' are found, a message is logged to the console.
+ *
+ * @returns void
+ */
 function addTournamentModal(): void {
   const recentTournaments = document.querySelectorAll('.recent-tournament');
   if (!recentTournaments) {
@@ -306,6 +315,16 @@ function addTournamentModal(): void {
   }
 }
 
+/**
+ * @brief Fetches tournament data based on a given UUID and displays it.
+ *
+ * This function sends a GET request to the tournament API endpoint to retrieve
+ * tournament data. If the request fails or encounters a network error, it logs
+ * the error and exits. Currently, it uses mock data for displaying tournament results.
+ *
+ * @param uuid The unique identifier of the tournament to fetch.
+ * @return void This function does not return any value.
+ */
 async function displayTournamentData(uuid: string): Promise<void> {
   try {
     const response = await fetch(`api/tournaments/${uuid}`, {
@@ -326,6 +345,13 @@ async function displayTournamentData(uuid: string): Promise<void> {
   }
 }
 
+/**
+ * Handles the click event on the modal backdrop. If the click is directly on the modal backdrop,
+ * the modal is hidden.
+ *
+ * @param {MouseEvent} event - The mouse event triggered by the click.
+ * @returns {Promise<void>} Resolves when the modal hiding process is complete.
+ */
 async function handleModalBackdropClick(event: MouseEvent): Promise<void> {
   const tournamentModal = document.getElementById('tournament-modal');
   if (!tournamentModal) {
@@ -338,6 +364,12 @@ async function handleModalBackdropClick(event: MouseEvent): Promise<void> {
   }
 }
 
+/**
+ * Opens the tournament modal by fading it in and attaching a click event listener
+ * to handle backdrop clicks.
+ *
+ * @returns {void}
+ */
 function openTournamentModal(): void {
   const tournamentModal = document.getElementById('tournament-modal');
   if (!tournamentModal) {
@@ -350,10 +382,15 @@ function openTournamentModal(): void {
   }
 
   fadeIn(tournamentModal);
-
   tournamentModal.addEventListener('click', handleModalBackdropClick);
 }
 
+/**
+ * Hides the tournament modal by fading it out, removing the backdrop click listener,
+ * clearing the tournament results, and waiting for the fade-out animation to complete.
+ *
+ * @returns {Promise<void>} Resolves when the modal hiding process is complete.
+ */
 async function hideTournamentModal(): Promise<void> {
   const tournamentModal = document.getElementById('tournament-modal');
   if (!tournamentModal) {
@@ -369,7 +406,7 @@ async function hideTournamentModal(): Promise<void> {
 
   tournamentModal.removeEventListener('click', handleModalBackdropClick);
   fadeOut(tournamentModal);
-  await wait(1);
+  await wait(0.5);
   tournamentResults.innerHTML = '';
 }
 
@@ -747,7 +784,6 @@ function setupLeaderboardClick(): void {
 
 /**
  * @brief Cleans the left panel by removing recent matches.
- * TODO: Also clean tournaments
  */
 function cleanLeftPanel(): void {
   const recentMatchList = document.getElementById('recent-matches');
@@ -757,4 +793,10 @@ function cleanLeftPanel(): void {
   }
 
   recentMatchList.innerHTML = '';
+
+  const recentTournamentList = document.getElementById('recent-tournaments');
+  if (!recentTournamentList) {
+    console.log("Couldn't find recent tournament list");
+    return;
+  }
 }
