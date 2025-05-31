@@ -13,6 +13,7 @@ import {
   userData,
 } from './rankings.types.js';
 import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatusNew.types.js';
+import { showTournamentResults } from '../../ui/tournamentStatus/tournamentStatusNew.js';
 
 /**
  * @brief Initializes the view for the rankings page.
@@ -255,6 +256,9 @@ async function renderTournamentBoard(userId: string): Promise<void> {
       tournamentResult: result,
     };
     updateNodeWithRecentTournamentData(clone, mockTournamentData);
+    const tournament = clone.querySelector('.recent-tournament') as HTMLElement;
+    if (!tournament) return;
+    tournament.setAttribute('data-id', mockTournamentData.uuid);
     recentTournamentSection.appendChild(clone);
   }
 
@@ -300,7 +304,7 @@ function addTournamentModal(): void {
 
 async function displayTournamentData(uuid: string): Promise<void> {
   try {
-    const response = await fetch(`tournaments/${uuid}`, {
+    const response = await fetch(`api/tournaments/${uuid}`, {
       method: 'GET',
       credentials: 'include',
     });
@@ -308,13 +312,77 @@ async function displayTournamentData(uuid: string): Promise<void> {
       console.error('Error fetching tournament:', response.status);
       return;
     }
-    console.log('response:', response);
-    const tournamentData: any = await response.text();
-    console.log(tournamentData);
+    //const tournamentData: tournamentPlayer[] = await response.json();
+    const tournamentMockData: tournamentPlayer[] = getMockData();
+    showTournamentResults(tournamentMockData);
   } catch (error) {
     console.error('Network error fetching recent tournament:', error);
     return;
   }
+}
+
+// HACK: Function to get mock data
+function getMockData(): tournamentPlayer[] {
+  const players: tournamentPlayer[] = [
+    {
+      userAlias: 'Alice',
+      quarterFinalScore: '3',
+      semiFinalScore: '4',
+      finalScore: '5', // Winner
+      avatarPath: '',
+    },
+    {
+      userAlias: 'Bob',
+      quarterFinalScore: '1',
+      semiFinalScore: null,
+      finalScore: null,
+      avatarPath: '',
+    },
+    {
+      userAlias: 'Charlie',
+      quarterFinalScore: '3',
+      semiFinalScore: '2',
+      finalScore: null,
+      avatarPath: '',
+    },
+    {
+      userAlias: 'Diana',
+      quarterFinalScore: '2',
+      semiFinalScore: null,
+      finalScore: null,
+      avatarPath: '',
+    },
+    {
+      userAlias: 'Eve',
+      quarterFinalScore: '3',
+      semiFinalScore: '1',
+      finalScore: '3', // Runner-up
+      avatarPath: '',
+    },
+    {
+      userAlias: 'Frank',
+      quarterFinalScore: '0',
+      semiFinalScore: null,
+      finalScore: null,
+      avatarPath: '',
+    },
+    {
+      userAlias: 'Grace',
+      quarterFinalScore: '3',
+      semiFinalScore: '4',
+      finalScore: null,
+      avatarPath: '',
+    },
+    {
+      userAlias: 'Henry',
+      quarterFinalScore: '1',
+      semiFinalScore: null,
+      finalScore: null,
+      avatarPath: '',
+    },
+  ];
+
+  return players;
 }
 
 /**
@@ -350,7 +418,6 @@ async function updateNodeWithRecentTournamentData(
   }
 
   recentTournamentID.innerText = recentTournament.id;
-  recentTournamentID.setAttribute('data-id', recentTournament.uuid);
 
   recentTournamentResult.innerText = recentTournament.tournamentResult;
 
