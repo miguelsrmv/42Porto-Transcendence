@@ -5,7 +5,14 @@
 
 import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
-import { matchData, leaderboardData, statsData, userData } from './rankings.types.js';
+import {
+  matchData,
+  tournamentData,
+  leaderboardData,
+  statsData,
+  userData,
+} from './rankings.types.js';
+import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatusNew.types.js';
 
 /**
  * @brief Initializes the view for the rankings page.
@@ -193,7 +200,6 @@ async function updateNodeWithRecentMatchesData(
   const userId = window.localStorage.getItem('ID');
   const opponentId = recentMatch.user1Id === userId ? recentMatch.user2Id : recentMatch.user1Id;
 
-  let opponentName;
   try {
     const response = await fetch(`api/users/${opponentId}`, {
       method: 'GET',
@@ -221,7 +227,137 @@ async function updateNodeWithRecentMatchesData(
  *
  * @param userId The ID of the user whose tournament data will be displayed.
  */
-async function renderTournamentBoard(userId: string): Promise<void> {}
+async function renderTournamentBoard(userId: string): Promise<void> {
+  const recentTournamentSection = document.getElementById('recent-tournaments');
+  if (!recentTournamentSection) {
+    console.log("Couldn't find recent tournaments element");
+    return;
+  }
+
+  const recentTournamentTemplate = document.getElementById(
+    'recent-tournaments-template',
+  ) as HTMLTemplateElement;
+  if (!recentTournamentTemplate) {
+    console.log("Couldn't find recent matches template element");
+    return;
+  }
+
+  // HACK: Mock data so far
+  for (let index: number = 0; index < 3; index++) {
+    const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
+    let result;
+    if (index == 0) result = 'Finals';
+    else if (index == 1) result = 'Semifinals';
+    else result = 'Winner';
+    const mockTournamentData: tournamentData = {
+      id: String(index),
+      uuid: 'acde070d-8c4c-4f0d-9d8a-162843c10333',
+      tournamentResult: result,
+    };
+    updateNodeWithRecentTournamentData(clone, mockTournamentData);
+    recentTournamentSection.appendChild(clone);
+  }
+
+  // TODO: Implement once route actually does what it's supposed to do
+  //
+  // try {
+  //   const response = await fetch(`api/matches/user/${userId}`, {
+  //     method: 'GET',
+  //     credentials: 'include',
+  //   });
+  //   if (!response.ok) {
+  //     console.error('Error fetching user response matches:', response.status);
+  //     return;
+  //   }
+  //   const recentTournamentsArray: tournamentData[] = await response.json();
+  //   for (let index: number = 0; index < 3 && index < recentTournamentsArray.length; index++) {
+  //     const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
+  //     await updateNodeWithRecentTournamentData(clone, recentTournamentsArray[index]);
+  //     recentMatchesSection.appendChild(clone);
+  //   }
+  // } catch (error) {
+  //   console.error('Network error fetching recent matches:', error);
+  //   return;
+  // }
+
+  addTournamentModal();
+}
+
+function addTournamentModal(): void {
+  const recentTournaments = document.querySelectorAll('.recent-tournament');
+  if (!recentTournaments) {
+    console.log("Couldn't find recent tournaments");
+    return;
+  }
+
+  for (let index: number = 0; index < recentTournaments.length; index++) {
+    recentTournaments[index].addEventListener('click', async () => {
+      const uuid = recentTournaments[index].getAttribute('data-id') as string;
+      await displayTournamentData(uuid);
+    });
+  }
+}
+
+async function displayTournamentData(uuid: string): Promise<void> {
+  try {
+    const response = await fetch(`tournaments/${uuid}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching tournament:', response.status);
+      return;
+    }
+    console.log('response:', response);
+    const tournamentData: any = await response.text();
+    console.log(tournamentData);
+  } catch (error) {
+    console.error('Network error fetching recent tournament:', error);
+    return;
+  }
+}
+
+/**
+ * @brief Updates a DOM node with recent match data.
+ *
+ * @param clone The DOM fragment to update.
+ * @param recentMatch The data of the recent match to display.
+ */
+async function updateNodeWithRecentTournamentData(
+  clone: DocumentFragment,
+  recentTournament: tournamentData,
+): Promise<void> {
+  const recentTournamentScoreIndicator = clone.querySelector(
+    '#recent-tournament-score-indicator',
+  ) as HTMLDivElement;
+  if (!recentTournamentScoreIndicator) {
+    console.log("Couldn't find recent tournament score indicator HTML element");
+    return;
+  }
+
+  const recentTournamentID = clone.querySelector('#recent-tournament-id') as HTMLSpanElement;
+  if (!recentTournamentID) {
+    console.log("Couldn't find recent tournament ID HTML element");
+    return;
+  }
+
+  const recentTournamentResult = clone.querySelector(
+    '#recent-tournament-result',
+  ) as HTMLSpanElement;
+  if (!recentTournamentResult) {
+    console.log("Couldn't find recent tournament result HTML element");
+    return;
+  }
+
+  recentTournamentID.innerText = recentTournament.id;
+  recentTournamentID.setAttribute('data-id', recentTournament.uuid);
+
+  recentTournamentResult.innerText = recentTournament.tournamentResult;
+
+  const colour = recentTournament.tournamentResult === 'Finals' ? 'green' : 'red';
+  recentTournamentResult.classList.add(`text-${colour}-400`);
+  recentTournamentScoreIndicator.classList.add(`bg-${colour}-500`);
+}
 
 /**
  * @brief Initializes the right panel of the rankings page.

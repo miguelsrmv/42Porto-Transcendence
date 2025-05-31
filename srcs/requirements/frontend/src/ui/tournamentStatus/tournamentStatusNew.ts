@@ -7,9 +7,8 @@ import { tournamentPlayer, TournamentPhase } from './tournamentStatusNew.types.j
  * Displays the tournament status by populating the tournament tree with participant data.
  *
  * @param participants - Array of tournament players.
- * @returns A cloned Node containing the tournament tree, or undefined if the tournament block is not found.
  */
-export function showTournamentStatus(participants: tournamentPlayer[]): Node | undefined {
+export function showTournamentStatus(participants: tournamentPlayer[]): void {
   const tournamentBlock = document.getElementById('tournament-tree') as HTMLTemplateElement;
   if (!tournamentBlock) {
     console.log("Couldn't find tournamentBlock");
@@ -22,7 +21,14 @@ export function showTournamentStatus(participants: tournamentPlayer[]): Node | u
   fillParticipants(clone, participants, TournamentPhase.Semi);
   fillParticipants(clone, participants, TournamentPhase.Final);
 
-  return clone;
+  const waitingGameModal = document.getElementById('waiting-game-modal') as HTMLDivElement;
+  if (!waitingGameModal) {
+    console.log("Couldn't find tournamentBlock");
+    return;
+  }
+
+  waitingGameModal.innerText = '';
+  waitingGameModal.appendChild(clone);
 }
 
 /**
@@ -44,6 +50,8 @@ function fillParticipants(
   console.log('Trimmed participants: ', trimmedParticipants);
   console.log(phase, ' ', playerElements);
 
+  hideFutureMatches(phase, trimmedParticipants);
+
   for (let i = 0; i < trimmedParticipants.length; i++) {
     const playerEl = playerElements[i] as HTMLParagraphElement;
     playerEl.innerText = trimmedParticipants[i].userAlias;
@@ -56,6 +64,28 @@ function fillParticipants(
       scoreEl.classList.add('text-green-500');
     }
   }
+}
+
+/**
+ * Hides boxes from events still to happen
+ * @param participants - Array of tournament players.
+ * @param phase - The current tournament phase.
+ */
+function hideFutureMatches(phase: TournamentPhase, trimmedParticipants: tournamentPlayer[]): void {
+  if (trimmedParticipants.length) return;
+
+  let phaseToHide;
+  if (phase === TournamentPhase.Semi) phaseToHide = 'semifinals';
+  else if (phase === TournamentPhase.Final) phaseToHide = 'finals';
+  else return;
+
+  const elementToHide = document.getElementById(phaseToHide);
+  if (!elementToHide) {
+    console.log(`Couldn't find ${phaseToHide} element`);
+    return;
+  }
+
+  elementToHide.classList.add('hidden');
 }
 
 /**
