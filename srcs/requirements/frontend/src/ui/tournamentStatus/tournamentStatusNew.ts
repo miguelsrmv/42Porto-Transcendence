@@ -31,6 +31,35 @@ export function showTournamentStatus(participants: tournamentPlayer[]): void {
   waitingGameModal.appendChild(clone);
 }
 
+export function showTournamentResults(participants: tournamentPlayer[]): void {
+  const tournamentBlock = document.getElementById('tournament-tree') as HTMLTemplateElement;
+  if (!tournamentBlock) {
+    console.log("Couldn't find tournamentBlock");
+    return;
+  }
+
+  const clone = tournamentBlock.content.cloneNode(true) as DocumentFragment;
+
+  fillParticipants(clone, participants, TournamentPhase.Quarter);
+  fillParticipants(clone, participants, TournamentPhase.Semi);
+  fillParticipants(clone, participants, TournamentPhase.Final);
+
+  const tournamentModal = document.getElementById('tournament-modal') as HTMLDivElement;
+  if (!tournamentModal) {
+    console.log("Couldn't find tournament modal");
+    return;
+  }
+
+  const tournamentResults = document.getElementById('tournament-results') as HTMLDivElement;
+  if (!tournamentResults) {
+    console.log("Couldn't find tournament results");
+    return;
+  }
+
+  tournamentResults.appendChild(clone);
+  tournamentModal.classList.toggle('hidden');
+}
+
 /**
  * Populates the tournament block with participant data for a specific phase.
  *
@@ -100,9 +129,9 @@ function getPhaseParticipants(
   participants: tournamentPlayer[],
 ): tournamentPlayer[] {
   if (phase === TournamentPhase.Semi) {
-    return participants.filter((participant) => participant.semiFinalScore !== '');
+    return participants.filter((participant) => participant.semiFinalScore !== null);
   } else if (phase === TournamentPhase.Final) {
-    return participants.filter((participant) => participant.finalScore !== '');
+    return participants.filter((participant) => participant.finalScore !== null);
   } else return participants;
 }
 

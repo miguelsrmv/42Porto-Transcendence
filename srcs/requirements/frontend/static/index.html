@@ -874,7 +874,12 @@
           </div>
         </div>
       </div>
-    </div>
+
+      <div id="tournament-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden">
+        <div id="tournament-results" class="bg-gray-800 w-[75%] h-[80%] rounded-lg shadow-xl overflow-auto">
+        </div>
+      </div>
+   </div>
   </template>
 
   <template id="game-template">
@@ -1428,7 +1433,7 @@
       <div class="leaderboard-player-tournaments-won w-1/6 text-center text-white">5</div>
     </div>
   </template>
-
+<!--
   <template id="tournament-tree">
     <div class="w-full h-full flex flex-col overflow-hidden bg-gray-700 text-sm text-white"> 
       
@@ -1441,7 +1446,7 @@
       <div class="grid grid-flow-col grid-cols-3 items-stretch flex-grow overflow-hidden">
         
         <div class="flex flex-col justify-around items-center p-1">
-          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105">
+          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105 duration-200">
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate" data-index="1"></p>
               <p class="TournamentPlayerScore text-right pr-1 sm:pr-2" data-index="1"></p>
@@ -1451,7 +1456,7 @@
               <p class="TournamentPlayerScore text-right pr-1 sm:pr-2" data-index="2"></p>
             </div>
           </div>
-          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105">
+          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105 duration-200">
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate" data-index="3"></p>
               <p class="TournamentPlayerScore text-right pr-1 sm:pr-2" data-index="3"></p>
@@ -1461,7 +1466,7 @@
               <p class="TournamentPlayerScore text-right pr-1 sm:pr-2" data-index="4"></p>
             </div>
           </div>
-          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105">
+          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105 duration-200">
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate" data-index="5"></p>
               <p class="TournamentPlayerScore text-right pr-1 sm:pr-2" data-index="5"></p>
@@ -1471,7 +1476,7 @@
               <p class="TournamentPlayerScore text-right pr-1 sm:pr-2" data-index="6"></p>
             </div>
           </div>
-          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105">
+          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105 duration-200">
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate" data-index="7"></p>
               <p class="TournamentPlayerScore text-right pr-1 sm:pr-2" data-index="7"></p>
@@ -1484,7 +1489,7 @@
         </div>
 
         <div id="semifinals" class="flex flex-col justify-around items-center p-1">
-          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105">
+          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105 duration-200">
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate"></p>
               <p class="QFWinnerScore text-right pr-1 sm:pr-2"></p>
@@ -1494,7 +1499,7 @@
               <p class="QFWinnerScore text-right pr-1 sm:pr-2"></p>
             </div>
           </div>
-          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105">
+          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105 duration-200">
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate"></p>
               <p class="QFWinnerScore text-right pr-1 sm:pr-2"></p>
@@ -1507,7 +1512,7 @@
         </div>
 
         <div id="finals" class="flex flex-col justify-center items-center p-1">
-          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105">
+          <div class="w-full max-w-xs rounded-md bg-gray-600 p-1 sm:p-2 flex flex-col justify-center min-h-0 hover:scale-105 duration-200">
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="SFWinner font-semibold text-left pl-1 sm:pl-2 truncate"></p>
               <p class="SFWinnerScore text-right pr-1 sm:pr-2"></p>
@@ -1515,6 +1520,112 @@
             <div class="grid grid-cols-2 items-center  transition-transform">
               <p class="SFWinner font-semibold text-left pl-1 sm:pl-2 truncate"></p>
               <p class="SFWinnerScore text-right pr-1 sm:pr-2"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  -->
+
+  <template id="tournament-tree">
+    <div class="w-full h-full flex flex-col overflow-hidden bg-gray-700 text-white">
+
+      <!-- Header: Round Names -->
+      <div class="mb-2 grid grid-flow-col grid-cols-3 items-center border-0 border-b-2 border-gray-500 text-center py-3 sm:py-4 text-base sm:text-lg md:text-xl lg:text-2xl font-bold uppercase shrink-0">
+        <div>Quarterfinals</div>
+        <div>Semifinals</div>
+        <div>Finals</div>
+      </div>
+
+      <!-- Main Content: Rounds -->
+      <div class="grid grid-flow-col grid-cols-3 items-stretch flex-grow overflow-hidden">
+
+        <!-- Quarterfinals Column -->
+        <div class="flex flex-col justify-around items-center p-2 md:p-4 gap-4">
+          <!-- Match Box 1 -->
+          <div class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="1"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="1"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="2"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="2"></p>
+            </div>
+          </div>
+          <!-- Match Box 2 -->
+          <div class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="3"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="3"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="4"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="4"></p>
+            </div>
+          </div>
+          <!-- Match Box 3 -->
+          <div class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="5"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="5"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="6"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="6"></p>
+            </div>
+          </div>
+          <!-- Match Box 4 -->
+          <div class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="7"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="7"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg" data-index="8"></p>
+              <p class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg" data-index="8"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Semifinals Column -->
+        <div id="semifinals" class="flex flex-col justify-around items-center p-2 md:p-4 gap-4">
+          <!-- Match Box 1 -->
+          <div class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+          </div>
+          <!-- Match Box 2 -->
+          <div class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Finals Column -->
+        <div id="finals" class="flex flex-col justify-center items-center p-2 md:p-4 gap-4"> <!-- Changed justify-around to justify-center for finals -->
+          <!-- Match Box 1 -->
+          <div class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="SFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"></p>
+              <p class="SFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p class="SFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"></p>
+              <p class="SFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
             </div>
           </div>
         </div>
