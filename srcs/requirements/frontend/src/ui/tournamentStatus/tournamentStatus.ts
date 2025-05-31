@@ -1,6 +1,14 @@
-import { tournamentPlayer } from './tournamentStatus.types.js';
+/**
+ * Imports necessary types for tournament player and phase.
+ */
+import { tournamentPlayer, TournamentPhase } from './tournamentStatus.types.js';
 
-export function showTournamentStatus(participants: tournamentPlayer[]): Node | undefined {
+/**
+ * Displays the tournament status by populating the tournament tree with participant data.
+ *
+ * @param participants - Array of tournament players.
+ */
+export function showTournamentStatus(participants: tournamentPlayer[]): void {
   const tournamentBlock = document.getElementById('tournament-tree') as HTMLTemplateElement;
   if (!tournamentBlock) {
     console.log("Couldn't find tournamentBlock");
@@ -9,69 +17,161 @@ export function showTournamentStatus(participants: tournamentPlayer[]): Node | u
 
   const clone = tournamentBlock.content.cloneNode(true) as DocumentFragment;
 
-  fillQFparticipants(clone, participants);
-  if (participants.length > 4) fillSFparticipants(clone, participants);
-  if (participants.length > 7) fillFinalParticipants(clone, participants);
+  fillParticipants(clone, participants, TournamentPhase.Quarter);
+  fillParticipants(clone, participants, TournamentPhase.Semi);
+  fillParticipants(clone, participants, TournamentPhase.Final);
 
-  return clone;
+  const waitingGameModal = document.getElementById('waiting-game-modal') as HTMLDivElement;
+  if (!waitingGameModal) {
+    console.log("Couldn't find tournamentBlock");
+    return;
+  }
+
+  waitingGameModal.innerText = '';
+  waitingGameModal.appendChild(clone);
 }
 
-function fillQFparticipants(
-  tournamentBlock: DocumentFragment,
-  participants: tournamentPlayer[],
-): void {
-  fillParticipants(tournamentBlock, participants, 0, 4);
+/**
+ * Displays the tournament final results by populating the tournament tree with participant data.
+ *
+ * @param participants - Array of tournament players.
+ */
+export function showTournamentResults(participants: tournamentPlayer[]): void {
+  const tournamentBlock = document.getElementById('tournament-tree') as HTMLTemplateElement;
+  if (!tournamentBlock) {
+    console.log("Couldn't find tournamentBlock");
+    return;
+  }
+
+  const clone = tournamentBlock.content.cloneNode(true) as DocumentFragment;
+
+  fillParticipants(clone, participants, TournamentPhase.Quarter);
+  fillParticipants(clone, participants, TournamentPhase.Semi);
+  fillParticipants(clone, participants, TournamentPhase.Final);
+
+  const tournamentModal = document.getElementById('tournament-modal') as HTMLDivElement;
+  if (!tournamentModal) {
+    console.log("Couldn't find tournament modal");
+    return;
+  }
+
+  const tournamentResults = document.getElementById('tournament-results') as HTMLDivElement;
+  if (!tournamentResults) {
+    console.log("Couldn't find tournament results");
+    return;
+  }
+
+  tournamentResults.appendChild(clone);
 }
 
-function fillSFparticipants(
-  tournamentBlock: DocumentFragment,
-  participants: tournamentPlayer[],
-): void {
-  fillParticipants(tournamentBlock, participants, 4, 6);
-}
-
-function fillFinalParticipants(
-  tournamentBlock: DocumentFragment,
-  participants: tournamentPlayer[],
-) {
-  fillParticipants(tournamentBlock, participants, 7, 8);
-}
-
+/**
+ * Populates the tournament block with participant data for a specific phase.
+ *
+ * @param tournamentBlock - The cloned tournament tree block.
+ * @param participants - Array of tournament players.
+ * @param phase - The current tournament phase.
+ */
 function fillParticipants(
   tournamentBlock: DocumentFragment,
   participants: tournamentPlayer[],
-  startingIndex: number,
-  endingIndex: number,
+  phase: TournamentPhase,
 ): void {
-  for (let i = startingIndex; i < endingIndex; i++) {
-    const playerEl = tournamentBlock.querySelector(
-      `.TournamentPlayer${i + 1}`,
-    ) as HTMLParagraphElement;
-    if (!playerEl) {
-      console.log(`Couldn't find Tournament Player ${i + 1}`);
-      return;
+  const trimmedParticipants: tournamentPlayer[] = getPhaseParticipants(phase, participants);
+  const playerElements = tournamentBlock.querySelectorAll(`.${phase}`);
+  const scoreElements = tournamentBlock.querySelectorAll(`.${phase}Score`);
+
+  console.log('Trimmed participants: ', trimmedParticipants);
+  console.log(phase, ' ', playerElements);
+
+  hideFutureMatches(phase, trimmedParticipants);
+
+  for (let i = 0; i < trimmedParticipants.length; i++) {
+    const playerEl = playerElements[i] as HTMLParagraphElement;
+    playerEl.innerText = trimmedParticipants[i].userAlias;
+
+    const scoreEl = scoreElements[i] as HTMLParagraphElement;
+    scoreEl.innerText = getMatchScore(trimmedParticipants[i], phase) ?? '';
+
+    if (playerHasWon(trimmedParticipants, i, phase)) {
+      playerEl.classList.add('text-green-500');
+      scoreEl.classList.add('text-green-500');
     }
-
-    playerEl.innerText = participants[i].userAlias;
-
-    const scoreEl = tournamentBlock.querySelector(
-      `.TournamentPlayer${i + 1}Score`,
-    ) as HTMLParagraphElement;
-    if (!scoreEl) {
-      console.log(`Couldn't find Tournament Player ${i + 1} Score`);
-      return;
-    }
-
-    // TODO: Uncomment and adjust variable name once I know what gets sent
-    // if (participants[i].score != null) {
-    //   scoreEl.innerText = participants[i].score;
-    //   if (
-    //     (i % 2 && participants[i].score > participants[i + 1].score) ||
-    //     (!(i % 2) && participants[i].score < participants[i + 1].score)
-    //   ) {
-    //     playerEl.classList.add('text-green-500');
-    //     scoreEl.classList.add('text-green-500');
-    //   }
-    // }
   }
+}
+
+/**
+ * Hides boxes from events still to happen
+ * @param participants - Array of tournament players.
+ * @param phase - The current tournament phase.
+ */
+function hideFutureMatches(phase: TournamentPhase, trimmedParticipants: tournamentPlayer[]): void {
+  if (trimmedParticipants.length) return;
+
+  let phaseToHide;
+  if (phase === TournamentPhase.Semi) phaseToHide = 'semifinals';
+  else if (phase === TournamentPhase.Final) phaseToHide = 'finals';
+  else return;
+
+  const elementToHide = document.getElementById(phaseToHide);
+  if (!elementToHide) {
+    console.log(`Couldn't find ${phaseToHide} element`);
+    return;
+  }
+
+  elementToHide.classList.add('hidden');
+}
+
+/**
+ * Filters participants based on the current tournament phase.
+ *
+ * @param phase - The current tournament phase.
+ * @param participants - Array of tournament players.
+ * @returns An array of participants relevant to the given phase.
+ */
+function getPhaseParticipants(
+  phase: TournamentPhase,
+  participants: tournamentPlayer[],
+): tournamentPlayer[] {
+  if (phase === TournamentPhase.Semi) {
+    return participants.filter((participant) => participant.semiFinalScore !== null);
+  } else if (phase === TournamentPhase.Final) {
+    return participants.filter((participant) => participant.finalScore !== null);
+  } else return participants;
+}
+
+/**
+ * Retrieves the match score for a participant based on the phase identifier.
+ *
+ * @param participant - A tournament player.
+ * @param identifier - The phase identifier.
+ * @returns The match score as a string, or null if not available.
+ */
+function getMatchScore(participant: tournamentPlayer, identifier: string): string | null {
+  if (identifier === 'TournamentPlayer') return participant.quarterFinalScore;
+  else if (identifier === 'QFWinner') return participant.semiFinalScore;
+  else return participant.finalScore;
+}
+
+/**
+ * Determines if a participant has won their match in the given phase.
+ *
+ * @param trimmedParticipants - Array of participants relevant to the current phase.
+ * @param i - Index of the participant in the array.
+ * @param phase - The current tournament phase.
+ * @returns True if the participant has won, false otherwise.
+ */
+function playerHasWon(
+  trimmedParticipants: tournamentPlayer[],
+  i: number,
+  phase: TournamentPhase,
+): boolean {
+  const player: tournamentPlayer = trimmedParticipants[i];
+  const opponent: tournamentPlayer =
+    i % 2 ? trimmedParticipants[i - 1] : trimmedParticipants[i + 1];
+
+  const playerScore = getMatchScore(player, phase);
+  const opponentScore = getMatchScore(opponent, phase);
+
+  if (playerScore === null || opponentScore === null) return false;
+  else return Number(playerScore) > Number(opponentScore);
 }
