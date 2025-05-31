@@ -12,8 +12,8 @@ import {
   statsData,
   userData,
 } from './rankings.types.js';
-import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatusNew.types.js';
-import { showTournamentResults } from '../../ui/tournamentStatus/tournamentStatusNew.js';
+import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatus.types.js';
+import { showTournamentResults } from '../../ui/tournamentStatus/tournamentStatus.js';
 import { fadeIn, fadeOut } from '../../ui/animations.js';
 import { wait } from '../../utils/helpers.js';
 
@@ -510,7 +510,7 @@ async function updateNodeWithRecentTournamentData(
 
   recentTournamentResult.innerText = recentTournament.tournamentResult;
 
-  const colour = recentTournament.tournamentResult === 'Finals' ? 'green' : 'red';
+  const colour = recentTournament.tournamentResult === 'Winner' ? 'green' : 'red';
   recentTournamentResult.classList.add(`text-${colour}-400`);
   recentTournamentScoreIndicator.classList.add(`bg-${colour}-500`);
 }
