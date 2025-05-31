@@ -14,6 +14,8 @@ import {
 } from './rankings.types.js';
 import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatusNew.types.js';
 import { showTournamentResults } from '../../ui/tournamentStatus/tournamentStatusNew.js';
+import { fadeIn, fadeOut } from '../../ui/animations.js';
+import { wait } from '../../utils/helpers.js';
 
 /**
  * @brief Initializes the view for the rankings page.
@@ -97,6 +99,7 @@ async function renderTopLeftBoard(userId: string): Promise<void> {
     const userProfileResponse = await fetch(`api/users/${userId}`, {
       method: 'GET',
       credentials: 'include',
+      w,
     });
     if (!userProfileResponse.ok) {
       console.error('Error fetching uder profile data:', userProfileResponse.status);
@@ -297,6 +300,7 @@ function addTournamentModal(): void {
   for (let index: number = 0; index < recentTournaments.length; index++) {
     recentTournaments[index].addEventListener('click', async () => {
       const uuid = recentTournaments[index].getAttribute('data-id') as string;
+      await openTournamentModal();
       await displayTournamentData(uuid);
     });
   }
@@ -314,11 +318,59 @@ async function displayTournamentData(uuid: string): Promise<void> {
     }
     //const tournamentData: tournamentPlayer[] = await response.json();
     const tournamentMockData: tournamentPlayer[] = getMockData();
+    openTournamentModal();
     showTournamentResults(tournamentMockData);
   } catch (error) {
     console.error('Network error fetching recent tournament:', error);
     return;
   }
+}
+
+async function handleModalBackdropClick(event: MouseEvent): Promise<void> {
+  const tournamentModal = document.getElementById('tournament-modal');
+  if (!tournamentModal) {
+    console.log("Couldn't find tournament modal element");
+    return;
+  }
+  // Ensure tournamentModal exists and the click was directly on it
+  if (tournamentModal && event.target === tournamentModal) {
+    await hideTournamentModal();
+  }
+}
+
+function openTournamentModal(): void {
+  const tournamentModal = document.getElementById('tournament-modal');
+  if (!tournamentModal) {
+    console.log("Couldn't find tournament modal element");
+    return;
+  }
+  if (!tournamentModal) {
+    console.error("Couldn't find tournament modal element.");
+    return;
+  }
+
+  fadeIn(tournamentModal);
+
+  tournamentModal.addEventListener('click', handleModalBackdropClick);
+}
+
+async function hideTournamentModal(): Promise<void> {
+  const tournamentModal = document.getElementById('tournament-modal');
+  if (!tournamentModal) {
+    console.log("Couldn't find tournament modal element");
+    return;
+  }
+
+  const tournamentResults = document.getElementById('tournament-results');
+  if (!tournamentResults) {
+    console.log("Couldn't find tournament results element");
+    return;
+  }
+
+  tournamentModal.removeEventListener('click', handleModalBackdropClick);
+  fadeOut(tournamentModal);
+  await wait(1);
+  tournamentResults.innerHTML = '';
 }
 
 // HACK: Function to get mock data

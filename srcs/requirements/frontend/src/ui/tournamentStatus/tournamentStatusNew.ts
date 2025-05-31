@@ -57,7 +57,6 @@ export function showTournamentResults(participants: tournamentPlayer[]): void {
   }
 
   tournamentResults.appendChild(clone);
-  tournamentModal.classList.toggle('hidden');
 }
 
 /**
