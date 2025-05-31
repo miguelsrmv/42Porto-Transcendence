@@ -22,6 +22,15 @@ export interface matchData {
 }
 
 /**
+ * Represents the data for a tournament.
+ */
+export interface tournamentData {
+  id: string;
+  uuid: string;
+  tournamentResult: string;
+}
+
+/**
  * Represents the data for a leaderboard entry.
  */
 export interface leaderboardData {
