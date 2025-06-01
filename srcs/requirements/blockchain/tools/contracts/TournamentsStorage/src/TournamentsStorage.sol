@@ -22,7 +22,6 @@ contract TournamentsStorage {
     }
 
     struct Tournament {
-        string id;
         gameType typeOfGame;
         uint16[3] date;
         uint256[3] time;
@@ -37,7 +36,7 @@ contract TournamentsStorage {
         TournamentsStorage.gameType gameType;
     }
 
-    mapping(string => Tournament) public tournamentsMap;
+    mapping(string => Tournament) private tournamentsMap;
 
     string[] classicTournamentsUUID;
     string[] crazyTournamentsUUID;
@@ -73,7 +72,6 @@ contract TournamentsStorage {
     function createTournament(string memory _tournamentId, gameType _gameType) public {
         Tournament memory newTournament;
 
-        newTournament.id = _tournamentId;
         newTournament.typeOfGame = _gameType;
         newTournament.date = getCurrentDate();
         newTournament.time = getCurrentTime();
@@ -204,8 +202,7 @@ contract TournamentsStorage {
         string[3] memory placements;
 
         for (uint256 i = 0; i < 3; i++) {
-            Tournament memory tournament = getTournament(_data[i].id);
-            uint256 lastIndex = findLastIndexOfPlayer(tournament.id, _userId);
+            uint256 lastIndex = findLastIndexOfPlayer(_data[i].id, _userId);
             uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
 
             if (lastIndex == maxNumberOfPlaces) {
