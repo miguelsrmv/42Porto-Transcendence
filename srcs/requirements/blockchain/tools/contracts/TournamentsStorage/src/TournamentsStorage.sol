@@ -42,37 +42,13 @@ contract TournamentsStorage {
     string[] classicTournamentsUUID;
     string[] crazyTournamentsUUID;
 
-    // Tournament[] public classicTournaments;
-    // Tournament[] public crazyTournaments;
-
-    // CONSTRUCTOR **************************************************************
-    // constructor() {
-    //     createTournament(
-    //         "classicx-xxxx-4xxx-axxx-xxxxxxxxxxxx",
-    //         gameType.CLASSIC
-    //     );
-    //     createTournament(
-    //         "crazyxxx-xxxx-4xxx-bxxx-xxxxxxxxxxxx",
-    //         gameType.CRAZY
-    //     );
-    //     i_owner = msg.sender;
-    // }
-
     // MODIFIERS ****************************************************************
-
     modifier onlyOwner() {
         require(i_owner == msg.sender, "Ownership Assertion: Caller of the function is not the owner.");
         _;
     }
 
     // GETTER FUNCTIONS *********************************************************
-    // function getAllTournaments(gameType _gameType) public view returns (Tournament[] memory) {
-    //     if (_gameType == gameType.CLASSIC) {
-    //         return classicTournaments;
-    //     }
-    //     return crazyTournaments;
-    // }
-
     function getTournament(string memory _tournamentId) public view returns (Tournament memory) {
         return tournamentsMap[_tournamentId];
     }
@@ -93,76 +69,7 @@ contract TournamentsStorage {
         return tournamentsMap[_tournamentId].scores;
     }
 
-    // function getNumberOfTournamentsParticipatedByPlayer(
-    //     string memory _playerName,
-    //     gameType _gameType
-    // ) public view returns (uint256) {
-    //     uint256 tournamentsParticipated = 0;
-    //     uint256 tournamentLength = 0;
-    //     Tournament[] storage tournaments;
-
-    //     if (_gameType == gameType.CLASSIC) {
-    //         tournamentLength = classicTournaments.length;
-    //         tournaments = classicTournaments;
-    //     } else {
-    //         tournamentLength = crazyTournaments.length;
-    //         tournaments = crazyTournaments;
-    //     }
-
-    //     for (uint256 i = 0; i < tournamentLength; i++) {
-    //         for (uint256 j = 0; j < MAX_PARTICIPANTS; j++) {
-    //             if (
-    //                 keccak256(
-    //                     abi.encodePacked(
-    //                         tournaments[i].matchedParticipants[j].uniqueId
-    //                     )
-    //                 ) == keccak256(abi.encodePacked(_playerName))
-    //             ) {
-    //                 tournamentsParticipated++;
-    //                 break;
-    //             }
-    //         }
-    //     }
-
-    //     return tournamentsParticipated;
-    // }
-
-    // function getTournamentsWonByPlayer(
-    //     string memory _playerName,
-    //     gameType _gameType
-    // ) public view returns (uint256) {
-    //     uint256 tournamentsWon = 0;
-    //     uint256 tournamentLength = 0;
-    //     Tournament[] storage tournaments;
-    //     uint256 winnersIndex = (MAX_PARTICIPANTS - 1) * 2;
-
-    //     if (_gameType == gameType.CLASSIC) {
-    //         tournamentLength = classicTournaments.length;
-    //         tournaments = classicTournaments;
-    //     } else {
-    //         tournamentLength = crazyTournaments.length;
-    //         tournaments = crazyTournaments;
-    //     }
-
-    //     for (uint256 i = 0; i < tournamentLength; i++) {
-    //         if (
-    //             keccak256(
-    //                 abi.encodePacked(
-    //                     tournaments[i]
-    //                         .matchedParticipants[winnersIndex]
-    //                         .uniqueId
-    //                 )
-    //             ) == keccak256(abi.encodePacked(_playerName))
-    //         ) {
-    //             tournamentsWon++;
-    //         }
-    //     }
-
-    //     return tournamentsWon;
-    // }
-
     // ACTION FUNCTIONS *********************************************************
-
     function createTournament(string memory _tournamentId, gameType _gameType) public {
         Tournament memory newTournament;
 
@@ -258,34 +165,6 @@ contract TournamentsStorage {
     }
 
     //HELPER FUNCTIONS **********************************************************
-    /* Check if a tournament is full */
-    // function isTournamentFull(
-    //     string memory _tournamentId,
-    // ) public view returns (bool) {
-    //     uint256 tournamentLength = 0;
-    //     Tournament[] storage tournaments;
-
-    //     if (_gameType == gameType.CLASSIC) {
-    //         tournaments = classicTournaments;
-    //     } else {
-    //         tournaments = crazyTournaments;
-    //     }
-
-    //     while (
-    //         tournamentLength < MAX_PARTICIPANTS &&
-    //         keccak256(
-    //             abi.encodePacked(
-    //                 tournaments[_tournamentId]
-    //                     .participants[tournamentLength]
-    //                     .uniqueId
-    //             )
-    //         ) !=
-    //         keccak256(abi.encodePacked(""))
-    //     ) tournamentLength++;
-
-    //     return tournamentLength >= MAX_PARTICIPANTS;
-    // }
-
     /* Find last index of a player in a tournament */
     function isEmptyString(string memory str) internal pure returns (bool) {
         return keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
