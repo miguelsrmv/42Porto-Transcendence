@@ -309,7 +309,7 @@ function addTournamentModal(): void {
   for (let index: number = 0; index < recentTournaments.length; index++) {
     recentTournaments[index].addEventListener('click', async () => {
       const uuid = recentTournaments[index].getAttribute('data-id') as string;
-      await openTournamentModal();
+      openTournamentModal();
       await displayTournamentData(uuid);
     });
   }
@@ -423,22 +423,22 @@ function getMockData(): tournamentPlayer[] {
     {
       userAlias: 'Bob',
       quarterFinalScore: '1',
-      semiFinalScore: null,
-      finalScore: null,
+      semiFinalScore: '',
+      finalScore: '',
       avatarPath: '',
     },
     {
       userAlias: 'Charlie',
       quarterFinalScore: '3',
       semiFinalScore: '2',
-      finalScore: null,
+      finalScore: '',
       avatarPath: '',
     },
     {
       userAlias: 'Diana',
       quarterFinalScore: '2',
-      semiFinalScore: null,
-      finalScore: null,
+      semiFinalScore: '',
+      finalScore: '',
       avatarPath: '',
     },
     {
@@ -451,22 +451,22 @@ function getMockData(): tournamentPlayer[] {
     {
       userAlias: 'Frank',
       quarterFinalScore: '0',
-      semiFinalScore: null,
-      finalScore: null,
+      semiFinalScore: '',
+      finalScore: '',
       avatarPath: '',
     },
     {
       userAlias: 'Grace',
       quarterFinalScore: '3',
       semiFinalScore: '4',
-      finalScore: null,
+      finalScore: '',
       avatarPath: '',
     },
     {
       userAlias: 'Henry',
       quarterFinalScore: '1',
-      semiFinalScore: null,
-      finalScore: null,
+      semiFinalScore: '',
+      finalScore: '',
       avatarPath: '',
     },
   ];
@@ -510,7 +510,7 @@ async function updateNodeWithRecentTournamentData(
 
   recentTournamentResult.innerText = recentTournament.tournamentResult;
 
-  const colour = recentTournament.tournamentResult === 'Winner' ? 'green' : 'red';
+  const colour = recentTournament.tournamentResult === 'Finals' ? 'green' : 'red';
   recentTournamentResult.classList.add(`text-${colour}-400`);
   recentTournamentScoreIndicator.classList.add(`bg-${colour}-500`);
 }
