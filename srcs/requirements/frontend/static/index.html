@@ -667,7 +667,7 @@
     <div id="friends-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
       <div class="flex flex-row gap-6 h-full pb-20">
         <!-- Left Panel: User Friends List -->
-        <div class="flex flex-col w-2/3 h-full">
+        <div class="flex flex-col w-2/3 h-full min-w-[600px]">
           <div
             class="flex flex-col bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
           >
@@ -707,7 +707,7 @@
         </div>
 
         <!-- Right Panel: Friend Requests & Activity -->
-        <div class="flex flex-col w-1/3 h-full gap-4">
+        <div class="flex flex-col w-1/3 h-full gap-4 min-w-[300px]">
           <!-- Friend Requests Section -->
           <div
             class="flex flex-col bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
@@ -763,7 +763,7 @@
   <template id="friend-request-template">
     <div
       id="friend-request-container"
-      class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg"
+      class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg min-w-[400px]"
     >
       <div class="flex items-center">
         <div class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
@@ -797,7 +797,7 @@
     <div id="rankings-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
       <div class="flex flex-row gap-6 h-full">
         <!-- Left Panel: User Stats -->
-        <div id="top-left-rankings-panel" class="flex flex-col w-1/3 h-full">
+        <div id="top-left-rankings-panel" class="flex flex-col w-1/3 h-full min-w-[400px]">
           <div
             class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-green-500 p-6 h-full transform transition-all duration-300 hover:shadow-green-500/30 hover:-translate-y-1 overflow-y-auto"
           >
@@ -856,7 +856,7 @@
         </div>
 
         <!-- Right Panel: Leaderboard -->
-        <div class="flex flex-col w-2/3 h-full">
+        <div class="flex flex-col w-2/3 h-full min-w-[900px]">
           <div
             class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-green-500 p-6 h-full transform transition-all duration-300 hover:shadow-green-500/30 hover:-translate-y-1 flex flex-col"
           >
@@ -1166,7 +1166,7 @@
   <template id="settings-template">
     <div id="player-global-settings" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
       <div class="flex flex-row gap-6 h-full">
-        <div class="flex flex-col w-1/3 h-full">
+        <div class="flex flex-col w-1/3 h-full min-w-[400px] min-h-[800px]">
           <div
             id="player-avatar-settings"
             class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
@@ -1212,7 +1212,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-col w-full h-full">
+        <div class="flex flex-col w-full h-full min-w-[800px] min-h-[800px]">
           <div
             id="user-account-settings"
             class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
