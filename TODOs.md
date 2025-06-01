@@ -1,8 +1,4 @@
 # Frontend
-- When submitting '' as username, no error and header gets updated
-- If change username and not insert oldPassword (click outside box), it changes in the header
-- If change email and not insert oldPassword (click outside box), username in the header disappears
-- If no oldPassword input and click confirm, crash (cannot get out of box until right password is submitted and then get a 405 from NGINX)
 
 # Backend
 - Deal with receiving ready_for_next_game before round ends
@@ -21,3 +17,9 @@
 - Make responses more uniform
 - Protect all routes in the end (except login/sign up related)
 - Remove populate from running automatically on project delivery
+
+NEW:
+- Can only access first set of games in a tournament (I don't get tournament status nor game start afterwards)
+- Sometimes, it feels like not all players are disconnected from a tournament (see Slack screenshot for evidence)
+- Missing Tournament IDs so I can ask for tournament information on Rankings page
+- Missing number of tournaments won by each player
