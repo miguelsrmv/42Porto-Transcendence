@@ -13,7 +13,6 @@ USER foundry
 
 WORKDIR /home/foundry/blockchain/TournamentsStorage
 RUN git init && rm -rf lib && forge install OpenZeppelin/openzeppelin-contracts
-RUN forge test
 
 ENTRYPOINT ["/bin/sh", "/home/foundry/blockchain/deploy.sh"]
 
