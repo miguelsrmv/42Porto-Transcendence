@@ -80,10 +80,11 @@ function fillParticipants(
   const playerElements = tournamentBlock.querySelectorAll(`.${phase}`);
   const scoreElements = tournamentBlock.querySelectorAll(`.${phase}Score`);
 
+  // TODO: Remove after bug fixing / checking everything is working alright
   console.log('Trimmed participants: ', trimmedParticipants);
   console.log(phase, ' ', playerElements);
 
-  hideFutureMatches(phase, trimmedParticipants);
+  hideFutureMatches(tournamentBlock, phase, trimmedParticipants);
 
   for (let i = 0; i < trimmedParticipants.length; i++) {
     const playerEl = playerElements[i] as HTMLParagraphElement;
@@ -104,7 +105,11 @@ function fillParticipants(
  * @param participants - Array of tournament players.
  * @param phase - The current tournament phase.
  */
-function hideFutureMatches(phase: TournamentPhase, trimmedParticipants: tournamentPlayer[]): void {
+function hideFutureMatches(
+  tournamentBlock: DocumentFragment,
+  phase: TournamentPhase,
+  trimmedParticipants: tournamentPlayer[],
+): void {
   if (trimmedParticipants.length) return;
 
   let phaseToHide;
@@ -112,13 +117,13 @@ function hideFutureMatches(phase: TournamentPhase, trimmedParticipants: tourname
   else if (phase === TournamentPhase.Final) phaseToHide = 'finals';
   else return;
 
-  const elementToHide = document.getElementById(phaseToHide);
-  if (!elementToHide) {
+  const elementsToHide = tournamentBlock.querySelectorAll(`.${phaseToHide}`);
+  if (!elementsToHide) {
     console.log(`Couldn't find ${phaseToHide} element`);
     return;
   }
 
-  elementToHide.classList.add('hidden');
+  elementsToHide.forEach((element) => element.classList.add('hidden'));
 }
 
 /**
@@ -133,9 +138,9 @@ function getPhaseParticipants(
   participants: tournamentPlayer[],
 ): tournamentPlayer[] {
   if (phase === TournamentPhase.Semi) {
-    return participants.filter((participant) => participant.semiFinalScore !== null);
+    return participants.filter((participant) => participant.semiFinalScore !== '');
   } else if (phase === TournamentPhase.Final) {
-    return participants.filter((participant) => participant.finalScore !== null);
+    return participants.filter((participant) => participant.finalScore !== '');
   } else return participants;
 }
 
