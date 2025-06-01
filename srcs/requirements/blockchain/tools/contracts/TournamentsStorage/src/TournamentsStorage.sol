@@ -46,25 +46,22 @@ contract TournamentsStorage {
     // Tournament[] public crazyTournaments;
 
     // CONSTRUCTOR **************************************************************
-    constructor() {
-        createTournament(
-            "classicx-xxxx-4xxx-axxx-xxxxxxxxxxxx",
-            gameType.CLASSIC
-        );
-        createTournament(
-            "crazyxxx-xxxx-4xxx-bxxx-xxxxxxxxxxxx",
-            gameType.CRAZY
-        );
-        i_owner = msg.sender;
-    }
+    // constructor() {
+    //     createTournament(
+    //         "classicx-xxxx-4xxx-axxx-xxxxxxxxxxxx",
+    //         gameType.CLASSIC
+    //     );
+    //     createTournament(
+    //         "crazyxxx-xxxx-4xxx-bxxx-xxxxxxxxxxxx",
+    //         gameType.CRAZY
+    //     );
+    //     i_owner = msg.sender;
+    // }
 
     // MODIFIERS ****************************************************************
 
     modifier onlyOwner() {
-        require(
-            i_owner == msg.sender,
-            "Ownership Assertion: Caller of the function is not the owner."
-        );
+        require(i_owner == msg.sender, "Ownership Assertion: Caller of the function is not the owner.");
         _;
     }
 
@@ -76,27 +73,23 @@ contract TournamentsStorage {
     //     return crazyTournaments;
     // }
 
-    function getTournament(
-        string memory _tournamentId
-    ) public view returns (Tournament memory) {
+    function getTournament(string memory _tournamentId) public view returns (Tournament memory) {
         return tournamentsMap[_tournamentId];
     }
 
-    function getParticipants(
-        string memory _tournamentId
-    ) public view returns (Participant[MAX_PARTICIPANTS] memory) {
+    function getParticipants(string memory _tournamentId) public view returns (Participant[MAX_PARTICIPANTS] memory) {
         return tournamentsMap[_tournamentId].participants;
     }
 
-    function getMatchedParticipants(
-        string memory _tournamentId
-    ) public view returns (Participant[MAX_PARTICIPANTS * 2 - 1] memory) {
+    function getMatchedParticipants(string memory _tournamentId)
+        public
+        view
+        returns (Participant[MAX_PARTICIPANTS * 2 - 1] memory)
+    {
         return tournamentsMap[_tournamentId].matchedParticipants;
     }
 
-    function getScores(
-        string memory _tournamentId
-    ) public view returns (uint256[(MAX_PARTICIPANTS - 1) * 2] memory) {
+    function getScores(string memory _tournamentId) public view returns (uint256[(MAX_PARTICIPANTS - 1) * 2] memory) {
         return tournamentsMap[_tournamentId].scores;
     }
 
@@ -170,10 +163,7 @@ contract TournamentsStorage {
 
     // ACTION FUNCTIONS *********************************************************
 
-    function createTournament(
-        string memory _tournamentId,
-        gameType _gameType
-    ) public {
+    function createTournament(string memory _tournamentId, gameType _gameType) public {
         Tournament memory newTournament;
 
         newTournament.id = _tournamentId;
@@ -200,68 +190,36 @@ contract TournamentsStorage {
 
         tournamentsMap[_tournamentId] = newTournament;
 
-        if (_gameType == gameType.CLASSIC)
-            classicTournamentsUUID[
-                classicTournamentsUUID.length
-            ] = _tournamentId;
-        else crazyTournamentsUUID[crazyTournamentsUUID.length] = _tournamentId;
-    }
-
-    function joinTournament(
-        string memory _tournamentId,
-        gameType _gameType,
-        Participant[] memory _participants
-    ) public onlyOwner {
-        createTournament(_tournamentId, _gameType);
-
-        for (uint256 i = 0; i < _participants.length; i++) {
-            tournamentsMap[_tournamentId]
-                .participants[i]
-                .uniqueId = _participants[i].uniqueId;
-            tournamentsMap[_tournamentId]
-                .participants[i]
-                .userAlias = _participants[i].userAlias;
-            tournamentsMap[_tournamentId]
-                .participants[i]
-                .character = _participants[i].character;
-            tournamentsMap[_tournamentId]
-                .matchedParticipants[i]
-                .uniqueId = _participants[i].uniqueId;
-            tournamentsMap[_tournamentId]
-                .matchedParticipants[i]
-                .userAlias = _participants[i].userAlias;
-            tournamentsMap[_tournamentId]
-                .matchedParticipants[i]
-                .character = _participants[i].character;
-
-            console.log(
-                _participants[i].uniqueId,
-                "joined tournament",
-                _tournamentId
-            );
+        if (_gameType == gameType.CLASSIC) {
+            classicTournamentsUUID.push(_tournamentId);
+        } else {
+            crazyTournamentsUUID.push(_tournamentId);
         }
     }
 
-    function addWinner(
-        string memory _tournamentId,
-        string memory _winnerName
-    ) public onlyOwner {
-        uint256 winnerNextIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _winnerName
-        ) /
-            2 +
-            MAX_PARTICIPANTS;
+    function joinTournament(string memory _tournamentId, gameType _gameType, Participant[] memory _participants)
+        public
+        onlyOwner
+    {
+        createTournament(_tournamentId, _gameType);
 
-        tournamentsMap[_tournamentId]
-            .matchedParticipants[winnerNextIndex]
-            .uniqueId = _winnerName;
-        console.log(
-            "Added winner",
-            _winnerName,
-            "to tournament",
-            _tournamentId
-        );
+        for (uint256 i = 0; i < _participants.length; i++) {
+            tournamentsMap[_tournamentId].participants[i].uniqueId = _participants[i].uniqueId;
+            tournamentsMap[_tournamentId].participants[i].userAlias = _participants[i].userAlias;
+            tournamentsMap[_tournamentId].participants[i].character = _participants[i].character;
+            tournamentsMap[_tournamentId].matchedParticipants[i].uniqueId = _participants[i].uniqueId;
+            tournamentsMap[_tournamentId].matchedParticipants[i].userAlias = _participants[i].userAlias;
+            tournamentsMap[_tournamentId].matchedParticipants[i].character = _participants[i].character;
+
+            console.log(_participants[i].uniqueId, "joined tournament", _tournamentId);
+        }
+    }
+
+    function addWinner(string memory _tournamentId, string memory _winnerName) public onlyOwner {
+        uint256 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winnerName) / 2 + MAX_PARTICIPANTS;
+
+        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].uniqueId = _winnerName;
+        console.log("Added winner", _winnerName, "to tournament", _tournamentId);
     }
 
     function saveScore(
@@ -271,21 +229,11 @@ contract TournamentsStorage {
         string memory _playerTwoName,
         uint256 _playerTwoScore
     ) public onlyOwner {
-        uint256 updatedPlayerOneIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _playerOneName
-        );
-        uint256 updatedPlayerTwoIndex = findLastIndexOfPlayer(
-            _tournamentId,
-            _playerTwoName
-        );
+        uint256 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _playerOneName);
+        uint256 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _playerTwoName);
 
-        tournamentsMap[_tournamentId].scores[
-            updatedPlayerOneIndex
-        ] = _playerOneScore;
-        tournamentsMap[_tournamentId].scores[
-            updatedPlayerTwoIndex
-        ] = _playerTwoScore;
+        tournamentsMap[_tournamentId].scores[updatedPlayerOneIndex] = _playerOneScore;
+        tournamentsMap[_tournamentId].scores[updatedPlayerTwoIndex] = _playerTwoScore;
         console.log("Scores saved for Tournament:", _tournamentId);
         console.log("Player One:", _playerOneName);
         console.logUint(_playerOneScore);
@@ -300,13 +248,7 @@ contract TournamentsStorage {
         string memory _playerTwoName,
         uint256 _playerTwoScore
     ) public onlyOwner {
-        saveScore(
-            _tournamentId,
-            _playerOneName,
-            _playerOneScore,
-            _playerTwoName,
-            _playerTwoScore
-        );
+        saveScore(_tournamentId, _playerOneName, _playerOneScore, _playerTwoName, _playerTwoScore);
 
         if (_playerOneScore > _playerTwoScore) {
             addWinner(_tournamentId, _playerOneName);
@@ -346,77 +288,54 @@ contract TournamentsStorage {
 
     /* Find last index of a player in a tournament */
     function isEmptyString(string memory str) internal pure returns (bool) {
-        return
-            keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
+        return keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
     }
 
-    function findLastIndexOfPlayer(
-        string memory _tournamentId,
-        string memory _playerName
-    ) public view returns (uint256) {
+    function findLastIndexOfPlayer(string memory _tournamentId, string memory _playerName)
+        public
+        view
+        returns (uint256)
+    {
         uint256 lastIndex = 0;
         uint256 tournamentLength = MAX_PARTICIPANTS * 2 - 1;
 
         for (uint256 i = 0; i < tournamentLength; i++) {
             if (
-                keccak256(
-                    abi.encodePacked(
-                        tournamentsMap[_tournamentId]
-                            .matchedParticipants[i]
-                            .uniqueId
-                    )
-                ) == keccak256(abi.encodePacked(_playerName))
+                keccak256(abi.encodePacked(tournamentsMap[_tournamentId].matchedParticipants[i].uniqueId))
+                    == keccak256(abi.encodePacked(_playerName))
             ) {
                 lastIndex = i;
             }
         }
 
         require(
-            keccak256(
-                abi.encodePacked(
-                    tournamentsMap[_tournamentId]
-                        .matchedParticipants[lastIndex]
-                        .uniqueId
-                )
-            ) == keccak256(abi.encodePacked(_playerName)),
+            keccak256(abi.encodePacked(tournamentsMap[_tournamentId].matchedParticipants[lastIndex].uniqueId))
+                == keccak256(abi.encodePacked(_playerName)),
             "Player not found"
         );
 
         return lastIndex;
     }
 
-    function getLastThreeTournamentsPosition(
-        string memory _userId,
-        TournamentIdAndType[3] memory _data
-    ) public view returns (string[3] memory) {
+    function getLastThreeTournamentsPosition(string memory _userId, TournamentIdAndType[3] memory _data)
+        public
+        view
+        returns (string[3] memory)
+    {
         string[3] memory placements;
 
         for (uint256 i = 0; i < 3; i++) {
-            Tournament memory tournament = getTournament(
-                _data[i].id
-            );
-            uint256 lastIndex = findLastIndexOfPlayer(
-                tournament.id,
-                _userId
-            );
+            Tournament memory tournament = getTournament(_data[i].id);
+            uint256 lastIndex = findLastIndexOfPlayer(tournament.id, _userId);
             uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
 
             if (lastIndex == maxNumberOfPlaces) {
                 placements[i] = "Tournament Winner!";
-            } else if (
-                lastIndex >= maxNumberOfPlaces - 2 &&
-                lastIndex <= maxNumberOfPlaces - 1
-            ) {
+            } else if (lastIndex >= maxNumberOfPlaces - 2 && lastIndex <= maxNumberOfPlaces - 1) {
                 placements[i] = "Final";
-            } else if (
-                lastIndex >= maxNumberOfPlaces - 6 &&
-                lastIndex <= maxNumberOfPlaces - 3
-            ) {
+            } else if (lastIndex >= maxNumberOfPlaces - 6 && lastIndex <= maxNumberOfPlaces - 3) {
                 placements[i] = "Semi-final";
-            } else if (
-                lastIndex >= maxNumberOfPlaces - 14 &&
-                lastIndex <= maxNumberOfPlaces - 7
-            ) {
+            } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
                 placements[i] = "Quarter-final";
             } else if (maxNumberOfPlaces > 14) {
                 uint256 nbrRound = MAX_PARTICIPANTS;
@@ -430,9 +349,7 @@ contract TournamentsStorage {
                 string memory strRoundName = "Round of ";
                 string memory strRoundNumber = nbrRound.toString();
 
-                placements[i] = string(
-                    abi.encodePacked(strRoundName, strRoundNumber)
-                );
+                placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
             }
         }
         return placements;
@@ -443,9 +360,7 @@ contract TournamentsStorage {
         return block.timestamp; // Avalanche timestamp in UTC
     }
 
-    function _daysToDate(
-        uint256 _days
-    ) internal pure returns (uint256 year, uint256 month, uint256 day) {
+    function _daysToDate(uint256 _days) internal pure returns (uint256 year, uint256 month, uint256 day) {
         int256 OFFSET19700101 = 2440588;
         int256 L = int256(_days) + 68569 + OFFSET19700101;
         int256 N = (4 * L) / 146097;
@@ -464,14 +379,7 @@ contract TournamentsStorage {
     function getCurrentDateTimeUTC()
         internal
         view
-        returns (
-            uint256 year,
-            uint256 month,
-            uint256 day,
-            uint256 hour,
-            uint256 minute,
-            uint256 second
-        )
+        returns (uint256 year, uint256 month, uint256 day, uint256 hour, uint256 minute, uint256 second)
     {
         uint256 timestamp = block.timestamp;
         uint256 SECONDS_PER_DAY = 86400;
@@ -491,14 +399,7 @@ contract TournamentsStorage {
     }
 
     function getCurrentDate() internal view returns (uint16[3] memory date) {
-        (
-            uint256 year,
-            uint256 month,
-            uint256 day,
-            ,
-            ,
-
-        ) = getCurrentDateTimeUTC();
+        (uint256 year, uint256 month, uint256 day,,,) = getCurrentDateTimeUTC();
 
         date[0] = uint16(day);
         date[1] = uint16(month);
@@ -508,14 +409,7 @@ contract TournamentsStorage {
     }
 
     function getCurrentTime() internal view returns (uint256[3] memory time) {
-        (
-            ,
-            ,
-            ,
-            uint256 hour,
-            uint256 minute,
-            uint256 second
-        ) = getCurrentDateTimeUTC();
+        (,,, uint256 hour, uint256 minute, uint256 second) = getCurrentDateTimeUTC();
 
         time[0] = uint256(hour);
         time[1] = uint256(minute);
