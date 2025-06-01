@@ -510,7 +510,7 @@ async function updateNodeWithRecentTournamentData(
 
   recentTournamentResult.innerText = recentTournament.tournamentResult;
 
-  const colour = recentTournament.tournamentResult === 'Finals' ? 'green' : 'red';
+  const colour = recentTournament.tournamentResult === 'Winner' ? 'green' : 'red';
   recentTournamentResult.classList.add(`text-${colour}-400`);
   recentTournamentScoreIndicator.classList.add(`bg-${colour}-500`);
 }
@@ -799,4 +799,6 @@ function cleanLeftPanel(): void {
     console.log("Couldn't find recent tournament list");
     return;
   }
+
+  recentTournamentList.innerHTML = '';
 }
