@@ -31,11 +31,6 @@ contract TournamentsStorage {
         uint256[(MAX_PARTICIPANTS - 1) * 2] scores;
     }
 
-    struct TournamentIdAndType {
-        string id;
-        gameType typeOfGame;
-    }
-
     mapping(string => Tournament) private tournamentsMap;
 
     string[] classicTournamentsUUID;
@@ -193,15 +188,22 @@ contract TournamentsStorage {
         return lastIndex;
     }
 
-    function getLastThreeTournamentsPosition(string memory _userId, TournamentIdAndType[3] memory _data)
+    function getLastThreeTournamentsPosition(string memory _userId, string[] memory _data)
         public
         view
         returns (string[3] memory)
     {
         string[3] memory placements;
+        uint256 tournamentsToDisplay = 0;
 
         for (uint256 i = 0; i < 3; i++) {
-            uint256 lastIndex = findLastIndexOfPlayer(_data[i].id, _userId);
+            placements[i] = "";
+            if (keccak256(abi.encodePacked(_data[i])) != keccak256(abi.encodePacked("")))
+                tournamentsToDisplay++;
+        }
+
+        for (uint256 i = 0; i < tournamentsToDisplay; i++) {
+            uint256 lastIndex = findLastIndexOfPlayer(_data[i], _userId);
             uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
 
             if (lastIndex == maxNumberOfPlaces) {
