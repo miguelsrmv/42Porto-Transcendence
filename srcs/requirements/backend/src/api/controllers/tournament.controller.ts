@@ -31,7 +31,6 @@ export async function getTournamentById(
   try {
     // const data = await generateTournamentData(request.params.id);
     const rawData = await contractProvider.getMatchedParticipants(request.params.id);
-    const rawScores: number[] = await contractProvider.getScores(request.params.id);
     const data = processTournamentData(rawData);
     reply.send(data);
   } catch (error) {
@@ -39,7 +38,7 @@ export async function getTournamentById(
   }
 }
 
-export async function getUserLastThreeTournaments(
+export async function getUserLastTournaments(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
