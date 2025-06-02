@@ -1,12 +1,17 @@
 import { randomUUID } from 'crypto';
 import { GameSession, PlayerInfo } from './gameSession';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
-import { ServerMessage } from './remoteGameApp/types';
+import { PlayerTuple, ServerMessage } from './remoteGameApp/types';
 import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
 import { gameTypeToEnum, gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
-import { contractSigner, wallet, provider } from '../api/services/blockchain.services';
+import {
+  contractSigner,
+  wallet,
+  provider,
+  contractProvider,
+} from '../api/services/blockchain.services';
 import {
   closeSocket,
   playerInfoToPlayerSettings,
@@ -31,9 +36,9 @@ export interface BlockchainScoreData {
   // TODO: change to number
   tournamentId: string;
   gameType: number;
-  player1Id: string;
+  player1Data: PlayerTuple;
   score1: number;
-  player2Id: string;
+  player2Data: PlayerTuple;
   score2: number;
 }
 
@@ -41,8 +46,6 @@ export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
   type: gameType;
-  // TODO: Get id as nbr of tournaments on blockchain
-  // id: number = 0;
   id: string = randomUUID();
   currentRound: number = 1;
   players: PlayerInfo[] = [];
@@ -154,8 +157,8 @@ export class Tournament {
         data.gameType,
         data.participants,
         {
-          nonce: currentNonce
-        }
+          nonce: currentNonce,
+        },
       );
       await tx.wait();
     } catch (err) {
@@ -194,13 +197,13 @@ export class Tournament {
       const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
       const tx = await contractSigner.saveScoreAndAddWinner(
         data.tournamentId,
-        data.player1Id,
+        data.player1Data,
         data.score1,
-        data.player2Id,
+        data.player2Data,
         data.score2,
         {
-          nonce: currentNonce
-        }
+          nonce: currentNonce,
+        },
       );
       await tx.wait();
     } catch (err) {
@@ -209,8 +212,8 @@ export class Tournament {
       release();
     }
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
-    this.setPlayerScore(data.player1Id, data.score1);
-    this.setPlayerScore(data.player2Id, data.score2);
+    this.setPlayerScore(data.player1Data[0], data.score1);
+    this.setPlayerScore(data.player2Data[0], data.score2);
     sessionToUpdate.winner = winner;
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
     if (roundSessions.every((session) => session.winner)) await this.advanceRound();
@@ -313,6 +316,7 @@ export class Tournament {
   private async createNextRoundSessions() {
     // TODO: Advance round if winner quits before next round
     console.log(`Creating new round session with: ${this.roundWinners.map((p) => p.alias)}`);
+    console.log(`Blockchain array: ${await contractProvider.getMatchedParticipants(this.id)}`);
     for (let i = 0; i < this.roundWinners.length; i += 2) {
       const player1 = this.roundWinners[i];
       const player2 = this.roundWinners[i + 1];
@@ -341,7 +345,6 @@ export class Tournament {
   }
 
   private getTournamentCreateData() {
-    type PlayerTuple = [string, string, string];
     const playersData: PlayerTuple[] = this.players.map((p): PlayerTuple => {
       return [p.id, p.alias, p.character?.name ?? 'NONE'];
     });
