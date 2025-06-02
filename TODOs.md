@@ -1,6 +1,7 @@
 # Frontend
 
 # Backend
+- join_game on WS connection?
 - Connect tournament logic to Blockchain (in progress)
 - Tournament brackets management
 
