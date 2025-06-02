@@ -34,7 +34,9 @@ function movementHandler(socket: WebSocket, direction: string) {
     console.log(`Not a valid player movement: ${direction}`);
     return;
   }
-  const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const playerTournament = tournamentManager.getPlayerTournament(playerId);
   const gameSession = playerTournament?.getPlayerSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
@@ -45,7 +47,9 @@ function movementHandler(socket: WebSocket, direction: string) {
 }
 
 async function powerUpHandler(socket: WebSocket) {
-  const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const playerTournament = tournamentManager.getPlayerTournament(playerId);
   const gameSession = playerTournament?.getPlayerSession(socket);
   if (!gameSession || !gameSession.gameArea) return;
   const ownPlayer =
@@ -56,7 +60,9 @@ async function powerUpHandler(socket: WebSocket) {
 }
 
 async function readyForNextRoundHandler(socket: WebSocket) {
-  const playerTournament = tournamentManager.getPlayerTournamentBySocket(socket);
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const playerTournament = tournamentManager.getPlayerTournament(playerId);
   if (!playerTournament) return;
   await playerTournament.setReadyForNextRound(socket);
 }
@@ -109,7 +115,9 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
 
   socket.on('close', async () => {
     try {
-      await tournamentManager.removePlayerTournament(socket);
+      const playerId = playerManager.getPlayerId(socket);
+      if (!playerId) return;
+      await tournamentManager.removePlayerTournament(playerId);
       playerManager.unregister(socket);
     } catch (err) {
       console.error('Error closing socket:', err);
