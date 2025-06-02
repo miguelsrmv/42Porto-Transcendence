@@ -105,20 +105,8 @@ export const abi = [
       },
       {
         "name": "_data",
-        "type": "tuple[3]",
-        "internalType": "struct TournamentsStorage.TournamentIdAndType[3]",
-        "components": [
-          {
-            "name": "id",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "typeOfGame",
-            "type": "uint8",
-            "internalType": "enum TournamentsStorage.gameType"
-          }
-        ]
+        "type": "string[]",
+        "internalType": "string[]"
       }
     ],
     "outputs": [
