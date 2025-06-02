@@ -192,6 +192,30 @@ export const abi = [
   },
   {
     "type": "function",
+    "name": "getPlayerTournamentScores",
+    "inputs": [
+      {
+        "name": "_tournamentId",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "_userId",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string[4]",
+        "internalType": "string[4]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getScores",
     "inputs": [
       {
