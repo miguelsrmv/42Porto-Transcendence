@@ -6,7 +6,7 @@ import fs from 'fs';
 dotenv.config();
 
 const RPC_URL = 'https://api.avax-test.network/ext/bc/C/rpc'; // C-Chain
-const CONTRACT_ADDRESS = "0xc6b63CF5221DD9986Cb434dcd32Fe16663E93af8";/* fs
+const CONTRACT_ADDRESS = "0xeDB129A8374E4E25E9912fA2C7BF29683a709EDa";/* fs
   .readFileSync('/app/data/blockchain/blockchain_address.txt', 'utf-8')
   .trim(); */
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
