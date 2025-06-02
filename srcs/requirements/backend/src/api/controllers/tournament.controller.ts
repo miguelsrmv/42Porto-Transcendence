@@ -2,25 +2,20 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { contractProvider } from '../services/blockchain.services';
-import { processTournamentData } from '../services/tournament.services';
-
-export type TournamentPlayerInfo = {
-  tournamentId: string;
-  userId: string;
-};
+import { generateTournamentData, processTournamentData } from '../services/tournament.services';
 
 export async function getTournamentStatus(
-  request: FastifyRequest<{ Body: TournamentPlayerInfo }>,
+  request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
   try {
-    // const data = await generateTournamentData(request.params.id);
-    const rawData = await contractProvider.getPlayerTournamentScores(
-      request.body.tournamentId,
-      request.body.userId,
-    );
-    console.log(`Tournament status: ${rawData}`);
-    const data = processTournamentData(rawData);
+    const data = await generateTournamentData(request.params.id);
+
+    // const rawParticipants: string[] = await contractProvider.getMatchedParticipants(
+    //   request.params.id,
+    // );
+    // const scores: number[] = await contractProvider.getScores(request.params.id);
+    // const data = processTournamentData(rawParticipants, scores);
     reply.send(data);
   } catch (error) {
     handleError(error, reply);

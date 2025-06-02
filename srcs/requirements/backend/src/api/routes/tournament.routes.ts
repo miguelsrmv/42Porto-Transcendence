@@ -5,5 +5,5 @@ import { getTournamentStatus, getUserLastTournaments } from '../controllers/tour
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function tournamentRoutes(fastify: FastifyInstance) {
   fastify.get('/user/:id', { schema: getByIdSchema }, getUserLastTournaments);
-  fastify.post('/', getTournamentStatus);
+  fastify.get('/:id', { schema: getByIdSchema }, getTournamentStatus);
 }
