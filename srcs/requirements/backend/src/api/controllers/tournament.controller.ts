@@ -21,7 +21,7 @@ export type MatchInfo = {
 };
 
 export type TournamentAndType = {
-  tournamentId: number;
+  tournamentId: bigint;
   type: GameMode;
 };
 
@@ -62,9 +62,9 @@ export async function saveTournamentScore(
 
     const tx = await contractSigner.saveScore(
       BigInt(tournamentId),
-      BigInt(userOneId),
+      userOneId,
       BigInt(scoreOne),
-      BigInt(userTwoId),
+      userTwoId,
       BigInt(scoreTwo),
     );
     await tx.wait();
@@ -87,7 +87,7 @@ export async function addMatchWinner(
       return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
     }
 
-    const tx = await contractSigner.addWinner(BigInt(tournamentId), BigInt(userId));
+    const tx = await contractSigner.addWinner(BigInt(tournamentId), userId);
     await tx.wait();
 
     reply.send('OK');
@@ -102,11 +102,7 @@ export async function getUserLastThreeTournaments(
   reply: FastifyReply,
 ) {
   try {
-    const tx = await contractProvider.getLastThreeTournamentsPosition(
-      BigInt(request.params.id),
-      request.body.tournamentsIdsandTypes,
-    );
-    await tx.wait();
+    const tx = await contractProvider.getLastThreeTournamentsPosition(BigInt(request.params.id), request.body.tournamentsIdsandTypes);
 
     reply.send('OK');
   } catch (error) {
