@@ -5,7 +5,6 @@
 - Connect tournament logic to Blockchain (in progress)
 - Tournament brackets management
 
-- Uniformize search by playerId (get it from playerManager)
 - Deal with re-connections and lag 
 - Review heartbeat times
 
