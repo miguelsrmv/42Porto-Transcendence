@@ -1,5 +1,10 @@
 export const abi = [
   {
+    "type": "constructor",
+    "inputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
     "type": "function",
     "name": "MAX_PARTICIPANTS",
     "inputs": [],
