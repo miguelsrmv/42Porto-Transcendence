@@ -91,8 +91,8 @@ export class GameSession {
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
     if (!this.gameArea) return;
+    this.gameArea.stop();
     if (this.players.length === 0) return;
-    if (this.gameArea.runningState !== gameRunningState.ended) this.gameArea.stop();
 
     const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
     if (playerWhoLeft.isEliminated) return; // score already saved in endGame

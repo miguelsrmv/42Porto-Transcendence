@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 
 // NOTE: Unused for now
-export class PlayerManager {
+class PlayerManager {
   private playerToSocket: Map<string, WebSocket> = new Map();
   private socketToPlayer: Map<WebSocket, string> = new Map();
 
@@ -30,3 +30,5 @@ export class PlayerManager {
     return this.playerToSocket.has(playerId);
   }
 }
+
+export const playerManager = new PlayerManager();
