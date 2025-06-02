@@ -2,8 +2,14 @@
 
 ### TOURNAMENT
 
-### Get all tournaments
-GET http://localhost:3000/tournaments HTTP/1.1
+### Get tournament status
+POST http://localhost:3000/tournaments HTTP/1.1
+content-type: application/json
+
+{
+  "tournamentId": "<id>",
+  "userId": "<id>"
+}
 
 ### Get all tournaments from a specific user
 GET http://localhost:3000/tournaments/user/<id> HTTP/1.1
