@@ -116,8 +116,8 @@ export class GameArea {
       this.rightPlayer.socket.send(message);
   }
 
-  getPlayerByWebSocket(socket: WebSocket) {
-    return socket === this.leftPlayer.socket ? this.leftPlayer : this.rightPlayer;
+  getPlayerById(playerId: string) {
+    return playerId === this.leftPlayer.id ? this.leftPlayer : this.rightPlayer;
   }
 
   getOtherPlayer(player: Player) {
