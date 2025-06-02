@@ -123,21 +123,23 @@ contract TournamentsStorage {
         }
     }
 
-    function addWinner(string memory _tournamentId, string memory _winnerName) public onlyOwner {
-        uint256 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winnerName) / 2 + MAX_PARTICIPANTS;
+    function addWinner(string memory _tournamentId, Participant memory _winner) public onlyOwner {
+        uint256 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winner.uniqueId) / 2 + MAX_PARTICIPANTS;
 
-        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].uniqueId = _winnerName;
+        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].uniqueId = _winner.uniqueId;
+        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].userAlias = _winner.userAlias;
+        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].character = _winner.character;
     }
 
     function saveScore(
         string memory _tournamentId,
-        string memory _playerOneName,
+        string memory _playerOneUniqueId,
         uint256 _playerOneScore,
-        string memory _playerTwoName,
+        string memory _playerTwoUniqueId,
         uint256 _playerTwoScore
     ) public onlyOwner {
-        uint256 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _playerOneName);
-        uint256 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _playerTwoName);
+        uint256 updatedPlayerOneIndex = findLastIndexOfPlayer(_tournamentId, _playerOneUniqueId);
+        uint256 updatedPlayerTwoIndex = findLastIndexOfPlayer(_tournamentId, _playerTwoUniqueId);
 
         tournamentsMap[_tournamentId].scores[updatedPlayerOneIndex] = _playerOneScore;
         tournamentsMap[_tournamentId].scores[updatedPlayerTwoIndex] = _playerTwoScore;
@@ -145,17 +147,17 @@ contract TournamentsStorage {
 
     function saveScoreAndAddWinner(
         string memory _tournamentId,
-        string memory _playerOneName,
+        Participant memory _playerOne,
         uint256 _playerOneScore,
-        string memory _playerTwoName,
+        Participant memory _playerTwo,
         uint256 _playerTwoScore
     ) public onlyOwner {
-        saveScore(_tournamentId, _playerOneName, _playerOneScore, _playerTwoName, _playerTwoScore);
+        saveScore(_tournamentId, _playerOne.uniqueId, _playerOneScore, _playerTwo.uniqueId, _playerTwoScore);
 
         if (_playerOneScore > _playerTwoScore) {
-            addWinner(_tournamentId, _playerOneName);
+            addWinner(_tournamentId, _playerOne);
         } else {
-            addWinner(_tournamentId, _playerTwoName);
+            addWinner(_tournamentId, _playerTwo);
         }
     }
 
