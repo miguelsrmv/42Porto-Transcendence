@@ -1,9 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
-import { GameMode } from '@prisma/client';
-import { contractSigner, contractProvider } from '../services/blockchain.services';
-import { generateTournamentData } from '../services/tournament.services';
+import { contractProvider } from '../services/blockchain.services';
+import { processTournamentData } from '../services/tournament.services';
 
 export type TournamentPlayer = {
   tournamentId: string;
@@ -20,18 +19,6 @@ export type MatchInfo = {
   scoreTwo: number;
 };
 
-export type TournamentAndType = {
-  tournamentId: string;
-  type: GameMode;
-};
-
-export type TournamentsFromPlayer = {
-  userId: string;
-  classicTournamentsIds: number[];
-  crazyTournamentsIds: number[];
-  tournamentsIdsandTypes: TournamentAndType[];
-};
-
 export type WinnerInfo = {
   tournamentId: string;
   userId: string;
@@ -42,93 +29,41 @@ export async function getTournamentById(
   reply: FastifyReply,
 ) {
   try {
-    const data = await generateTournamentData(request.params.id);
+    // const data = await generateTournamentData(request.params.id);
+    const rawData = await contractProvider.getMatchedParticipants(request.params.id);
+    const rawScores: number[] = await contractProvider.getScores(request.params.id);
+    const data = processTournamentData(rawData);
     reply.send(data);
   } catch (error) {
     handleError(error, reply);
   }
 }
 
-// export async function saveTournamentScore(
-//   request: FastifyRequest<{ Body: MatchInfo }>,
-//   reply: FastifyReply,
-// ) {
-//   try {
-//     const { tournamentId, userOneId, userTwoId, scoreOne, scoreTwo } = request.body;
-
-//     if (!tournamentId) {
-//       return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
-//     }
-
-//     const tx = await contractSigner.saveScore(
-//       tournamentId,
-//       userOneId,
-//       BigInt(scoreOne),
-//       userTwoId,
-//       BigInt(scoreTwo),
-//     );
-//     await tx.wait();
-
-//     reply.send('OK');
-//   } catch (error) {
-//     console.error('Error in saveTournamentScore:', error);
-//     handleError(error, reply);
-//   }
-// }
-
-// export async function addMatchWinner(
-//   request: FastifyRequest<{ Body: WinnerInfo }>,
-//   reply: FastifyReply,
-// ) {
-//   try {
-//     const { tournamentId, userId } = request.body;
-
-//     if (!tournamentId) {
-//       return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
-//     }
-
-//     const tx = await contractSigner.addWinner(tournamentId, userId);
-//     await tx.wait();
-
-//     reply.send('OK');
-//   } catch (error) {
-//     console.error('Error in addWinner:', error);
-//     handleError(error, reply);
-//   }
-// }
-
 export async function getUserLastThreeTournaments(
-  request: FastifyRequest<{ Body: TournamentsFromPlayer; Params: IParams }>,
-  reply: FastifyReply,
-) {
-  try {
-    const tx = await contractProvider.getLastThreeTournamentsPosition(request.params.id, request.body.tournamentsIdsandTypes);
-
-    reply.send('OK');
-  } catch (error) {
-    console.error('Error in addWinner:', error);
-    reply.status(500).send({ error: 'Failed to add winner' });
-  }
-}
-
-export async function getUserTournaments(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
   try {
-    const tournamentIds = await prisma.tournamentParticipant.findMany({
+    const tournaments = await prisma.tournamentParticipant.findMany({
       where: { userId: request.params.id },
       select: { tournamentId: true, tournamentType: true },
       orderBy: { createdAt: 'desc' },
       take: 3,
     });
-    // TODO: Update with right function
-    // const tx = await contractProvider.addWinner(BigInt(tournamentId), BigInt(request.params.id));
-    // await tx.wait();
-
-    reply.send('OK');
+    const ids = tournaments.map((t) => t.tournamentId);
+    // TODO: force array with 3 strings ?
+    const positions = await contractProvider.getLastThreeTournamentsPosition(
+      request.params.id,
+      ids,
+    );
+    const data = tournaments.map((t, index) => ({
+      tournamentId: t.tournamentId,
+      tournamentType: t.tournamentType,
+      position: positions[index] ?? null,
+    }));
+    reply.send(data);
   } catch (error) {
     console.error('Error in addWinner:', error);
-    handleError(error, reply);
+    reply.status(500).send({ error: 'Failed to add winner' });
   }
 }
