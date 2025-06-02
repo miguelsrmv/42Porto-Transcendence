@@ -60,7 +60,7 @@ export async function updateGameArea(dt: number, gameArea: GameArea) {
   } as GameState;
   // TODO: Filter before sending
   const gameStateMsg: ServerMessage = { type: 'game_state', state: gameState };
-  gameArea.broadcastSessionMessage(JSON.stringify(gameStateMsg));
+  gameArea.session.broadcastMessage(JSON.stringify(gameStateMsg));
 }
 
 export function getGameVersion(gameArea: GameArea): number {
