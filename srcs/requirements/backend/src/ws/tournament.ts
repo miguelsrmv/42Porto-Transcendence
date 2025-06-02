@@ -184,7 +184,6 @@ export class Tournament {
       // TODO: Check if order of users matter
       const tx = await contractSigner.saveScoreAndAddWinner(
         data.tournamentId,
-        data.gameType,
         data.player1Id,
         data.score1,
         data.player2Id,
