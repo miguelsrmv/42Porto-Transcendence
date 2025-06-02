@@ -15,7 +15,10 @@ export async function getTournamentById(
 ) {
   try {
     // const data = await generateTournamentData(request.params.id);
-    const rawData = await contractProvider.getMatchedParticipants(request.body.tournamentId);
+    const rawData: string = await contractProvider.getPlayerTournamentScores(
+      request.body.tournamentId,
+      request.body.userId,
+    );
     const data = processTournamentData(rawData);
     reply.send(data);
   } catch (error) {
