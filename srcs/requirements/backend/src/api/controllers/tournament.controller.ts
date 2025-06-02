@@ -51,10 +51,15 @@ export async function getUserLastThreeTournaments(
       take: 3,
     });
     const ids = tournaments.map((t) => t.tournamentId);
-    // TODO: force array with 3 strings ?
+    const fixedIds: [string, string, string] = [
+      ...ids.slice(0, 3), // get at most 3 entries
+      '',
+      '',
+      '', // add empty strings
+    ].slice(0, 3) as [string, string, string];
     const positions = await contractProvider.getLastThreeTournamentsPosition(
       request.params.id,
-      ids,
+      fixedIds,
     );
     const data = tournaments.map((t, index) => ({
       tournamentId: t.tournamentId,
@@ -63,7 +68,6 @@ export async function getUserLastThreeTournaments(
     }));
     reply.send(data);
   } catch (error) {
-    console.error('Error in addWinner:', error);
-    reply.status(500).send({ error: 'Failed to add winner' });
+    handleError(error, reply);
   }
 }
