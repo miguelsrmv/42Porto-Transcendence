@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {console} from "forge-std/Script.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
+// import {console} from "forge-std/Script.sol";
+// import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
     uint256 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
-    using Strings for uint256;
+    // using Strings for uint256;
 
     enum gameType {
         CLASSIC,
@@ -40,6 +40,11 @@ contract TournamentsStorage {
 
     string[] classicTournamentsUUID;
     string[] crazyTournamentsUUID;
+
+    // CONSTRUCTOR***************************************************************
+    constructor() {
+        i_owner = msg.sender;
+    }
 
     // MODIFIERS ****************************************************************
     modifier onlyOwner() {
@@ -115,8 +120,6 @@ contract TournamentsStorage {
             tournamentsMap[_tournamentId].matchedParticipants[i].uniqueId = _participants[i].uniqueId;
             tournamentsMap[_tournamentId].matchedParticipants[i].userAlias = _participants[i].userAlias;
             tournamentsMap[_tournamentId].matchedParticipants[i].character = _participants[i].character;
-
-            console.log(_participants[i].uniqueId, "joined tournament", _tournamentId);
         }
     }
 
@@ -124,7 +127,6 @@ contract TournamentsStorage {
         uint256 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winnerName) / 2 + MAX_PARTICIPANTS;
 
         tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].uniqueId = _winnerName;
-        console.log("Added winner", _winnerName, "to tournament", _tournamentId);
     }
 
     function saveScore(
@@ -139,11 +141,6 @@ contract TournamentsStorage {
 
         tournamentsMap[_tournamentId].scores[updatedPlayerOneIndex] = _playerOneScore;
         tournamentsMap[_tournamentId].scores[updatedPlayerTwoIndex] = _playerTwoScore;
-        console.log("Scores saved for Tournament:", _tournamentId);
-        console.log("Player One:", _playerOneName);
-        console.logUint(_playerOneScore);
-        console.log("Player Two:", _playerTwoName);
-        console.logUint(_playerTwoScore);
     }
 
     function saveScoreAndAddWinner(
@@ -213,19 +210,19 @@ contract TournamentsStorage {
                 placements[i] = "Semi-final";
             } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
                 placements[i] = "Quarter-final";
-            } else if (maxNumberOfPlaces > 14) {
-                uint256 nbrRound = MAX_PARTICIPANTS;
-                uint256 tier = nbrRound;
+            // } else if (maxNumberOfPlaces > 14) {
+            //     uint256 nbrRound = MAX_PARTICIPANTS;
+            //     uint256 tier = nbrRound;
 
-                while (lastIndex < tier) {
-                    nbrRound /= 2;
-                    tier += nbrRound;
-                }
+            //     while (lastIndex < tier) {
+            //         nbrRound /= 2;
+            //         tier += nbrRound;
+            //     }
 
-                string memory strRoundName = "Round of ";
-                string memory strRoundNumber = nbrRound.toString();
+            //     string memory strRoundName = "Round of ";
+            //     string memory strRoundNumber = nbrRound.toString();
 
-                placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
+            //     placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
             }
         }
         return placements;

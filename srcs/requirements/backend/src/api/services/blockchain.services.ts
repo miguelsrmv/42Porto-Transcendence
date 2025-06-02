@@ -6,7 +6,7 @@ import fs from 'fs';
 dotenv.config();
 
 const RPC_URL = 'https://api.avax-test.network/ext/bc/C/rpc'; // C-Chain
-const CONTRACT_ADDRESS = "0x7590C866F270B68fe48224AEd4C7061DF9ABCCd4";/* fs
+const CONTRACT_ADDRESS = "0x818eaE077a6a8177d3cD5afcdF6F6d9a68FC84f8";/* fs
   .readFileSync('/app/data/blockchain/blockchain_address.txt', 'utf-8')
   .trim(); */
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
@@ -15,4 +15,4 @@ const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const contractSigner = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
 const contractProvider = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
 
-export { contractSigner, contractProvider };
+export { contractSigner, contractProvider, wallet, provider };
