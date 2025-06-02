@@ -1,8 +1,16 @@
 import { tournamentPlayer } from '../../ws/remoteGameApp/types';
 import { prisma } from '../../utils/prisma';
 
-export function processTournamentData(data: string) {
-  return data;
+// TODO: create tournament_status type data
+export function processTournamentData(data: string[], scores: number[]) {
+  if (data.length !== 15 && scores.length !== 14) return;
+  const playerData = data.flatMap((p) => {
+    return {
+      id: p[0],
+      alias: p[1],
+    };
+  });
+  console.log(`Players: ${JSON.stringify(playerData)}`);
 }
 
 export async function generateTournamentData(tournamentId: string) {
