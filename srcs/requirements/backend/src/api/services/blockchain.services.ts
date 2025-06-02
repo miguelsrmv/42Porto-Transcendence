@@ -15,4 +15,4 @@ const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const contractSigner = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
 const contractProvider = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
 
-export { contractSigner, contractProvider };
+export { contractSigner, contractProvider, wallet, provider };
