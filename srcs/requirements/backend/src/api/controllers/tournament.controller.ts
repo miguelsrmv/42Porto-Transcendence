@@ -42,7 +42,7 @@ export async function getTournamentById(
   reply: FastifyReply,
 ) {
   try {
-    const data = generateTournamentData(request.params.id);
+    const data = await generateTournamentData(request.params.id);
     reply.send(data);
   } catch (error) {
     handleError(error, reply);
