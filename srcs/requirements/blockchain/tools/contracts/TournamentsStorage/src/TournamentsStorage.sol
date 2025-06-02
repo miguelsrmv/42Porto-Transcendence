@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-// import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
     uint256 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
 
-    // using Strings for uint256;
+    using Strings for uint256;
 
     enum gameType {
         CLASSIC,
@@ -65,6 +65,76 @@ contract TournamentsStorage {
 
     function getScores(string memory _tournamentId) public view returns (uint256[(MAX_PARTICIPANTS - 1) * 2] memory) {
         return tournamentsMap[_tournamentId].scores;
+    }
+
+    function getLastThreeTournamentsPosition(string memory _userId, string[] memory _data)
+        public
+        view
+        returns (string[3] memory)
+    {
+        string[3] memory placements;
+        uint256 tournamentsToDisplay = 0;
+
+        for (uint256 i = 0; i < 3; i++) {
+            placements[i] = "";
+            if (keccak256(abi.encodePacked(_data[i])) != keccak256(abi.encodePacked("")))
+                tournamentsToDisplay++;
+        }
+
+        for (uint256 i = 0; i < tournamentsToDisplay; i++) {
+            uint256 lastIndex = findLastIndexOfPlayer(_data[i], _userId);
+            uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
+
+            if (lastIndex == maxNumberOfPlaces) {
+                placements[i] = "Tournament Winner!";
+            } else if (lastIndex >= maxNumberOfPlaces - 2 && lastIndex <= maxNumberOfPlaces - 1) {
+                placements[i] = "Final";
+            } else if (lastIndex >= maxNumberOfPlaces - 6 && lastIndex <= maxNumberOfPlaces - 3) {
+                placements[i] = "Semi-final";
+            } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
+                placements[i] = "Quarter-final";
+            } else if (maxNumberOfPlaces > 14) {
+                uint256 nbrRound = MAX_PARTICIPANTS;
+                uint256 tier = nbrRound;
+
+                while (lastIndex < tier) {
+                    nbrRound /= 2;
+                    tier += nbrRound;
+                }
+
+                string memory strRoundName = "Round of ";
+                string memory strRoundNumber = nbrRound.toString();
+
+                placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
+            }
+        }
+        return placements;
+    }
+
+    function getPlayerTournamentScores(string memory _tournamentId, string memory _userId) public view returns (string[4] memory) {
+        string[4] memory data;
+
+        Tournament memory tournament = tournamentsMap[_tournamentId];
+        for (uint256 i = 0; i < MAX_PARTICIPANTS; i++) {
+            if (keccak256(abi.encodePacked(tournament.participants[i].uniqueId)) == keccak256(abi.encodePacked(_userId))) {
+                data[0] = tournament.participants[i].uniqueId;
+                break;
+            }
+        }
+        uint256 dataIndex = 1;
+        for (uint256 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
+            if (keccak256(abi.encodePacked(tournament.matchedParticipants[i].uniqueId)) == keccak256(abi.encodePacked(_userId))) {
+                data[dataIndex] = (tournament.scores[i]).toString();
+                dataIndex++;
+            }
+        }
+
+        while (dataIndex < 3) {
+            data[dataIndex] = "";
+            dataIndex++;
+        }
+
+        return data;
     }
 
     // ACTION FUNCTIONS *********************************************************
@@ -185,50 +255,6 @@ contract TournamentsStorage {
         );
 
         return lastIndex;
-    }
-
-    function getLastThreeTournamentsPosition(string memory _userId, string[] memory _data)
-        public
-        view
-        returns (string[3] memory)
-    {
-        string[3] memory placements;
-        uint256 tournamentsToDisplay = 0;
-
-        for (uint256 i = 0; i < 3; i++) {
-            placements[i] = "";
-            if (keccak256(abi.encodePacked(_data[i])) != keccak256(abi.encodePacked("")))
-                tournamentsToDisplay++;
-        }
-
-        for (uint256 i = 0; i < tournamentsToDisplay; i++) {
-            uint256 lastIndex = findLastIndexOfPlayer(_data[i], _userId);
-            uint256 maxNumberOfPlaces = (MAX_PARTICIPANTS - 1) * 2;
-
-            if (lastIndex == maxNumberOfPlaces) {
-                placements[i] = "Tournament Winner!";
-            } else if (lastIndex >= maxNumberOfPlaces - 2 && lastIndex <= maxNumberOfPlaces - 1) {
-                placements[i] = "Final";
-            } else if (lastIndex >= maxNumberOfPlaces - 6 && lastIndex <= maxNumberOfPlaces - 3) {
-                placements[i] = "Semi-final";
-            } else if (lastIndex >= maxNumberOfPlaces - 14 && lastIndex <= maxNumberOfPlaces - 7) {
-                placements[i] = "Quarter-final";
-            // } else if (maxNumberOfPlaces > 14) {
-            //     uint256 nbrRound = MAX_PARTICIPANTS;
-            //     uint256 tier = nbrRound;
-
-            //     while (lastIndex < tier) {
-            //         nbrRound /= 2;
-            //         tier += nbrRound;
-            //     }
-
-            //     string memory strRoundName = "Round of ";
-            //     string memory strRoundNumber = nbrRound.toString();
-
-            //     placements[i] = string(abi.encodePacked(strRoundName, strRoundNumber));
-            }
-        }
-        return placements;
     }
 
     /* Get the current timestamp */
