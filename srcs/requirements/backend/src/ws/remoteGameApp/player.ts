@@ -15,7 +15,6 @@ export class Player {
   score: number;
   attack: Attack | null;
   side: string;
-  socket: WebSocket;
   input: PlayerInput;
   powerBarFill: number;
   isEliminated: boolean = false;
@@ -29,7 +28,6 @@ export class Player {
     attackName: string | null,
     enemyAttackName: string | null,
     side: string,
-    socket: WebSocket,
     stats: gameStats,
     gameArea: GameArea,
   ) {
@@ -43,7 +41,6 @@ export class Player {
       ? new Attack(attackName, enemyAttackName, ownPaddle, enemyPaddle, ball, side, stats, gameArea)
       : null;
     this.side = side;
-    this.socket = socket;
     this.input = PlayerInput.stop;
     this.powerBarFill = 0;
   }

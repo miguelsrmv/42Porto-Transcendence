@@ -42,8 +42,6 @@ export class GameArea {
   constructor(
     p1id: string,
     p2id: string,
-    p1socket: WebSocket,
-    p2socket: WebSocket,
     gameSettings: gameSettings,
     session: GameSession,
   ) {
@@ -75,7 +73,6 @@ export class GameArea {
       gameSettings.character1?.attack ?? null,
       gameSettings.character2 ? gameSettings.character2.attack : null,
       'left',
-      p1socket,
       this.stats,
       this,
     );
@@ -88,7 +85,6 @@ export class GameArea {
       gameSettings.character2?.attack ?? null,
       gameSettings.character1 ? gameSettings.character1.attack : null,
       'right',
-      p2socket,
       this.stats,
       this,
     );
@@ -109,15 +105,8 @@ export class GameArea {
     this.intervals.forEach((interval) => clearInterval(interval));
   }
 
-  broadcastSessionMessage(message: string) {
-    if (!this.leftPlayer || !this.rightPlayer) return;
-    if (this.leftPlayer.socket.readyState === WebSocket.OPEN) this.leftPlayer.socket.send(message);
-    if (this.rightPlayer.socket.readyState === WebSocket.OPEN)
-      this.rightPlayer.socket.send(message);
-  }
-
-  getPlayerByWebSocket(socket: WebSocket) {
-    return socket === this.leftPlayer.socket ? this.leftPlayer : this.rightPlayer;
+  getPlayerById(playerId: string) {
+    return playerId === this.leftPlayer.id ? this.leftPlayer : this.rightPlayer;
   }
 
   getOtherPlayer(player: Player) {
@@ -165,7 +154,7 @@ export class GameArea {
       };
 
       const gameStateMsg: ServerMessage = { type: 'game_state', state: gameState };
-      this.broadcastSessionMessage(JSON.stringify(gameStateMsg));
+      this.session.broadcastMessage(JSON.stringify(gameStateMsg));
       return;
     }
 
