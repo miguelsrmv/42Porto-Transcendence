@@ -13,9 +13,12 @@ import {
   playerInfoToTournamentPlayer,
   wait,
 } from './helpers';
+import { Mutex } from 'async-mutex';
 
 const NBR_PARTICIPANTS = 8;
 const NBR_SESSIONS_FIRST_ROUND = NBR_PARTICIPANTS / 2;
+
+const blockchainMutex = new Mutex();
 
 export enum tournamentState {
   creating = 'creating',
@@ -143,8 +146,9 @@ export class Tournament {
     this.broadcastStatus(this.players);
     const data = this.getTournamentCreateData();
     console.log(`Starting tournament: ${JSON.stringify(data)}`);
-    const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
+    const release = await blockchainMutex.acquire();
     try {
+      const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
       const tx = await contractSigner.joinTournament(
         data.tournamentId,
         data.gameType,
@@ -156,6 +160,8 @@ export class Tournament {
       await tx.wait();
     } catch (err) {
       console.log(`Error in joinTournament Blockchain call: ${err}`);
+    } finally {
+      release();
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
     await wait(10);
@@ -183,9 +189,9 @@ export class Tournament {
     data: BlockchainScoreData,
   ) {
     if (sessionToUpdate.winner) return;
-    const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
+    const release = await blockchainMutex.acquire();
     try {
-      // TODO: Check if order of users matter
+      const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
       const tx = await contractSigner.saveScoreAndAddWinner(
         data.tournamentId,
         data.player1Id,
@@ -199,6 +205,8 @@ export class Tournament {
       await tx.wait();
     } catch (err) {
       console.log(`Error calling saveScoreAndAddWinner: ${err}`);
+    } finally {
+      release();
     }
     await updateLeaderboardTournament(winner, sessionToUpdate.round);
     this.setPlayerScore(data.player1Id, data.score1);
