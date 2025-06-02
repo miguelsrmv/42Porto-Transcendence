@@ -27,9 +27,26 @@ export const abi = [
         "internalType": "string"
       },
       {
-        "name": "_winnerName",
-        "type": "string",
-        "internalType": "string"
+        "name": "_winner",
+        "type": "tuple",
+        "internalType": "struct TournamentsStorage.Participant",
+        "components": [
+          {
+            "name": "uniqueId",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "userAlias",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "character",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
       }
     ],
     "outputs": [],
@@ -344,7 +361,7 @@ export const abi = [
         "internalType": "string"
       },
       {
-        "name": "_playerOneName",
+        "name": "_playerOneUniqueId",
         "type": "string",
         "internalType": "string"
       },
@@ -354,7 +371,7 @@ export const abi = [
         "internalType": "uint256"
       },
       {
-        "name": "_playerTwoName",
+        "name": "_playerTwoUniqueId",
         "type": "string",
         "internalType": "string"
       },
@@ -377,9 +394,26 @@ export const abi = [
         "internalType": "string"
       },
       {
-        "name": "_playerOneName",
-        "type": "string",
-        "internalType": "string"
+        "name": "_playerOne",
+        "type": "tuple",
+        "internalType": "struct TournamentsStorage.Participant",
+        "components": [
+          {
+            "name": "uniqueId",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "userAlias",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "character",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
       },
       {
         "name": "_playerOneScore",
@@ -387,9 +421,26 @@ export const abi = [
         "internalType": "uint256"
       },
       {
-        "name": "_playerTwoName",
-        "type": "string",
-        "internalType": "string"
+        "name": "_playerTwo",
+        "type": "tuple",
+        "internalType": "struct TournamentsStorage.Participant",
+        "components": [
+          {
+            "name": "uniqueId",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "userAlias",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "character",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
       },
       {
         "name": "_playerTwoScore",
