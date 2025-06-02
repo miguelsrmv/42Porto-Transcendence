@@ -15,6 +15,8 @@ export interface GameState {
   rightAnimation: boolean;
 }
 
+export type PlayerTuple = [string, string, string];
+
 export enum gameRunningState {
   playing,
   paused,
