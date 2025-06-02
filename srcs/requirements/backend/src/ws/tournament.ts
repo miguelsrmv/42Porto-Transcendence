@@ -323,14 +323,9 @@ export class Tournament {
   }
 
   private getTournamentCreateData() {
-    const playersData = this.players.flatMap((p) => {
-      return [
-        {
-          userId: p.id,
-          alias: p.alias,
-          character: p.character?.name ?? 'NONE',
-        },
-      ];
+    type PlayerTuple = [string, string, string];
+    const playersData: PlayerTuple[] = this.players.map((p): PlayerTuple => {
+      return [p.id, p.alias, p.character?.name ?? 'NONE'];
     });
     return {
       tournamentId: this.id,
