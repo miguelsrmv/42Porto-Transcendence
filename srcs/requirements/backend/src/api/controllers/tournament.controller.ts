@@ -4,33 +4,18 @@ import { handleError } from '../../utils/errorHandler';
 import { contractProvider } from '../services/blockchain.services';
 import { processTournamentData } from '../services/tournament.services';
 
-export type TournamentPlayer = {
-  tournamentId: string;
-  userId: string;
-  alias: string;
-  character: string;
-};
-
-export type MatchInfo = {
-  tournamentId: string;
-  userOneId: string;
-  userTwoId: string;
-  scoreOne: number;
-  scoreTwo: number;
-};
-
-export type WinnerInfo = {
+export type TournamentPlayerInfo = {
   tournamentId: string;
   userId: string;
 };
 
 export async function getTournamentById(
-  request: FastifyRequest<{ Params: IParams }>,
+  request: FastifyRequest<{ Body: TournamentPlayerInfo }>,
   reply: FastifyReply,
 ) {
   try {
     // const data = await generateTournamentData(request.params.id);
-    const rawData = await contractProvider.getMatchedParticipants(request.params.id);
+    const rawData = await contractProvider.getMatchedParticipants(request.body.tournamentId);
     const data = processTournamentData(rawData);
     reply.send(data);
   } catch (error) {
