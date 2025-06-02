@@ -5,8 +5,8 @@
 ### Get all tournaments
 GET http://localhost:3000/tournaments HTTP/1.1
 
-### Get all tournaments from a specific player
-GET http://localhost:3000/tournaments/player/<id> HTTP/1.1
+### Get all tournaments from a specific user
+GET http://localhost:3000/tournaments/user/<id> HTTP/1.1
 
 ### Get specific tournament
 GET http://localhost:3000/tournaments/<id> HTTP/1.1
