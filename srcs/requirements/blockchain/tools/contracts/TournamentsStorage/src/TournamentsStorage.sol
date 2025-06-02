@@ -117,7 +117,7 @@ contract TournamentsStorage {
         Tournament memory tournament = tournamentsMap[_tournamentId];
         for (uint256 i = 0; i < MAX_PARTICIPANTS; i++) {
             if (keccak256(abi.encodePacked(tournament.participants[i].uniqueId)) == keccak256(abi.encodePacked(_userId))) {
-                data[0] = tournament.participants[i].uniqueId;
+                data[0] = tournament.participants[i].userAlias;
                 break;
             }
         }
