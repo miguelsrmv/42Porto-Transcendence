@@ -10,7 +10,7 @@ import { GameArea } from './remoteGameApp/gameArea';
 import { BlockchainScoreData, Tournament, tournamentState } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
-import { gameRunningState, ServerMessage } from './remoteGameApp/types';
+import { ServerMessage } from './remoteGameApp/types';
 import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 import { getAvatarFromPlayer } from '../api/services/user.services';
 import { getRandomBackground } from './remoteGameApp/backgroundData';
@@ -84,8 +84,8 @@ export class GameSession {
     );
   }
 
-  async removePlayer(ws: WebSocket) {
-    const playerToRemove = this.players.find((player) => player.socket === ws);
+  async removePlayer(playerId: string) {
+    const playerToRemove = this.players.find((player) => player.id === playerId);
     if (!playerToRemove) return;
     console.log(`Removing ${playerToRemove.alias}`);
     const index = this.players.indexOf(playerToRemove);
@@ -94,7 +94,7 @@ export class GameSession {
     this.gameArea.stop();
     if (this.players.length === 0) return;
 
-    const playerWhoLeft = this.gameArea.getPlayerByWebSocket(ws);
+    const playerWhoLeft = this.gameArea.getPlayerById(playerId);
     if (playerWhoLeft.isEliminated) return; // score already saved in endGame
 
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
@@ -133,6 +133,18 @@ export class GameSession {
     return Array.from(ids);
   }
 
+  getPlayerSocket(playerId: string) {
+    const player = this.players.find((p) => p.id === playerId);
+    if (!player) return;
+    return player.socket;
+  }
+
+  sendToPlayer(playerId: string, message: string) {
+    const player = this.players.find((p) => p.id === playerId);
+    if (!player) return;
+    if (player.socket.readyState === WebSocket.OPEN) player.socket.send(message);
+  }
+
   broadcastMessage(message: string) {
     this.players.forEach((player) => {
       if (player.socket.readyState === WebSocket.OPEN) player.socket.send(message);
@@ -147,11 +159,9 @@ export class GameSession {
       ownSide: 'left',
       stats: this.gameArea.stats,
     };
-    if (this.gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
-      this.gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
+    this.sendToPlayer(this.gameArea.leftPlayer.id, JSON.stringify(gameEndMsg));
     gameEndMsg.ownSide = 'right';
-    if (this.gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
-      this.gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
+    this.sendToPlayer(this.gameArea.rightPlayer.id, JSON.stringify(gameEndMsg));
   }
 
   broadcastPlayerLeftMessage(winningPlayer: Player) {
@@ -166,8 +176,7 @@ export class GameSession {
       ownSide: winningPlayer.side,
       stats: this.gameArea.stats,
     };
-    if (winningPlayer.socket.readyState === WebSocket.OPEN)
-      winningPlayer.socket.send(JSON.stringify(gameEndMsg));
+    this.sendToPlayer(winningPlayer.id, JSON.stringify(gameEndMsg));
   }
 
   getJointSettings(): gameSettings {
@@ -199,8 +208,6 @@ export class GameSession {
     this.gameArea = new GameArea(
       this.players[0].id,
       this.players[1].id,
-      this.players[0].socket,
-      this.players[1].socket,
       this.getJointSettings(),
       this,
     );
@@ -220,12 +227,12 @@ export class GameSession {
 
   async clear() {
     console.log('Clearing session');
-    await Promise.allSettled(this.players.map((player) => this.removePlayer(player.socket)));
+    await Promise.allSettled(this.players.map((player) => this.removePlayer(player.id)));
     this.players.length = 0;
   }
 
-  playerIsInSession(ws: WebSocket) {
-    return this.players.some((p) => p.socket === ws);
+  playerIsInSession(playerId: string) {
+    return this.players.some((p) => p.id === playerId);
   }
 
   print() {

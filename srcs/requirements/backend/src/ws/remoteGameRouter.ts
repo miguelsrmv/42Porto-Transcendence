@@ -33,22 +33,20 @@ function movementHandler(socket: WebSocket, direction: string) {
     sendErrorMessage(socket, `Not a valid player movement: ${direction}`);
     return;
   }
-  const gameSession = sessionManager.getSessionBySocket(socket);
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const gameSession = sessionManager.getSessionByPlayerId(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
   ownPlayer.input = direction as PlayerInput;
 }
 
 async function powerUpHandler(socket: WebSocket) {
-  const gameSession = sessionManager.getSessionBySocket(socket);
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const gameSession = sessionManager.getSessionByPlayerId(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
   await ownPlayer.attack?.attack();
 }
 
@@ -93,7 +91,9 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
 
   socket.on('close', async () => {
     try {
-      await sessionManager.removePlayerBySocket(socket);
+      const playerId = playerManager.getPlayerId(socket);
+      if (!playerId) return;
+      await sessionManager.removePlayer(playerId);
       playerManager.unregister(socket);
     } catch (err) {
       console.error('Error closing socket:', err);

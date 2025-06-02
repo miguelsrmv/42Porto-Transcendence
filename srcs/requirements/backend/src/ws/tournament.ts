@@ -94,10 +94,10 @@ export class Tournament {
     if (index !== -1) this.sessions.splice(index, 1);
   }
 
-  public getPlayerSession(ws: WebSocket) {
+  public getPlayerSession(playerId: string) {
     return this.sessions
       .filter((s) => s.round === this.currentRound)
-      .find((session) => session.players.some((p) => p.socket === ws));
+      .find((session) => session.players.some((p) => p.id === playerId));
   }
 
   private async clear() {
@@ -115,11 +115,10 @@ export class Tournament {
     );
   }
 
-  private sendToPlayerCloseSocket(playerId: string, message: string) {
-    const socket = this.getPlayerInfoFromId(playerId)?.socket;
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(message);
-      closeSocket(socket);
+  private sendToPlayerCloseSocket(player: PlayerInfo, message: string) {
+    if (player.socket.readyState === WebSocket.OPEN) {
+      player.socket.send(message);
+      closeSocket(player.socket);
     }
   }
 
@@ -149,7 +148,7 @@ export class Tournament {
     console.log(`Starting tournament: ${JSON.stringify(data)}`);
     const release = await blockchainMutex.acquire();
     try {
-      let currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
+      const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
       const tx = await contractSigner.joinTournament(
         data.tournamentId,
         data.gameType,
@@ -192,7 +191,7 @@ export class Tournament {
     if (sessionToUpdate.winner) return;
     const release = await blockchainMutex.acquire();
     try {
-      let currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
+      const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
       const tx = await contractSigner.saveScoreAndAddWinner(
         data.tournamentId,
         data.player1Id,
@@ -240,10 +239,13 @@ export class Tournament {
     if (this.roundWinners.length <= 1) {
       console.log('Tournament has ended');
       // TODO: send winner score ?
-      this.sendToPlayerCloseSocket(
-        this.roundWinners[0].id,
-        JSON.stringify({ type: 'tournament_end' } as ServerMessage),
-      );
+      if (this.roundWinners.length === 1) {
+        this.sendToPlayerCloseSocket(
+          this.roundWinners[0],
+          JSON.stringify({ type: 'tournament_end' } as ServerMessage),
+        );
+      }
+
       this.state = tournamentState.ended;
       await this.clear();
       return;
@@ -329,11 +331,11 @@ export class Tournament {
   }
 
   // NOTE: only removing player from session from current round
-  public async removePlayer(socket: WebSocket) {
+  public async removePlayer(playerId: string) {
     console.log('Removing player in tournament');
-    const playerSessions = this.sessions.filter((s) => s.playerIsInSession(socket));
+    const playerSessions = this.sessions.filter((s) => s.playerIsInSession(playerId));
     for (const session of playerSessions) {
-      await session.removePlayer(socket);
+      await session.removePlayer(playerId);
       if (session.isEmpty()) this.removeSession(session);
     }
   }

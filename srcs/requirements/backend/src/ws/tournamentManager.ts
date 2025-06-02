@@ -4,8 +4,6 @@ import { Tournament, tournamentState } from './tournament';
 
 export class TournamentManager {
   private tournaments: Map<gameType, Tournament[]> = new Map();
-  private playerSockets: Map<string, WebSocket> = new Map();
-  private socketToPlayerId: Map<WebSocket, string> = new Map();
   private playerTournaments: Map<string, Tournament> = new Map();
 
   constructor() {
@@ -17,9 +15,7 @@ export class TournamentManager {
     return this.tournaments.get(type)!;
   }
 
-  public getPlayerTournamentBySocket(ws: WebSocket): Tournament | undefined {
-    const playerId = this.socketToPlayerId.get(ws);
-    if (!playerId) return;
+  public getPlayerTournament(playerId: string) {
     return this.playerTournaments.get(playerId);
   }
 
@@ -30,13 +26,11 @@ export class TournamentManager {
   public async attributePlayerToTournament(ws: WebSocket, settings: leanGameSettings) {
     await this.clearEndedTournaments(this.getTournaments(settings.gameType));
     const { playerID } = settings;
-    this.playerSockets.set(playerID, ws);
-    this.socketToPlayerId.set(ws, playerID);
     if (!(await this.foundTournament(ws, settings))) {
       await this.createTournament(ws, settings);
     }
     // TODO: Pass start logic to Tournament
-    const playerTournament = this.getPlayerTournamentBySocket(ws);
+    const playerTournament = this.playerTournaments.get(playerID);
     if (playerTournament && playerTournament.isFull()) await playerTournament.start();
   }
 
@@ -76,19 +70,11 @@ export class TournamentManager {
     );
   }
 
-  public async removePlayerTournament(ws: WebSocket) {
-    const playerId = this.socketToPlayerId.get(ws);
-    if (!playerId) return;
+  public async removePlayerTournament(playerId: string) {
     const tournament = this.playerTournaments.get(playerId);
     if (!tournament) return;
-    await tournament.removePlayer(ws);
-    this.cleanupPlayer(playerId, ws);
-  }
-
-  private cleanupPlayer(playerId: string, ws: WebSocket) {
+    await tournament.removePlayer(playerId);
     this.playerTournaments.delete(playerId);
-    this.playerSockets.delete(playerId);
-    this.socketToPlayerId.delete(ws);
   }
 
   private async clearEndedTournaments(tournaments: Tournament[]) {
