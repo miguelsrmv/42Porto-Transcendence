@@ -9,5 +9,6 @@ dev.db
 *.log
 **/blockchain_address.txt
 **/output/
+**/broadcast/
 settings.json
 avatar/
