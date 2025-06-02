@@ -41,6 +41,11 @@ contract TournamentsStorage {
     string[] classicTournamentsUUID;
     string[] crazyTournamentsUUID;
 
+    // CONSTRUCTOR***************************************************************
+    constructor() {
+        i_owner = msg.sender;
+    }
+
     // MODIFIERS ****************************************************************
     modifier onlyOwner() {
         require(i_owner == msg.sender, "Ownership Assertion: Caller of the function is not the owner.");
