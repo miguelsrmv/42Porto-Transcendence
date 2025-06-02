@@ -100,13 +100,20 @@ export class GameSession {
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
     this.broadcastPlayerLeftMessage(playerWhoStayed);
     if (this.tournament && this.tournament.state === tournamentState.ongoing) {
+      const player = this.players.find((p) => p.id === playerWhoStayed.id);
+      const leavingPlayer = this.players.find((p) => p.id === playerWhoLeft.id);
+      if (!player || !leavingPlayer) return;
       // TODO: Check if order of users matter
       const data: BlockchainScoreData = {
         tournamentId: this.tournament.id,
         gameType: gameTypeToEnum(this.tournament.type),
-        player1Id: playerWhoStayed.id,
+        player1Data: [player.id, player.alias, player.character?.name ?? 'NONE'],
         score1: 5, // hard-coded win
-        player2Id: playerWhoLeft.id,
+        player2Data: [
+          leavingPlayer.id,
+          leavingPlayer.alias,
+          leavingPlayer.character?.name ?? 'NONE',
+        ],
         score2: playerWhoLeft.score,
       };
       await this.tournament.updateSessionScore(this, playerWhoStayed.id, data);
