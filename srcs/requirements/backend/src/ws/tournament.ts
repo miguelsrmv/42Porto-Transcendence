@@ -143,7 +143,7 @@ export class Tournament {
     this.broadcastStatus(this.players);
     const data = this.getTournamentCreateData();
     console.log(`Starting tournament: ${JSON.stringify(data)}`);
-    let currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
+    const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
     try {
       const tx = await contractSigner.joinTournament(
         data.tournamentId,
@@ -183,7 +183,7 @@ export class Tournament {
     data: BlockchainScoreData,
   ) {
     if (sessionToUpdate.winner) return;
-    let currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
+    const currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
     try {
       // TODO: Check if order of users matter
       const tx = await contractSigner.saveScoreAndAddWinner(
