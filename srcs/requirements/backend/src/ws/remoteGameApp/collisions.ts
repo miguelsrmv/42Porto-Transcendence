@@ -43,14 +43,14 @@ export async function checkGoal(gameArea: GameArea) {
     gameArea.stats.right.increaseGoals();
     gameArea.stats.left.increaseSufferedGoals();
     const gameGoal: ServerMessage = { type: 'game_goal', scoringSide: 'right' };
-    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
+    gameArea.session.broadcastMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   } else if (gameArea.leftPlayer.ball.x + gameArea.leftPlayer.ball.radius >= CANVAS_WIDTH) {
     gameArea.leftPlayer.increaseScore();
     gameArea.stats.left.increaseGoals();
     gameArea.stats.right.increaseSufferedGoals();
     const gameGoal: ServerMessage = { type: 'game_goal', scoringSide: 'left' };
-    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
+    gameArea.session.broadcastMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   }
   if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer)) {

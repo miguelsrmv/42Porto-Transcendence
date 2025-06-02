@@ -4,8 +4,6 @@ import { GameSession } from './gameSession';
 
 export class GameSessionManager {
   private sessions: Map<gameType, GameSession[]> = new Map();
-  private playerSockets: Map<string, WebSocket> = new Map();
-  private socketToPlayerId: Map<WebSocket, string> = new Map();
   private playerSessions: Map<string, GameSession> = new Map();
 
   constructor() {
@@ -17,8 +15,8 @@ export class GameSessionManager {
     return this.sessions.get(type)!;
   }
 
-  private getSessionByPlayerId(playerId: string): GameSession {
-    return this.playerSessions.get(playerId)!;
+  public getSessionByPlayerId(playerId: string) {
+    return this.playerSessions.get(playerId);
   }
 
   public isPlayerInSession(playerId: string): boolean {
@@ -27,12 +25,10 @@ export class GameSessionManager {
 
   public async attributePlayerToSession(ws: WebSocket, settings: leanGameSettings) {
     const { playerID } = settings;
-    this.playerSockets.set(playerID, ws);
-    this.socketToPlayerId.set(ws, playerID);
     if (!(await this.foundSession(ws, settings))) {
       await this.createSession(ws, settings);
     }
-    const session = this.getSessionByPlayerId(playerID);
+    const session = this.getSessionByPlayerId(playerID)!;
     if (session.isFull()) session.startGame();
   }
 
@@ -63,29 +59,15 @@ export class GameSessionManager {
     );
   }
 
-  public getSessionBySocket(ws: WebSocket): GameSession | undefined {
-    const playerId = this.socketToPlayerId.get(ws);
-    if (!playerId) return;
-    return this.playerSessions.get(playerId);
-  }
-
-  public async removePlayerBySocket(ws: WebSocket) {
-    const playerId = this.socketToPlayerId.get(ws);
-    if (!playerId) return;
+  public async removePlayer(playerId: string) {
     const session = this.getSessionByPlayerId(playerId);
     if (!session) return;
-    await session.removePlayer(ws);
+    await session.removePlayer(playerId);
     await session.clear();
-    this.cleanupPlayer(playerId, ws);
+    this.playerSessions.delete(playerId);
     if (session.players.length === 0) {
       this.removeSession(session);
     }
-  }
-
-  private cleanupPlayer(playerId: string, ws: WebSocket) {
-    this.playerSessions.delete(playerId);
-    this.playerSockets.delete(playerId);
-    this.socketToPlayerId.delete(ws);
   }
 
   public removeSession(session: GameSession) {
