@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {console} from "forge-std/Script.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
@@ -133,6 +134,10 @@ contract TournamentsStorage {
             data[dataIndex] = "";
             dataIndex++;
         }
+        console.log("index[0]", data[0]);
+        console.log("index[1]", data[1]);
+        console.log("index[2]", data[2]);
+        console.log("index[3]", data[3]);
 
         return data;
     }
