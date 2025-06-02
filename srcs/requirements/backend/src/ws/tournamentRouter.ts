@@ -37,12 +37,9 @@ function movementHandler(socket: WebSocket, direction: string) {
   const playerId = playerManager.getPlayerId(socket);
   if (!playerId) return;
   const playerTournament = tournamentManager.getPlayerTournament(playerId);
-  const gameSession = playerTournament?.getPlayerSession(socket);
+  const gameSession = playerTournament?.getPlayerSession(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
   ownPlayer.input = direction as PlayerInput;
 }
 
@@ -50,12 +47,9 @@ async function powerUpHandler(socket: WebSocket) {
   const playerId = playerManager.getPlayerId(socket);
   if (!playerId) return;
   const playerTournament = tournamentManager.getPlayerTournament(playerId);
-  const gameSession = playerTournament?.getPlayerSession(socket);
+  const gameSession = playerTournament?.getPlayerSession(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
   await ownPlayer.attack?.attack();
 }
 

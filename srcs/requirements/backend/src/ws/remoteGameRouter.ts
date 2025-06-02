@@ -37,10 +37,7 @@ function movementHandler(socket: WebSocket, direction: string) {
   if (!playerId) return;
   const gameSession = sessionManager.getSessionByPlayerId(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
   ownPlayer.input = direction as PlayerInput;
 }
 
@@ -49,10 +46,7 @@ async function powerUpHandler(socket: WebSocket) {
   if (!playerId) return;
   const gameSession = sessionManager.getSessionByPlayerId(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
   await ownPlayer.attack?.attack();
 }
 
