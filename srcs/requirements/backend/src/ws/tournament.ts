@@ -46,8 +46,6 @@ export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
   type: gameType;
-  // TODO: Get id as nbr of tournaments on blockchain
-  // id: number = 0;
   id: string = randomUUID();
   currentRound: number = 1;
   players: PlayerInfo[] = [];
