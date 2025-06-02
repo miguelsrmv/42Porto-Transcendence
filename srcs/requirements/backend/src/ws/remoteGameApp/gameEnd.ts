@@ -7,6 +7,7 @@ import { gameTypeToEnum, gameTypeToGameMode } from '../../utils/helpers';
 import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
 import { BlockchainScoreData } from '../tournament';
 import { closeSocket } from '../helpers';
+import { ServerMessage } from './types';
 
 const characterNameToCharacter: Record<string, Character> = {
   Mario: Character.MARIO,
@@ -94,8 +95,11 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
   gameArea.session.broadcastEndGameMessage(winningPlayer);
   losingPlayer.isEliminated = true;
-  closeSocket(losingPlayer.socket);
   if (gameArea.tournament) {
+    if (losingPlayer.socket.readyState === WebSocket.OPEN) {
+      const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
+      losingPlayer.socket.send(endTournamentMSg);
+    }
     const data: BlockchainScoreData = {
       tournamentId: gameArea.tournament.id,
       gameType: gameTypeToEnum(gameArea.tournament.type),
@@ -110,4 +114,5 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     await createMatch(winningPlayer, gameArea);
     await updateLeaderboardRemote(winningPlayer, losingPlayer);
   }
+  closeSocket(losingPlayer.socket);
 }
