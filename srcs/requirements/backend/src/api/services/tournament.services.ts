@@ -2,7 +2,7 @@ import { tournamentPlayer } from '../../ws/remoteGameApp/types';
 import { prisma } from '../../utils/prisma';
 
 export function processTournamentData(data: string) {
-  
+  return data;
 }
 
 export async function generateTournamentData(tournamentId: string) {

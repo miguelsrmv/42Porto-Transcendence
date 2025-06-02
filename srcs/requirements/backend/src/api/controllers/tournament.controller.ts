@@ -9,16 +9,17 @@ export type TournamentPlayerInfo = {
   userId: string;
 };
 
-export async function getTournamentById(
+export async function getTournamentStatus(
   request: FastifyRequest<{ Body: TournamentPlayerInfo }>,
   reply: FastifyReply,
 ) {
   try {
     // const data = await generateTournamentData(request.params.id);
-    const rawData: string = await contractProvider.getPlayerTournamentScores(
+    const rawData = await contractProvider.getPlayerTournamentScores(
       request.body.tournamentId,
       request.body.userId,
     );
+    console.log(`Tournament status: ${rawData}`);
     const data = processTournamentData(rawData);
     reply.send(data);
   } catch (error) {
