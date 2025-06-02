@@ -21,7 +21,7 @@ export type MatchInfo = {
 };
 
 export type TournamentAndType = {
-  tournamentId: bigint;
+  tournamentId: string;
   type: GameMode;
 };
 
@@ -49,60 +49,60 @@ export async function getTournamentById(
   }
 }
 
-export async function saveTournamentScore(
-  request: FastifyRequest<{ Body: MatchInfo }>,
-  reply: FastifyReply,
-) {
-  try {
-    const { tournamentId, userOneId, userTwoId, scoreOne, scoreTwo } = request.body;
+// export async function saveTournamentScore(
+//   request: FastifyRequest<{ Body: MatchInfo }>,
+//   reply: FastifyReply,
+// ) {
+//   try {
+//     const { tournamentId, userOneId, userTwoId, scoreOne, scoreTwo } = request.body;
 
-    if (!tournamentId) {
-      return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
-    }
+//     if (!tournamentId) {
+//       return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
+//     }
 
-    const tx = await contractSigner.saveScore(
-      BigInt(tournamentId),
-      userOneId,
-      BigInt(scoreOne),
-      userTwoId,
-      BigInt(scoreTwo),
-    );
-    await tx.wait();
+//     const tx = await contractSigner.saveScore(
+//       tournamentId,
+//       userOneId,
+//       BigInt(scoreOne),
+//       userTwoId,
+//       BigInt(scoreTwo),
+//     );
+//     await tx.wait();
 
-    reply.send('OK');
-  } catch (error) {
-    console.error('Error in saveTournamentScore:', error);
-    handleError(error, reply);
-  }
-}
+//     reply.send('OK');
+//   } catch (error) {
+//     console.error('Error in saveTournamentScore:', error);
+//     handleError(error, reply);
+//   }
+// }
 
-export async function addMatchWinner(
-  request: FastifyRequest<{ Body: WinnerInfo }>,
-  reply: FastifyReply,
-) {
-  try {
-    const { tournamentId, userId } = request.body;
+// export async function addMatchWinner(
+//   request: FastifyRequest<{ Body: WinnerInfo }>,
+//   reply: FastifyReply,
+// ) {
+//   try {
+//     const { tournamentId, userId } = request.body;
 
-    if (!tournamentId) {
-      return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
-    }
+//     if (!tournamentId) {
+//       return reply.status(400).send({ error: 'tournamentId must be provided (starting point)' });
+//     }
 
-    const tx = await contractSigner.addWinner(BigInt(tournamentId), userId);
-    await tx.wait();
+//     const tx = await contractSigner.addWinner(tournamentId, userId);
+//     await tx.wait();
 
-    reply.send('OK');
-  } catch (error) {
-    console.error('Error in addWinner:', error);
-    handleError(error, reply);
-  }
-}
+//     reply.send('OK');
+//   } catch (error) {
+//     console.error('Error in addWinner:', error);
+//     handleError(error, reply);
+//   }
+// }
 
 export async function getUserLastThreeTournaments(
   request: FastifyRequest<{ Body: TournamentsFromPlayer; Params: IParams }>,
   reply: FastifyReply,
 ) {
   try {
-    const tx = await contractProvider.getLastThreeTournamentsPosition(BigInt(request.params.id), request.body.tournamentsIdsandTypes);
+    const tx = await contractProvider.getLastThreeTournamentsPosition(request.params.id, request.body.tournamentsIdsandTypes);
 
     reply.send('OK');
   } catch (error) {
