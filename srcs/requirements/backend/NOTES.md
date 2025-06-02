@@ -85,5 +85,4 @@ Then run `npm run populate` inside the backend container (alternatively, run `ma
 - Allow user to be logged in on multiple computers? 
 - Organize functions in each file
 - Test edge cases
-- Add match creation logic in tournaments
 - Add more tests
