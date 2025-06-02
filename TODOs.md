@@ -1,8 +1,6 @@
 # Frontend
 
 # Backend
-- Deal with receiving ready_for_next_game before round ends
-- Add ready for next round logic (game_end -> display stats -> client sends ready_for_next_game -> "waiting for next game" -> once every winner sent ready_for_next_game, send tournament_status -> display status -> 10s later send game_start)
 - Connect tournament logic to Blockchain (in progress)
 - Tournament brackets management
 - Check user stats match leaderboard
