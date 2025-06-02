@@ -2,10 +2,7 @@
 
 # Backend
 - join_game on WS connection?
-- Connect tournament logic to Blockchain (in progress)
-- Tournament brackets management
-
-- Deal with re-connections and lag 
+- Deal with re-connections and lag (player_lagging, player_reconnected)
 - Review heartbeat times
 
 - Parse player settings ?

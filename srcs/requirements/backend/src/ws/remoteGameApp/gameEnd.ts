@@ -98,12 +98,23 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   if (gameArea.tournament) {
     const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
     gameArea.session.sendToPlayer(losingPlayer.id, endTournamentMSg);
+    const winningPlayerInfo = gameArea.session.players.find((p) => p.id === winningPlayer.id);
+    const losingPlayerInfo = gameArea.session.players.find((p) => p.id === losingPlayer.id);
+    if (!winningPlayerInfo || !losingPlayerInfo) return;
     const data: BlockchainScoreData = {
       tournamentId: gameArea.tournament.id,
       gameType: gameTypeToEnum(gameArea.tournament.type),
-      player1Id: winningPlayer.id,
+      player1Data: [
+        winningPlayerInfo.id,
+        winningPlayerInfo.alias,
+        winningPlayerInfo.character?.name ?? 'NONE',
+      ],
       score1: winningPlayer.score,
-      player2Id: losingPlayer.id,
+      player2Data: [
+        losingPlayerInfo.id,
+        losingPlayerInfo.alias,
+        losingPlayerInfo.character?.name ?? 'NONE',
+      ],
       score2: losingPlayer.score,
     };
     console.log(`Game ended, winner: ${winningPlayer.alias}`);
