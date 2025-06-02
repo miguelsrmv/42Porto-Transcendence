@@ -6,7 +6,7 @@ import WebSocket from 'ws';
 import { prisma } from '../utils/prisma';
 import { gameTypeToEnum, gameTypeToGameMode } from '../utils/helpers';
 import { updateLeaderboardTournament } from '../api/services/leaderboard.services';
-import { contractSigner } from '../api/services/blockchain.services';
+import { contractSigner, wallet, provider } from '../api/services/blockchain.services';
 import {
   closeSocket,
   playerInfoToPlayerSettings,
@@ -144,11 +144,15 @@ export class Tournament {
     this.broadcastStatus(this.players);
     const data = this.getTournamentCreateData();
     console.log(`Starting tournament: ${JSON.stringify(data)}`);
+    let currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
     try {
       const tx = await contractSigner.joinTournament(
         data.tournamentId,
         data.gameType,
         data.participants,
+        {
+          nonce: currentNonce
+        }
       );
       await tx.wait();
     } catch (err) {
@@ -180,6 +184,7 @@ export class Tournament {
     data: BlockchainScoreData,
   ) {
     if (sessionToUpdate.winner) return;
+    let currentNonce = await provider.getTransactionCount(wallet.address, 'pending');
     try {
       // TODO: Check if order of users matter
       const tx = await contractSigner.saveScoreAndAddWinner(
@@ -188,6 +193,9 @@ export class Tournament {
         data.score1,
         data.player2Id,
         data.score2,
+        {
+          nonce: currentNonce
+        }
       );
       await tx.wait();
     } catch (err) {
