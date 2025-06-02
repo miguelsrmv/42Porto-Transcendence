@@ -33,7 +33,7 @@ contract TournamentsStorage {
 
     struct TournamentIdAndType {
         string id;
-        TournamentsStorage.gameType gameType;
+        gameType typeOfGame;
     }
 
     mapping(string => Tournament) private tournamentsMap;
