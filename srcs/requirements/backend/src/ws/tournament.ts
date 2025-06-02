@@ -313,11 +313,11 @@ export class Tournament {
   }
 
   // NOTE: only removing player from session from current round
-  public async removePlayer(socket: WebSocket) {
+  public async removePlayer(playerId: string) {
     console.log('Removing player in tournament');
-    const playerSessions = this.sessions.filter((s) => s.playerIsInSession(socket));
+    const playerSessions = this.sessions.filter((s) => s.playerIsInSession(playerId));
     for (const session of playerSessions) {
-      await session.removePlayer(socket);
+      await session.removePlayer(playerId);
       if (session.isEmpty()) this.removeSession(session);
     }
   }
