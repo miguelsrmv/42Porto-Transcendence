@@ -118,13 +118,6 @@ export class Tournament {
     );
   }
 
-  private sendToPlayerCloseSocket(player: PlayerInfo, message: string) {
-    if (player.socket.readyState === WebSocket.OPEN) {
-      player.socket.send(message);
-      closeSocket(player.socket);
-    }
-  }
-
   public broadcastSettingsToSessions() {
     this.sessions.forEach((s) => {
       const message: ServerMessage = { type: 'game_setup', settings: s.getJointSettings() };
@@ -241,12 +234,8 @@ export class Tournament {
     this.roundWinners = this.determineRoundWinners();
     if (this.roundWinners.length <= 1) {
       console.log('Tournament has ended');
-      // TODO: send winner score ?
       if (this.roundWinners.length === 1) {
-        this.sendToPlayerCloseSocket(
-          this.roundWinners[0],
-          JSON.stringify({ type: 'tournament_end' } as ServerMessage),
-        );
+        closeSocket(this.roundWinners[0].socket);
       }
 
       this.state = tournamentState.ended;
