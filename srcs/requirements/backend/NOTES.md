@@ -83,7 +83,7 @@ Then run `npm run populate` inside the backend container (alternatively, run `ma
 
 ## TODOs
 - Allow user to be logged in on multiple computers? 
-- Remove unused functions/routes
+- Remove unused functions/routes/types
 - Organize functions in each file
 - Test edge cases
 - Add more tests
