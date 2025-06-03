@@ -1,9 +1,5 @@
 Edit layout depending on tournament end
 
-Make tournament showcase on rankings smaller
-
-Check layout on main screen
-
 Create local tournament
 
 Show match stats on rankings
