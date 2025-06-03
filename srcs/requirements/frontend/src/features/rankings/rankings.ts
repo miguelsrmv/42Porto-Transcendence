@@ -121,8 +121,7 @@ async function renderTopLeftBoard(userId: string): Promise<void> {
     const stats: statsData = statsJson.stats;
     userRanking.innerText = stats.rank.toString();
     userWL.innerText = `${stats.wins}/${stats.losses}`;
-    // TODO: Change once API is available
-    userTournaments.innerText = 'WAITING';
+    userTournaments.innerText = stats.tournaments.toString();
     userPoints.innerText = stats.points.toString();
   } catch (error) {
     console.error('Network error fetching user stats:', error);
@@ -246,45 +245,48 @@ async function renderTournamentBoard(userId: string): Promise<void> {
   }
 
   // HACK: Mock data so far
-  for (let index: number = 0; index < 3; index++) {
-    const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
-    let result;
-    if (index == 0) result = 'Finals';
-    else if (index == 1) result = 'Semifinals';
-    else result = 'Winner';
-    const mockTournamentData: tournamentData = {
-      id: String(index),
-      uuid: 'acde070d-8c4c-4f0d-9d8a-162843c10333',
-      tournamentResult: result,
-    };
-    updateNodeWithRecentTournamentData(clone, mockTournamentData);
-    const tournament = clone.querySelector('.recent-tournament') as HTMLElement;
-    if (!tournament) return;
-    tournament.setAttribute('data-id', mockTournamentData.uuid);
-    recentTournamentSection.appendChild(clone);
-  }
+  // for (let index: number = 0; index < 3; index++) {
+  //   const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
+  //   let result;
+  //   if (index == 0) result = 'Finals';
+  //   else if (index == 1) result = 'Semifinals';
+  //   else result = 'Winner';
+  //   const mockTournamentData: tournamentData = {
+  //     id: String(index),
+  //     uuid: 'acde070d-8c4c-4f0d-9d8a-162843c10333',
+  //     tournamentResult: result,
+  //   };
+  //   updateNodeWithRecentTournamentData(clone, mockTournamentData);
+  //   const tournament = clone.querySelector('.recent-tournament') as HTMLElement;
+  //   if (!tournament) return;
+  //   tournament.setAttribute('data-id', mockTournamentData.uuid);
+  //   recentTournamentSection.appendChild(clone);
+  // }
 
   // TODO: Implement once route actually does what it's supposed to do
-  //
-  // try {
-  //   const response = await fetch(`api/matches/user/${userId}`, {
-  //     method: 'GET',
-  //     credentials: 'include',
-  //   });
-  //   if (!response.ok) {
-  //     console.error('Error fetching user response matches:', response.status);
-  //     return;
-  //   }
-  //   const recentTournamentsArray: tournamentData[] = await response.json();
-  //   for (let index: number = 0; index < 3 && index < recentTournamentsArray.length; index++) {
-  //     const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
-  //     await updateNodeWithRecentTournamentData(clone, recentTournamentsArray[index]);
-  //     recentMatchesSection.appendChild(clone);
-  //   }
-  // } catch (error) {
-  //   console.error('Network error fetching recent matches:', error);
-  //   return;
-  // }
+
+  try {
+    const response = await fetch(`api/tournaments/user/${userId}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching user response matches:', response.status);
+      return;
+    }
+    const recentTournamentsArray: tournamentData[] = await response.json();
+    for (let index: number = 0; index < 3 && index < recentTournamentsArray.length; index++) {
+      const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
+      await updateNodeWithRecentTournamentData(clone, recentTournamentsArray[index]);
+      const tournament = clone.querySelector('.recent-tournament') as HTMLElement;
+      if (!tournament) return;
+      tournament.setAttribute('data-id', recentTournamentsArray[index].tournamentId);
+      recentTournamentSection.appendChild(clone);
+    }
+  } catch (error) {
+    console.error('Network error fetching recent matches:', error);
+    return;
+  }
 
   addTournamentModal();
 }
@@ -335,10 +337,11 @@ async function displayTournamentData(uuid: string): Promise<void> {
       console.error('Error fetching tournament:', response.status);
       return;
     }
-    //const tournamentData: tournamentPlayer[] = await response.json();
-    const tournamentMockData: tournamentPlayer[] = getMockData();
+    console.log('Response: ', response);
+    const tournamentData: tournamentPlayer[] = await response.json();
+    console.log('JSON response: ', tournamentData);
     openTournamentModal();
-    showTournamentResults(tournamentMockData);
+    showTournamentResults(tournamentData);
   } catch (error) {
     console.error('Network error fetching recent tournament:', error);
     return;
@@ -506,11 +509,10 @@ async function updateNodeWithRecentTournamentData(
     return;
   }
 
-  recentTournamentID.innerText = recentTournament.id;
+  recentTournamentID.innerText = `#${recentTournament.tournamentId.split('-')[0]}`;
+  recentTournamentResult.innerText = recentTournament.position;
 
-  recentTournamentResult.innerText = recentTournament.tournamentResult;
-
-  const colour = recentTournament.tournamentResult === 'Winner' ? 'green' : 'red';
+  const colour = recentTournament.position === 'Winner' ? 'green' : 'red';
   recentTournamentResult.classList.add(`text-${colour}-400`);
   recentTournamentScoreIndicator.classList.add(`bg-${colour}-500`);
 }
@@ -642,8 +644,7 @@ async function updateNodeWithLeaderboardPlayer(
     const stats: statsData = statsJson.stats;
     userRank.innerText = `#${stats.rank}`;
     userWL.innerText = `${stats.wins}/${stats.losses}`;
-    // TODO: Change once API is available
-    userTournamentsWon.innerText = 'WAITING';
+    userTournamentsWon.innerText = stats.tournaments.toString();
     userPoints.innerText = stats.points.toString();
     user.setAttribute('data-ranking', stats.rank.toString());
     user.setAttribute('data-user-id', element.userId.toString());
