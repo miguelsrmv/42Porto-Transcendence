@@ -84,10 +84,6 @@ function fillParticipants(
   const playerElements = tournamentBlock.querySelectorAll(`.${phase}`);
   const scoreElements = tournamentBlock.querySelectorAll(`.${phase}Score`);
 
-  // TODO: Remove after bug fixing / checking everything is working alright
-  console.log('Trimmed participants: ', trimmedParticipants);
-  console.log(phase, ' ', playerElements);
-
   hideFutureMatches(tournamentBlock, phase, trimmedParticipants);
 
   for (let i = 0; i < trimmedParticipants.length; i++) {
@@ -114,11 +110,14 @@ function hideFutureMatches(
   phase: TournamentPhase,
   trimmedParticipants: tournamentPlayer[],
 ): void {
-  if (trimmedParticipants.length) return;
+  //if (trimmedParticipants.length) return;
 
   let phaseToHide;
-  if (phase === TournamentPhase.Semi) phaseToHide = 'semifinals';
-  else if (phase === TournamentPhase.Final) phaseToHide = 'finals';
+
+  console.log("I'm on phase ", phase);
+
+  if (phase === TournamentPhase.Quarter) phaseToHide = 'finals';
+  //  else if (phase === TournamentPhase.Semi) phaseToHide = 'finals';
   else return;
 
   const elementsToHide = tournamentBlock.querySelectorAll(`.${phaseToHide}`);
