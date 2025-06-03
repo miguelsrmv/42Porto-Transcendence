@@ -16,7 +16,10 @@ import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatus.typ
 import { showTournamentResults } from '../../ui/tournamentStatus/tournamentStatus.js';
 import { fadeIn, fadeOut } from '../../ui/animations.js';
 import { wait } from '../../utils/helpers.js';
-import { getCharacterPathFromBackend } from '../game/characterData/characterData.js';
+import {
+  getCharacterPathFromBackend,
+  getAccentColourFromBackend,
+} from '../game/characterData/characterData.js';
 
 /**
  * @brief Initializes the view for the rankings page.
@@ -378,8 +381,9 @@ function editHUD(clone: DocumentFragment, matchData: matchData, side: string): v
     ? (userCharacter = matchData.user1Character)
     : (userCharacter = matchData.user2Character);
 
-  console.log('I got ', userCharacter, ' on the ', side);
   playerPortrait.src = getCharacterPathFromBackend(userCharacter);
+
+  // TODO: Accent colour, avatar, hide character if not crazy
 }
 
 function editStats(clone: DocumentFragment, matchData: matchData): void {}
