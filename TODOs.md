@@ -1,4 +1,3 @@
-# Frontend
 
 # Backend
 - join_game on WS connection?
@@ -11,6 +10,9 @@
 - Make responses more uniform
 - Protect all routes in the end (except login/sign up related)
 - Remove populate from running automatically on project delivery
+
+NEW:
+- WAITING FOR NEXT GAME: too long?? 
 
 # Blockchain
 - Test data persistence on Blockchain
