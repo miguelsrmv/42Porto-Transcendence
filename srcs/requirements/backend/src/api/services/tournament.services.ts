@@ -4,12 +4,14 @@ import { prisma } from '../../utils/prisma';
 // TODO: create tournament_status type data
 export function processTournamentData(data: string[], scores: number[]) {
   if (data.length !== 15 && scores.length !== 14) return;
-  const playerData = data.flatMap((p) => {
-    return {
-      id: p[0],
-      alias: p[1],
-    };
-  });
+  const playerData = data
+    .filter((s) => s[0] !== '')
+    .flatMap((p) => {
+      return {
+        id: p[0],
+        alias: p[1],
+      };
+    });
   console.log(`Players: ${JSON.stringify(playerData)}`);
 }
 
