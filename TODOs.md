@@ -11,8 +11,11 @@
 - Protect all routes in the end (except login/sign up related)
 - Remove populate from running automatically on project delivery
 
+<<<<<<< HEAD
 NEW:
 - WAITING FOR NEXT GAME: too long?? 
 
+=======
+>>>>>>> Backend
 # Blockchain
 - Test data persistence on Blockchain

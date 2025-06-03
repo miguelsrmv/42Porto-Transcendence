@@ -280,9 +280,9 @@ export class Tournament {
   }
 
   private async startRound() {
+    this.broadcastStatus(this.roundWinners);
     ++this.currentRound;
     console.log(`Advancing to round ${this.currentRound}`);
-    this.broadcastStatus(this.roundWinners);
     await this.createNextRoundSessions();
     await wait(10);
     this.sessions

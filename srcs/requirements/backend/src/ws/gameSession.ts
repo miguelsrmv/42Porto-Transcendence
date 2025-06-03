@@ -65,6 +65,7 @@ export class GameSession {
   round: number = 1;
   gameArea: GameArea | null = null;
   tournament?: Tournament;
+  aliases: string[] = [];
 
   constructor(gameType: gameType, playType: playType) {
     this.gameType = gameType;
@@ -82,6 +83,7 @@ export class GameSession {
         playerSettings.character,
       ),
     );
+    this.aliases.push(playerSettings.alias);
   }
 
   async removePlayer(playerId: string) {

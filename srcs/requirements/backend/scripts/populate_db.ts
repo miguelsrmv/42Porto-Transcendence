@@ -134,6 +134,7 @@ async function createMatches(users: User[]) {
       const match = await prisma.match.create({
         data: {
           settings: '',
+          stats: '',
           user1Id: participants[0].id,
           user2Id: participants[1].id,
           user1Score: score1,
@@ -184,6 +185,7 @@ async function createTestUserMatches(users: User[]) {
     await prisma.match.create({
       data: {
         settings: '',
+        stats: '',
         user1Id: testUser!.id,
         user2Id: users[i].id,
         user1Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
