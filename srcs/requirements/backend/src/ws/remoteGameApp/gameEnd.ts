@@ -66,10 +66,12 @@ export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: Gam
       user2Score: gameArea.rightPlayer === winningPlayer ? 5 : gameArea.stats.right.goals,
       mode: gameMode,
       settings: filterGameSettings(gameArea.settings),
+      stats: JSON.stringify(gameArea.stats),
     },
   });
 }
 
+// TODO: filter stats saved
 async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
   const [character1, character2] = getCharacters(gameArea.settings);
@@ -84,6 +86,7 @@ async function createMatch(winningPlayer: Player, gameArea: GameArea) {
       user2Score: gameArea.stats.right.goals,
       mode: gameMode,
       settings: filterGameSettings(gameArea.settings),
+      stats: JSON.stringify(gameArea.stats),
     },
   });
 }
