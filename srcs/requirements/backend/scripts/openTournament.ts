@@ -16,12 +16,6 @@ async function simulateClient(browser: Browser, index: number) {
   await page.fill('#login-password', MOCK_PASSWORD);
   await page.click('button#login-submit-button');
 
-  await page.waitForFunction(() => localStorage.getItem('ID') !== null, {}, { timeout: 5000 });
-
-  await page.click('button#tournament-play-button');
-  await page.waitForTimeout(500);
-  await page.click('crazy-pong-button');
-
   // Don't close context or tab
 }
 
