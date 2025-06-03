@@ -56,6 +56,10 @@ export class Tournament {
     this.type = type;
   }
 
+  hasAlias(alias: string): boolean {
+    return this.sessions.some((s) => s.aliases.some((a) => a === alias));
+  }
+
   // TODO: Create first session on Tournament constructor
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     const newSession = new GameSession(this.type, 'Tournament Play');
@@ -67,6 +71,7 @@ export class Tournament {
       JSON.stringify(newSession.print()),
     );
     this.sessions.push(newSession);
+    return newSession;
   }
 
   public async attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {

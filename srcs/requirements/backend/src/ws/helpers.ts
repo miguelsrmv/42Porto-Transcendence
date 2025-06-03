@@ -40,6 +40,7 @@ export function areGameSettingsValid(
     return false;
   }
   // TODO: validate character
+  // TODO: Trim alias
   return true;
 }
 

@@ -92,6 +92,8 @@ export class GameSession {
     console.log(`Removing ${playerToRemove.alias}`);
     const index = this.players.indexOf(playerToRemove);
     if (index !== -1) this.players.splice(index, 1);
+    const indexAlias = this.aliases.indexOf(playerToRemove.alias);
+    if (indexAlias !== -1) this.aliases.splice(indexAlias, 1);
     if (!this.gameArea) return;
     this.gameArea.stop();
     if (this.players.length === 0) return;
