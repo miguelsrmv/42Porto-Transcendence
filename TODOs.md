@@ -12,8 +12,5 @@
 - Protect all routes in the end (except login/sign up related)
 - Remove populate from running automatically on project delivery
 
-NEW:
-- Missing Tournament IDs so I can ask for tournament information on Rankings page
-
 # Blockchain
 - Test data persistence on Blockchain
