@@ -1,5 +1,0 @@
-Edit layout depending on tournament end
-
-Create local tournament
-
-Show match stats on rankings
