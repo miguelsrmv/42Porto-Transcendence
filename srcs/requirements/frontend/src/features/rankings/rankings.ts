@@ -16,6 +16,7 @@ import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatus.typ
 import { showTournamentResults } from '../../ui/tournamentStatus/tournamentStatus.js';
 import { fadeIn, fadeOut } from '../../ui/animations.js';
 import { wait } from '../../utils/helpers.js';
+import { getCharacterPathFromBackend } from '../game/characterData/characterData.js';
 
 /**
  * @brief Initializes the view for the rankings page.
@@ -321,7 +322,7 @@ async function displayMatchData(id: string): Promise<void> {
   }
 }
 
-function showMatchResults(matchData: any): void {
+function showMatchResults(matchData: matchData): void {
   const matchBlock = document.getElementById('match-stats') as HTMLTemplateElement;
   if (!matchBlock) {
     console.log("Couldn't find matchBlock");
@@ -329,6 +330,10 @@ function showMatchResults(matchData: any): void {
   }
 
   const clone = matchBlock.content.cloneNode(true) as DocumentFragment;
+
+  editHUD(clone, matchData, 'left');
+  editHUD(clone, matchData, 'right');
+  editStats(clone, matchData);
 
   const statsResults = document.getElementById('stats-results') as HTMLDivElement;
   if (!statsResults) {
@@ -338,6 +343,46 @@ function showMatchResults(matchData: any): void {
 
   statsResults.appendChild(clone);
 }
+
+function editHUD(clone: DocumentFragment, matchData: matchData, side: string): void {
+  const playerAvatar = clone.querySelector(
+    `.${side}-match-stats-player-avatar`,
+  ) as HTMLImageElement;
+  if (!playerAvatar) {
+    console.log(`Couldn't find ${side}-match-stats-player-avatar`);
+    return;
+  }
+
+  const playerAlias = clone.querySelector(`.${side}-match-stats-alias`) as HTMLParagraphElement;
+  if (!playerAlias) {
+    console.log(`Couldn't find ${side}-match-stats-alias`);
+    return;
+  }
+
+  const playerPortrait = clone.querySelector(`.${side}-match-stats-portrait`) as HTMLImageElement;
+  if (!playerPortrait) {
+    console.log(`Couldn't find .${side}-match-stats-portrait`);
+    return;
+  }
+
+  const matchSettings = JSON.parse(matchData.settings);
+  let alias;
+  side === 'left' ? (alias = matchSettings.alias1) : (alias = matchSettings.alias2);
+  playerAlias.innerText = alias;
+
+  let userId;
+  side === 'left' ? (userId = matchData.user1Id) : (userId = matchData.user2Id);
+
+  let userCharacter;
+  side === 'left'
+    ? (userCharacter = matchData.user1Character)
+    : (userCharacter = matchData.user2Character);
+
+  console.log('I got ', userCharacter, ' on the ', side);
+  playerPortrait.src = getCharacterPathFromBackend(userCharacter);
+}
+
+function editStats(clone: DocumentFragment, matchData: matchData): void {}
 
 /**
  * @brief Adds event listeners to recent tournament elements to open a modal and display tournament data.

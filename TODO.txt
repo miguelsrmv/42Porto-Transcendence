@@ -1,5 +1,8 @@
-Edit layout depending on tournament end
 
 Create local tournament
 
-Show match stats on rankings
+Edit player avatar on match stats show
+
+Edit match stats themselves
+
+Do something with friends
