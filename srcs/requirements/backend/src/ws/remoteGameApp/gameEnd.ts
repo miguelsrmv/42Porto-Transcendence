@@ -95,8 +95,9 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
   losingPlayer.isEliminated = true;
   if (gameArea.tournament) {
+    const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
+    gameArea.session.sendToPlayer(losingPlayer.id, endTournamentMSg);
     if (gameArea.tournament.currentRound === 3) {
-      const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
       gameArea.session.sendToPlayer(winningPlayer.id, endTournamentMSg);
     }
     gameArea.session.broadcastEndGameMessage(winningPlayer);
