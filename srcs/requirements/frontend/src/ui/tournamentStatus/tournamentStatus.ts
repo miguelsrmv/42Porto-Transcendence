@@ -21,7 +21,11 @@ export function showTournamentStatus(participants: tournamentPlayer[]): void {
   fillParticipants(clone, participants, TournamentPhase.Semi);
   fillParticipants(clone, participants, TournamentPhase.Final);
 
-  const waitingGameModal = document.getElementById('waiting-game-modal') as HTMLDivElement;
+  let waitingGameModal = document.getElementById('waiting-game-modal') as HTMLDivElement;
+  if (!waitingGameModal) {
+    waitingGameModal = document.getElementById('waiting-next-game-modal') as HTMLDivElement;
+  }
+
   if (!waitingGameModal) {
     console.log("Couldn't find tournamentBlock");
     return;
