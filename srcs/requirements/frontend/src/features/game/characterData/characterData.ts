@@ -175,3 +175,48 @@ export function getCharacterPathFromBackend(name: string): string {
 
   return characterList[index].characterAvatarPicturePath;
 }
+
+export function getAccentColourFromBackend(name: string): string {
+  let index: number = 0;
+
+  switch (name) {
+    case 'MARIO':
+      index = 0;
+      break;
+    case 'YOSHI':
+      index = 1;
+      break;
+    case 'DK':
+      index = 2;
+      break;
+    case 'BOWSER':
+      index = 3;
+      break;
+    case 'SONIC':
+      index = 4;
+      break;
+    case 'PIKACHU':
+      index = 5;
+      break;
+    case 'MEWTWO':
+      index = 6;
+      break;
+    case 'LINK':
+      index = 7;
+      break;
+    case 'KIRBY':
+      index = 8;
+      break;
+    case 'SAMUS':
+      index = 9;
+      break;
+    case 'CAPFALCON':
+      index = 10;
+      break;
+    case 'SNAKE':
+      index = 11;
+      break;
+  }
+
+  return characterList[index].accentColour;
+}
