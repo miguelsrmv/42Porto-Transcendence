@@ -36,9 +36,10 @@ export class TournamentManager {
 
   private async foundTournament(ws: WebSocket, settings: leanGameSettings) {
     const openTournament = this.getTournaments(settings.gameType).find(
-      (t) => t.state === tournamentState.creating && !t.hasAlias(settings.alias),
+      (t) => t.state === tournamentState.creating,
     );
     if (openTournament) {
+      if (openTournament.hasAlias(settings.alias)) settings.alias = settings.alias.concat('1');
       await openTournament.attributePlayerToSession(ws, settings);
       if (openTournament.isFull()) openTournament.state = tournamentState.full;
       this.playerTournaments.set(settings.playerID, openTournament);

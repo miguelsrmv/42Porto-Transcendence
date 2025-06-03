@@ -35,8 +35,9 @@ export class GameSessionManager {
   private async foundSession(ws: WebSocket, settings: leanGameSettings): Promise<boolean> {
     const sessions = this.getSessions(settings.gameType);
     for (const session of sessions) {
-      const hasAlias = session.aliases.some((a) => a === settings.alias);
-      if (session.players.length === 1 && !hasAlias) {
+      if (session.aliases.some((a) => a === settings.alias))
+        settings.alias = settings.alias.concat('1');
+      if (session.players.length === 1) {
         this.playerSessions.set(settings.playerID, session);
         await session.setPlayer(ws, settings);
         console.log(
