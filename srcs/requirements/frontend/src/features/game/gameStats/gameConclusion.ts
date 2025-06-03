@@ -203,6 +203,8 @@ function copyHUD(winnerHUD: Node): void {
  * @param playType The type of play (e.g., Local Play, Remote Play).
  */
 function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
+  console.log('Tournament is running: ', tournamentIsRunning);
+
   const playAgainButton = document.getElementById('play-again-button');
   if (!playAgainButton) {
     console.log("Couldn't find Play Again Button");
