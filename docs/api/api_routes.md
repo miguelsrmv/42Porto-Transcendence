@@ -30,12 +30,8 @@
 | `POST`   | `/friends/username`       |                    |                   username                   | Create a friendship between the logged in user and another user |
 | `PATCH`  | `/friends`                |                    |             friendId and status              | Update friendship status                                        |
 | `DELETE` | `/friends/:id`            |   `id` friend id   |                                              | Delete a friendship                                             |
-| `GET`    | `/matches`                |                    |                                              | Get all matches                                                 |
-| `GET`    | `/matches/me`             |                    |                                              | Get all matches of logged in user, ordered by date              |
 | `GET`    | `/matches/user/:id`       |    `id` user id    |                                              | Get all matches from a specific user                            |
 | `GET`    | `/matches/:id`            |   `id` match id    |                                              | Get a specific match                                            |
-| `POST`   | `/matches`                |                    |             user1Id and user2Id              | Create a match                                                  |
-| `PATCH`  | `/matches/:id`            |   `id` match id    |                data to update                | Update data on a specific match                                 |
 | `GET`    | `/tournaments/:id`        | `id` tournament id |                                              | Get data on a specific tournament                               |
 | `GET`    | `/tournaments/user/:id`   |    `id` user id    |                                              | Get user's latest 3 tournaments                                 |
 

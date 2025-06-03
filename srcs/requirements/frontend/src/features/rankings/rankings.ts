@@ -162,12 +162,17 @@ async function renderMatchesBoard(userId: string): Promise<void> {
     for (let index: number = 0; index < 3 && index < recentMatchesArray.length; index++) {
       const clone = recentMatchTemplate.content.cloneNode(true) as DocumentFragment;
       await updateNodeWithRecentMatchesData(clone, recentMatchesArray[index]);
+      const match = clone.querySelector('.recent-match') as HTMLElement;
+      if (!match) return;
+      match.setAttribute('data-id', recentMatchesArray[index].id);
       recentMatchesSection.appendChild(clone);
     }
   } catch (error) {
     console.error('Network error fetching recent matches:', error);
     return;
   }
+
+  addMatchModal();
 }
 
 /**
@@ -244,27 +249,6 @@ async function renderTournamentBoard(userId: string): Promise<void> {
     return;
   }
 
-  // HACK: Mock data so far
-  // for (let index: number = 0; index < 3; index++) {
-  //   const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
-  //   let result;
-  //   if (index == 0) result = 'Finals';
-  //   else if (index == 1) result = 'Semifinals';
-  //   else result = 'Winner';
-  //   const mockTournamentData: tournamentData = {
-  //     id: String(index),
-  //     uuid: 'acde070d-8c4c-4f0d-9d8a-162843c10333',
-  //     tournamentResult: result,
-  //   };
-  //   updateNodeWithRecentTournamentData(clone, mockTournamentData);
-  //   const tournament = clone.querySelector('.recent-tournament') as HTMLElement;
-  //   if (!tournament) return;
-  //   tournament.setAttribute('data-id', mockTournamentData.uuid);
-  //   recentTournamentSection.appendChild(clone);
-  // }
-
-  // TODO: Implement once route actually does what it's supposed to do
-
   try {
     const response = await fetch(`api/tournaments/user/${userId}`, {
       method: 'GET',
@@ -301,6 +285,70 @@ async function renderTournamentBoard(userId: string): Promise<void> {
  *
  * @returns void
  */
+function addMatchModal(): void {
+  const recentMatches = document.querySelectorAll('.recent-match');
+  if (!recentMatches) {
+    console.log("Couldn't find recent matches");
+    return;
+  }
+
+  for (let index: number = 0; index < recentMatches.length; index++) {
+    recentMatches[index].addEventListener('click', async () => {
+      const id = recentMatches[index].getAttribute('data-id') as string;
+      openStatsModal();
+      await displayMatchData(id);
+    });
+  }
+}
+
+async function displayMatchData(id: string): Promise<void> {
+  try {
+    const response = await fetch(`api/matches/${id}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching matchData:', response.status);
+      return;
+    }
+    const matchData: any = await response.json();
+    console.log('Match data: ', matchData);
+    openStatsModal();
+    showMatchResults(matchData);
+  } catch (error) {
+    console.error('Network error fetching recent match:', error);
+    return;
+  }
+}
+
+function showMatchResults(matchData: any): void {
+  const matchBlock = document.getElementById('match-stats') as HTMLTemplateElement;
+  if (!matchBlock) {
+    console.log("Couldn't find matchBlock");
+    return;
+  }
+
+  const clone = matchBlock.content.cloneNode(true) as DocumentFragment;
+
+  const statsResults = document.getElementById('stats-results') as HTMLDivElement;
+  if (!statsResults) {
+    console.log("Couldn't find stats results");
+    return;
+  }
+
+  statsResults.appendChild(clone);
+}
+
+/**
+ * @brief Adds event listeners to recent tournament elements to open a modal and display tournament data.
+ *
+ * This function selects all elements with the class 'recent-tournament' and attaches click event listeners to them.
+ * When clicked, the modal for the tournament is opened, and the tournament data is displayed based on the element's data-id attribute.
+ *
+ * @note If no elements with the class 'recent-tournament' are found, a message is logged to the console.
+ *
+ * @returns void
+ */
 function addTournamentModal(): void {
   const recentTournaments = document.querySelectorAll('.recent-tournament');
   if (!recentTournaments) {
@@ -311,7 +359,7 @@ function addTournamentModal(): void {
   for (let index: number = 0; index < recentTournaments.length; index++) {
     recentTournaments[index].addEventListener('click', async () => {
       const uuid = recentTournaments[index].getAttribute('data-id') as string;
-      openTournamentModal();
+      openStatsModal();
       await displayTournamentData(uuid);
     });
   }
@@ -337,10 +385,8 @@ async function displayTournamentData(uuid: string): Promise<void> {
       console.error('Error fetching tournament:', response.status);
       return;
     }
-    console.log('Response: ', response);
     const tournamentData: tournamentPlayer[] = await response.json();
-    console.log('JSON response: ', tournamentData);
-    openTournamentModal();
+    openStatsModal();
     showTournamentResults(tournamentData);
   } catch (error) {
     console.error('Network error fetching recent tournament:', error);
@@ -356,14 +402,14 @@ async function displayTournamentData(uuid: string): Promise<void> {
  * @returns {Promise<void>} Resolves when the modal hiding process is complete.
  */
 async function handleModalBackdropClick(event: MouseEvent): Promise<void> {
-  const tournamentModal = document.getElementById('tournament-modal');
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal element");
+  const statsModal = document.getElementById('stats-modal');
+  if (!statsModal) {
+    console.log("Couldn't find stats modal element");
     return;
   }
   // Ensure tournamentModal exists and the click was directly on it
-  if (tournamentModal && event.target === tournamentModal) {
-    await hideTournamentModal();
+  if (statsModal && event.target === statsModal) {
+    await hideStatsModal();
   }
 }
 
@@ -373,19 +419,15 @@ async function handleModalBackdropClick(event: MouseEvent): Promise<void> {
  *
  * @returns {void}
  */
-function openTournamentModal(): void {
-  const tournamentModal = document.getElementById('tournament-modal');
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal element");
-    return;
-  }
-  if (!tournamentModal) {
-    console.error("Couldn't find tournament modal element.");
+function openStatsModal(): void {
+  const statsModal = document.getElementById('stats-modal');
+  if (!statsModal) {
+    console.log("Couldn't find stats modal element");
     return;
   }
 
-  fadeIn(tournamentModal);
-  tournamentModal.addEventListener('click', handleModalBackdropClick);
+  fadeIn(statsModal);
+  statsModal.addEventListener('click', handleModalBackdropClick);
 }
 
 /**
@@ -394,87 +436,23 @@ function openTournamentModal(): void {
  *
  * @returns {Promise<void>} Resolves when the modal hiding process is complete.
  */
-async function hideTournamentModal(): Promise<void> {
-  const tournamentModal = document.getElementById('tournament-modal');
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal element");
+async function hideStatsModal(): Promise<void> {
+  const statsModal = document.getElementById('stats-modal');
+  if (!statsModal) {
+    console.log("Couldn't find stats modal element");
     return;
   }
 
-  const tournamentResults = document.getElementById('tournament-results');
-  if (!tournamentResults) {
+  const statsResults = document.getElementById('stats-results');
+  if (!statsResults) {
     console.log("Couldn't find tournament results element");
     return;
   }
 
-  tournamentModal.removeEventListener('click', handleModalBackdropClick);
-  fadeOut(tournamentModal);
+  statsModal.removeEventListener('click', handleModalBackdropClick);
+  fadeOut(statsModal);
   await wait(0.5);
-  tournamentResults.innerHTML = '';
-}
-
-// HACK: Function to get mock data
-function getMockData(): tournamentPlayer[] {
-  const players: tournamentPlayer[] = [
-    {
-      userAlias: 'Alice',
-      quarterFinalScore: '3',
-      semiFinalScore: '4',
-      finalScore: '5', // Winner
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Bob',
-      quarterFinalScore: '1',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Charlie',
-      quarterFinalScore: '3',
-      semiFinalScore: '2',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Diana',
-      quarterFinalScore: '2',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Eve',
-      quarterFinalScore: '3',
-      semiFinalScore: '1',
-      finalScore: '3', // Runner-up
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Frank',
-      quarterFinalScore: '0',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Grace',
-      quarterFinalScore: '3',
-      semiFinalScore: '4',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Henry',
-      quarterFinalScore: '1',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-  ];
-
-  return players;
+  statsResults.innerHTML = '';
 }
 
 /**
