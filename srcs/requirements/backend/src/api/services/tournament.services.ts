@@ -73,9 +73,13 @@ export async function getWonTournaments(playerId: string) {
     select: { tournamentId: true },
   });
   let wonTournaments = 0;
-  for (const tournament of tournaments) {
-    const index = await contractProvider.findLastIndexOfPlayer(tournament.tournamentId, playerId);
-    if (index == 14) wonTournaments++;
+  try {
+    for (const tournament of tournaments) {
+      const index = await contractProvider.findLastIndexOfPlayer(tournament.tournamentId, playerId);
+      if (index == 14) wonTournaments++;
+    }
+  } catch (err) {
+    console.error(err);
   }
   return wonTournaments;
 }
