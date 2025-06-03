@@ -14,4 +14,3 @@
 
 NEW:
 - Missing Tournament IDs so I can ask for tournament information on Rankings page
-- Missing number of tournaments won by each player

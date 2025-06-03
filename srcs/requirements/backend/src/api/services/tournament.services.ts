@@ -15,6 +15,14 @@ export function processTournamentData(data: string[], scores: number[]) {
   console.log(`Players: ${JSON.stringify(playerData)}`);
 }
 
+export async function getTotalTournaments(playerId: string) {
+  const tournaments = await prisma.tournamentParticipant.findMany({
+    where: { userId: playerId },
+    select: { tournamentId: true },
+  });
+  return tournaments.length;
+}
+
 export async function generateTournamentData(tournamentId: string) {
   const users = await prisma.user.findMany({
     take: 8,

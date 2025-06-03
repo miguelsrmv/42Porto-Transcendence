@@ -37,6 +37,7 @@
 | `POST`   | `/matches`                |                    |             user1Id and user2Id              | Create a match                                                  |
 | `PATCH`  | `/matches/:id`            |   `id` match id    |                data to update                | Update data on a specific match                                 |
 | `GET`    | `/tournaments/:id`        | `id` tournament id |                                              | Get data on a specific tournament                               |
+| `GET`    | `/tournaments/user:id`    |    `id` user id    |                                              | Get user's latest 3 tournaments                                 |
 
 ## Base
 
@@ -178,6 +179,11 @@ Content-Type: application/json
   "user2Score": 2
 }
 ```
+
+## Tournaments
+
+- **Get a specific tournament:** `/tournaments/:id`
+- **Get user's latest 3 tournaments:** `/tournaments/user:id`
 
 ### Notes
 
