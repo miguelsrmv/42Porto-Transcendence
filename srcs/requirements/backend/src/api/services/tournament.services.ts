@@ -4,14 +4,32 @@ import { prisma } from '../../utils/prisma';
 // TODO: create tournament_status type data
 export function processTournamentData(data: string[], scores: number[]) {
   if (data.length !== 15 && scores.length !== 14) return;
-  const playerData = data
-    .filter((s) => s[0] !== '')
-    .flatMap((p) => {
-      return {
-        id: p[0],
-        alias: p[1],
-      };
-    });
+  console.log(`Scores: ${scores}`);
+  const firstRoundScores = scores.slice(0, 8);
+  const secondRoundScores = scores.slice(8, 12);
+  const thirdRoundScores = scores.slice(12);
+  console.log(`First round scores: ${firstRoundScores}`);
+  console.log(`Second round scores: ${secondRoundScores}`);
+  console.log(`Third round scores: ${thirdRoundScores}`);
+  const playerData = data.slice(0, -1).flatMap((p) => {
+    return {
+      id: p[0],
+      userAlias: p[1],
+      avatarPath: '',
+      quarterFinalScore: '',
+      semiFinalScore: '',
+      finalScore: '',
+    };
+  });
+  for (let index = 0; index < firstRoundScores.length; index++) {
+    playerData[index].quarterFinalScore = firstRoundScores[index].toString();
+  }
+  for (let index = 0; index < secondRoundScores.length; index++) {
+    playerData[index + 8].semiFinalScore = secondRoundScores[index].toString();
+  }
+  for (let index = 0; index < thirdRoundScores.length; index++) {
+    playerData[index + 12].finalScore = thirdRoundScores[index].toString();
+  }
   console.log(`Players: ${JSON.stringify(playerData)}`);
 }
 
