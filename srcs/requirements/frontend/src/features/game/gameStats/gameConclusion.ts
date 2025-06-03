@@ -45,6 +45,7 @@ export function triggerEndGameMenu(
 
   hideGameElements();
   showStatsMenu(HUDSideToShow, stats, playerHUDcopy, colour, HUDSideToShow === winningPlayerSide);
+  // TODO: Remove is it's working properly. Workaround because I didn't get tournament_end before
   if (tournamentIsRunning) tournamentIsRunning = winningPlayerSide === playerSide;
   updateButtons(playType, tournamentIsRunning);
 }

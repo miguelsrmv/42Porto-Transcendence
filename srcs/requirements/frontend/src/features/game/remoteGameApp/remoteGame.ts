@@ -106,7 +106,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
         tournamentIsRunning,
       );
       resetVariables();
-      // webSocket.close();
     } else if (messageData.type === 'tournament_status') {
       showTournamentStatus(messageData.participants);
     }
