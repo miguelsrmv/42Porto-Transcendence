@@ -2,6 +2,7 @@ import { Match } from '@prisma/client';
 import { getUserRank, getUserScore } from './leaderboard.services';
 import { prisma } from '../../utils/prisma';
 import app from '../../app';
+import { getTotalTournaments } from './tournament.services';
 
 export async function getUserGlobalStats(matches: Match[], userId: string) {
   const totalMatches = matches.length;
@@ -15,6 +16,7 @@ export async function getUserGlobalStats(matches: Match[], userId: string) {
     winRate: parseFloat(((wins / totalMatches) * 100).toFixed(2)) || 0,
     points: await getUserScore(userId),
     rank: await getUserRank(userId),
+    tournaments: await getTotalTournaments(userId),
   };
 }
 
