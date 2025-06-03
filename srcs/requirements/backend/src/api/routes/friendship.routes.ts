@@ -1,5 +1,9 @@
 import { FastifyInstance } from 'fastify';
-import { createFriendByUsernameSchema, createFriendSchema, updateFriendSchema } from '../schemas/friendship.schema';
+import {
+  createFriendByUsernameSchema,
+  createFriendSchema,
+  updateFriendSchema,
+} from '../schemas/friendship.schema';
 import {
   addFriend,
   addFriendByUsername,

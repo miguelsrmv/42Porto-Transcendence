@@ -9,8 +9,6 @@ export async function getTournamentStatus(
   reply: FastifyReply,
 ) {
   try {
-    // const data = await generateTournamentData(request.params.id);
-
     const rawParticipants: string[][] = await contractProvider.getMatchedParticipants(
       request.params.id,
     );
