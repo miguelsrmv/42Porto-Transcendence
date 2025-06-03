@@ -94,12 +94,10 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       renderGame(messageData);
     } else if (messageData.type === 'game_goal' && gameIsRunning) {
       renderGoal(messageData.scoringSide);
-    } else if (
-      (messageData.type === 'game_end' || messageData.type === 'tournament_end') &&
-      gameIsRunning
-    ) {
+    } else if (messageData.type === 'tournament_end') {
+      tournamentIsRunning = false;
+    } else if (messageData.type === 'game_end' && gameIsRunning) {
       gameIsRunning = false;
-      if (messageData.type === 'tournament_end') tournamentIsRunning = false;
       triggerEndGameMenu(
         messageData.winningPlayer,
         messageData.ownSide,

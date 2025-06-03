@@ -25,9 +25,9 @@ export interface matchData {
  * Represents the data for a tournament.
  */
 export interface tournamentData {
-  id: string;
-  uuid: string;
-  tournamentResult: string;
+  tournamentId: string;
+  tournamentType: string;
+  position: string;
 }
 
 /**
@@ -48,6 +48,7 @@ export interface statsData {
   winrate: number;
   points: number;
   rank: number;
+  tournaments: number;
 }
 
 /**
