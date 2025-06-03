@@ -39,6 +39,7 @@ export function areGameSettingsValid(
     closeSocket(socket);
     return false;
   }
+  // TODO: validate character
   return true;
 }
 
