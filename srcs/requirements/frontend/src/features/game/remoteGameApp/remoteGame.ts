@@ -59,7 +59,7 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       if (webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify({ type: 'ping' }));
       }
-    }, 30000);
+    }, 20000);
   };
 
   window.addEventListener(
@@ -108,7 +108,7 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
         tournamentIsRunning,
       );
       resetVariables();
-      webSocket.close();
+      // webSocket.close();
     } else if (messageData.type === 'tournament_status') {
       showTournamentStatus(messageData.participants);
     }

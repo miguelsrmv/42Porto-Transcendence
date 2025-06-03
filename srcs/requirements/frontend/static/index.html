@@ -270,7 +270,7 @@
             class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4"
           >
             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-              Local Play
+              Local Match
             </h3>
           </div>
           <div
@@ -296,7 +296,7 @@
             class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-yellow-700 to-transparent h-1/2 flex items-end justify-start p-4"
           >
             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-              Remote Play
+              Remote Match
             </h3>
           </div>
           <div
@@ -306,10 +306,36 @@
         </a>
 
         <a
-          href="#tournament-play-page"
+          href="#local-tournament-page"
+          id="remote-play-button"
+          data-target="remote-play-page"
+          data-helper-message="Play a local tournament!"
+          class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-zinc-700 rounded overflow-hidden"
+        >
+          <img
+            src="/static/images/remoteplay.jpg"
+            alt="Remote Play"
+            class="w-full h-full object-cover"
+          />
+          <div
+            id="remote-play-button-container-text"
+            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-zinc-700 to-transparent h-1/2 flex items-end justify-start p-4"
+          >
+            <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+              Local Tournament
+            </h3>
+          </div>
+          <div
+            id="remote-play-button-overlay"
+            class="absolute inset-0 bg-zinc-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+          ></div>
+        </a>
+
+        <a
+          href="#remote-tournament-page"
           id="tournament-play-button"
           data-target="tournament-play-page"
-          data-helper-message="Play in a tournament!"
+          data-helper-message="Play an online tournament!"
           class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-700 rounded overflow-hidden"
         >
           <img
@@ -322,7 +348,7 @@
             class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4"
           >
             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-              Tournament Play
+              Remote Tournament
             </h3>
           </div>
           <div
