@@ -17,16 +17,6 @@ type MatchUpdate = {
   user2Score: number;
 };
 
-// TODO: delete in the end
-export async function getAllMatches(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    const matches = await prisma.match.findMany();
-    reply.send(matches);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
 export async function getUserMatches(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,

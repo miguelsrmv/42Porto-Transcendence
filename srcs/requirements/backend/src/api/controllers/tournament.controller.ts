@@ -2,20 +2,18 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { contractProvider } from '../services/blockchain.services';
-import { generateTournamentData, processTournamentData } from '../services/tournament.services';
+import { processTournamentData } from '../services/tournament.services';
 
 export async function getTournamentStatus(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
   try {
-    // const data = await generateTournamentData(request.params.id);
-
-    const rawParticipants: string[] = await contractProvider.getMatchedParticipants(
+    const rawParticipants: string[][] = await contractProvider.getMatchedParticipants(
       request.params.id,
     );
     const scores: number[] = await contractProvider.getScores(request.params.id);
-    const data = processTournamentData(rawParticipants, scores);
+    const data = await processTournamentData(rawParticipants, scores);
     reply.send(data);
   } catch (error) {
     handleError(error, reply);

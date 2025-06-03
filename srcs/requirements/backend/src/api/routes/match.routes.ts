@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import {
   createMatch,
-  getAllMatches,
   getMatchById,
   getOwnUserMatches,
   getUserMatches,
@@ -12,7 +11,6 @@ import { getByIdSchema } from '../schemas/global.schema';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function matchRoutes(fastify: FastifyInstance) {
-  fastify.get('/', getAllMatches);
   fastify.get('/:id', { schema: getByIdSchema }, getMatchById);
   fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUserMatches);
   fastify.get('/user/:id', getUserMatches);

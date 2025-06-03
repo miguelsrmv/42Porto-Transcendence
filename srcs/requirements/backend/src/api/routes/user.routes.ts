@@ -80,5 +80,9 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     deleteUser,
   );
-  fastify.get('/:id/stats', { schema: getByIdSchema }, getUserStats);
+  fastify.get<{ Params: IParams }>(
+    '/:id/stats',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    getUserStats,
+  );
 }
