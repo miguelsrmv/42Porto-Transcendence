@@ -11,6 +11,7 @@ export interface matchData {
   id: string;
   mode: string;
   settings: string;
+  stats: string;
   updatedAt: string;
   user1Character: string;
   user1Id: string;
