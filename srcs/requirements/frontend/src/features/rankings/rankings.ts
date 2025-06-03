@@ -512,7 +512,7 @@ async function updateNodeWithRecentTournamentData(
   recentTournamentID.innerText = `#${recentTournament.tournamentId.split('-')[0]}`;
   recentTournamentResult.innerText = recentTournament.position;
 
-  const colour = recentTournament.position === 'Winner' ? 'green' : 'red';
+  const colour = recentTournament.position === 'Tournament Winner!' ? 'green' : 'red';
   recentTournamentResult.classList.add(`text-${colour}-400`);
   recentTournamentScoreIndicator.classList.add(`bg-${colour}-500`);
 }
