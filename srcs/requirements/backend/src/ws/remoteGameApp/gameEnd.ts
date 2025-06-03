@@ -94,10 +94,12 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.stop();
   const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
   losingPlayer.isEliminated = true;
-  gameArea.session.broadcastEndGameMessage(winningPlayer);
   if (gameArea.tournament) {
-    const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
-    gameArea.session.sendToPlayer(losingPlayer.id, endTournamentMSg);
+    if (gameArea.tournament.currentRound === 3) {
+      const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
+      gameArea.session.sendToPlayer(winningPlayer.id, endTournamentMSg);
+    }
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
     const winningPlayerInfo = gameArea.session.players.find((p) => p.id === winningPlayer.id);
     const losingPlayerInfo = gameArea.session.players.find((p) => p.id === losingPlayer.id);
     if (!winningPlayerInfo || !losingPlayerInfo) return;
@@ -123,6 +125,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     closeSocket(socket);
     await gameArea.tournament.updateSessionScore(gameArea.session, winningPlayer.id, data);
   } else {
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
     await createMatch(winningPlayer, gameArea);
     await updateLeaderboardRemote(winningPlayer, losingPlayer);
     const socket = gameArea.session.getPlayerSocket(losingPlayer.id);
