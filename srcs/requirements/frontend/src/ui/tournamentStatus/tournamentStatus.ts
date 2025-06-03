@@ -55,19 +55,19 @@ export function showTournamentResults(participants: tournamentPlayer[]): void {
   fillParticipants(clone, participants, TournamentPhase.Semi);
   fillParticipants(clone, participants, TournamentPhase.Final);
 
-  const tournamentModal = document.getElementById('tournament-modal') as HTMLDivElement;
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal");
+  const statsModal = document.getElementById('stats-modal') as HTMLDivElement;
+  if (!statsModal) {
+    console.log("Couldn't find stats modal");
     return;
   }
 
-  const tournamentResults = document.getElementById('tournament-results') as HTMLDivElement;
-  if (!tournamentResults) {
-    console.log("Couldn't find tournament results");
+  const statsResults = document.getElementById('stats-results') as HTMLDivElement;
+  if (!statsResults) {
+    console.log("Couldn't find stats results");
     return;
   }
 
-  tournamentResults.appendChild(clone);
+  statsResults.appendChild(clone);
 }
 
 /**
