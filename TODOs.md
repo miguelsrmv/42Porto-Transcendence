@@ -1,5 +1,7 @@
 
 # Backend
+- Deal with multiple players leaving in a tournament or during waiting
+
 - join_game on WS connection?
 - Deal with re-connections and lag (player_lagging, player_reconnected)
 - Review heartbeat times
