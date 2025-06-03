@@ -104,19 +104,6 @@ function hideFutureMatches(
   tournamentBlock: DocumentFragment,
   participants: tournamentPlayer[],
 ): void {
-  console.log(
-    'Final participants length',
-    getPhaseParticipants(TournamentPhase.Final, participants).length,
-  );
-  console.log(
-    'SFinal participants length',
-    getPhaseParticipants(TournamentPhase.Semi, participants).length,
-  );
-  console.log(
-    'QFinal participants length',
-    getPhaseParticipants(TournamentPhase.Quarter, participants).length,
-  );
-
   if (getPhaseParticipants(TournamentPhase.Final, participants).length) {
     return;
   }
@@ -128,8 +115,6 @@ function hideFutureMatches(
   } else if (getPhaseParticipants(TournamentPhase.Quarter, participants).length) {
     phasesToHide = ['semifinals', 'finals'];
   }
-
-  console.log('I am going to be hiding ', phasesToHide);
 
   phasesToHide.forEach((phaseClass) => {
     const elements = tournamentBlock.querySelectorAll(`.${phaseClass}`);
