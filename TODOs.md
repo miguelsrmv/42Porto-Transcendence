@@ -1,4 +1,3 @@
-# Frontend
 
 # Backend
 - join_game on WS connection?
@@ -13,7 +12,7 @@
 - Remove populate from running automatically on project delivery
 
 NEW:
-- Missing Tournament IDs so I can ask for tournament information on Rankings page
+- WAITING FOR NEXT GAME: too long?? 
 
 # Blockchain
 - Test data persistence on Blockchain
