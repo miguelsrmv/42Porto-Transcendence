@@ -37,7 +37,7 @@
 | `POST`   | `/matches`                |                    |             user1Id and user2Id              | Create a match                                                  |
 | `PATCH`  | `/matches/:id`            |   `id` match id    |                data to update                | Update data on a specific match                                 |
 | `GET`    | `/tournaments/:id`        | `id` tournament id |                                              | Get data on a specific tournament                               |
-| `GET`    | `/tournaments/user:id`    |    `id` user id    |                                              | Get user's latest 3 tournaments                                 |
+| `GET`    | `/tournaments/user/:id`   |    `id` user id    |                                              | Get user's latest 3 tournaments                                 |
 
 ## Base
 

@@ -293,9 +293,8 @@ export class Tournament {
   private async startRound() {
     ++this.currentRound;
     console.log(`Advancing to round ${this.currentRound}`);
-    await this.createNextRoundSessions();
     this.broadcastStatus(this.roundWinners);
-    this.roundWinners.length = 0;
+    await this.createNextRoundSessions();
     await wait(10);
     this.sessions
       .filter((session) => session.round === this.currentRound)
@@ -328,6 +327,7 @@ export class Tournament {
       newSession.tournament = this;
       this.sessions.push(newSession);
     }
+    this.roundWinners.length = 0;
   }
 
   private getPlayerInfoFromId(playerId: string) {

@@ -14,3 +14,6 @@
 
 NEW:
 - Missing Tournament IDs so I can ask for tournament information on Rankings page
+
+# Blockchain
+- Test data persistence on Blockchain
