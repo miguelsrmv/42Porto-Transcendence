@@ -131,92 +131,44 @@ export function getCharacterList(): character[] {
   return characterList;
 }
 
-export function getCharacterPathFromBackend(name: string): string {
-  let index: number = 0;
-
+function getCharacterIndexFromBackend(name: string): number {
   switch (name) {
     case 'MARIO':
-      index = 0;
-      break;
+      return 0;
     case 'YOSHI':
-      index = 1;
-      break;
+      return 1;
     case 'DK':
-      index = 2;
-      break;
+      return 2;
     case 'BOWSER':
-      index = 3;
-      break;
+      return 3;
     case 'SONIC':
-      index = 4;
-      break;
+      return 4;
     case 'PIKACHU':
-      index = 5;
-      break;
+      return 5;
     case 'MEWTWO':
-      index = 6;
-      break;
+      return 6;
     case 'LINK':
-      index = 7;
-      break;
+      return 7;
     case 'KIRBY':
-      index = 8;
-      break;
+      return 8;
     case 'SAMUS':
-      index = 9;
-      break;
+      return 9;
     case 'CAPFALCON':
-      index = 10;
-      break;
+      return 10;
     case 'SNAKE':
-      index = 11;
-      break;
+      return 11;
   }
+  return 0;
+}
+
+export function getCharacterPathFromBackend(name: string): string {
+  let index: number = getCharacterIndexFromBackend(name);
 
   return characterList[index].characterAvatarPicturePath;
 }
 
 export function getAccentColourFromBackend(name: string): string {
-  let index: number = 0;
-
-  switch (name) {
-    case 'MARIO':
-      index = 0;
-      break;
-    case 'YOSHI':
-      index = 1;
-      break;
-    case 'DK':
-      index = 2;
-      break;
-    case 'BOWSER':
-      index = 3;
-      break;
-    case 'SONIC':
-      index = 4;
-      break;
-    case 'PIKACHU':
-      index = 5;
-      break;
-    case 'MEWTWO':
-      index = 6;
-      break;
-    case 'LINK':
-      index = 7;
-      break;
-    case 'KIRBY':
-      index = 8;
-      break;
-    case 'SAMUS':
-      index = 9;
-      break;
-    case 'CAPFALCON':
-      index = 10;
-      break;
-    case 'SNAKE':
-      index = 11;
-      break;
-  }
+  let index: number = getCharacterIndexFromBackend(name);
 
   return characterList[index].accentColour;
 }
