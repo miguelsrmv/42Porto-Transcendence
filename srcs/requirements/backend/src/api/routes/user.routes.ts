@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import {
-  getAllUsers,
   getUserById,
   createUser,
   updateUser,
