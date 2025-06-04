@@ -325,8 +325,31 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ## Friendships
 
-- **Get all friendships for logged in user:** `GET /friends`
-- **Create a new friendship:** `POST /friends`
+- **Get all friendships for logged in user (Protected):** `GET /friends`
+
+### Response example
+
+```c
+{
+ ["92c4f55f-5000-440e-ae20-20d2fa7c2dbe", "76c4f55f-5020-330e-ae20-20d1237c2dbi", ...]
+}
+```
+
+- **Get pending friends of logged in user (Protected):** `GET /friends/pending`
+
+### Response example
+
+```json
+{
+ [
+  {"initiatorId": "92c4f55f-5000-440e-ae20-20d2fa7c2dbe"}
+  ]
+}
+```
+
+- **Create a new friendship (Protected):** `POST /friends`
+
+### Request body example
 
 ```json
 {
@@ -334,7 +357,17 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Create a new friendship, based on friend username:** `POST /friends/username`
+### Response example
+
+```json
+{
+  "message": "Friendship created"
+}
+```
+
+- **Create a new friendship, based on friend username (Protected):** `POST /friends/username`
+
+### Request body example
 
 ```json
 {
@@ -342,27 +375,79 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Delete a friendship:** `DELETE /friends/:id`
-- **Update a friendship status:** `PATCH /friends`
+### Response example
 
 ```json
 {
-  "friendId": "<id>",
+  "message": "Friendship created"
+}
+```
+
+- **Delete a friendship (Protected):** `DELETE /friends/:id`
+
+### Response example
+
+```json
+{
+  "message": "Friendship deleted"
+}
+```
+
+- **Update a friendship status (Protected):** `PATCH /friends`
+
+### Request body example
+
+```json
+{
+  "friendId": "d232f55f-5000-440e-ae20-20d2fa7c2dbe",
   "status": "PENDING" // or "ACCEPTED", "REJECTED"
 }
 ```
 
 ## Leaderboard
 
-- **Get leaderboard:** `GET /leaderboard`
+- **Get leaderboard (Protected):** `GET /leaderboard`
+
+### Response example
+
+```json
+{
+  [
+    {
+      "userId": "d232f55f-5000-440e-ae20-20d2fa7c2dbe",
+      "score": 24
+    },
+  ]
+}
+```
 
 ## Matches
 
-- **Get all matches:** `GET /matches`
-- **Get all matches of logged in user, ordered by date (desc):** `GET /matches/me`
 - **Get all matches from a specific user:** `GET /matches/user/:id`
+
+### Response example
+
+```json
+{
+  "id": "v532f55f-5000-440e-ae20-20d2fa732see",
+  "mode": "CRAZY", // CLASSIC
+  "user1Id": "v532dt5f-5000-440e-ae20-20d2fa732see",
+  "user2Id": "b3d2f55f-5000-440e-ae20-20d2fa732see",
+  "user1Score": 3,
+  "user2Score": 5,
+  "user1Character": "PIKACHU",
+  "user2Character": "MARIO",
+  "user1Alias": "chris",
+  "user2Alias": "anna",
+  "winnerId": "b3d2f55f-5000-440e-ae20-20d2fa732see",
+  "createdAt": "2025-06-04T09:57:41.096Z",
+  "updatedAt": "2025-06-04T09:57:41.096Z",
+  "settings": "",
+  "stats": "{\"left\":{\"goals\":0,\"sufferedGoals\":5,\"saves\":0,\"powersUsed\":0},\"right\":{\"goals\":5,\"sufferedGoals\":0,\"saves\":0,\"powersUsed\":0},\"maxSpeed\":353.5533905932738}"
+}
+```
+
 - **Get a specific match:** `GET /matches/:id`
-- **Create a new match:** `POST /matches`
 
 ```json
 {
