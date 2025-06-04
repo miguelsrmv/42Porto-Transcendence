@@ -37,7 +37,6 @@ import { userCreateValidation, userUpdateValidation } from '../validation/users.
 // TODO: review request methods
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
-  fastify.get('/', { onRequest: [fastify.jwtAuth] }, getAllUsers);
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
   fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
   fastify.post('/preLogin', { schema: loginSchema }, preLogin);
