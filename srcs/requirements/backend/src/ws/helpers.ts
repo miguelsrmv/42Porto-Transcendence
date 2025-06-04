@@ -21,6 +21,10 @@ export function isPlayType(type: string) {
   return types.includes(type as playType);
 }
 
+function isValidHexColor(hex: string): boolean {
+  return /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(hex);
+}
+
 export function areGameSettingsValid(
   socket: WebSocket,
   userId: string,
@@ -39,7 +43,16 @@ export function areGameSettingsValid(
     closeSocket(socket);
     return false;
   }
+  if (playerSettings.gameType === 'Crazy Pong' && !playerSettings.character) {
+    sendErrorMessage(socket, `Crazy Pong matches must have a character`);
+    closeSocket(socket);
+    return false;
+  }
   // TODO: validate character
+  if (!isValidHexColor(playerSettings.paddleColour)) playerSettings.paddleColour = '#000000';
+  const newAlias = playerSettings.alias.trim();
+  playerSettings.alias = newAlias;
+  if (newAlias.length === 0) playerSettings.alias = 'empty';
   return true;
 }
 
