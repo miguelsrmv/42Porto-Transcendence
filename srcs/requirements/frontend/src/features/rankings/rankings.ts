@@ -371,7 +371,7 @@ async function editHUD(clone: DocumentFragment, matchData: matchData, side: stri
   }
 
   let alias;
-  side === 'left' ? (alias = matchData.user1alias) : (alias = matchData.user2alias);
+  side === 'left' ? (alias = matchData.user1Alias) : (alias = matchData.user2Alias);
   playerAlias.innerText = alias;
 
   let userId;
@@ -409,55 +409,65 @@ async function editHUD(clone: DocumentFragment, matchData: matchData, side: stri
 }
 
 function editStats(clone: DocumentFragment, matchData: matchData): void {
-  const leftGoals = document.getElementById('left-goals');
+  const leftGoals = clone.querySelector('#left-goals') as HTMLParagraphElement;
   if (!leftGoals) {
     console.log("Couldn't find leftGoals element");
     return;
   }
 
-  const rightGoals = document.getElementById('right-goals');
+  const rightGoals = clone.querySelector('#right-goals') as HTMLParagraphElement;
   if (!rightGoals) {
     console.log("Couldn't find rightGoals element");
     return;
   }
 
-  const leftSaves = document.getElementById('left-saves');
+  const leftSaves = clone.querySelector('#left-saves') as HTMLParagraphElement;
   if (!leftSaves) {
     console.log("Couldn't find leftSaves element");
     return;
   }
 
-  const rightSaves = document.getElementById('right-saves');
+  const rightSaves = clone.querySelector('#right-saves') as HTMLParagraphElement;
   if (!rightSaves) {
     console.log("Couldn't find leftSaves element");
     return;
   }
 
-  const powersUsed = document.getElementById('powers-used');
+  const powersUsed = clone.querySelector('#powers-used') as HTMLDivElement;
   if (!powersUsed) {
     console.log("Couldn't find powersUsed element");
     return;
   }
 
-  const leftPowersUsed = document.getElementById('left-powers');
+  const leftPowersUsed = clone.querySelector('#left-powers') as HTMLParagraphElement;
   if (!leftPowersUsed) {
     console.log("Couldn't find leftPowersUsed element");
     return;
   }
 
-  const rightPowersUsed = document.getElementById('right-powers');
+  const rightPowersUsed = clone.querySelector('#right-powers') as HTMLParagraphElement;
   if (!rightPowersUsed) {
     console.log("Couldn't find rightPowersUsed element");
     return;
   }
 
-  const maxBallSpeed = document.getElementById('max-speed');
+  const maxBallSpeed = clone.querySelector('#max-speed') as HTMLParagraphElement;
   if (!maxBallSpeed) {
     console.log("Couldn't find maxBallSpeed element");
     return;
   }
 
-  // TODO: Edit stats, hide powers used if mode !=== Crazy
+  const stats = JSON.parse(matchData.stats);
+
+  leftGoals.innerText = stats.left.goals;
+  rightGoals.innerText = stats.right.goals;
+  leftSaves.innerText = stats.left.saves;
+  rightSaves.innerText = stats.right.saves;
+  maxBallSpeed.innerText = parseFloat(stats.maxSpeed).toFixed(2);
+  if (matchData.mode === 'CRAZY') {
+    leftPowersUsed.innerText = stats.left.powersUsed;
+    rightPowersUsed.innerText = stats.right.powersUsed;
+  } else powersUsed.classList.add('hidden');
 }
 
 /**
