@@ -428,50 +428,73 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 ### Response example
 
 ```json
-{
-  "id": "v532f55f-5000-440e-ae20-20d2fa732see",
-  "mode": "CRAZY", // CLASSIC
-  "user1Id": "v532dt5f-5000-440e-ae20-20d2fa732see",
-  "user2Id": "b3d2f55f-5000-440e-ae20-20d2fa732see",
-  "user1Score": 3,
-  "user2Score": 5,
-  "user1Character": "PIKACHU",
-  "user2Character": "MARIO",
-  "user1Alias": "chris",
-  "user2Alias": "anna",
-  "winnerId": "b3d2f55f-5000-440e-ae20-20d2fa732see",
-  "createdAt": "2025-06-04T09:57:41.096Z",
-  "updatedAt": "2025-06-04T09:57:41.096Z",
-  "settings": "",
-  "stats": "{\"left\":{\"goals\":0,\"sufferedGoals\":5,\"saves\":0,\"powersUsed\":0},\"right\":{\"goals\":5,\"sufferedGoals\":0,\"saves\":0,\"powersUsed\":0},\"maxSpeed\":353.5533905932738}"
-}
+[
+  {
+    "id": "v532f55f-5000-440e-ae20-20d2fa732see",
+    "mode": "CRAZY", // CLASSIC
+    "user1Id": "v532dt5f-5000-440e-ae20-20d2fa732see",
+    "user2Id": "b3d2f55f-5000-440e-ae20-20d2fa732see",
+    "user1Score": 3,
+    "user2Score": 5,
+    "user1Character": "PIKACHU",
+    "user2Character": "MARIO",
+    "user1Alias": "chris",
+    "user2Alias": "anna",
+    "winnerId": "b3d2f55f-5000-440e-ae20-20d2fa732see",
+    "createdAt": "2025-06-04T09:57:41.096Z",
+    "updatedAt": "2025-06-04T09:57:41.096Z",
+    "settings": "{\"playType\":\"Remote Play\",\"alias1\":\"ana123\",\"alias2\":\"chris123\",\"paddleColour1\":\"#ff0000\",\"paddleColour2\":\"#ff0000\",\"background\":\"Forest\"}",
+    "stats": "{\"left\":{\"goals\":0,\"sufferedGoals\":5,\"saves\":0,\"powersUsed\":0},\"right\":{\"goals\":5,\"sufferedGoals\":0,\"saves\":0,\"powersUsed\":0},\"maxSpeed\":353.5533905932738}"
+  }
+]
 ```
 
 - **Get a specific match:** `GET /matches/:id`
 
-```json
-{
-  "user1Id": "<id>",
-  "user2Id": "<id>",
-  "settings": "{\"map\":\"map3\",\"ballSpeed\": 1.3,\"rounds\":5}" // optional settings
-}
-```
-
-- **Update a match:** `PATCH /matches/:id`
+### Response example
 
 ```json
 {
-  "duration": 120, // in seconds
-  "winnerId": "<id>",
-  "user1Score": 3,
-  "user2Score": 2
+  "mode": "CRAZY", // CLASSIC
+  "user1Id": "v532dt5f-5000-440e-ae20-20d2fa732see",
+  "user2Id": "b3d2f55f-5000-440e-ae20-20d2fa732see",
+  "user1Character": "PIKACHU",
+  "user2Character": "MARIO",
+  "user1Alias": "chris",
+  "user2Alias": "anna",
+  "createdAt": "2025-06-04T09:57:41.096Z",
+  "stats": "{\"left\":{\"goals\":0,\"sufferedGoals\":5,\"saves\":0,\"powersUsed\":0},\"right\":{\"goals\":5,\"sufferedGoals\":0,\"saves\":0,\"powersUsed\":0},\"maxSpeed\":353.5533905932738}"
 }
 ```
 
 ## Tournaments
 
 - **Get a specific tournament:** `/tournaments/:id`
+
+### Response example
+
+```json
+{
+  "id": "v532dt5f-5000-440e-ae20-20d2fa732see",
+  "userAlias": "chris",
+  "avatarPath": "avatar/avatar.png",
+  "quarterFinalScore": 5, // or ''
+  "semiFinalScore": 5, // or ''
+  "finalScore": 3 // or ''
+}
+```
+
 - **Get user's latest 3 tournaments:** `/tournaments/user:id`
+
+### Response example
+
+```json
+{
+  "tournamentId": "7f32dt5f-5000-440e-ae20-20d2fa732see",
+  "tournamentType": "CRAZY", // or CLASSIC
+  "position": "Final" // or 'Semi-final', 'Quarter-final', 'Tournament Winner!'
+}
+```
 
 ### Notes
 
