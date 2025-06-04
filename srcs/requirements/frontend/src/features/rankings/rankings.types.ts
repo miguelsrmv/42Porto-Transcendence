@@ -16,11 +16,11 @@ export interface matchData {
   user1Character: string;
   user1Id: string;
   user1Score: number;
-  user1alias: string;
+  user1Alias: string;
   user2Character: string;
   user2Id: string;
   user2Score: number;
-  user2alias: string;
+  user2Alias: string;
   winnerId: string;
 }
 
