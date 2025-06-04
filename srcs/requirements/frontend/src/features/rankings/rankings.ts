@@ -318,14 +318,14 @@ async function displayMatchData(id: string): Promise<void> {
     const matchData: any = await response.json();
     console.log('Match data: ', matchData);
     openStatsModal();
-    showMatchResults(matchData);
+    await showMatchResults(matchData);
   } catch (error) {
     console.error('Network error fetching recent match:', error);
     return;
   }
 }
 
-function showMatchResults(matchData: matchData): void {
+async function showMatchResults(matchData: matchData): Promise<void> {
   const matchBlock = document.getElementById('match-stats') as HTMLTemplateElement;
   if (!matchBlock) {
     console.log("Couldn't find matchBlock");
@@ -334,8 +334,8 @@ function showMatchResults(matchData: matchData): void {
 
   const clone = matchBlock.content.cloneNode(true) as DocumentFragment;
 
-  editHUD(clone, matchData, 'left');
-  editHUD(clone, matchData, 'right');
+  await editHUD(clone, matchData, 'left');
+  await editHUD(clone, matchData, 'right');
   editStats(clone, matchData);
 
   const statsResults = document.getElementById('stats-results') as HTMLDivElement;
@@ -347,7 +347,7 @@ function showMatchResults(matchData: matchData): void {
   statsResults.appendChild(clone);
 }
 
-function editHUD(clone: DocumentFragment, matchData: matchData, side: string): void {
+async function editHUD(clone: DocumentFragment, matchData: matchData, side: string): Promise<void> {
   const playerAvatar = clone.querySelector(
     `.${side}-match-stats-player-avatar`,
   ) as HTMLImageElement;
@@ -373,17 +373,32 @@ function editHUD(clone: DocumentFragment, matchData: matchData, side: string): v
   side === 'left' ? (alias = matchSettings.alias1) : (alias = matchSettings.alias2);
   playerAlias.innerText = alias;
 
-  let userId;
-  side === 'left' ? (userId = matchData.user1Id) : (userId = matchData.user2Id);
-
   let userCharacter;
   side === 'left'
     ? (userCharacter = matchData.user1Character)
     : (userCharacter = matchData.user2Character);
-
   playerPortrait.src = getCharacterPathFromBackend(userCharacter);
 
-  // TODO: Accent colour, avatar, hide character if not crazy
+  let userId;
+  side === 'left' ? (userId = matchData.user1Id) : (userId = matchData.user2Id);
+
+  try {
+    const response = await fetch(`api/users/${userId}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching opponent data', response.status);
+      return;
+    }
+    const userData = await response.json();
+    playerAvatar.src = userData.avatarUrl;
+  } catch (error) {
+    console.error('Network error fetching user data', error);
+    return;
+  }
+
+  // TODO: Accent colour, hide character if not crazy
 }
 
 function editStats(clone: DocumentFragment, matchData: matchData): void {}
