@@ -3,7 +3,6 @@
 | Method   | Route                     |   URL parameters   |                     Body                     | Description                                                     |
 | -------- | ------------------------- | :----------------: | :------------------------------------------: | --------------------------------------------------------------- |
 | `GET`    | `/`                       |                    |                                              | Base route for test                                             |
-| `GET`    | `/users`                  |                    |                                              | Get all users                                                   |
 | `GET`    | `/users/me`               |                    |                                              | Get own user                                                    |
 | `GET`    | `/users/:id`              |    `id` user id    |                                              | Get a specific user public data                                 |
 | `POST`   | `/users`                  |                    | username, email, password and repeatPassword | Create a new user                                               |
@@ -43,10 +42,37 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ## Users
 
-- **Get all users (Protected):** `GET /users`
-- **Get a specific user:** `GET /users/:id`
+- **Get a specific user (Protected):** `GET /users/:id`
+
+### Response example
+
+```json
+{
+  "username": "john_doe",
+  "lastActiveAt": "2025-06-04T09:57:41.096Z",
+  "avatarUrl": "../static/avatar.png",
+  "rank": 8,
+  "points": 30,
+  "onlineState": "offline"
+}
+```
+
 - **Get own user (Protected):** `GET /users/me`
+
+### Response example
+
+```json
+{
+  "email": "john_doe@example.com",
+  "username": "john_doe",
+  "id": "92c4f55f-5000-440e-ae20-20d2fa7c2dbe",
+  "avatarUrl": "../static/avatar.png"
+}
+```
+
 - **Create a new user:** `POST /users`
+
+### Request body example
 
 ```json
 {
@@ -57,7 +83,18 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
+### Response example
+
+```json
+{
+  "email": "new_user@email.com",
+  "username": "new_user_name"
+}
+```
+
 - **Update own user (Protected):** `PATCH /users`
+
+### Request body example
 
 ```json
 {
@@ -69,52 +106,222 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Delete a user:** `DELETE /users/:id`
-- **Check if a user is online:** `GET /users/isOnline/:id`
-- **Check if user has 2FA enabled (Get JWT):** `POST /users/preLogin`
+### Response example
+
+```json
+{
+  "email": "updated_user@email.com",
+  "username": "updated_username"
+}
+```
+
+- **Delete a user (Protected):** `DELETE /users/:id`
+
+### Response example
+
+```json
+{
+  "email": "deleted_user@email.com",
+  "username": "deleted_username"
+}
+```
+
+- **Check if a user is online (Protected):** `GET /users/isOnline/:id`
+
+### Response example
+
+```json
+{
+  "isOnline": true
+}
+```
+
+- **Check if user has 2FA enabled:** `POST /users/preLogin`
+
+### Request body example
+
+```json
+{
+  "email": "user@email.com",
+  "password": "password"
+}
+```
+
+### Response example
+
+```json
+{
+  "enabled2FA": true
+}
+```
+
 - **User login with 2FA (Get JWT):** `POST /users/login2FA`
+
+### Request body example
 
 ```json
 {
   "email": "user@email.com",
   "password": "password",
-  "token": "325362"
+  "code": "325362"
 }
 ```
 
-- **User login (Get JWT) :** `POST /users/login`
+### Response example
 
-```http
-POST http://localhost:3000/users/login HTTP/1.1
-Content-Type: application/json
-
+```json
 {
-	"email": "test@gmail.com",
-	"password": "secure123"
+  "avatar": "../static/avatar.png"
 }
-
 ```
 
 **Note:** The token will be saved in a Cookie `access_token`. Requests to protected routes require this cookie to be set with a valid token.
 
-- **Check if user is logged in:** `GET /users/checkLoginStatus`
-- **Logout a user:** `DELETE /users/logout`
+- **User login (Get JWT) :** `POST /users/login`
 
-- **Get a user's match stats:** `GET /users/:id/stats`
-- **Checks if user enters valid token for 2FA:** `POST /users/2FA/verify`
+### Request body example
 
-```http
-POST http://localhost:3000/users/2FA/verify HTTP/1.1
-Content-Type: application/json
-
+```json
 {
-	"token": "2FAtoken",
+  "email": "user@email.com",
+  "password": "password"
 }
-
 ```
 
-- **Checks if user has 2FA enabled:** `GET /users/2FA/check`
-- **Sets up 2FA for that user:** `GET /users/2FA/setup`
+### Response example
+
+```json
+{
+  "avatar": "../static/avatar.png"
+}
+```
+
+**Note:** The token will be saved in a Cookie `access_token`. Requests to protected routes require this cookie to be set with a valid token.
+
+- **Check if user is logged in (Protected):** `GET /users/checkLoginStatus`
+
+### Response example
+
+```c
+{
+  "User is logged in"
+}
+```
+
+- **Logout a user (Protected):** `DELETE /users/logout`
+
+### Response example
+
+```json
+{
+  "message": "Logout successful!"
+}
+```
+
+- **Get a user's stats (Protected):** `GET /users/:id/stats`
+
+### Response example
+
+```json
+{
+  "stats": {
+    "totalMatches": 24,
+    "wins": 12,
+    "losses": 12,
+    "winRate": 0.5,
+    "points": 23,
+    "rank": 5,
+    "tournaments": 2
+  }
+}
+```
+
+- **Checks if user enters valid token for 2FA (Protected):** `POST /users/2FA/verify`
+
+### Request body example
+
+```json
+{
+  "code": "2FAtoken",
+  "password": "password"
+}
+```
+
+### Response example
+
+```json
+{
+  "token": "token"
+}
+```
+
+**Note:** The token will be saved in a Cookie `access_token`. Requests to protected routes require this cookie to be set with a valid token.
+
+- **Checks if user has 2FA enabled (Protected):** `GET /users/2FA/check`
+
+### Response example
+
+```json
+{
+  "enabled2FA": true
+}
+```
+
+- **Sets up 2FA for that user (Protected):** `GET /users/2FA/setup`
+
+### Response example
+
+```c
+{
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQCAYAAAA... (truncated)"
+}
+```
+
+- **Updates avatar image path to a default (Protected):** `PUT /users/defaultAvatar`
+
+### Request body example
+
+```json
+{
+  "path": "default/avatar.png"
+}
+```
+
+### Response example
+
+```json
+{
+  "message": "Path to avatar updated successfully."
+}
+```
+
+- **Uploads custom avatar image (Protected):** `PUT /users/customAvatar`
+
+### Request body example
+
+```json
+{
+  "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQCAYAAAA... (truncated)"
+}
+```
+
+### Response example
+
+```json
+{
+  "message": "Avatar uploaded."
+}
+```
+
+- **Get user's avatar image path (Protected):** `GET /users/getAvatarPath`
+
+### Response example
+
+```json
+{
+  "path": "avatar/avatar.png"
+}
+```
 
 ## Friendships
 
