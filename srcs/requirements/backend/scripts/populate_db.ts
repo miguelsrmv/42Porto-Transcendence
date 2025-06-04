@@ -134,9 +134,11 @@ async function createMatches(users: User[]) {
       const match = await prisma.match.create({
         data: {
           settings: '',
-          stats: '',
+          stats: `{"left":{"goals":${score1},"sufferedGoals":${score2},"saves":0,"powersUsed":0},"right":{"goals":${score2},"sufferedGoals":${score1},"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
           user1Id: participants[0].id,
           user2Id: participants[1].id,
+          user1Alias: participants[0].username,
+          user2Alias: participants[1].username,
           user1Score: score1,
           user2Score: score2,
           user1Character: Character.NONE,
@@ -185,11 +187,13 @@ async function createTestUserMatches(users: User[]) {
     await prisma.match.create({
       data: {
         settings: '',
-        stats: '',
+        stats: `{"left":{"goals":${score1},"sufferedGoals":${score2},"saves":0,"powersUsed":0},"right":{"goals":${score2},"sufferedGoals":${score1},"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
         user1Id: testUser!.id,
         user2Id: users[i].id,
         user1Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
         user2Character: CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] as Character,
+        user1Alias: testUser!.username,
+        user2Alias: users[i].username,
         user1Score: score1,
         user2Score: score2,
         winnerId: score1 > score2 ? testUser!.id : users[i].id,
