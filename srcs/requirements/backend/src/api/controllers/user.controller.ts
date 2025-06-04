@@ -321,7 +321,7 @@ export async function setDefaultAvatar(
   }
 }
 
-export async function UuploadCustomAvatar(
+export async function uploadCustomAvatar(
   request: FastifyRequest<{ Body: AvatarData }>,
   reply: FastifyReply,
 ) {
