@@ -13,7 +13,7 @@
 - Deal with re-connections and lag (player_lagging, player_reconnected)
 - Review heartbeat times
 
-- Update api docs
+- Review API endpoints' output
 - Parse player settings ?
 - Allow user to be logged in on multiple computers? 
 - Check user stats match leaderboard
