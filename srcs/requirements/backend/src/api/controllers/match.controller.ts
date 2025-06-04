@@ -26,6 +26,17 @@ export async function getMatchById(
   try {
     const match = await prisma.match.findUniqueOrThrow({
       where: { id: request.params.id },
+      select: {
+        mode: true,
+        user1Id: true,
+        user2Id: true,
+        user1Character: true,
+        user2Character: true,
+        createdAt: true,
+        stats: true,
+        user1Alias: true,
+        user2Alias: true,
+      },
     });
     reply.send(match);
   } catch (error) {
