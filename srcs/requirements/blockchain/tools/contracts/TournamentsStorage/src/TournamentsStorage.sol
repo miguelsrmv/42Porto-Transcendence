@@ -2,11 +2,13 @@
 pragma solidity ^0.8.28;
 
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
-import {console} from "forge-std/Script.sol";
 
 contract TournamentsStorage {
     address private immutable i_owner;
     uint256 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
+    mapping(string => Tournament) public tournamentsMap;
+    string[] public classicTournamentsUUID;
+    string[] public crazyTournamentsUUID;
 
     using Strings for uint256;
 
@@ -30,11 +32,6 @@ contract TournamentsStorage {
         Participant[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
         uint256[(MAX_PARTICIPANTS - 1) * 2] scores;
     }
-
-    mapping(string => Tournament) private tournamentsMap;
-
-    string[] classicTournamentsUUID;
-    string[] crazyTournamentsUUID;
 
     // CONSTRUCTOR***************************************************************
     constructor() {
@@ -78,8 +75,7 @@ contract TournamentsStorage {
 
         for (uint256 i = 0; i < 3; i++) {
             placements[i] = "";
-            if (keccak256(abi.encodePacked(_data[i])) != keccak256(abi.encodePacked("")))
-                tournamentsToDisplay++;
+            if (keccak256(abi.encodePacked(_data[i])) != keccak256(abi.encodePacked(""))) tournamentsToDisplay++;
         }
 
         for (uint256 i = 0; i < tournamentsToDisplay; i++) {
@@ -112,19 +108,28 @@ contract TournamentsStorage {
         return placements;
     }
 
-    function getPlayerTournamentScores(string memory _tournamentId, string memory _userId) public view returns (string[4] memory) {
+    function getPlayerTournamentScores(string memory _tournamentId, string memory _userId)
+        public
+        view
+        returns (string[4] memory)
+    {
         string[4] memory data;
 
         Tournament memory tournament = tournamentsMap[_tournamentId];
         for (uint256 i = 0; i < MAX_PARTICIPANTS; i++) {
-            if (keccak256(abi.encodePacked(tournament.participants[i].uniqueId)) == keccak256(abi.encodePacked(_userId))) {
+            if (
+                keccak256(abi.encodePacked(tournament.participants[i].uniqueId)) == keccak256(abi.encodePacked(_userId))
+            ) {
                 data[0] = tournament.participants[i].userAlias;
                 break;
             }
         }
         uint256 dataIndex = 1;
         for (uint256 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
-            if (keccak256(abi.encodePacked(tournament.matchedParticipants[i].uniqueId)) == keccak256(abi.encodePacked(_userId))) {
+            if (
+                keccak256(abi.encodePacked(tournament.matchedParticipants[i].uniqueId))
+                    == keccak256(abi.encodePacked(_userId))
+            ) {
                 data[dataIndex] = (tournament.scores[i]).toString();
                 dataIndex++;
             }
@@ -134,10 +139,6 @@ contract TournamentsStorage {
             data[dataIndex] = "";
             dataIndex++;
         }
-        console.log("index[0]", data[0]);
-        console.log("index[1]", data[1]);
-        console.log("index[2]", data[2]);
-        console.log("index[3]", data[3]);
 
         return data;
     }

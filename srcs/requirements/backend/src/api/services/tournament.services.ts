@@ -1,5 +1,6 @@
 import { prisma } from '../../utils/prisma';
 import { tournamentPlayer } from '../../ws/remoteGameApp/types';
+import { contractProvider } from './blockchain.services';
 
 // TODO: create tournament_status type data
 export async function processTournamentData(data: string[][], scores: number[]) {
@@ -64,4 +65,21 @@ export async function getTotalTournaments(playerId: string) {
     select: { tournamentId: true },
   });
   return tournaments.length;
+}
+
+export async function getWonTournaments(playerId: string) {
+  const tournaments = await prisma.tournamentParticipant.findMany({
+    where: { userId: playerId },
+    select: { tournamentId: true },
+  });
+  let wonTournaments = 0;
+  try {
+    for (const tournament of tournaments) {
+      const index = await contractProvider.findLastIndexOfPlayer(tournament.tournamentId, playerId);
+      if (index == 14) wonTournaments++;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  return wonTournaments;
 }
