@@ -1,4 +1,5 @@
 import { PlayerInfo } from './gameSession';
+import { character, characterList } from './remoteGameApp/characterData';
 import { gameType, leanGameSettings, playerSettings, playType } from './remoteGameApp/settings';
 import { PlayerInput, ServerMessage, tournamentPlayer } from './remoteGameApp/types';
 import WebSocket from 'ws';
@@ -25,6 +26,22 @@ function isValidHexColor(hex: string): boolean {
   return /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(hex);
 }
 
+const charactersAreEqual = (a: character, b: character): boolean => {
+  return (
+    a.name === b.name &&
+    a.attack === b.attack &&
+    a.characterSelectPicturePath === b.characterSelectPicturePath &&
+    a.characterAvatarPicturePath === b.characterAvatarPicturePath &&
+    a.accentColour === b.accentColour &&
+    a.selectHelpMessage === b.selectHelpMessage
+  );
+};
+
+function isValidCharacter(character: character): boolean {
+  return characterList.some((c) => charactersAreEqual(c, character));
+}
+
+// TODO: Separate settings' parsing into another function
 export function areGameSettingsValid(
   socket: WebSocket,
   userId: string,
@@ -48,7 +65,11 @@ export function areGameSettingsValid(
     closeSocket(socket);
     return false;
   }
-  // TODO: validate character
+  if (playerSettings.character && !isValidCharacter(playerSettings.character)) {
+    sendErrorMessage(socket, `Invalid Character`);
+    closeSocket(socket);
+    return false;
+  }
   if (!isValidHexColor(playerSettings.paddleColour)) playerSettings.paddleColour = '#000000';
   const newAlias = playerSettings.alias.trim();
   playerSettings.alias = newAlias;

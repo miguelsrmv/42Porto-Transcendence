@@ -1,11 +1,5 @@
 import WebSocket from 'ws';
-import {
-  character,
-  gameSettings,
-  gameType,
-  playerSettings,
-  playType,
-} from './remoteGameApp/settings';
+import { gameSettings, gameType, playerSettings, playType } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
 import { BlockchainScoreData, Tournament, tournamentState } from './tournament';
 import { Player } from './remoteGameApp/player';
@@ -16,6 +10,7 @@ import { getAvatarFromPlayer } from '../api/services/user.services';
 import { getRandomBackground } from './remoteGameApp/backgroundData';
 import { updateLeaderboardRemote } from '../api/services/leaderboard.services';
 import { gameTypeToEnum } from '../utils/helpers';
+import { character } from './remoteGameApp/characterData';
 
 export class PlayerInfo {
   id: string;
