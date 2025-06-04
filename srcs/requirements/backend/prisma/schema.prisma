@@ -68,6 +68,8 @@ model Match {
   user2Score     Int        @default(0)
   user1Character Character?
   user2Character Character?
+  user1Alias     String
+  user2Alias     String
   winnerId       String?
   winner         User?      @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
   createdAt      DateTime   @default(now())

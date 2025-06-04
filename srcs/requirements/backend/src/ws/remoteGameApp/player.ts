@@ -1,7 +1,6 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { Attack } from './attack.js';
-import WebSocket from 'ws';
 import { PlayerInput } from './types.js';
 import { gameStats } from './gameStats.js';
 import { GameArea } from './gameArea.js';
@@ -11,7 +10,7 @@ export class Player {
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
   ball: Ball;
-  alias?: string;
+  alias: string;
   score: number;
   attack: Attack | null;
   side: string;
