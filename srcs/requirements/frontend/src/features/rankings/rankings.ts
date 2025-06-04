@@ -362,22 +362,17 @@ async function editHUD(clone: DocumentFragment, matchData: matchData, side: stri
     return;
   }
 
-  const playerPortrait = clone.querySelector(`.${side}-match-stats-portrait`) as HTMLImageElement;
-  if (!playerPortrait) {
+  const characterPortrait = clone.querySelector(
+    `.${side}-match-stats-portrait`,
+  ) as HTMLImageElement;
+  if (!characterPortrait) {
     console.log(`Couldn't find .${side}-match-stats-portrait`);
     return;
   }
 
-  const matchSettings = JSON.parse(matchData.settings);
   let alias;
-  side === 'left' ? (alias = matchSettings.alias1) : (alias = matchSettings.alias2);
+  side === 'left' ? (alias = matchData.user1alias) : (alias = matchData.user2alias);
   playerAlias.innerText = alias;
-
-  let userCharacter;
-  side === 'left'
-    ? (userCharacter = matchData.user1Character)
-    : (userCharacter = matchData.user2Character);
-  playerPortrait.src = getCharacterPathFromBackend(userCharacter);
 
   let userId;
   side === 'left' ? (userId = matchData.user1Id) : (userId = matchData.user2Id);
@@ -398,10 +393,72 @@ async function editHUD(clone: DocumentFragment, matchData: matchData, side: stri
     return;
   }
 
-  // TODO: Accent colour, hide character if not crazy
+  if (matchData.mode === 'CRAZY') {
+    let userCharacter;
+    side === 'left'
+      ? (userCharacter = matchData.user1Character)
+      : (userCharacter = matchData.user2Character);
+    characterPortrait.src = getCharacterPathFromBackend(userCharacter);
+    let placeholderColour = playerAvatar.className.match(/([a-z]+)-([a-z]+)-500/)?.[2];
+    let colour = getAccentColourFromBackend(userCharacter);
+    playerAvatar.classList.remove(`border-${placeholderColour}-500`);
+    characterPortrait.classList.remove(`border-${placeholderColour}-500`);
+    playerAvatar.classList.add(`border-${colour}-500`);
+    characterPortrait.classList.add(`border-${colour}-500`);
+  } else characterPortrait.classList.add('hidden');
 }
 
-function editStats(clone: DocumentFragment, matchData: matchData): void {}
+function editStats(clone: DocumentFragment, matchData: matchData): void {
+  const leftGoals = document.getElementById('left-goals');
+  if (!leftGoals) {
+    console.log("Couldn't find leftGoals element");
+    return;
+  }
+
+  const rightGoals = document.getElementById('right-goals');
+  if (!rightGoals) {
+    console.log("Couldn't find rightGoals element");
+    return;
+  }
+
+  const leftSaves = document.getElementById('left-saves');
+  if (!leftSaves) {
+    console.log("Couldn't find leftSaves element");
+    return;
+  }
+
+  const rightSaves = document.getElementById('right-saves');
+  if (!rightSaves) {
+    console.log("Couldn't find leftSaves element");
+    return;
+  }
+
+  const powersUsed = document.getElementById('powers-used');
+  if (!powersUsed) {
+    console.log("Couldn't find powersUsed element");
+    return;
+  }
+
+  const leftPowersUsed = document.getElementById('left-powers');
+  if (!leftPowersUsed) {
+    console.log("Couldn't find leftPowersUsed element");
+    return;
+  }
+
+  const rightPowersUsed = document.getElementById('right-powers');
+  if (!rightPowersUsed) {
+    console.log("Couldn't find rightPowersUsed element");
+    return;
+  }
+
+  const maxBallSpeed = document.getElementById('max-speed');
+  if (!maxBallSpeed) {
+    console.log("Couldn't find maxBallSpeed element");
+    return;
+  }
+
+  // TODO: Edit stats, hide powers used if mode !=== Crazy
+}
 
 /**
  * @brief Adds event listeners to recent tournament elements to open a modal and display tournament data.
