@@ -1,16 +1,17 @@
 import WebSocket from 'ws';
 import { gameSettings, gameType, playerSettings, playType } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
-import { BlockchainScoreData, Tournament, tournamentState } from './tournament';
+import { BlockchainScoreData, Tournament } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
-import { ServerMessage } from './remoteGameApp/types';
+import { gameRunningState, ServerMessage } from './remoteGameApp/types';
 import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 import { getAvatarFromPlayer } from '../api/services/user.services';
 import { getRandomBackground } from './remoteGameApp/backgroundData';
 import { updateLeaderboardRemote } from '../api/services/leaderboard.services';
 import { gameTypeToEnum } from '../utils/helpers';
 import { character } from './remoteGameApp/characterData';
+import { removeItem } from './helpers';
 
 export class PlayerInfo {
   id: string;
@@ -19,6 +20,7 @@ export class PlayerInfo {
   avatar: string;
   paddleColour: string;
   character: character | null;
+  isDisconnected: boolean = false;
   readyForNextRound: boolean = false;
   scoreQuarterFinals?: number;
   scoreSemiFinals?: number;
@@ -81,45 +83,23 @@ export class GameSession {
     this.aliases.push(playerSettings.alias);
   }
 
-  async removePlayer(playerId: string) {
+  async removePlayerSession(playerId: string) {
     const playerToRemove = this.players.find((player) => player.id === playerId);
     if (!playerToRemove) return;
-    console.log(`Removing ${playerToRemove.alias}`);
-    const index = this.players.indexOf(playerToRemove);
-    if (index !== -1) this.players.splice(index, 1);
-    const indexAlias = this.aliases.indexOf(playerToRemove.alias);
-    if (indexAlias !== -1) this.aliases.splice(indexAlias, 1);
+    console.log(`Removing ${playerToRemove.alias} from session`);
+    removeItem(this.players, playerToRemove);
+    removeItem(this.aliases, playerToRemove.alias);
     if (!this.gameArea) return;
     this.gameArea.stop();
-    if (this.players.length === 0) return;
+    if (this.players.length === 0 || this.tournament) return;
 
     const playerWhoLeft = this.gameArea.getPlayerById(playerId);
     if (playerWhoLeft.isEliminated) return; // score already saved in endGame
 
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
     this.broadcastPlayerLeftMessage(playerWhoStayed);
-    if (this.tournament && this.tournament.state === tournamentState.ongoing) {
-      const player = this.players.find((p) => p.id === playerWhoStayed.id);
-      const leavingPlayer = this.players.find((p) => p.id === playerWhoLeft.id);
-      if (!player || !leavingPlayer) return;
-      // TODO: Check if order of users matter
-      const data: BlockchainScoreData = {
-        tournamentId: this.tournament.id,
-        gameType: gameTypeToEnum(this.tournament.type),
-        player1Data: [player.id, player.alias, player.character?.name ?? 'NONE'],
-        score1: 5, // hard-coded win
-        player2Data: [
-          leavingPlayer.id,
-          leavingPlayer.alias,
-          leavingPlayer.character?.name ?? 'NONE',
-        ],
-        score2: playerWhoLeft.score,
-      };
-      await this.tournament.updateSessionScore(this, playerWhoStayed.id, data);
-    } else {
-      await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
-      await updateLeaderboardRemote(playerWhoStayed, playerWhoLeft);
-    }
+    await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
+    await updateLeaderboardRemote(playerWhoStayed, playerWhoLeft);
   }
 
   isFull(): boolean {
@@ -130,8 +110,16 @@ export class GameSession {
     return this.players.length === 0;
   }
 
+  hasDisconnectedPlayers(): boolean {
+    return this.players.some((p) => p.isDisconnected);
+  }
+
   getPlayers() {
     return this.players;
+  }
+
+  getPlayerInfo(playerId: string) {
+    return this.players.find((p) => p.id === playerId);
   }
 
   getPlayerIds() {
@@ -159,7 +147,7 @@ export class GameSession {
 
   broadcastEndGameMessage(winningPlayer: Player) {
     if (!this.gameArea) return;
-    const gameEndMsg = {
+    const gameEndMsg: ServerMessage = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,
       ownSide: 'left',
@@ -176,7 +164,7 @@ export class GameSession {
     this.gameArea.stats.setMaxGoals(winningPlayer.side);
     // TODO: Differentiate from normal game_end message?
     console.log(`Player left from match with ${winningPlayer.alias}`);
-    const gameEndMsg = {
+    const gameEndMsg: ServerMessage = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,
       ownSide: winningPlayer.side,
@@ -203,8 +191,101 @@ export class GameSession {
     };
   }
 
+  private getForfeitStats() {
+    return {
+      left: { goals: 5, sufferedGoals: 0, saves: 0, powersUsed: 0 },
+      right: { goals: 0, sufferedGoals: 5, saves: 0, powersUsed: 0 },
+      maxSpeed: 0,
+    };
+  }
+
+  private getConnectedPlayer() {
+    return this.players.find((p) => !p.isDisconnected);
+  }
+
+  private getDisconnectedPlayer() {
+    return this.players.find((p) => p.isDisconnected);
+  }
+
+  public async markAsDisconnected(playerId: string) {
+    if (!this.tournament) return;
+    const leavingPlayer = this.getPlayerInfo(playerId);
+    if (!leavingPlayer) return;
+    leavingPlayer.isDisconnected = true;
+
+    console.log(`${leavingPlayer.alias} disconnected`);
+    if (!this.gameArea) return;
+    if (this.gameArea.runningState === gameRunningState.ended) return;
+    this.gameArea.stop();
+    if (this.players.length === 0) return;
+
+    const playerWhoLeft = this.gameArea.getPlayerById(playerId);
+    if (playerWhoLeft.isEliminated) return; // score already saved in endGame
+
+    const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
+    const stayingPlayer = this.players.find((p) => p.id === playerWhoStayed.id);
+    if (!leavingPlayer || !stayingPlayer || stayingPlayer.isDisconnected) return;
+    this.broadcastPlayerLeftMessage(playerWhoStayed);
+    const data: BlockchainScoreData = {
+      tournamentId: this.tournament.id,
+      gameType: gameTypeToEnum(this.tournament.type),
+      player1Data: [stayingPlayer.id, stayingPlayer.alias, stayingPlayer.character?.name ?? 'NONE'],
+      score1: 5, // hard-coded win
+      player2Data: [leavingPlayer.id, leavingPlayer.alias, leavingPlayer.character?.name ?? 'NONE'],
+      score2: playerWhoLeft.score,
+    };
+    this.winner = playerWhoStayed.id;
+    await this.tournament.updateSessionScore(this.round, playerWhoStayed.id, data);
+  }
+
+  private async endSessionForfeit() {
+    if (!this.tournament) return;
+    const remainingPlayer = this.getConnectedPlayer();
+    if (!remainingPlayer) {
+      // TODO: Handle case
+      console.log(`Both players missing for match`);
+      this.winner = this.players[0].id;
+      await this.tournament.checkAllSessionsWinner();
+      return;
+    }
+    console.log(`${remainingPlayer.alias} auto-advances due to missing opponent`);
+    this.sendToPlayer(
+      remainingPlayer.id,
+      JSON.stringify({ type: 'game_setup', settings: this.getJointSettings() }),
+    );
+    this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'game_start' } as ServerMessage));
+    const gameEndMsg = {
+      type: 'game_end',
+      winningPlayer: 'left',
+      ownSide: 'left',
+      stats: this.getForfeitStats(),
+    };
+    this.sendToPlayer(remainingPlayer.id, JSON.stringify(gameEndMsg));
+
+    if (this.tournament.currentRound === 3) {
+      this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'tournament_end' }));
+    }
+    const leavingPlayer = this.getDisconnectedPlayer();
+    if (!leavingPlayer) return;
+    this.gameArea!.getPlayerById(leavingPlayer.id).isEliminated = true;
+    const data: BlockchainScoreData = {
+      tournamentId: this.tournament.id,
+      gameType: gameTypeToEnum(this.tournament.type),
+      player1Data: [
+        remainingPlayer.id,
+        remainingPlayer.alias,
+        remainingPlayer.character?.name ?? 'NONE',
+      ],
+      score1: 5, // hard-coded win
+      player2Data: [leavingPlayer.id, leavingPlayer.alias, leavingPlayer.character?.name ?? 'NONE'],
+      score2: 0, // hard-coded loss due to forfeit
+    };
+    this.winner = remainingPlayer.id;
+    await this.tournament.updateSessionScore(this.round, remainingPlayer.id, data);
+  }
+
   // TODO: Review if all these parameters are necessary
-  startGame() {
+  async startGame() {
     console.log(`Starting game between: ${this.players[0].alias} and ${this.players[1].alias}`);
     const response: ServerMessage = {
       type: 'game_setup',
@@ -218,6 +299,11 @@ export class GameSession {
       this,
     );
     this.gameArea.tournament = this.tournament;
+    // TODO: Deal with both players quitting
+    if (this.hasDisconnectedPlayers()) {
+      await this.endSessionForfeit();
+      return;
+    }
     setPowerUpBar(this.gameArea);
     const gameInterval = setInterval(async () => {
       try {
@@ -232,8 +318,9 @@ export class GameSession {
   }
 
   async clear() {
+    if (this.players.length === 0) return;
     console.log('Clearing session');
-    await Promise.allSettled(this.players.map((player) => this.removePlayer(player.id)));
+    await Promise.allSettled(this.players.map((player) => this.removePlayerSession(player.id)));
     this.players.length = 0;
   }
 

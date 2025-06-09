@@ -129,9 +129,9 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     };
     console.log(`Game ended, winner: ${winningPlayer.alias}`);
     const socket = gameArea.session.getPlayerSocket(losingPlayer.id);
-    if (!socket) return;
-    closeSocket(socket);
-    await gameArea.tournament.updateSessionScore(gameArea.session, winningPlayer.id, data);
+    gameArea.session.winner = winningPlayer.id;
+    if (socket) closeSocket(socket);
+    await gameArea.tournament.updateSessionScore(gameArea.session.round, winningPlayer.id, data);
   } else {
     gameArea.session.broadcastEndGameMessage(winningPlayer);
     await createMatch(winningPlayer, gameArea);
