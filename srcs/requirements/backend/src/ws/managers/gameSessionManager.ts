@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
-import { gameType, leanGameSettings } from './remoteGameApp/settings';
-import { GameSession } from './gameSession';
-import { removeItem } from './helpers';
+import { gameType, leanGameSettings } from './../remoteGameApp/settings';
+import { GameSession } from './../gameSession';
+import { removeItem } from './../helpers';
 
 export class GameSessionManager {
   private sessions: Map<gameType, GameSession[]> = new Map();

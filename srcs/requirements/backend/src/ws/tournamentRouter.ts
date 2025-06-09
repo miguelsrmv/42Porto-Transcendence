@@ -4,8 +4,8 @@ import { ClientMessage, PlayerInput } from './remoteGameApp/types';
 import { areGameSettingsValid, closeSocket, sendErrorMessage } from './helpers';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isPlayerInput } from './helpers';
-import { TournamentManager } from './tournamentManager';
-import { playerManager } from './playerManager';
+import { TournamentManager } from './managers/tournamentManager';
+import { playerManager } from './managers/playerManager';
 
 const tournamentManager = new TournamentManager();
 

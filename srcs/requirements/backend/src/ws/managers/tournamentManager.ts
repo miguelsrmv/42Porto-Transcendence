@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
-import { gameType, leanGameSettings } from './remoteGameApp/settings';
-import { Tournament, tournamentState } from './tournament';
-import { removeItem } from './helpers';
+import { gameType, leanGameSettings } from './../remoteGameApp/settings';
+import { Tournament, tournamentState } from './../tournament';
+import { removeItem } from './../helpers';
 
 export class TournamentManager {
   private tournaments: Map<gameType, Tournament[]> = new Map();
