@@ -136,8 +136,10 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     gameArea.session.broadcastEndGameMessage(winningPlayer);
     await createMatch(winningPlayer, gameArea);
     await updateLeaderboardRemote(winningPlayer, losingPlayer);
-    const socket = gameArea.session.getPlayerSocket(losingPlayer.id);
-    if (!socket) return;
-    closeSocket(socket);
+    const loserSocket = gameArea.session.getPlayerSocket(losingPlayer.id);
+    const winnerSocket = gameArea.session.getPlayerSocket(winningPlayer.id);
+    if (!loserSocket || !winnerSocket) return;
+    closeSocket(loserSocket);
+    closeSocket(winnerSocket);
   }
 }
