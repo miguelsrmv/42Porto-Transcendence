@@ -83,6 +83,13 @@ export class GameSession {
     this.aliases.push(playerSettings.alias);
   }
 
+  reconnectPlayer(playerId: string, newSocket: WebSocket) {
+    const player = this.getPlayerInfo(playerId);
+    if (!player) return;
+    player.socket = newSocket;
+    player.isDisconnected = false;
+  }
+
   async removePlayerSession(playerId: string) {
     const playerToRemove = this.players.find((player) => player.id === playerId);
     if (!playerToRemove) return;
