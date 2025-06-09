@@ -6,6 +6,7 @@
 - Do something with friends
 - Doxygen comments
 - Check play another game button is working after remote match
+- Next game button showing on tournament winner
 
 # Backend
 - Deal with multiple players leaving in a tournament or during waiting
