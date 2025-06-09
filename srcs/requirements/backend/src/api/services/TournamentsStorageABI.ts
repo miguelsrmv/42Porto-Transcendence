@@ -134,6 +134,32 @@ export const abi = [
   },
   {
     "type": "function",
+    "name": "getAllClassicTournamentsUUIDs",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string[]",
+        "internalType": "string[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAllCrazyTournamentsUUIDs",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string[]",
+        "internalType": "string[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getLastThreeTournamentsPosition",
     "inputs": [
       {
