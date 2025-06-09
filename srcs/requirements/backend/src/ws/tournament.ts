@@ -181,6 +181,7 @@ export class Tournament {
   }
 
   async checkAllSessionsWinner() {
+    if (this.state === tournamentState.ended) return;
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
     if (roundSessions.every((session) => session.winner)) await this.advanceRound();
   }
