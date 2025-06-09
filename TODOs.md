@@ -5,6 +5,7 @@
 - Edit match stats themselves
 - Do something with friends
 - Doxygen comments
+- Check play another game button is working after remote match
 
 # Backend
 - Deal with multiple players leaving in a tournament or during waiting
@@ -14,7 +15,6 @@
 - Review heartbeat times
 
 - Review API endpoints' output
-- Parse player settings ?
 - Allow user to be logged in on multiple computers? 
 - Check user stats match leaderboard
 - Remove unused functions/routes/types
