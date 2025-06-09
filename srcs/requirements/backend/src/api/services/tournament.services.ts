@@ -1,84 +1,85 @@
-import { tournamentPlayer } from '../../ws/remoteGameApp/types';
 import { prisma } from '../../utils/prisma';
+import { tournamentPlayer } from '../../ws/remoteGameApp/types';
+import { contractProvider } from './blockchain.services';
 
-export function processTournamentData(data: any) {
+// TODO: create tournament_status type data
+export async function processTournamentData(data: string[][], scores: number[]) {
+  if (data.length !== 15 || scores.length !== 14) return;
 
+  const firstRoundScores = scores.slice(0, 8);
+  const secondRoundScores = scores.slice(8, 12);
+  const thirdRoundScores = scores.slice(12);
+
+  const rawPlayers = data.slice(0, -1).map((p, index) => {
+    const [id, userAlias] = p;
+    let quarterFinalScore = '';
+    let semiFinalScore = '';
+    let finalScore = '';
+
+    if (index < 8) {
+      quarterFinalScore = firstRoundScores[index].toString();
+    } else if (index < 12) {
+      semiFinalScore = secondRoundScores[index - 8].toString();
+    } else if (index < 14) {
+      finalScore = thirdRoundScores[index - 12].toString();
+    }
+
+    return {
+      id,
+      userAlias,
+      avatarPath: '',
+      quarterFinalScore,
+      semiFinalScore,
+      finalScore,
+    };
+  });
+
+  const mergedPlayers: Record<string, (typeof rawPlayers)[0]> = {};
+
+  for (const player of rawPlayers) {
+    if (!mergedPlayers[player.id]) {
+      mergedPlayers[player.id] = { ...player };
+    } else {
+      const existing = mergedPlayers[player.id];
+      existing.quarterFinalScore ||= player.quarterFinalScore;
+      existing.semiFinalScore ||= player.semiFinalScore;
+      existing.finalScore ||= player.finalScore;
+    }
+  }
+
+  const finalPlayers: tournamentPlayer[] = Object.values(mergedPlayers);
+  for (const player of finalPlayers) {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: player.id },
+      select: { avatarUrl: true },
+    });
+    player.avatarPath = user.avatarUrl;
+  }
+
+  return finalPlayers;
 }
 
-export async function generateTournamentData(tournamentId: string) {
-  const users = await prisma.user.findMany({
-    take: 8,
-    select: {
-      id: true,
-      avatarUrl: true,
-    },
+export async function getTotalTournaments(playerId: string) {
+  const tournaments = await prisma.tournamentParticipant.findMany({
+    where: { userId: playerId },
+    select: { tournamentId: true },
   });
-  if (users.length < 8) throw 'Less than 8 users in the database';
-  const tournamentData: tournamentPlayer[] = [
-    {
-      id: users[0].id,
-      userAlias: 'alias1',
-      avatarPath: users[0].avatarUrl,
-      quarterFinalScore: '5',
-      semiFinalScore: '3',
-      finalScore: '',
-    },
-    {
-      id: users[1].id,
-      userAlias: 'alias2',
-      avatarPath: users[1].avatarUrl,
-      quarterFinalScore: '5',
-      semiFinalScore: '5',
-      finalScore: '2',
-    },
-    {
-      id: users[2].id,
-      userAlias: 'alias3',
-      avatarPath: users[2].avatarUrl,
-      quarterFinalScore: '5',
-      semiFinalScore: '5',
-      finalScore: '5',
-    },
-    {
-      id: users[3].id,
-      userAlias: 'alias4',
-      avatarPath: users[3].avatarUrl,
-      quarterFinalScore: '3',
-      semiFinalScore: '',
-      finalScore: '',
-    },
-    {
-      id: users[4].id,
-      userAlias: 'alias5',
-      avatarPath: users[4].avatarUrl,
-      quarterFinalScore: '2',
-      semiFinalScore: '',
-      finalScore: '',
-    },
-    {
-      id: users[5].id,
-      userAlias: 'alias6',
-      avatarPath: users[5].avatarUrl,
-      quarterFinalScore: '5',
-      semiFinalScore: '3',
-      finalScore: '',
-    },
-    {
-      id: users[6].id,
-      userAlias: 'alias7',
-      avatarPath: users[6].avatarUrl,
-      quarterFinalScore: '4',
-      semiFinalScore: '',
-      finalScore: '',
-    },
-    {
-      id: users[7].id,
-      userAlias: 'alias8',
-      avatarPath: users[7].avatarUrl,
-      quarterFinalScore: '1',
-      semiFinalScore: '',
-      finalScore: '',
-    },
-  ];
-  return tournamentData;
+  return tournaments.length;
+}
+
+export async function getWonTournaments(playerId: string) {
+  const tournaments = await prisma.tournamentParticipant.findMany({
+    where: { userId: playerId },
+    select: { tournamentId: true },
+  });
+  let wonTournaments = 0;
+  try {
+    for (const tournament of tournaments) {
+      const index = await contractProvider.findLastIndexOfPlayer(tournament.tournamentId, playerId);
+      if (index == 14) wonTournaments++;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  return wonTournaments;
 }

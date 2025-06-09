@@ -56,6 +56,10 @@ export class Tournament {
     this.type = type;
   }
 
+  hasAlias(alias: string): boolean {
+    return this.sessions.some((s) => s.aliases.some((a) => a === alias));
+  }
+
   // TODO: Create first session on Tournament constructor
   async createSession(ws: WebSocket, playerSettings: leanGameSettings) {
     const newSession = new GameSession(this.type, 'Tournament Play');
@@ -67,6 +71,7 @@ export class Tournament {
       JSON.stringify(newSession.print()),
     );
     this.sessions.push(newSession);
+    return newSession;
   }
 
   public async attributePlayerToSession(ws: WebSocket, playerSettings: leanGameSettings) {
@@ -116,13 +121,6 @@ export class Tournament {
       this.sessions.length === NBR_SESSIONS_FIRST_ROUND &&
       this.sessions.every((session) => session.isFull())
     );
-  }
-
-  private sendToPlayerCloseSocket(player: PlayerInfo, message: string) {
-    if (player.socket.readyState === WebSocket.OPEN) {
-      player.socket.send(message);
-      closeSocket(player.socket);
-    }
   }
 
   public broadcastSettingsToSessions() {
@@ -241,12 +239,8 @@ export class Tournament {
     this.roundWinners = this.determineRoundWinners();
     if (this.roundWinners.length <= 1) {
       console.log('Tournament has ended');
-      // TODO: send winner score ?
       if (this.roundWinners.length === 1) {
-        this.sendToPlayerCloseSocket(
-          this.roundWinners[0],
-          JSON.stringify({ type: 'tournament_end' } as ServerMessage),
-        );
+        closeSocket(this.roundWinners[0].socket);
       }
 
       this.state = tournamentState.ended;
@@ -291,11 +285,10 @@ export class Tournament {
   }
 
   private async startRound() {
+    this.broadcastStatus(this.roundWinners);
     ++this.currentRound;
     console.log(`Advancing to round ${this.currentRound}`);
     await this.createNextRoundSessions();
-    this.broadcastStatus(this.roundWinners);
-    this.roundWinners.length = 0;
     await wait(10);
     this.sessions
       .filter((session) => session.round === this.currentRound)
@@ -328,6 +321,7 @@ export class Tournament {
       newSession.tournament = this;
       this.sessions.push(newSession);
     }
+    this.roundWinners.length = 0;
   }
 
   private getPlayerInfoFromId(playerId: string) {

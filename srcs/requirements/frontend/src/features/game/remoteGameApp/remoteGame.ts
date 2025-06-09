@@ -59,7 +59,7 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       if (webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify({ type: 'ping' }));
       }
-    }, 30000);
+    }, 20000);
   };
 
   window.addEventListener(
@@ -94,12 +94,10 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       renderGame(messageData);
     } else if (messageData.type === 'game_goal' && gameIsRunning) {
       renderGoal(messageData.scoringSide);
-    } else if (
-      (messageData.type === 'game_end' || messageData.type === 'tournament_end') &&
-      gameIsRunning
-    ) {
+    } else if (messageData.type === 'tournament_end') {
+      tournamentIsRunning = false;
+    } else if (messageData.type === 'game_end' && gameIsRunning) {
       gameIsRunning = false;
-      if (messageData.type === 'tournament_end') tournamentIsRunning = false;
       triggerEndGameMenu(
         messageData.winningPlayer,
         messageData.ownSide,
@@ -108,7 +106,6 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
         tournamentIsRunning,
       );
       resetVariables();
-      webSocket.close();
     } else if (messageData.type === 'tournament_status') {
       showTournamentStatus(messageData.participants);
     }

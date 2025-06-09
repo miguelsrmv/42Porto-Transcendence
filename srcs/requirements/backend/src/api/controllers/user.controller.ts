@@ -55,16 +55,6 @@ export type Login2FAData = {
 
 type OnlineState = 'online' | 'offline' | 'inGame';
 
-// TODO: remove in the end
-export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    const users = await prisma.user.findMany();
-    reply.send(users);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
 export async function getUserById(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
@@ -128,6 +118,7 @@ export async function updateUser(
   }
 }
 
+// TODO: Only delete own user, get id from jwt
 export async function deleteUser(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,

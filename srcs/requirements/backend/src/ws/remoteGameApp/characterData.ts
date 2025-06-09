@@ -1,29 +1,30 @@
-/**
- * @file characterData.ts
- * @brief Provides character data and related functions for the game.
- *
- * This module defines the character data used in the game, including their names, attacks,
- * and image paths. It also provides functions to retrieve character data.
- */
+export interface character {
+  name: string;
+  attack: attackIdentifier;
+  characterSelectPicturePath: string;
+  characterAvatarPicturePath: string;
+  accentColour: string;
+  selectHelpMessage: string;
+}
 
-import { character } from './characterData.types.js';
+type attackIdentifier =
+  | 'Super Shroom'
+  | 'Egg Barrage'
+  | 'Spin Dash'
+  | 'Thunder Wave'
+  | 'Confusion'
+  | 'Gale Boomerang'
+  | 'The Amazing Mirror'
+  | 'Giant Punch'
+  | 'Morph Ball'
+  | 'Falcon Dive'
+  | 'Shell Decoy'
+  | 'Sabotage';
 
-/**
- * @brief Path to the character selection images.
- */
 const characterSelectPicturePath = '../../../../static/character_select/';
-
-/**
- * @brief Path to the character avatar images.
- */
 const characterAvatarPicturePath = '../../../../static/character_portrait/';
 
-/**
- * @brief Array of character data objects.
- *
- * Each object contains the character's name, attack, image paths, and a help message.
- */
-const characterList: character[] = [
+export const characterList: character[] = [
   {
     name: 'Mario',
     attack: 'Super Shroom',
@@ -120,55 +121,4 @@ const characterList: character[] = [
     accentColour: 'zinc',
     selectHelpMessage: "Hide your opponent's paddle!",
   },
-] as const;
-
-/**
- * @brief Retrieves all character data.
- *
- * @return The list of all character data.
- */
-export function getCharacterList(): character[] {
-  return characterList;
-}
-
-function getCharacterIndexFromBackend(name: string): number {
-  switch (name) {
-    case 'MARIO':
-      return 0;
-    case 'YOSHI':
-      return 1;
-    case 'DK':
-      return 2;
-    case 'BOWSER':
-      return 3;
-    case 'SONIC':
-      return 4;
-    case 'PIKACHU':
-      return 5;
-    case 'MEWTWO':
-      return 6;
-    case 'LINK':
-      return 7;
-    case 'KIRBY':
-      return 8;
-    case 'SAMUS':
-      return 9;
-    case 'CAPFALCON':
-      return 10;
-    case 'SNAKE':
-      return 11;
-  }
-  return 0;
-}
-
-export function getCharacterPathFromBackend(name: string): string {
-  let index: number = getCharacterIndexFromBackend(name);
-
-  return characterList[index].characterAvatarPicturePath;
-}
-
-export function getAccentColourFromBackend(name: string): string {
-  let index: number = getCharacterIndexFromBackend(name);
-
-  return characterList[index].accentColour;
-}
+];
