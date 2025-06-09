@@ -9,7 +9,7 @@
 - Next game button showing on tournament winner
 
 # Backend
-- Deal with multiple players leaving in a tournament or during waiting
+- How to deal with empty brackets? Sudden winner after first round?
 
 - join_game on WS connection?
 - Deal with re-connections and lag (player_lagging, player_reconnected)
