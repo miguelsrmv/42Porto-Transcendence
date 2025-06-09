@@ -11,7 +11,7 @@ import { getRandomBackground } from './remoteGameApp/backgroundData';
 import { updateLeaderboardRemote } from '../api/services/leaderboard.services';
 import { gameTypeToEnum } from '../utils/helpers';
 import { character } from './remoteGameApp/characterData';
-import { removeItem } from './helpers';
+import { closeSocket, removeItem } from './helpers';
 
 export class PlayerInfo {
   id: string;
@@ -107,6 +107,8 @@ export class GameSession {
     this.broadcastPlayerLeftMessage(playerWhoStayed);
     await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
     await updateLeaderboardRemote(playerWhoStayed, playerWhoLeft);
+    const winnerSocket = this.getPlayerSocket(playerWhoStayed.id);
+    if (winnerSocket) closeSocket(winnerSocket);
   }
 
   isFull(): boolean {
