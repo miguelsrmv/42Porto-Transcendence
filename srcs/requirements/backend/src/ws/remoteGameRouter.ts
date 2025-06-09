@@ -93,7 +93,7 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
     try {
       const playerId = playerManager.getPlayerId(socket);
       if (!playerId) return;
-      await sessionManager.removePlayer(playerId);
+      await sessionManager.removePlayerSessionManager(playerId);
       playerManager.unregister(socket);
     } catch (err) {
       console.error('Error closing socket:', err);

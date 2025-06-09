@@ -112,7 +112,7 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
     try {
       const playerId = playerManager.getPlayerId(socket);
       if (!playerId) return;
-      await tournamentManager.removePlayerTournament(playerId);
+      await tournamentManager.removePlayerTournamentManager(playerId);
       playerManager.unregister(socket);
     } catch (err) {
       console.error('Error closing socket:', err);

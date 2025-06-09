@@ -1,6 +1,7 @@
 import WebSocket from 'ws';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { Tournament, tournamentState } from './tournament';
+import { removeItem } from './helpers';
 
 export class TournamentManager {
   private tournaments: Map<gameType, Tournament[]> = new Map();
@@ -25,13 +26,9 @@ export class TournamentManager {
 
   public async attributePlayerToTournament(ws: WebSocket, settings: leanGameSettings) {
     await this.clearEndedTournaments(this.getTournaments(settings.gameType));
-    const { playerID } = settings;
     if (!(await this.foundTournament(ws, settings))) {
       await this.createTournament(ws, settings);
     }
-    // TODO: Pass start logic to Tournament
-    const playerTournament = this.playerTournaments.get(playerID);
-    if (playerTournament && playerTournament.isFull()) await playerTournament.start();
   }
 
   private async foundTournament(ws: WebSocket, settings: leanGameSettings) {
@@ -40,13 +37,13 @@ export class TournamentManager {
     );
     if (openTournament) {
       if (openTournament.hasAlias(settings.alias)) settings.alias = settings.alias.concat('1');
-      await openTournament.attributePlayerToSession(ws, settings);
-      if (openTournament.isFull()) openTournament.state = tournamentState.full;
+      await openTournament.setPlayer(ws, settings);
       this.playerTournaments.set(settings.playerID, openTournament);
       console.log(
         `Player joined ${settings.gameType} Tournament: `,
         JSON.stringify(openTournament.print()),
       );
+      if (openTournament.isFull()) await openTournament.start();
       return true;
     }
     return false;
@@ -54,7 +51,7 @@ export class TournamentManager {
 
   private async createTournament(ws: WebSocket, settings: leanGameSettings) {
     const newTournament = new Tournament(settings.gameType);
-    await newTournament.createSession(ws, settings);
+    await newTournament.setPlayer(ws, settings);
     this.getTournaments(settings.gameType).push(newTournament);
     this.playerTournaments.set(settings.playerID, newTournament);
     console.log(
@@ -63,10 +60,10 @@ export class TournamentManager {
     );
   }
 
-  public async removePlayerTournament(playerId: string) {
+  public async removePlayerTournamentManager(playerId: string) {
     const tournament = this.playerTournaments.get(playerId);
     if (!tournament) return;
-    await tournament.removePlayer(playerId);
+    await tournament.removePlayerTournament(playerId);
     this.playerTournaments.delete(playerId);
   }
 
@@ -77,8 +74,7 @@ export class TournamentManager {
 
   private removeTournament(tournament: Tournament) {
     const tournaments = this.getTournaments(tournament.type);
-    const index = tournaments.indexOf(tournament);
-    if (index !== -1) tournaments.splice(index, 1);
+    removeItem(tournaments, tournament);
   }
 
   printTournaments(tournaments: Tournament[]) {

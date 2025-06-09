@@ -1,6 +1,7 @@
 import WebSocket from 'ws';
 import { gameType, leanGameSettings } from './remoteGameApp/settings';
 import { GameSession } from './gameSession';
+import { removeItem } from './helpers';
 
 export class GameSessionManager {
   private sessions: Map<gameType, GameSession[]> = new Map();
@@ -29,7 +30,7 @@ export class GameSessionManager {
       await this.createSession(ws, settings);
     }
     const session = this.getSessionByPlayerId(playerID)!;
-    if (session.isFull()) session.startGame();
+    if (session.isFull()) await session.startGame();
   }
 
   private async foundSession(ws: WebSocket, settings: leanGameSettings): Promise<boolean> {
@@ -61,10 +62,10 @@ export class GameSessionManager {
     );
   }
 
-  public async removePlayer(playerId: string) {
+  public async removePlayerSessionManager(playerId: string) {
     const session = this.getSessionByPlayerId(playerId);
     if (!session) return;
-    await session.removePlayer(playerId);
+    await session.removePlayerSession(playerId);
     await session.clear();
     this.playerSessions.delete(playerId);
     if (session.players.length === 0) {
@@ -74,7 +75,6 @@ export class GameSessionManager {
 
   public removeSession(session: GameSession) {
     const sessions = this.getSessions(session.gameType);
-    const index = sessions.indexOf(session);
-    if (index !== -1) sessions.splice(index, 1);
+    removeItem(sessions, session);
   }
 }
