@@ -80,9 +80,3 @@ Then run `npm run populate` inside the backend container (alternatively, run `ma
 
 - When testing locally, an `.env` file is required with the DATABASE_URL key, in the project root directory `.`
 - If running locally for the first time, first run `npm install` to install all the project's dependencies
-
-## TODOs
-- Allow user to be logged in on multiple computers? 
-- Organize functions in each file
-- Test edge cases
-- Add more tests

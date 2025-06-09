@@ -21,7 +21,13 @@ export function showTournamentStatus(participants: tournamentPlayer[]): void {
   fillParticipants(clone, participants, TournamentPhase.Semi);
   fillParticipants(clone, participants, TournamentPhase.Final);
 
-  const waitingGameModal = document.getElementById('waiting-game-modal') as HTMLDivElement;
+  hideFutureMatches(clone, participants);
+
+  let waitingGameModal = document.getElementById('waiting-game-modal') as HTMLDivElement;
+  if (!waitingGameModal) {
+    waitingGameModal = document.getElementById('waiting-next-game-modal') as HTMLDivElement;
+  }
+
   if (!waitingGameModal) {
     console.log("Couldn't find tournamentBlock");
     return;
@@ -49,19 +55,19 @@ export function showTournamentResults(participants: tournamentPlayer[]): void {
   fillParticipants(clone, participants, TournamentPhase.Semi);
   fillParticipants(clone, participants, TournamentPhase.Final);
 
-  const tournamentModal = document.getElementById('tournament-modal') as HTMLDivElement;
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal");
+  const statsModal = document.getElementById('stats-modal') as HTMLDivElement;
+  if (!statsModal) {
+    console.log("Couldn't find stats modal");
     return;
   }
 
-  const tournamentResults = document.getElementById('tournament-results') as HTMLDivElement;
-  if (!tournamentResults) {
-    console.log("Couldn't find tournament results");
+  const statsResults = document.getElementById('stats-results') as HTMLDivElement;
+  if (!statsResults) {
+    console.log("Couldn't find stats results");
     return;
   }
 
-  tournamentResults.appendChild(clone);
+  statsResults.appendChild(clone);
 }
 
 /**
@@ -80,12 +86,6 @@ function fillParticipants(
   const playerElements = tournamentBlock.querySelectorAll(`.${phase}`);
   const scoreElements = tournamentBlock.querySelectorAll(`.${phase}Score`);
 
-  // TODO: Remove after bug fixing / checking everything is working alright
-  console.log('Trimmed participants: ', trimmedParticipants);
-  console.log(phase, ' ', playerElements);
-
-  hideFutureMatches(tournamentBlock, phase, trimmedParticipants);
-
   for (let i = 0; i < trimmedParticipants.length; i++) {
     const playerEl = playerElements[i] as HTMLParagraphElement;
     playerEl.innerText = trimmedParticipants[i].userAlias;
@@ -100,30 +100,26 @@ function fillParticipants(
   }
 }
 
-/**
- * Hides boxes from events still to happen
- * @param participants - Array of tournament players.
- * @param phase - The current tournament phase.
- */
 function hideFutureMatches(
   tournamentBlock: DocumentFragment,
-  phase: TournamentPhase,
-  trimmedParticipants: tournamentPlayer[],
+  participants: tournamentPlayer[],
 ): void {
-  if (trimmedParticipants.length) return;
-
-  let phaseToHide;
-  if (phase === TournamentPhase.Semi) phaseToHide = 'semifinals';
-  else if (phase === TournamentPhase.Final) phaseToHide = 'finals';
-  else return;
-
-  const elementsToHide = tournamentBlock.querySelectorAll(`.${phaseToHide}`);
-  if (!elementsToHide) {
-    console.log(`Couldn't find ${phaseToHide} element`);
+  if (getPhaseParticipants(TournamentPhase.Final, participants).length) {
     return;
   }
 
-  elementsToHide.forEach((element) => element.classList.add('hidden'));
+  let phasesToHide: string[] = [];
+
+  if (getPhaseParticipants(TournamentPhase.Semi, participants).length) {
+    phasesToHide = ['finals'];
+  } else if (getPhaseParticipants(TournamentPhase.Quarter, participants).length) {
+    phasesToHide = ['semifinals', 'finals'];
+  }
+
+  phasesToHide.forEach((phaseClass) => {
+    const elements = tournamentBlock.querySelectorAll(`.${phaseClass}`);
+    elements.forEach((element) => element.classList.add('hidden'));
+  });
 }
 
 /**
@@ -138,9 +134,9 @@ function getPhaseParticipants(
   participants: tournamentPlayer[],
 ): tournamentPlayer[] {
   if (phase === TournamentPhase.Semi) {
-    return participants.filter((participant) => participant.semiFinalScore !== '');
+    return participants.filter((participant) => participant.quarterFinalScore === '5');
   } else if (phase === TournamentPhase.Final) {
-    return participants.filter((participant) => participant.finalScore !== '');
+    return participants.filter((participant) => participant.semiFinalScore === '5');
   } else return participants;
 }
 

@@ -39,6 +39,7 @@ export class TournamentManager {
       (t) => t.state === tournamentState.creating,
     );
     if (openTournament) {
+      if (openTournament.hasAlias(settings.alias)) settings.alias = settings.alias.concat('1');
       await openTournament.attributePlayerToSession(ws, settings);
       if (openTournament.isFull()) openTournament.state = tournamentState.full;
       this.playerTournaments.set(settings.playerID, openTournament);
@@ -53,14 +54,6 @@ export class TournamentManager {
 
   private async createTournament(ws: WebSocket, settings: leanGameSettings) {
     const newTournament = new Tournament(settings.gameType);
-    // try {
-    //   const BCtournaments = await contractProvider.getAllTournaments(
-    //     gameTypeToEnum(settings.gameType),
-    //   );
-    //   newTournament.id = BCtournaments.length;
-    // } catch (err) {
-    //   console.log(`Error in getAllTournaments Blockchain call: ${err}`);
-    // }
     await newTournament.createSession(ws, settings);
     this.getTournaments(settings.gameType).push(newTournament);
     this.playerTournaments.set(settings.playerID, newTournament);
