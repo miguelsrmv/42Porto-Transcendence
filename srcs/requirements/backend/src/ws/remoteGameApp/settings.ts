@@ -1,21 +1,4 @@
-export type attackIdentifier =
-  | 'Super Shroom'
-  | 'Egg Barrage'
-  | 'Spin Dash'
-  | 'Thunder Wave'
-  | 'Confusion'
-  | 'Magic Mirror'
-  | 'Mini'
-  | 'Giant Punch';
-
-export interface character {
-  name: string;
-  attack: attackIdentifier;
-  characterSelectPicturePath: string;
-  characterAvatarPicturePath: string;
-  accentColour: string;
-  selectHelpMessage: string;
-}
+import { character } from "./characterData";
 
 export interface background {
   name: string;

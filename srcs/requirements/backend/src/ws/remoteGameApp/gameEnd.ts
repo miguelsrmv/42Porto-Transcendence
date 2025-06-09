@@ -61,15 +61,19 @@ export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: Gam
       user2Id: gameArea.rightPlayer.id,
       user1Character: character1,
       user2Character: character2,
+      user1Alias: gameArea.leftPlayer.alias,
+      user2Alias: gameArea.rightPlayer.alias,
       winnerId: winningPlayer.id,
       user1Score: gameArea.leftPlayer === winningPlayer ? 5 : gameArea.stats.left.goals,
       user2Score: gameArea.rightPlayer === winningPlayer ? 5 : gameArea.stats.right.goals,
       mode: gameMode,
       settings: filterGameSettings(gameArea.settings),
+      stats: JSON.stringify(gameArea.stats),
     },
   });
 }
 
+// TODO: filter stats saved
 async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
   const [character1, character2] = getCharacters(gameArea.settings);
@@ -79,11 +83,14 @@ async function createMatch(winningPlayer: Player, gameArea: GameArea) {
       user2Id: gameArea.rightPlayer.id,
       user1Character: character1,
       user2Character: character2,
+      user1Alias: gameArea.leftPlayer.alias,
+      user2Alias: gameArea.rightPlayer.alias,
       winnerId: winningPlayer.id,
       user1Score: gameArea.stats.left.goals,
       user2Score: gameArea.stats.right.goals,
       mode: gameMode,
       settings: filterGameSettings(gameArea.settings),
+      stats: JSON.stringify(gameArea.stats),
     },
   });
 }
@@ -94,10 +101,13 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
   gameArea.stop();
   const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
   losingPlayer.isEliminated = true;
-  gameArea.session.broadcastEndGameMessage(winningPlayer);
   if (gameArea.tournament) {
     const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
     gameArea.session.sendToPlayer(losingPlayer.id, endTournamentMSg);
+    if (gameArea.tournament.currentRound === 3) {
+      gameArea.session.sendToPlayer(winningPlayer.id, endTournamentMSg);
+    }
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
     const winningPlayerInfo = gameArea.session.players.find((p) => p.id === winningPlayer.id);
     const losingPlayerInfo = gameArea.session.players.find((p) => p.id === losingPlayer.id);
     if (!winningPlayerInfo || !losingPlayerInfo) return;
@@ -123,6 +133,7 @@ export async function endGame(winningPlayer: Player, gameArea: GameArea) {
     closeSocket(socket);
     await gameArea.tournament.updateSessionScore(gameArea.session, winningPlayer.id, data);
   } else {
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
     await createMatch(winningPlayer, gameArea);
     await updateLeaderboardRemote(winningPlayer, losingPlayer);
     const socket = gameArea.session.getPlayerSocket(losingPlayer.id);

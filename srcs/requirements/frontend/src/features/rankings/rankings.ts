@@ -16,6 +16,10 @@ import { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatus.typ
 import { showTournamentResults } from '../../ui/tournamentStatus/tournamentStatus.js';
 import { fadeIn, fadeOut } from '../../ui/animations.js';
 import { wait } from '../../utils/helpers.js';
+import {
+  getCharacterPathFromBackend,
+  getAccentColourFromBackend,
+} from '../game/characterData/characterData.js';
 
 /**
  * @brief Initializes the view for the rankings page.
@@ -121,8 +125,7 @@ async function renderTopLeftBoard(userId: string): Promise<void> {
     const stats: statsData = statsJson.stats;
     userRanking.innerText = stats.rank.toString();
     userWL.innerText = `${stats.wins}/${stats.losses}`;
-    // TODO: Change once API is available
-    userTournaments.innerText = 'WAITING';
+    userTournaments.innerText = stats.tournaments.toString();
     userPoints.innerText = stats.points.toString();
   } catch (error) {
     console.error('Network error fetching user stats:', error);
@@ -163,12 +166,17 @@ async function renderMatchesBoard(userId: string): Promise<void> {
     for (let index: number = 0; index < 3 && index < recentMatchesArray.length; index++) {
       const clone = recentMatchTemplate.content.cloneNode(true) as DocumentFragment;
       await updateNodeWithRecentMatchesData(clone, recentMatchesArray[index]);
+      const match = clone.querySelector('.recent-match') as HTMLElement;
+      if (!match) return;
+      match.setAttribute('data-id', recentMatchesArray[index].id);
       recentMatchesSection.appendChild(clone);
     }
   } catch (error) {
     console.error('Network error fetching recent matches:', error);
     return;
   }
+
+  addMatchModal();
 }
 
 /**
@@ -245,48 +253,221 @@ async function renderTournamentBoard(userId: string): Promise<void> {
     return;
   }
 
-  // HACK: Mock data so far
-  for (let index: number = 0; index < 3; index++) {
-    const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
-    let result;
-    if (index == 0) result = 'Finals';
-    else if (index == 1) result = 'Semifinals';
-    else result = 'Winner';
-    const mockTournamentData: tournamentData = {
-      id: String(index),
-      uuid: 'acde070d-8c4c-4f0d-9d8a-162843c10333',
-      tournamentResult: result,
-    };
-    updateNodeWithRecentTournamentData(clone, mockTournamentData);
-    const tournament = clone.querySelector('.recent-tournament') as HTMLElement;
-    if (!tournament) return;
-    tournament.setAttribute('data-id', mockTournamentData.uuid);
-    recentTournamentSection.appendChild(clone);
+  try {
+    const response = await fetch(`api/tournaments/user/${userId}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching user response matches:', response.status);
+      return;
+    }
+    const recentTournamentsArray: tournamentData[] = await response.json();
+    for (let index: number = 0; index < 3 && index < recentTournamentsArray.length; index++) {
+      const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
+      await updateNodeWithRecentTournamentData(clone, recentTournamentsArray[index]);
+      const tournament = clone.querySelector('.recent-tournament') as HTMLElement;
+      if (!tournament) return;
+      tournament.setAttribute('data-id', recentTournamentsArray[index].tournamentId);
+      recentTournamentSection.appendChild(clone);
+    }
+  } catch (error) {
+    console.error('Network error fetching recent matches:', error);
+    return;
   }
 
-  // TODO: Implement once route actually does what it's supposed to do
-  //
-  // try {
-  //   const response = await fetch(`api/matches/user/${userId}`, {
-  //     method: 'GET',
-  //     credentials: 'include',
-  //   });
-  //   if (!response.ok) {
-  //     console.error('Error fetching user response matches:', response.status);
-  //     return;
-  //   }
-  //   const recentTournamentsArray: tournamentData[] = await response.json();
-  //   for (let index: number = 0; index < 3 && index < recentTournamentsArray.length; index++) {
-  //     const clone = recentTournamentTemplate.content.cloneNode(true) as DocumentFragment;
-  //     await updateNodeWithRecentTournamentData(clone, recentTournamentsArray[index]);
-  //     recentMatchesSection.appendChild(clone);
-  //   }
-  // } catch (error) {
-  //   console.error('Network error fetching recent matches:', error);
-  //   return;
-  // }
-
   addTournamentModal();
+}
+
+/**
+ * @brief Adds event listeners to recent tournament elements to open a modal and display tournament data.
+ *
+ * This function selects all elements with the class 'recent-tournament' and attaches click event listeners to them.
+ * When clicked, the modal for the tournament is opened, and the tournament data is displayed based on the element's data-id attribute.
+ *
+ * @note If no elements with the class 'recent-tournament' are found, a message is logged to the console.
+ *
+ * @returns void
+ */
+function addMatchModal(): void {
+  const recentMatches = document.querySelectorAll('.recent-match');
+  if (!recentMatches) {
+    console.log("Couldn't find recent matches");
+    return;
+  }
+
+  for (let index: number = 0; index < recentMatches.length; index++) {
+    recentMatches[index].addEventListener('click', async () => {
+      const id = recentMatches[index].getAttribute('data-id') as string;
+      openStatsModal();
+      await displayMatchData(id);
+    });
+  }
+}
+
+async function displayMatchData(id: string): Promise<void> {
+  try {
+    const response = await fetch(`api/matches/${id}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching matchData:', response.status);
+      return;
+    }
+    const matchData: any = await response.json();
+    console.log('Match data: ', matchData);
+    openStatsModal();
+    await showMatchResults(matchData);
+  } catch (error) {
+    console.error('Network error fetching recent match:', error);
+    return;
+  }
+}
+
+async function showMatchResults(matchData: matchData): Promise<void> {
+  const matchBlock = document.getElementById('match-stats') as HTMLTemplateElement;
+  if (!matchBlock) {
+    console.log("Couldn't find matchBlock");
+    return;
+  }
+
+  const clone = matchBlock.content.cloneNode(true) as DocumentFragment;
+
+  await editHUD(clone, matchData, 'left');
+  await editHUD(clone, matchData, 'right');
+  editStats(clone, matchData);
+
+  const statsResults = document.getElementById('stats-results') as HTMLDivElement;
+  if (!statsResults) {
+    console.log("Couldn't find stats results");
+    return;
+  }
+
+  statsResults.appendChild(clone);
+}
+
+async function editHUD(clone: DocumentFragment, matchData: matchData, side: string): Promise<void> {
+  const playerAvatar = clone.querySelector(
+    `.${side}-match-stats-player-avatar`,
+  ) as HTMLImageElement;
+  if (!playerAvatar) {
+    console.log(`Couldn't find ${side}-match-stats-player-avatar`);
+    return;
+  }
+
+  const playerAlias = clone.querySelector(`.${side}-match-stats-alias`) as HTMLParagraphElement;
+  if (!playerAlias) {
+    console.log(`Couldn't find ${side}-match-stats-alias`);
+    return;
+  }
+
+  const characterPortrait = clone.querySelector(
+    `.${side}-match-stats-portrait`,
+  ) as HTMLImageElement;
+  if (!characterPortrait) {
+    console.log(`Couldn't find .${side}-match-stats-portrait`);
+    return;
+  }
+
+  let alias;
+  side === 'left' ? (alias = matchData.user1Alias) : (alias = matchData.user2Alias);
+  playerAlias.innerText = alias;
+
+  let userId;
+  side === 'left' ? (userId = matchData.user1Id) : (userId = matchData.user2Id);
+
+  try {
+    const response = await fetch(`api/users/${userId}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      console.error('Error fetching opponent data', response.status);
+      return;
+    }
+    const userData = await response.json();
+    playerAvatar.src = userData.avatarUrl;
+  } catch (error) {
+    console.error('Network error fetching user data', error);
+    return;
+  }
+
+  if (matchData.mode === 'CRAZY') {
+    let userCharacter;
+    side === 'left'
+      ? (userCharacter = matchData.user1Character)
+      : (userCharacter = matchData.user2Character);
+    characterPortrait.src = getCharacterPathFromBackend(userCharacter);
+    let placeholderColour = playerAvatar.className.match(/([a-z]+)-([a-z]+)-500/)?.[2];
+    let colour = getAccentColourFromBackend(userCharacter);
+    playerAvatar.classList.remove(`border-${placeholderColour}-500`);
+    characterPortrait.classList.remove(`border-${placeholderColour}-500`);
+    playerAvatar.classList.add(`border-${colour}-500`);
+    characterPortrait.classList.add(`border-${colour}-500`);
+  } else characterPortrait.classList.add('hidden');
+}
+
+function editStats(clone: DocumentFragment, matchData: matchData): void {
+  const leftGoals = clone.querySelector('#left-goals') as HTMLParagraphElement;
+  if (!leftGoals) {
+    console.log("Couldn't find leftGoals element");
+    return;
+  }
+
+  const rightGoals = clone.querySelector('#right-goals') as HTMLParagraphElement;
+  if (!rightGoals) {
+    console.log("Couldn't find rightGoals element");
+    return;
+  }
+
+  const leftSaves = clone.querySelector('#left-saves') as HTMLParagraphElement;
+  if (!leftSaves) {
+    console.log("Couldn't find leftSaves element");
+    return;
+  }
+
+  const rightSaves = clone.querySelector('#right-saves') as HTMLParagraphElement;
+  if (!rightSaves) {
+    console.log("Couldn't find leftSaves element");
+    return;
+  }
+
+  const powersUsed = clone.querySelector('#powers-used') as HTMLDivElement;
+  if (!powersUsed) {
+    console.log("Couldn't find powersUsed element");
+    return;
+  }
+
+  const leftPowersUsed = clone.querySelector('#left-powers') as HTMLParagraphElement;
+  if (!leftPowersUsed) {
+    console.log("Couldn't find leftPowersUsed element");
+    return;
+  }
+
+  const rightPowersUsed = clone.querySelector('#right-powers') as HTMLParagraphElement;
+  if (!rightPowersUsed) {
+    console.log("Couldn't find rightPowersUsed element");
+    return;
+  }
+
+  const maxBallSpeed = clone.querySelector('#max-speed') as HTMLParagraphElement;
+  if (!maxBallSpeed) {
+    console.log("Couldn't find maxBallSpeed element");
+    return;
+  }
+
+  const stats = JSON.parse(matchData.stats);
+
+  leftGoals.innerText = stats.left.goals;
+  rightGoals.innerText = stats.right.goals;
+  leftSaves.innerText = stats.left.saves;
+  rightSaves.innerText = stats.right.saves;
+  maxBallSpeed.innerText = parseFloat(stats.maxSpeed).toFixed(2);
+  if (matchData.mode === 'CRAZY') {
+    leftPowersUsed.innerText = stats.left.powersUsed;
+    rightPowersUsed.innerText = stats.right.powersUsed;
+  } else powersUsed.classList.add('hidden');
 }
 
 /**
@@ -309,7 +490,7 @@ function addTournamentModal(): void {
   for (let index: number = 0; index < recentTournaments.length; index++) {
     recentTournaments[index].addEventListener('click', async () => {
       const uuid = recentTournaments[index].getAttribute('data-id') as string;
-      openTournamentModal();
+      openStatsModal();
       await displayTournamentData(uuid);
     });
   }
@@ -335,10 +516,9 @@ async function displayTournamentData(uuid: string): Promise<void> {
       console.error('Error fetching tournament:', response.status);
       return;
     }
-    //const tournamentData: tournamentPlayer[] = await response.json();
-    const tournamentMockData: tournamentPlayer[] = getMockData();
-    openTournamentModal();
-    showTournamentResults(tournamentMockData);
+    const tournamentData: tournamentPlayer[] = await response.json();
+    openStatsModal();
+    showTournamentResults(tournamentData);
   } catch (error) {
     console.error('Network error fetching recent tournament:', error);
     return;
@@ -353,14 +533,14 @@ async function displayTournamentData(uuid: string): Promise<void> {
  * @returns {Promise<void>} Resolves when the modal hiding process is complete.
  */
 async function handleModalBackdropClick(event: MouseEvent): Promise<void> {
-  const tournamentModal = document.getElementById('tournament-modal');
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal element");
+  const statsModal = document.getElementById('stats-modal');
+  if (!statsModal) {
+    console.log("Couldn't find stats modal element");
     return;
   }
   // Ensure tournamentModal exists and the click was directly on it
-  if (tournamentModal && event.target === tournamentModal) {
-    await hideTournamentModal();
+  if (statsModal && event.target === statsModal) {
+    await hideStatsModal();
   }
 }
 
@@ -370,19 +550,15 @@ async function handleModalBackdropClick(event: MouseEvent): Promise<void> {
  *
  * @returns {void}
  */
-function openTournamentModal(): void {
-  const tournamentModal = document.getElementById('tournament-modal');
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal element");
-    return;
-  }
-  if (!tournamentModal) {
-    console.error("Couldn't find tournament modal element.");
+function openStatsModal(): void {
+  const statsModal = document.getElementById('stats-modal');
+  if (!statsModal) {
+    console.log("Couldn't find stats modal element");
     return;
   }
 
-  fadeIn(tournamentModal);
-  tournamentModal.addEventListener('click', handleModalBackdropClick);
+  fadeIn(statsModal);
+  statsModal.addEventListener('click', handleModalBackdropClick);
 }
 
 /**
@@ -391,87 +567,23 @@ function openTournamentModal(): void {
  *
  * @returns {Promise<void>} Resolves when the modal hiding process is complete.
  */
-async function hideTournamentModal(): Promise<void> {
-  const tournamentModal = document.getElementById('tournament-modal');
-  if (!tournamentModal) {
-    console.log("Couldn't find tournament modal element");
+async function hideStatsModal(): Promise<void> {
+  const statsModal = document.getElementById('stats-modal');
+  if (!statsModal) {
+    console.log("Couldn't find stats modal element");
     return;
   }
 
-  const tournamentResults = document.getElementById('tournament-results');
-  if (!tournamentResults) {
+  const statsResults = document.getElementById('stats-results');
+  if (!statsResults) {
     console.log("Couldn't find tournament results element");
     return;
   }
 
-  tournamentModal.removeEventListener('click', handleModalBackdropClick);
-  fadeOut(tournamentModal);
+  statsModal.removeEventListener('click', handleModalBackdropClick);
+  fadeOut(statsModal);
   await wait(0.5);
-  tournamentResults.innerHTML = '';
-}
-
-// HACK: Function to get mock data
-function getMockData(): tournamentPlayer[] {
-  const players: tournamentPlayer[] = [
-    {
-      userAlias: 'Alice',
-      quarterFinalScore: '3',
-      semiFinalScore: '4',
-      finalScore: '5', // Winner
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Bob',
-      quarterFinalScore: '1',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Charlie',
-      quarterFinalScore: '3',
-      semiFinalScore: '2',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Diana',
-      quarterFinalScore: '2',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Eve',
-      quarterFinalScore: '3',
-      semiFinalScore: '1',
-      finalScore: '3', // Runner-up
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Frank',
-      quarterFinalScore: '0',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Grace',
-      quarterFinalScore: '3',
-      semiFinalScore: '4',
-      finalScore: '',
-      avatarPath: '',
-    },
-    {
-      userAlias: 'Henry',
-      quarterFinalScore: '1',
-      semiFinalScore: '',
-      finalScore: '',
-      avatarPath: '',
-    },
-  ];
-
-  return players;
+  statsResults.innerHTML = '';
 }
 
 /**
@@ -506,11 +618,10 @@ async function updateNodeWithRecentTournamentData(
     return;
   }
 
-  recentTournamentID.innerText = recentTournament.id;
+  recentTournamentID.innerText = `#${recentTournament.tournamentId.split('-')[0]}`;
+  recentTournamentResult.innerText = recentTournament.position;
 
-  recentTournamentResult.innerText = recentTournament.tournamentResult;
-
-  const colour = recentTournament.tournamentResult === 'Winner' ? 'green' : 'red';
+  const colour = recentTournament.position === 'Tournament Winner!' ? 'green' : 'red';
   recentTournamentResult.classList.add(`text-${colour}-400`);
   recentTournamentScoreIndicator.classList.add(`bg-${colour}-500`);
 }
@@ -642,8 +753,7 @@ async function updateNodeWithLeaderboardPlayer(
     const stats: statsData = statsJson.stats;
     userRank.innerText = `#${stats.rank}`;
     userWL.innerText = `${stats.wins}/${stats.losses}`;
-    // TODO: Change once API is available
-    userTournamentsWon.innerText = 'WAITING';
+    userTournamentsWon.innerText = stats.tournaments.toString();
     userPoints.innerText = stats.points.toString();
     user.setAttribute('data-ranking', stats.rank.toString());
     user.setAttribute('data-user-id', element.userId.toString());

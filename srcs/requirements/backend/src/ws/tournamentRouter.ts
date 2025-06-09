@@ -108,6 +108,7 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
   });
 
   socket.on('close', async () => {
+    console.log('Client disconnected');
     try {
       const playerId = playerManager.getPlayerId(socket);
       if (!playerId) return;
@@ -117,7 +118,6 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
       console.error('Error closing socket:', err);
     }
     clearInterval(keepAlive);
-    console.log('Client disconnected');
   });
 
   socket.on('error', (err) => {
