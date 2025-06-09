@@ -4,6 +4,12 @@ import { gameType, leanGameSettings, playerSettings, playType } from './remoteGa
 import { PlayerInput, ServerMessage, tournamentPlayer } from './remoteGameApp/types';
 import WebSocket from 'ws';
 
+export function removeItem<T>(array: T[], item: T): T[] {
+  const index = array.indexOf(item);
+  if (index !== -1) array.splice(index, 1);
+  return array;
+}
+
 export function wait(seconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
