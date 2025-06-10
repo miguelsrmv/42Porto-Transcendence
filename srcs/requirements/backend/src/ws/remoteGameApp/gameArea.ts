@@ -39,12 +39,7 @@ export class GameArea {
   session: GameSession;
   tournament?: Tournament;
 
-  constructor(
-    p1id: string,
-    p2id: string,
-    gameSettings: gameSettings,
-    session: GameSession,
-  ) {
+  constructor(p1id: string, p2id: string, gameSettings: gameSettings, session: GameSession) {
     this.session = session;
     this.settings = gameSettings;
     this.isEnding = false;
