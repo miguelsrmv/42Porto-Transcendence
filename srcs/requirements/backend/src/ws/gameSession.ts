@@ -256,6 +256,10 @@ export class GameSession {
       : this.players[1];
   }
 
+  private getOtherPlayer(playerId: string) {
+    return this.players.find((p) => p.id !== playerId);
+  }
+
   private async endSessionForfeit() {
     if (!this.tournament) return;
     let remainingPlayer = this.getConnectedPlayer();
@@ -277,7 +281,7 @@ export class GameSession {
     if (this.tournament.currentRound === 3) {
       this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'tournament_end' }));
     }
-    const leavingPlayer = this.getDisconnectedPlayer();
+    const leavingPlayer = this.getOtherPlayer(remainingPlayer.id);
     if (!leavingPlayer) return;
     this.gameArea!.getPlayerById(leavingPlayer.id).isEliminated = true;
     const data: BlockchainScoreData = {
