@@ -10,6 +10,7 @@ import { loadView } from '../../../core/viewLoader.js';
 import { forceRouteChange } from '../../../core/router.js';
 import { waitForNextGame } from '../../../ui/waitingNextGame.js';
 import { readyForNextGame } from '../remoteGameApp/remoteGame.js';
+import type { gameEnd } from '../../localTournamentPlay/localTournamentPlay.events.js';
 
 /**
  * @brief Triggers the end game menu for the winning player.
@@ -25,7 +26,8 @@ export function triggerEndGameMenu(
   playType: playType,
   tournamentIsRunning: boolean = false,
 ): void {
-  const HUDSideToShow = playType === 'Local Play' ? winningPlayerSide : playerSide;
+  const HUDSideToShow =
+    playType === 'Local Play' || 'Local Tournament Play' ? winningPlayerSide : playerSide;
 
   const playerHUD = document.getElementById(`${HUDSideToShow}-hud`);
   if (!playerHUD) {
@@ -47,7 +49,7 @@ export function triggerEndGameMenu(
   showStatsMenu(HUDSideToShow, stats, playerHUDcopy, colour, HUDSideToShow === winningPlayerSide);
   // TODO: Remove is it's working properly. Workaround because I didn't get tournament_end before
   // if (tournamentIsRunning) tournamentIsRunning = winningPlayerSide === playerSide;
-  updateButtons(playType, tournamentIsRunning);
+  updateButtons(playType, tournamentIsRunning, stats);
 }
 
 /**
@@ -203,9 +205,7 @@ function copyHUD(winnerHUD: Node): void {
  * @brief Updates the buttons in the end game menu, such as the "Play Again" button.
  * @param playType The type of play (e.g., Local Play, Remote Play).
  */
-function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
-  console.log('Tournament is running: ', tournamentIsRunning);
-
+function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: gameStats): void {
   const playAgainButton = document.getElementById('play-again-button');
   if (!playAgainButton) {
     console.log("Couldn't find Play Again Button");
@@ -215,12 +215,13 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
   let targetPage: string | null;
   if (playType === 'Local Play') targetPage = 'local-play-page';
   else if (playType === 'Remote Play') targetPage = 'remote-play-page';
-  else if (playType === 'Remote Tournament Play') {
+  else {
     targetPage = null;
     if (tournamentIsRunning) playAgainButton.innerText = 'Next game!';
     else playAgainButton.classList.add('hidden');
   }
 
+  // TODO: Check why event is being dispatched twice
   playAgainButton.addEventListener(
     'click',
     () => {
@@ -229,8 +230,12 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
         loadView(targetPage);
         forceRouteChange(targetPage);
       } else {
-        readyForNextGame();
-        waitForNextGame();
+        if (playType === 'Remote Tournament Play') {
+          readyForNextGame();
+          waitForNextGame();
+        } else if (playType === 'Local Tournament Play') {
+          dispatchNextMatchEvent(stats);
+        }
       }
     },
     { once: true },
@@ -272,4 +277,15 @@ function restoreGameElements(): void {
       }
     }
   }
+}
+
+function dispatchNextMatchEvent(stats: gameStats): void {
+  const gameEndEvent = new CustomEvent<gameEnd>('game:end', {
+    detail: {
+      matchStats: stats,
+    },
+  });
+
+  // Dispatch the event from the global window object.
+  window.dispatchEvent(gameEndEvent);
 }

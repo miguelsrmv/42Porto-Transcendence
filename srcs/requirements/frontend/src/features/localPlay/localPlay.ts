@@ -37,8 +37,6 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
-  //TODO: REVIEW
-  //
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
   if (gameType === 'Crazy Pong') {
     for (let i: number = 1; i <= 2; i++) {
@@ -54,9 +52,10 @@ export async function initializeView(): Promise<void> {
 
   const playButton = document.getElementById('play-button');
   if (playButton) {
-    playButton.innerText = 'Play Tournament!';
     playButton.addEventListener('click', () => {
       setGameSettings(gameType, 'Local Play');
+      loadView('game-page');
+      updateHUD(getGameSettings(), gameType);
       initializeLocalGame(getGameSettings());
     });
   } else console.warn('Play Button not found');
