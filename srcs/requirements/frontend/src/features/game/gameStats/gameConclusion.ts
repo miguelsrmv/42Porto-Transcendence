@@ -215,7 +215,7 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean): void {
   let targetPage: string | null;
   if (playType === 'Local Play') targetPage = 'local-play-page';
   else if (playType === 'Remote Play') targetPage = 'remote-play-page';
-  else if (playType === 'Tournament Play') {
+  else if (playType === 'Remote Tournament Play') {
     targetPage = null;
     if (tournamentIsRunning) playAgainButton.innerText = 'Next game!';
     else playAgainButton.classList.add('hidden');

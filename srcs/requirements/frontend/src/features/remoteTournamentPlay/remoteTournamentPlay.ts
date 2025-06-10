@@ -66,7 +66,7 @@ export async function initializeView(): Promise<void> {
   if (playButton) {
     playButton.innerText = 'Play Tournament!';
     playButton.addEventListener('click', () => {
-      setGameSettings(gameType, 'Tournament Play');
+      setGameSettings(gameType, 'Remote Tournament Play');
       showWaitingModal();
       initializeRemoteGame(getLeanGameSettings());
     });
