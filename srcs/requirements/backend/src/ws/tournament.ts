@@ -83,13 +83,6 @@ export class Tournament {
     return this.players.length === NBR_PARTICIPANTS;
   }
 
-  public broadcastSettingsToSessions() {
-    this.sessions.forEach((s) => {
-      const message: ServerMessage = { type: 'game_setup', settings: s.getJointSettings() };
-      s.broadcastMessage(JSON.stringify(message));
-    });
-  }
-
   private getAllPlayerIds(): string[] {
     return this.players.flatMap((p) => p.id);
   }
@@ -208,13 +201,13 @@ export class Tournament {
 
   private async advanceRound() {
     this.roundWinners = this.determineRoundWinners();
+    console.log(`Round winners: ${this.roundWinners.map((w) => w.alias)}`);
     const availableWinners = this.roundWinners.filter((p) => !p.isDisconnected);
-    // TODO: Deal with multiple/all players leaving
-    if (availableWinners.length <= 1) {
+    if (availableWinners.length === 1) {
+      closeSocket(this.roundWinners[0].socket);
+    }
+    if (this.roundWinners.length <= 1) {
       console.log('Tournament has ended');
-      if (availableWinners.length === 1) {
-        closeSocket(this.roundWinners[0].socket);
-      }
       await this.clear();
       return;
     }
@@ -238,7 +231,6 @@ export class Tournament {
   }
 
   private async checkIfAllWinnersReady() {
-    if (this.players.every((p) => p.isDisconnected)) await this.clear();
     if (!this.roundWinners || this.roundWinners.length === 0 || this.roundStarting) return;
     const availableWinners = this.roundWinners.filter((p) => !p.isDisconnected);
 
@@ -292,18 +284,12 @@ export class Tournament {
 
   private async createRoundSessions(players: PlayerInfo[]) {
     const availablePlayers = players.filter((p) => !p.isDisconnected);
-    console.log(`Creating new round session with: ${availablePlayers.map((p) => p.alias)}`);
+    console.log(`Creating new round session with: ${players.map((p) => p.alias)}`);
     if (this.currentRound > 1)
       console.log(`Blockchain array: ${await contractProvider.getMatchedParticipants(this.id)}`);
     for (let i = 0; i < players.length; i += 2) {
       const player1 = players[i];
       const player2 = players[i + 1];
-
-      if (player1.isDisconnected && player2.isDisconnected) {
-        console.log(`Both players missing in match ${i / 2 + 1} of round ${this.currentRound}`);
-        // TODO: handle this case
-        continue;
-      }
 
       const newSession = new GameSession(this.type, 'Tournament Play');
       newSession.players.push(player1);
