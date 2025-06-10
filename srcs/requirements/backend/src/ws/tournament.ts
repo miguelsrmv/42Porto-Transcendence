@@ -336,6 +336,7 @@ export class Tournament {
       return;
     }
     player.isDisconnected = true;
+    player.lastConnectedAt = Date.now();
     const winner = this.roundWinners.find((w) => w.id === playerId);
     if (winner) winner.isDisconnected = true;
     const playerSession = this.sessions
