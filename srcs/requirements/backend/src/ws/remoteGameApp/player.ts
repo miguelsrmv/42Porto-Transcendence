@@ -1,7 +1,7 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { Attack } from './attack.js';
-import { PlayerInput } from './types.js';
+import { PlayerInput, Side } from './types.js';
 import { gameStats } from './gameStats.js';
 import { GameArea } from './gameArea.js';
 
@@ -13,7 +13,7 @@ export class Player {
   alias: string;
   score: number;
   attack: Attack | null;
-  side: string;
+  side: Side;
   input: PlayerInput;
   powerBarFill: number;
   isEliminated: boolean = false;
@@ -26,7 +26,7 @@ export class Player {
     alias: string,
     attackName: string | null,
     enemyAttackName: string | null,
-    side: string,
+    side: Side,
     stats: gameStats,
     gameArea: GameArea,
   ) {

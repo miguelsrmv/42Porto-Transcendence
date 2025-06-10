@@ -4,8 +4,8 @@ import { ClientMessage, PlayerInput } from './remoteGameApp/types';
 import { areGameSettingsValid, closeSocket, sendErrorMessage } from './helpers';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { isPlayerInput } from './helpers';
-import { TournamentManager } from './tournamentManager';
-import { playerManager } from './playerManager';
+import { TournamentManager } from './managers/tournamentManager';
+import { playerManager } from './managers/playerManager';
 
 const tournamentManager = new TournamentManager();
 
@@ -112,7 +112,7 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
     try {
       const playerId = playerManager.getPlayerId(socket);
       if (!playerId) return;
-      await tournamentManager.removePlayerTournament(playerId);
+      await tournamentManager.removePlayerTournamentManager(playerId);
       playerManager.unregister(socket);
     } catch (err) {
       console.error('Error closing socket:', err);
