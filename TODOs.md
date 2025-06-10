@@ -5,16 +5,17 @@
 - Edit match stats themselves
 - Do something with friends
 - Doxygen comments
+- Check play another game button is working after remote match
+- Next game button showing on tournament winner
 
 # Backend
-- Deal with multiple players leaving in a tournament or during waiting
+- How to deal with empty brackets? Sudden winner after first round?
 
 - join_game on WS connection?
 - Deal with re-connections and lag (player_lagging, player_reconnected)
 - Review heartbeat times
 
 - Review API endpoints' output
-- Parse player settings ?
 - Allow user to be logged in on multiple computers? 
 - Check user stats match leaderboard
 - Remove unused functions/routes/types
