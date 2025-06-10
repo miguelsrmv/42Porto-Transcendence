@@ -146,6 +146,8 @@ function resizeGrid(settingsMenu: HTMLElement) {
       console.log(`Couldn't find player-${i}-settings`);
       return;
     }
+    player.classList.remove('p-6');
+    player.classList.add('p-2');
 
     const playerNameSection = player.querySelector(`#player-${i}-name`);
     if (!playerNameSection) {
@@ -166,6 +168,7 @@ function resizeGrid(settingsMenu: HTMLElement) {
       console.log(`Couldn't find player-${i}-colour`);
       return;
     }
+    playerPaddleSection.classList.remove('mt-6');
     playerPaddleSection.classList.add(
       'flex',
       'flex-row',
@@ -174,7 +177,6 @@ function resizeGrid(settingsMenu: HTMLElement) {
       'items-center',
       'w-3/4',
     );
-    playerPaddleSection.classList.remove('flex-col', 'mt-6');
 
     const playerPaddleLabel = player.querySelector(`#player-${i}-paddle-colour-input-label`);
     if (!playerPaddleLabel) {
@@ -190,5 +192,55 @@ function resizeGrid(settingsMenu: HTMLElement) {
     }
     playerPaddleInput.classList.remove('w-1/2');
     playerPaddleInput.classList.add('w-1/3');
+
+    const playerCharacter = player.querySelector(`#player-${i}-character`);
+    if (!playerCharacter) {
+      console.log(`Couldn't find player-${i}-character`);
+      return;
+    }
+    playerCharacter.classList.remove('flex-col', 'mt-6');
+    playerCharacter.classList.add('flex-row', 'w-3/4', 'justify-between', 'items-center', 'gap-2');
+
+    const prevCharacter = player.querySelector(`#prev-character-${i}`) as HTMLButtonElement;
+    if (!prevCharacter) {
+      console.log(`Couldn't find prev-character-${i}`);
+      return;
+    }
+
+    prevCharacter.innerText = '<';
+
+    const nextCharacter = player.querySelector(`#next-character-${i}`) as HTMLButtonElement;
+    if (!nextCharacter) {
+      console.log(`Couldn't find next-character-${i}`);
+      return;
+    }
+
+    nextCharacter.innerText = '>';
+
+    const characterDisplay = player.querySelector(`#character-display-${i}`);
+    if (!characterDisplay) {
+      console.log(`Couldn't find character-display-${i}`);
+      return;
+    }
+
+    characterDisplay.classList.remove('w-48', 'h-48', 'p-3');
+    characterDisplay.classList.add('w-12', 'h-12');
+
+    const characterSelect = player.querySelector(`#character-select-${i}`);
+    if (!characterSelect) {
+      console.log(`Couldn't find character-select-${i}`);
+      return;
+    }
+
+    characterSelect.classList.remove('gap-6');
+
+    const helperText = player.querySelector(`#character-helper-text-${i}`);
+    if (!helperText) {
+      console.log(`Couldn't find character-helper-text-${i}`);
+      return;
+    }
+
+    helperText.classList.add('text-xs');
+    playerCharacter.after(helperText);
   }
 }
