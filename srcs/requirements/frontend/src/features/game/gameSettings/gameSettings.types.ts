@@ -14,7 +14,11 @@ import { character } from '../characterData/characterData.types.js';
  *
  * This type defines the different modes of play available in the game.
  */
-export type playType = 'Local Play' | 'Remote Play' | 'Tournament Play';
+export type playType =
+  | 'Local Play'
+  | 'Remote Play'
+  | 'Local Tournament Play'
+  | 'Remote Tournament Play';
 
 /**
  * @brief Type representing the game variant.
@@ -41,6 +45,31 @@ export interface gameSettings {
   character1: character | null;
   character2: character | null;
   background: background;
+}
+
+/**
+ * @brief Interface for tournament settings.
+ *
+ * This interface defines the structure for tournament settings, including play type, game type, and tournament players
+ */
+export interface tournamentSettings {
+  playType: playType;
+  gameType: gameType;
+  players: tournamentPlayerSettings[];
+}
+
+/**
+ * @brief Interface for tournament player settings.
+ *
+ * This interface defines the structure for tournament settings, including play type, game type, and tournament players
+ */
+export interface tournamentPlayerSettings {
+  alias: string;
+  paddleColour: string;
+  character: character | null;
+  quarterFinalScore: string | null;
+  semiFinalScore: string | null;
+  finalScore: string | null;
 }
 
 /**
