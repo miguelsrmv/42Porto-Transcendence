@@ -203,7 +203,7 @@ export class Tournament {
     this.roundWinners = this.determineRoundWinners();
     console.log(`Round winners: ${this.roundWinners.map((w) => w.alias)}`);
     const availableWinners = this.roundWinners.filter((p) => !p.isDisconnected);
-    if (availableWinners.length === 1) {
+    if (this.currentRound === 3 && availableWinners.length === 1) {
       closeSocket(this.roundWinners[0].socket);
     }
     if (this.roundWinners.length <= 1) {
