@@ -27,9 +27,6 @@ export async function initializeView(): Promise<void> {
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
 
-  // Creates background loop
-  createBackgroundLoop();
-
   // Hides game type menu
   const gameTypeSelection = document.getElementById('game-type-selection');
   if (gameTypeSelection) gameTypeSelection.classList.add('hidden');
@@ -40,33 +37,26 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
-  // Toggle second player
-  const player2Settings = document.getElementById('player-2-settings');
-  if (player2Settings) player2Settings.classList.remove('hidden');
-  else console.warn('Player 2 Settings not found.');
+  // TODO: Create template for 8 players?
 
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
   if (gameType === 'Crazy Pong') {
-    // Unhides character selection
-    const characterSelect1 = document.getElementById('player-1-character');
-    if (characterSelect1) characterSelect1.classList.remove('hidden');
-    else console.warn('Character Select 1 not found.');
+    for (let i: number = 0; i < 8; i++) {
+      // Unhides character selection
+      const characterSelect = document.getElementById(`player-${i}-character`);
+      if (characterSelect) characterSelect.classList.remove('hidden');
+      else console.warn(`Character Select ${i} not found.`);
 
-    const characterSelect2 = document.getElementById('player-2-character');
-    if (characterSelect2) characterSelect2.classList.remove('hidden');
-    else console.warn('Character Select 2 not found.');
-
-    // Creates character loop (for both players)
-    createCharacterLoop();
-    createCharacterLoop(2);
+      // Creates character loop
+      createCharacterLoop(i);
+    }
   }
 
   const playButton = document.getElementById('play-button');
   if (playButton) {
+    playButton.innerText = 'Play Tournament!';
     playButton.addEventListener('click', () => {
-      setGameSettings(gameType, 'Local Play');
-      loadView('game-page');
-      updateHUD(getGameSettings(), gameType);
+      setGameSettings(gameType, 'Tournament Play');
       initializeLocalGame(getGameSettings());
     });
   } else console.warn('Play Button not found');

@@ -41,7 +41,7 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
-  // Hidens Player 2 settings
+  // Hides Player 2 settings
   const player2Settings = document.getElementById('player-2-settings');
   if (player2Settings) player2Settings.classList.add('hidden');
   else console.warn('Player 2 settings menu not found');
