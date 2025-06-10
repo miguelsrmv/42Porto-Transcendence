@@ -264,6 +264,7 @@ export class GameSession {
       remainingPlayer = this.getLastToLeavePlayer();
     }
     console.log(`${remainingPlayer.alias} auto-advances due to missing opponent`);
+    this.gameArea?.stop();
     this.sendToPlayer(
       remainingPlayer.id,
       JSON.stringify({ type: 'game_setup', settings: this.getJointSettings() }),
