@@ -265,10 +265,6 @@ export class GameSession {
     }
     console.log(`${remainingPlayer.alias} auto-advances due to missing opponent`);
     this.gameArea?.stop();
-    this.sendToPlayer(
-      remainingPlayer.id,
-      JSON.stringify({ type: 'game_setup', settings: this.getJointSettings() }),
-    );
     this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'game_start' } as ServerMessage));
     const gameEndMsg = {
       type: 'game_end',
