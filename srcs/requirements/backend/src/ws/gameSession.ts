@@ -213,14 +213,10 @@ export class GameSession {
     return this.players.find((p) => !p.isDisconnected);
   }
 
-  private getDisconnectedPlayer() {
-    return this.players.find((p) => p.isDisconnected);
-  }
-
   public async markAsDisconnected(playerId: string) {
     if (!this.tournament) return;
     const leavingPlayer = this.getPlayerInfo(playerId);
-    if (!leavingPlayer) return;
+    if (!leavingPlayer || leavingPlayer.isDisconnected) return;
     leavingPlayer.isDisconnected = true;
 
     console.log(`${leavingPlayer.alias} disconnected`);
@@ -302,6 +298,8 @@ export class GameSession {
 
   // TODO: Review if all these parameters are necessary
   async startGame() {
+    const err = new Error();
+    console.log(`Called by: ${err.stack}`);
     console.log(`Starting game between: ${this.players[0].alias} and ${this.players[1].alias}`);
     const response: ServerMessage = {
       type: 'game_setup',
@@ -315,7 +313,6 @@ export class GameSession {
       this,
     );
     this.gameArea.tournament = this.tournament;
-    // TODO: Deal with both players quitting
     if (this.hasDisconnectedPlayers()) {
       await this.endSessionForfeit();
       return;
