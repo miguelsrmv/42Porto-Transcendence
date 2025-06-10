@@ -112,11 +112,23 @@ function editGridLayout(): void {
   settingsMenu.classList.remove('flex', 'flex-row', 'h-full', 'overflow-hidden');
   settingsMenu.classList.add('grid', 'grid-cols-4', 'items-start');
 
+  editPlayerAlias(settingsMenu);
   showOtherPlayers(settingsMenu);
   resizeGrid(settingsMenu);
 }
 
-function showOtherPlayers(settingsMenu: HTMLElement) {
+function editPlayerAlias(settingsMenu: HTMLElement): void {
+  for (let i: number = 1; i <= 2; i++) {
+    const player = settingsMenu.querySelector(`#player-${i}-alias`) as HTMLInputElement;
+    if (!player) {
+      console.log(`Couldn't find player-${i}-alias`);
+      return;
+    }
+    player.placeholder = `Player ${i}`;
+  }
+}
+
+function showOtherPlayers(settingsMenu: HTMLElement): void {
   for (let i: number = 3; i <= 8; i++) {
     const player = settingsMenu.querySelector(`#player-${i}-settings`);
     if (!player) {
