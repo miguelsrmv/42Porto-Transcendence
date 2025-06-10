@@ -21,6 +21,7 @@ export class PlayerInfo {
   paddleColour: string;
   character: character | null;
   isDisconnected: boolean = false;
+  lastConnectedAt: number = Date.now();
   readyForNextRound: boolean = false;
   scoreQuarterFinals?: number;
   scoreSemiFinals?: number;
@@ -235,6 +236,8 @@ export class GameSession {
     const stayingPlayer = this.players.find((p) => p.id === playerWhoStayed.id);
     if (!leavingPlayer || !stayingPlayer || stayingPlayer.isDisconnected) return;
     this.broadcastPlayerLeftMessage(playerWhoStayed);
+    if (this.round === 3)
+      this.sendToPlayer(playerWhoStayed.id, JSON.stringify({ type: 'tournament_end' }));
     const data: BlockchainScoreData = {
       tournamentId: this.tournament.id,
       gameType: gameTypeToEnum(this.tournament.type),
@@ -247,15 +250,18 @@ export class GameSession {
     await this.tournament.updateSessionScore(this.round, playerWhoStayed.id, data);
   }
 
+  private getLastToLeavePlayer() {
+    return this.players[0].lastConnectedAt > this.players[1].lastConnectedAt
+      ? this.players[0]
+      : this.players[1];
+  }
+
   private async endSessionForfeit() {
     if (!this.tournament) return;
-    const remainingPlayer = this.getConnectedPlayer();
+    let remainingPlayer = this.getConnectedPlayer();
     if (!remainingPlayer) {
-      // TODO: Handle case
       console.log(`Both players missing for match`);
-      this.winner = this.players[0].id;
-      await this.tournament.checkAllSessionsWinner();
-      return;
+      remainingPlayer = this.getLastToLeavePlayer();
     }
     console.log(`${remainingPlayer.alias} auto-advances due to missing opponent`);
     this.sendToPlayer(
