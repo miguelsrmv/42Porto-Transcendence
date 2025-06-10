@@ -8,23 +8,42 @@ import type {
   playType,
   tournamentSettings,
   tournamentPlayerSettings,
+  gameSettings,
 } from '../game/gameSettings/gameSettings.types.js';
+
+import type { background } from '../game/backgroundData/backgroundData.types.js';
+
+import type { avatar } from '../../ui/avatarData/avatarData.types.js';
+
+import type { gameEnd } from './localTournamentPlay.events.js';
+
+import type { gameStats } from '../game/gameStats/gameStatsTypes.js';
+
+import { TournamentPhase } from '../../ui/tournamentStatus/tournamentStatus.types.js';
 
 import {
   getGameType,
   createCharacterLoop,
-  getGameSettings,
   getCharacterIndex,
+  updateHUD,
 } from '../game/gameSetup.js';
 import { initializeLocalGame } from '../game/localGameApp/game.js';
 import { getCharacterList } from '../game/characterData/characterData.js';
+import { getBackgroundList } from '../../features/game/backgroundData/backgroundData.js';
+import { getAvatarList } from '../../ui/avatarData/avatarData.js';
 import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
 import { editGridLayout } from './localTournamentPlayerMenu.js';
+import { getRandomInt } from '../../utils/helpers.js';
+import { loadView } from '../../core/viewLoader.js';
 
 let tournamentSettings: tournamentSettings | undefined;
 
 const characterList = getCharacterList();
+
+let match: number = 1;
+
+let phase: TournamentPhase = TournamentPhase.Quarter;
 
 /**
  * @brief Initializes view for tournament play
@@ -37,6 +56,9 @@ export async function initializeView(): Promise<void> {
     navigate('landing-page');
     return;
   }
+
+  // Resets variable on page load
+  resetVariables();
 
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
@@ -76,6 +98,7 @@ export async function initializeView(): Promise<void> {
     playButton.innerText = 'Play Tournament!';
     playButton.addEventListener('click', () => {
       setTournamentSettings(gameType, 'Local Tournament Play');
+      initializeLocalTournament(tournamentSettings as tournamentSettings);
     });
   } else console.warn('Play Button not found');
 }
@@ -107,17 +130,116 @@ function setTournamentSettings(gameType: gameType, playType: playType): void {
     if (gameType === 'Crazy Pong') {
       character = characterList[getCharacterIndex(i)];
     } else character = null;
+
+    let tournamentPlayer: tournamentPlayerSettings = {
+      alias: alias,
+      paddleColour: paddleColour,
+      character: character,
+      avatar: getRandomAvatar(),
+      quarterFinalScore: '',
+      semiFinalScore: '',
+      finalScore: '',
+    };
+
+    tournamentPlayers.push(tournamentPlayer);
   }
-  //
-  //   let tournamentPlayer : tournamentPlayerSettings = {
-  //     alias: alias,
-  //     paddleColour: paddleColour;
-  //
-  //   };
-  //
-  // tournamentSettings = {
-  //   playType: playType,
-  //   gameType: gameType,
-  //   players: tournamentPlayers,
-  // };
+
+  tournamentSettings = {
+    playType: playType,
+    gameType: gameType,
+    players: tournamentPlayers,
+  };
 }
+
+async function initializeLocalTournament(tournamentSettings: tournamentSettings): Promise<void> {
+  let tournamentIsRunning: boolean = true;
+
+  for (let match = 1; match <= 7; match++) {
+    const gameSettings = createGameSettings(match, phase, tournamentSettings);
+    loadView('game-page');
+    updateHUD(gameSettings, gameSettings.gameType);
+    if (match === 7) tournamentIsRunning = false;
+    initializeLocalGame(gameSettings, tournamentIsRunning);
+    await listenToGameEnd(tournamentSettings);
+  }
+}
+
+function createGameSettings(
+  match: number,
+  phase: TournamentPhase,
+  tournamentSettings: tournamentSettings,
+): gameSettings {
+  const player1: tournamentPlayerSettings = getLeftPlayer(match, phase, tournamentSettings);
+  const player2: tournamentPlayerSettings = getRightPlayer(match, phase, tournamentSettings);
+  const background: background = getRandomBackground();
+  const gameSettings: gameSettings = {
+    playType: tournamentSettings.playType,
+    gameType: tournamentSettings.gameType,
+    alias1: player1.alias,
+    alias2: player2.alias,
+    avatar1: player1.avatar,
+    avatar2: player2.avatar,
+    paddleColour1: player1.paddleColour,
+    paddleColour2: player2.paddleColour,
+    character1: player1.character,
+    character2: player2.character,
+    background: background,
+  };
+  return gameSettings;
+}
+
+function getLeftPlayer(
+  match: number,
+  phase: TournamentPhase,
+  tournamentSettings: tournamentSettings,
+): tournamentPlayerSettings {
+  return tournamentSettings.players[0];
+}
+
+function getRightPlayer(
+  match: number,
+  phase: TournamentPhase,
+  tournamentSettings: tournamentSettings,
+): tournamentPlayerSettings {
+  return tournamentSettings.players[1];
+}
+
+function getRandomBackground(): background {
+  const backgroundList = getBackgroundList();
+
+  const backgroundIndex = getRandomInt(0, backgroundList.length - 1);
+
+  return backgroundList[backgroundIndex];
+}
+
+function getRandomAvatar(): string {
+  const avatarList: avatar[] = getAvatarList();
+
+  const avatarIndex = getRandomInt(0, avatarList.length - 1);
+
+  return avatarList[avatarIndex].imagePath;
+}
+
+function resetVariables(): void {
+  match = 1;
+  tournamentSettings = undefined;
+  phase = TournamentPhase.Quarter;
+}
+
+// This function wraps the event listener in a Promise.
+function listenToGameEnd(tournamentSettings: tournamentSettings): Promise<gameEnd> {
+  return new Promise((resolve) => {
+    const eventHandler = (event: CustomEvent<gameEnd>) => {
+      console.log('I want this to happen once');
+      updateTournamentResults(tournamentSettings, event.detail.matchStats);
+      resolve(event.detail);
+    };
+
+    window.addEventListener('game:end', eventHandler, { once: true });
+  });
+}
+
+function updateTournamentResults(
+  tournamentSettings: tournamentSettings,
+  matchStats: gameStats,
+): void {}
