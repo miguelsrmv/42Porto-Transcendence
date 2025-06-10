@@ -67,6 +67,7 @@ export interface tournamentPlayerSettings {
   alias: string;
   paddleColour: string;
   character: character | null;
+  avatar: string;
   quarterFinalScore: string | null;
   semiFinalScore: string | null;
   finalScore: string | null;
