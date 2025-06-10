@@ -41,10 +41,7 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
-  // Hidens Player 2 settings
-  const player2Settings = document.getElementById('player-2-settings');
-  if (player2Settings) player2Settings.classList.add('hidden');
-  else console.warn('Player 2 settings menu not found');
+  editGridLayout();
 
   // Hides background settings
   const backgroundSettings = document.getElementById('board-settings-content');
@@ -53,13 +50,15 @@ export async function initializeView(): Promise<void> {
 
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
   if (gameType === 'Crazy Pong') {
-    // Unhides character selection
-    const characterSelect1 = document.getElementById('player-1-character');
-    if (characterSelect1) characterSelect1.classList.remove('hidden');
-    else console.warn('Character Select 1 not found.');
+    for (let i: number = 1; i <= 8; i++) {
+      // Unhides character selection
+      const characterSelect = document.getElementById(`player-${i}-character`);
+      if (characterSelect) characterSelect.classList.remove('hidden');
+      else console.warn(`Character Select ${1} not found.`);
 
-    // Creates character loop (for both players)
-    createCharacterLoop();
+      // Creates Character loop
+      createCharacterLoop(i);
+    }
   }
 
   const playButton = document.getElementById('play-button');
@@ -101,4 +100,83 @@ async function showWaitingModal(): Promise<void> {
 
   waitingModal.classList.remove('animate-fade-in');
   waitingModal.classList.add('animate-pulse');
+}
+
+function editGridLayout(): void {
+  const settingsMenu = document.getElementById('settings-columns');
+  if (!settingsMenu) {
+    console.log("Couldn't find settings menu");
+    return;
+  }
+
+  settingsMenu.classList.remove('flex', 'flex-row', 'h-full', 'overflow-hidden');
+  settingsMenu.classList.add('grid', 'grid-cols-4', 'items-start');
+
+  showOtherPlayers(settingsMenu);
+  resizeGrid(settingsMenu);
+}
+
+function showOtherPlayers(settingsMenu: HTMLElement) {
+  for (let i: number = 3; i <= 8; i++) {
+    const player = settingsMenu.querySelector(`#player-${i}-settings`);
+    if (!player) {
+      console.log(`Couldn't find player-${i}-settings`);
+      return;
+    }
+    player.classList.remove('hidden');
+  }
+}
+
+function resizeGrid(settingsMenu: HTMLElement) {
+  for (let i: number = 1; i <= 8; i++) {
+    const player = settingsMenu.querySelector(`#player-${i}-settings`);
+    if (!player) {
+      console.log(`Couldn't find player-${i}-settings`);
+      return;
+    }
+
+    const playerNameSection = player.querySelector(`#player-${i}-name`);
+    if (!playerNameSection) {
+      console.log(`Couldn't find player-${i}-name`);
+      return;
+    }
+    playerNameSection.classList.add('flex', 'flex-row', 'gap-2', 'justify-between', 'items-center');
+
+    const playerAlias = player.querySelector(`#player-${i}-alias-label`);
+    if (!playerAlias) {
+      console.log(`Couldn't find player-${i}-alias-label`);
+      return;
+    }
+    playerAlias.classList.remove('mb-6');
+
+    const playerPaddleSection = player.querySelector(`#player-${i}-paddle-colour`);
+    if (!playerPaddleSection) {
+      console.log(`Couldn't find player-${i}-colour`);
+      return;
+    }
+    playerPaddleSection.classList.add(
+      'flex',
+      'flex-row',
+      'gap-2',
+      'justify-between',
+      'items-center',
+      'w-3/4',
+    );
+    playerPaddleSection.classList.remove('flex-col', 'mt-6');
+
+    const playerPaddleLabel = player.querySelector(`#player-${i}-paddle-colour-input-label`);
+    if (!playerPaddleLabel) {
+      console.log(`Couldn't find player-${i}-paddle-colour-input-label`);
+      return;
+    }
+    playerPaddleLabel.classList.remove('mb-2', 'block');
+
+    const playerPaddleInput = player.querySelector(`#player-${i}-paddle-colour-input`);
+    if (!playerPaddleInput) {
+      console.log(`Couldn't find player-${i}-paddle-colour-input`);
+      return;
+    }
+    playerPaddleInput.classList.remove('w-1/2');
+    playerPaddleInput.classList.add('w-1/3');
+  }
 }
