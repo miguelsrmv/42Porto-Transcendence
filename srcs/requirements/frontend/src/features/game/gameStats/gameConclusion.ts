@@ -222,13 +222,13 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
   }
 
   async function onPlayAgainClick() {
-    console.trace('target page is ', targetPage, ' and playType is ', playType);
+    console.log('Triggered!');
     restoreGameElements();
     if (targetPage) {
       loadView(targetPage);
       forceRouteChange(targetPage);
     } else {
-      await waitForNextGame(); // TODO: Check why stats are not hiding!
+      await waitForNextGame(); // TODO: Check why stats are reappearing
       if (playType === 'Remote Tournament Play') {
         readyForNextGame();
       } else if (playType === 'Local Tournament Play') {
