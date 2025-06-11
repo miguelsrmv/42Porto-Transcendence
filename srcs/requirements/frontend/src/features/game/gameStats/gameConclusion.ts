@@ -221,16 +221,16 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
     else playAgainButton.classList.add('hidden');
   }
 
-  function onPlayAgainClick() {
-    console.trace('Button clicked');
+  async function onPlayAgainClick() {
+    console.trace('target page is ', targetPage, ' and playType is ', playType);
     restoreGameElements();
     if (targetPage) {
       loadView(targetPage);
       forceRouteChange(targetPage);
     } else {
+      await waitForNextGame();
       if (playType === 'Remote Tournament Play') {
         readyForNextGame();
-        waitForNextGame();
       } else if (playType === 'Local Tournament Play') {
         dispatchNextMatchEvent(stats);
       }
