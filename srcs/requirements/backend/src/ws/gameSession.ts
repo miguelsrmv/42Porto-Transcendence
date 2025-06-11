@@ -298,8 +298,6 @@ export class GameSession {
 
   // TODO: Review if all these parameters are necessary
   async startGame() {
-    const err = new Error();
-    console.log(`Called by: ${err.stack}`);
     console.log(`Starting game between: ${this.players[0].alias} and ${this.players[1].alias}`);
     const response: ServerMessage = {
       type: 'game_setup',
