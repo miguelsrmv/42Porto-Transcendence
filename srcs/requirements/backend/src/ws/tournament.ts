@@ -14,7 +14,6 @@ import {
 } from '../api/services/blockchain.services';
 import {
   closeSocket,
-  playerInfoToPlayerSettings,
   playerInfoToTournamentPlayer,
   removeItem,
   wait,
@@ -91,7 +90,7 @@ export class Tournament {
     this.players.forEach((p) => (p.readyForNextRound = false));
   }
 
-  async setPlayer(ws: WebSocket, playerSettings: playerSettings) {
+  public async setPlayer(ws: WebSocket, playerSettings: playerSettings) {
     this.players.push(
       new PlayerInfo(
         playerSettings.playerID,
@@ -174,7 +173,7 @@ export class Tournament {
     await this.checkAllSessionsWinner();
   }
 
-  async checkAllSessionsWinner() {
+  private async checkAllSessionsWinner() {
     if (this.state === tournamentState.ended) return;
     const roundSessions = this.sessions.filter((session) => session.round === this.currentRound);
     if (roundSessions.every((session) => session.winner)) await this.advanceRound();
@@ -232,7 +231,6 @@ export class Tournament {
   }
 
   private async checkIfAllWinnersReady() {
-    console.log('Checking if all winners are ready');
     if (!this.roundWinners || this.roundWinners.length === 0 || this.roundStarting) return;
     const availableWinners = this.roundWinners.filter((p) => !p.isDisconnected);
     availableWinners.forEach((w) => console.log(`Available round winner: ${w.alias}`));
@@ -305,14 +303,6 @@ export class Tournament {
     return this.players.find((player) => player.id === playerId);
   }
 
-  async createOnePlayerSession(winner: PlayerInfo) {
-    const session = new GameSession(this.type, 'Remote Tournament Play');
-    await session.setPlayer(winner.socket, playerInfoToPlayerSettings(winner));
-    session.round = this.currentRound;
-    session.tournament = this;
-    this.sessions.push(session);
-  }
-
   public async removePlayerTournament(playerId: string) {
     const player = this.getPlayerInfo(playerId);
     if (!player) return;
@@ -330,7 +320,6 @@ export class Tournament {
       .filter((s) => s.round === this.currentRound)
       .find((s) => s.playerIsInSession(playerId));
     if (!playerSession) return;
-    // Just one session
     await playerSession.markAsDisconnected(playerId);
     await this.checkIfAllWinnersReady();
   }
