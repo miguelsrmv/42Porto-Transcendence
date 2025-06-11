@@ -263,6 +263,7 @@ function listenToGameEnd(
   return new Promise((resolve) => {
     const eventHandler = (event: CustomEvent<gameEnd>) => {
       console.log('TRIGGERED A GAME END EVENT');
+      // NOTE: Start debugging from here!
       updateTournamentResults(
         tournamentSettings,
         phase,

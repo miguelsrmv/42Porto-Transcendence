@@ -13,8 +13,6 @@ import { playType } from '../gameSettings/gameSettings.types.js';
  */
 export const MAX_BALL_SPEED: number = 1000;
 
-let gameHasEnded: boolean = false;
-
 let endGameMenuHasTriggered: boolean = false;
 
 /**
@@ -72,9 +70,7 @@ export function checkFakeBallWallCollision(ball: Ball, gameArea: GameArea): void
  * @returns True if either player has won, false otherwise.
  */
 function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
-  gameHasEnded = leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
-
-  return gameHasEnded;
+  return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
 
 /**
