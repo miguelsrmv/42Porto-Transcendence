@@ -5,7 +5,7 @@ export interface background {
   imagePath: string;
 }
 
-export type playType = 'Remote Play' | 'Tournament Play';
+export type playType = 'Remote Play' | 'Remote Tournament Play';
 
 export type gameType = 'Classic Pong' | 'Crazy Pong';
 
