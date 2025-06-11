@@ -100,12 +100,15 @@ export class GameSession {
     if (!this.gameArea) return;
     this.gameArea.stop();
     if (this.players.length === 0 || this.tournament) return;
+    await this.remotePlayerLeftHandle(playerId);
+  }
 
+  private async remotePlayerLeftHandle(playerId: string) {
+    if (!this.gameArea) return;
     const playerWhoLeft = this.gameArea.getPlayerById(playerId);
     if (playerWhoLeft.isEliminated) return; // score already saved in endGame
-
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
-    this.broadcastPlayerLeftMessage(playerWhoStayed);
+    this.sendGameEndToRemainingPlayer(playerWhoStayed);
     await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
     await updateLeaderboardRemote(playerWhoStayed, playerWhoLeft);
     const winnerSocket = this.getPlayerSocket(playerWhoStayed.id);
@@ -168,12 +171,10 @@ export class GameSession {
     this.sendToPlayer(this.gameArea.rightPlayer.id, JSON.stringify(gameEndMsg));
   }
 
-  broadcastPlayerLeftMessage(winningPlayer: Player) {
+  sendGameEndToRemainingPlayer(winningPlayer: Player) {
     if (!this.gameArea) return;
-    // Goals automatically set to 5 for remaining player
     this.gameArea.stats.setMaxGoals(winningPlayer.side);
     // TODO: Differentiate from normal game_end message?
-    console.log(`Player left from match with ${winningPlayer.alias}`);
     const gameEndMsg: ServerMessage = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,
@@ -201,14 +202,6 @@ export class GameSession {
     };
   }
 
-  private getForfeitStats() {
-    return {
-      left: { goals: 5, sufferedGoals: 0, saves: 0, powersUsed: 0 },
-      right: { goals: 0, sufferedGoals: 5, saves: 0, powersUsed: 0 },
-      maxSpeed: 0,
-    };
-  }
-
   private getConnectedPlayer() {
     return this.players.find((p) => !p.isDisconnected);
   }
@@ -218,20 +211,21 @@ export class GameSession {
     const leavingPlayer = this.getPlayerInfo(playerId);
     if (!leavingPlayer || leavingPlayer.isDisconnected) return;
     leavingPlayer.isDisconnected = true;
-
     console.log(`${leavingPlayer.alias} disconnected`);
     if (!this.gameArea) return;
     if (this.gameArea.runningState === gameRunningState.ended) return;
     this.gameArea.stop();
-    if (this.players.length === 0) return;
-
+    await this.tournamentPlayerLeftHandler(playerId, leavingPlayer);
+  }
+  
+  private async tournamentPlayerLeftHandler(playerId: string, leavingPlayer: PlayerInfo) {
+    if (!this.tournament || !this.gameArea) return;
     const playerWhoLeft = this.gameArea.getPlayerById(playerId);
     if (playerWhoLeft.isEliminated) return; // score already saved in endGame
-
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
+    this.sendGameEndToRemainingPlayer(playerWhoStayed);
     const stayingPlayer = this.players.find((p) => p.id === playerWhoStayed.id);
     if (!leavingPlayer || !stayingPlayer || stayingPlayer.isDisconnected) return;
-    this.broadcastPlayerLeftMessage(playerWhoStayed);
     if (this.round === 3)
       this.sendToPlayer(playerWhoStayed.id, JSON.stringify({ type: 'tournament_end' }));
     const data: BlockchainScoreData = {
@@ -266,17 +260,10 @@ export class GameSession {
     console.log(`${remainingPlayer.alias} auto-advances due to missing opponent`);
     this.gameArea?.stop();
     this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'game_start' } as ServerMessage));
-    const gameEndMsg = {
-      type: 'game_end',
-      winningPlayer: 'left',
-      ownSide: 'left',
-      stats: this.getForfeitStats(),
-    };
-    this.sendToPlayer(remainingPlayer.id, JSON.stringify(gameEndMsg));
-
-    if (this.tournament.currentRound === 3) {
+    const player = this.gameArea?.getPlayerById(remainingPlayer.id);
+    this.sendGameEndToRemainingPlayer(player!);
+    if (this.tournament.currentRound === 3)
       this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'tournament_end' }));
-    }
     const leavingPlayer = this.getOtherPlayer(remainingPlayer.id);
     if (!leavingPlayer) return;
     this.gameArea!.getPlayerById(leavingPlayer.id).isEliminated = true;
