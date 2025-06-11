@@ -1,7 +1,12 @@
 name: Docker Compose CI
 
 env:
-  DATA_PATH: '../data/'
+  DATA_PATH: ${{ secrets.DATA_PATH }}
+  DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  JWT_SIGN_SECRET: ${{ secrets.JWT_SIGN_SECRET }}
+  COOKIE_SECRET:  ${{ secrets.COOKIE_SECRET }}
+  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
 on:
   push:
