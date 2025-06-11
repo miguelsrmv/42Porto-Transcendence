@@ -18,3 +18,4 @@ forge script script/DeployTournamentsStorage.s.sol:DeployTournamentsStorage \
 | tee /output/deploy.log
 
 grep '0: contract TournamentsStorage' /output/deploy.log | awk '{print $4}' > /output/blockchain_address.txt
+rm -rf /output/deploy.log

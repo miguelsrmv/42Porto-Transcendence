@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
-import { getUserGlobalStats, getUserRank } from '../services/user.services';
+import { getUserGlobalStats } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
@@ -10,6 +10,7 @@ import fs from 'fs';
 import util from 'util';
 import { pipeline } from 'stream';
 import path from 'path';
+import { getUserRank } from '../services/leaderboard.services';
 
 const COOKIE_MAX_AGE = 2 * 60 * 60; // Valid for 2h
 
@@ -53,16 +54,6 @@ export type Login2FAData = {
 };
 
 type OnlineState = 'online' | 'offline' | 'inGame';
-
-// TODO: remove in the end
-export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    const users = await prisma.user.findMany();
-    reply.send(users);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
 
 export async function getUserById(
   request: FastifyRequest<{ Params: IParams }>,
@@ -127,6 +118,7 @@ export async function updateUser(
   }
 }
 
+// TODO: Only delete own user, get id from jwt
 export async function deleteUser(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,

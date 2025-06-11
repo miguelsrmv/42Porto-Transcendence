@@ -8,10 +8,15 @@ export default tseslint.config(
   tseslint.configs.recommended, // TypeScript ESLint rules
   prettier, // Disables ESLint rules that conflict with Prettier
   {
-    ignores: ['**/*.d.ts'], // Ignore .d.ts files
+    ignores: ['**/*.d.ts', 'dist/**/*', '*.mjs', 'tests/**/*', '*.config.ts'], // Ignore .d.ts files
   },
   {
-    files: ['src/**/*.ts'], // Only check .ts files inside src/
+    files: ['src/**/*.ts', 'scripts/*.ts'], // Only check .ts files inside src/
+    languageOptions: {
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+    },
   },
   {
     plugins: { prettier: prettierPlugin }, // Enable Prettier as an ESLint plugin
@@ -23,6 +28,7 @@ export default tseslint.config(
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-floating-promises': 'error',
       'no-console': 'warn',
     },
   },

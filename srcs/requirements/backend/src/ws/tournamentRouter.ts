@@ -1,84 +1,32 @@
 import { FastifyRequest } from 'fastify';
 import WebSocket from 'ws';
-import { ClientMessage, PlayerInput, ServerMessage } from './remoteGameApp/types';
-import {
-  attributePlayerToTournament,
-  getPlayerTournament,
-  removePlayerTournament,
-} from './tournamentManagement';
-import { areGameSettingsValid } from './remoteGameRouter';
+import { ClientMessage, PlayerInput } from './remoteGameApp/types';
+import { areGameSettingsValid, closeSocket, sendErrorMessage } from './helpers';
 import { leanGameSettings } from './remoteGameApp/settings';
-import { initializeRemoteGame } from './remoteGameApp/game';
-import { isPlayerInput } from './remoteGameApp/helpers';
-import { Tournament } from './tournament';
+import { isPlayerInput } from './helpers';
+import { TournamentManager } from './managers/tournamentManager';
+import { playerManager } from './managers/playerManager';
 
-function getTournamentCreateData(tournament: Tournament) {
-  const playersData = tournament.sessions.map((session) => {
-    if (!session.gameArea) return;
-    return [
-      {
-        userId: session.gameArea.leftPlayer.id,
-        alias: session.gameArea.settings.alias1,
-        character: session.gameArea.settings.character1?.name,
-      },
-      {
-        userId: session.gameArea.rightPlayer.id,
-        alias: session.gameArea.settings.alias2,
-        character: session.gameArea.settings.character2?.name,
-      },
-    ];
-  });
-  return { tournamentId: tournament.id, gameType: tournament.type, participants: playersData };
-}
+const tournamentManager = new TournamentManager();
 
 async function joinGameHandler(
   socket: WebSocket,
   userId: string,
   playerSettings: leanGameSettings,
 ) {
-  if (getPlayerTournament(socket)) return;
-  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
-  await attributePlayerToTournament(socket, playerSettings);
-  const playerTournament = getPlayerTournament(socket);
-  if (playerTournament && playerTournament.isFull()) {
-    playerTournament.broadcastSettingsToSessions();
-    const tournamentPlayersData = getTournamentCreateData(playerTournament);
-    // { alias, userID, character, gameType, tournamentID }
-    // TODO: Create tournament in the Blockchain
-    // TODO: Save tournamentId on each User
-    await playerTournament.addTournamentToDB(
-      playerTournament.id,
-      playerTournament.type,
-      playerTournament.getAllPlayerIds(),
-    );
-    for (const session of playerTournament.sessions) initializeRemoteGame(session);
-    const gameStartMsg: ServerMessage = { type: 'game_start' };
-    playerTournament.broadcastToAll(JSON.stringify(gameStartMsg));
+  if (tournamentManager.isPlayerInATournament(userId)) {
+    sendErrorMessage(socket, 'Player already in a tournament');
+    closeSocket(socket);
+    return;
   }
-}
-
-function stopGameHandler(socket: WebSocket) {
-  const playerLeft: ServerMessage = { type: 'player_left' };
-  const playerTournament = getPlayerTournament(socket);
-  const gameSession = playerTournament?.getPlayerSession(socket);
-  if (!playerTournament || !gameSession || !gameSession.gameArea) return;
-  const gameArea = gameSession.gameArea;
-  gameArea.stop();
-  const playerWhoLeft = gameArea.getPlayerByWebSocket(socket);
-  removePlayerTournament(socket);
-  const playerWhoStayed = gameArea.getOtherPlayer(playerWhoLeft);
-  // TODO: Update data on Blockchain
-  // const data = {
-  //   gameType: gameArea.settings.gameType,
-  //   user1Id: playerWhoStayed.id,
-  //   score1: 5, // hard-coded win
-  //   user2Id: playerWhoLeft.id,
-  //   score2: playerWhoLeft.score,
-  //   tournamentId: playerTournament.id,
-  // };
-  if (playerWhoStayed.socket.readyState === WebSocket.OPEN)
-    playerWhoStayed.socket.send(JSON.stringify(playerLeft));
-  // TODO: Advance tournament to next match
+  if (!areGameSettingsValid(socket, userId, playerSettings)) return;
+  if (playerSettings.playType !== 'Remote Tournament Play') {
+    sendErrorMessage(socket, 'Attempting to join a Remote Game through the wrong route');
+    closeSocket(socket);
+    return;
+  }
+  playerManager.register(playerSettings.playerID, socket);
+  await tournamentManager.attributePlayerToTournament(socket, playerSettings);
 }
 
 function movementHandler(socket: WebSocket, direction: string) {
@@ -86,25 +34,31 @@ function movementHandler(socket: WebSocket, direction: string) {
     console.log(`Not a valid player movement: ${direction}`);
     return;
   }
-  const playerTournament = getPlayerTournament(socket);
-  const gameSession = playerTournament?.getPlayerSession(socket);
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const playerTournament = tournamentManager.getPlayerTournament(playerId);
+  const gameSession = playerTournament?.getPlayerSession(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
   ownPlayer.input = direction as PlayerInput;
 }
 
-function powerUpHandler(socket: WebSocket) {
-  const playerTournament = getPlayerTournament(socket);
-  const gameSession = playerTournament?.getPlayerSession(socket);
+async function powerUpHandler(socket: WebSocket) {
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const playerTournament = tournamentManager.getPlayerTournament(playerId);
+  const gameSession = playerTournament?.getPlayerSession(playerId);
   if (!gameSession || !gameSession.gameArea) return;
-  const ownPlayer =
-    gameSession.gameArea.leftPlayer.socket === socket
-      ? gameSession.gameArea.leftPlayer
-      : gameSession.gameArea.rightPlayer;
-  ownPlayer.attack?.attack();
+  const ownPlayer = gameSession.gameArea.getPlayerById(playerId);
+  await ownPlayer.attack?.attack();
+}
+
+async function readyForNextRoundHandler(socket: WebSocket) {
+  const playerId = playerManager.getPlayerId(socket);
+  if (!playerId) return;
+  const playerTournament = tournamentManager.getPlayerTournament(playerId);
+  if (!playerTournament) return;
+  await playerTournament.setReadyForNextRound(socket);
 }
 
 async function messageTypeHandlerTournament(
@@ -117,16 +71,16 @@ async function messageTypeHandlerTournament(
       await joinGameHandler(socket, userId, message.playerSettings);
       break;
     }
-    case 'stop_game': {
-      stopGameHandler(socket);
-      break;
-    }
     case 'movement': {
       movementHandler(socket, message.direction);
       break;
     }
     case 'power_up': {
-      powerUpHandler(socket);
+      await powerUpHandler(socket);
+      break;
+    }
+    case 'ready_for_next_game': {
+      await readyForNextRoundHandler(socket);
       break;
     }
   }
@@ -137,19 +91,33 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
   let clientLastActive = Date.now() / 1000;
   const keepAlive = setInterval(() => {
     const currentTime = Date.now() / 1000;
-    if (currentTime - clientLastActive > 30) socket.close();
+    if (currentTime - clientLastActive > 30) {
+      console.log('Client inactive for too long. Disconnecting...');
+      closeSocket(socket);
+    }
   }, 15000); // every 15 seconds
-
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
     console.log('Received message:', message.toString());
-    await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
+    try {
+      await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
+    } catch (err) {
+      console.error('Error handling message:', err);
+      // closeSocket(socket);
+    }
   });
 
-  socket.on('close', () => {
-    removePlayerTournament(socket);
-    clearInterval(keepAlive);
+  socket.on('close', async () => {
     console.log('Client disconnected');
+    try {
+      const playerId = playerManager.getPlayerId(socket);
+      if (!playerId) return;
+      await tournamentManager.removePlayerTournamentManager(playerId);
+      playerManager.unregister(socket);
+    } catch (err) {
+      console.error('Error closing socket:', err);
+    }
+    clearInterval(keepAlive);
   });
 
   socket.on('error', (err) => {

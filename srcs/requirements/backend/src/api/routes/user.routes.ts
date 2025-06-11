@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify';
 import {
-  getAllUsers,
   getUserById,
   createUser,
   updateUser,
@@ -37,7 +36,6 @@ import { userCreateValidation, userUpdateValidation } from '../validation/users.
 // TODO: review request methods
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
-  fastify.get('/', { onRequest: [fastify.jwtAuth] }, getAllUsers);
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
   fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
   fastify.post('/preLogin', { schema: loginSchema }, preLogin);
@@ -80,5 +78,9 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     deleteUser,
   );
-  fastify.get('/:id/stats', { schema: getByIdSchema }, getUserStats);
+  fastify.get<{ Params: IParams }>(
+    '/:id/stats',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    getUserStats,
+  );
 }
