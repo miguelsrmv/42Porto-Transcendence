@@ -10,7 +10,12 @@ Tournamnets:
 3 Wins: (+4) +8			[12]
 
 
-ORDERNAR LEADERBOARD
+ORDENAR LEADERBOARD
 
 
 TOURNAMENT DATA
+
+
+
+
+# Quando alguém perde um jogo a meio do torneio, para essa pessoa o torneio terminou. Precisa de receber um tournament_end.

@@ -8,12 +8,17 @@
     "populate": "npx tsx scripts/populate_db.ts",
     "start": "node dist/src/server.js",
     "dev": "npx tsx src/server.ts",
-    "start-dev": "npx nodemon --signal SIGTERM dist/src/server.js",
+    "start-dev": "npx nodemon --legacy-watch --signal SIGTERM dist/src/server.js",
     "build-dev": "tsc --watch",
     "test": "vitest",
     "test-db": "npx tsx scripts/test_db.ts",
-    "migrate": "npx prisma migrate dev",
+    "tournament": "node dist/scripts/simulateTournament.js",
+    "open-tournament": "node dist/scripts/openTournament.js",
+    "login-tournament": "node dist/scripts/autoLogin.js",
     "db-reset": "npx prisma migrate reset"
+  },
+  "prisma": {
+    "seed": "npx tsx scripts/populate_db.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +29,7 @@
     "@fastify/multipart": "^9.0.3",
     "@fastify/websocket": "^11.0.2",
     "@prisma/client": "^6.5.0",
+    "async-mutex": "^0.5.0",
     "dotenv": "^16.4.7",
     "ethers": "^6.14.0",
     "fastify": "^5.2.1",
@@ -41,11 +47,13 @@
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "ethers-types": "^3.18.1",
     "nodemon": "^3.1.9",
+    "playwright": "^1.52.0",
     "prettier": "^3.5.3",
     "prisma": "^6.5.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.26.1",
     "vitest": "^3.0.9"
   }

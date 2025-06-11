@@ -1,18 +1,30 @@
 # Frontend
-- When username is updated, it is not displayed correctly on header (have to logout and in again) //NOTE: Done ?
-- When submitting user update form, sometimes response is NGINX not allowed to https://www.padaria.pt/# // NOTE: Done? Unsure if bug was introduzed
-- When submitting user update form, sometimes submit button does not work (when logged out and in after changing username) // NOTE: Done?
-- Check if form is empty before requesting oldPassword on user update // NOTE: Done?
-- Hide password as it is being inserted in settings form // NOTE: Done?
-- Lead user to login again after JWT cookie expires?
-- When submitting empty username, no error and header gets updated
+- Create local tournament
+- Edit player avatar on match stats show
+- Edit accent colour on match stats show
+- Edit match stats themselves
+- Do something with friends
+- Doxygen comments
+- Check play another game button is working after remote match
+- Next game button showing on tournament winner
 
 # Backend
+- join_game on WS connection?
+- Deal with re-connections and lag (player_lagging, player_reconnected)
+- Review heartbeat times
+
+- Review API endpoints' output
+- Allow user to be logged in on multiple computers? 
+- Check user stats match leaderboard
+- Remove unused functions/routes/types
+- Organize functions in each file
+- Test security
+- Add more tests
 - Make responses more uniform
 - Protect all routes in the end (except login/sign up related)
-- Discuss refresh JWT token
-- Store local matches (not counting for rank, other user as guest)
-- Test server-side pong through CLI
-- Test waiting player to remote and then remove a player in the match. Does the third player go into the match?
-- Tournament brackets management
-- Connect tournament logic to Blockchain
+- Remove populate from running automatically on project delivery
+
+# Blockchain
+- Test data persistence on Blockchain
+- How to see data on Blockchain
+- If database is reset, how to see tournaments?
