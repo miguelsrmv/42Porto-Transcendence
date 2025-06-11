@@ -1,5 +1,8 @@
 name: Docker Compose CI
 
+env:
+  DATA_PATH: '../data/'
+
 on:
   push:
     branches: [ "main" ]
