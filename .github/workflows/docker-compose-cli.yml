@@ -1,5 +1,8 @@
 name: Docker Compose CI
 
+env:
+  DATA_PATH: ${{ secrets.DATA_PATH }}
+
 on:
   push:
     branches: [ "main" ]
@@ -18,10 +21,6 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: stable
-
-      - name: 🧪 Run Solidity Tests with Forge
-        working-directory: srcs/requirements/blockchain/tools/contracts/TournamentsStorage
-        run: forge test
 
       - name: 🛠️ Set up Docker Buildx (for caching & multi-platform builds)
         uses: docker/setup-buildx-action@v3

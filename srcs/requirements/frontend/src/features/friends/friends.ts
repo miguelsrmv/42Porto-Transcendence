@@ -132,13 +132,13 @@ function updateNodeWithFriendData(clone: DocumentFragment, newFriend: friendData
   friendOnlineStatus.innerText = capitalize(newFriend.onlineState);
   let statusColour: string = 'green';
   switch (newFriend.onlineState) {
-    case 'Online':
+    case 'online':
       statusColour = 'green';
       break;
-    case 'Offline':
+    case 'offline':
       statusColour = 'gray';
       break;
-    case 'In Game':
+    case 'in game':
       statusColour = 'yellow';
       break;
   }

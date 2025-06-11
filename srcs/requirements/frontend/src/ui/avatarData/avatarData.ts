@@ -1,7 +1,7 @@
 /**
  * @file avatarDefaultData.ts
  * @brief Provides data and functions related to game avatarDefault images.
- *
+
  * This file contains the path to avatarDefault images and a list of available avatarDefaults
  * with their respective image paths. It also provides a function to retrieve the list
  * of avatarDefaults.
@@ -97,3 +97,12 @@ export const avatarList: avatar[] = [
   { name: 'Zelda', imagePath: `${avatarDefaultPicturePath}zelda.png` },
   { name: 'UploadYourOwn', imagePath: `${avatarDefaultPicturePath}uploadYourOwn.png` },
 ] as const;
+
+/**
+ * @brief Retrieves the list of available avatars
+ *
+ * @return An array of avatar objects, each containing the name and image path of an avatar
+ */
+export function getAvatarList(): avatar[] {
+  return avatarList;
+}
