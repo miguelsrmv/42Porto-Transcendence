@@ -224,7 +224,6 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
   }
 
   async function onPlayAgainClick() {
-    console.log('Triggered!');
     restoreGameElements();
     if (targetPage) {
       loadView(targetPage);
