@@ -12,8 +12,14 @@ export class gameStats {
   }
 
   setMaxGoals(side: string) {
-    if (side === 'left') this.left.goals = 5;
-    else if (side === 'right') this.right.goals = 5;
+    if (side === 'left') {
+      this.left.goals = 5;
+      this.right.sufferedGoals = 5;
+    }
+    else if (side === 'right') {
+      this.right.goals = 5;
+      this.left.sufferedGoals = 5;
+    }
   }
 
   updateMaxSpeed(newSpeed: number) {
