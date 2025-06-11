@@ -221,25 +221,25 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
     else playAgainButton.classList.add('hidden');
   }
 
-  // TODO: Check why event is being dispatched twice
-  playAgainButton.addEventListener(
-    'click',
-    () => {
-      restoreGameElements();
-      if (targetPage) {
-        loadView(targetPage);
-        forceRouteChange(targetPage);
-      } else {
-        if (playType === 'Remote Tournament Play') {
-          readyForNextGame();
-          waitForNextGame();
-        } else if (playType === 'Local Tournament Play') {
-          dispatchNextMatchEvent(stats);
-        }
+  function onPlayAgainClick() {
+    console.trace('Button clicked');
+    restoreGameElements();
+    if (targetPage) {
+      loadView(targetPage);
+      forceRouteChange(targetPage);
+    } else {
+      if (playType === 'Remote Tournament Play') {
+        readyForNextGame();
+        waitForNextGame();
+      } else if (playType === 'Local Tournament Play') {
+        dispatchNextMatchEvent(stats);
       }
-    },
-    { once: true },
-  );
+    }
+    playAgainButton!.removeEventListener('click', onPlayAgainClick);
+  }
+
+  playAgainButton.removeEventListener('click', onPlayAgainClick);
+  playAgainButton.addEventListener('click', onPlayAgainClick);
 }
 
 /**
