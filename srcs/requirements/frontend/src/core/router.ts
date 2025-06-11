@@ -9,7 +9,8 @@ import * as landingPageModule from '../features/landing/landing.js';
 import * as mainMenuModule from '../features/mainMenu/mainMenu.js';
 import * as localPlayModule from '../features/localPlay/localPlay.js';
 import * as remotePlayModule from '../features/remotePlay/remotePlay.js';
-import * as tournamentPlayModule from '../features/tournamentPlay/tournamentPlay.js';
+import * as remoteTournamentPlayModule from '../features/remoteTournamentPlay/remoteTournamentPlay.js';
+import * as localTournamentPlayModule from '../features/localTournamentPlay/localTournamentPlay.js';
 import * as friendModule from '../features/friends/friends.js';
 import * as rankingsModule from '../features/rankings/rankings.js';
 import * as settingsModule from '../features/settings/settings.js';
@@ -23,9 +24,10 @@ type FeatureModule = {
 export const routes: { [key: string]: FeatureModule } = {
   'landing-page': landingPageModule as FeatureModule,
   'main-menu-page': mainMenuModule as FeatureModule,
-  'local-play-page': localPlayModule as FeatureModule,
-  'remote-play-page': remotePlayModule as FeatureModule,
-  'tournament-play-page': tournamentPlayModule as FeatureModule,
+  'local-match-page': localPlayModule as FeatureModule,
+  'remote-match-page': remotePlayModule as FeatureModule,
+  'local-tournament-page': localTournamentPlayModule as FeatureModule,
+  'remote-tournament-page': remoteTournamentPlayModule as FeatureModule,
   'friends-page': friendModule as FeatureModule,
   'rankings-page': rankingsModule as FeatureModule,
   'settings-page': settingsModule as FeatureModule,

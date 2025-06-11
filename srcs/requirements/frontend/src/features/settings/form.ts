@@ -23,7 +23,6 @@ type UserData = {
 };
 
 let userData: UserData;
-let userDataSubmitButtonListenerAttached: boolean = false;
 
 /**
  * @function resetFormData
@@ -51,13 +50,16 @@ export function handleUserDataChange(): void {
   }
 
   userDataSubmitButton.addEventListener('click', async () => {
-    userDataSubmitButtonListenerAttached = true;
     fillUserData();
     if (userData.username || userData.email || (userData.newPassword && userData.repeatPassword)) {
       userData.oldPassword = (await confirmChanges()) as string;
-      if (userData.oldPassword) await submitUserData();
-      updateLocalStorageData(userData.username);
-      updateHeaderData();
+      if (userData.oldPassword) {
+        let success: boolean = await submitUserData();
+        if (success) {
+          updateLocalStorageData(userData.username);
+          updateHeaderData();
+        }
+      }
     } else {
       alert('Error: no valid input!');
     }
@@ -68,7 +70,8 @@ export function handleUserDataChange(): void {
    * @brief Submits the user data to the server via a PATCH request.
    * @returns {Promise<void>} A promise that resolves when the request completes.
    */
-  async function submitUserData(): Promise<void> {
+
+  async function submitUserData(): Promise<boolean> {
     try {
       const response = await fetch('/api/users/', {
         method: 'PATCH',
@@ -78,8 +81,25 @@ export function handleUserDataChange(): void {
         },
         body: JSON.stringify(userData),
       });
+
+      if (!response.ok) {
+        try {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.message}`);
+        } catch (parseError) {
+          console.warn(
+            `Failed to parse error response body (Status: ${response.status}):`,
+            parseError,
+          );
+        }
+        return false;
+      }
+
+      return true;
     } catch (error) {
-      console.log(`User Data change error`);
+      console.error('Submit user data critical error (e.g., network issue):', error);
+
+      return false;
     }
   }
 
