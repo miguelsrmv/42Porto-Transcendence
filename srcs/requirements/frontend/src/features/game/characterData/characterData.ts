@@ -130,3 +130,45 @@ const characterList: character[] = [
 export function getCharacterList(): character[] {
   return characterList;
 }
+
+function getCharacterIndexFromBackend(name: string): number {
+  switch (name) {
+    case 'MARIO':
+      return 0;
+    case 'YOSHI':
+      return 1;
+    case 'DK':
+      return 2;
+    case 'BOWSER':
+      return 3;
+    case 'SONIC':
+      return 4;
+    case 'PIKACHU':
+      return 5;
+    case 'MEWTWO':
+      return 6;
+    case 'LINK':
+      return 7;
+    case 'KIRBY':
+      return 8;
+    case 'SAMUS':
+      return 9;
+    case 'CAPFALCON':
+      return 10;
+    case 'SNAKE':
+      return 11;
+  }
+  return 0;
+}
+
+export function getCharacterPathFromBackend(name: string): string {
+  let index: number = getCharacterIndexFromBackend(name);
+
+  return characterList[index].characterAvatarPicturePath;
+}
+
+export function getAccentColourFromBackend(name: string): string {
+  let index: number = getCharacterIndexFromBackend(name);
+
+  return characterList[index].accentColour;
+}

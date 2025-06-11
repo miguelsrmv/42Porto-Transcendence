@@ -1,13 +1,14 @@
 ## WebSocket Routes
 
-**Note:** in maintenance
+- `/ws` for remote games
+- `/ws/tournament` for tournaments
 
-| Event     | Route           | Parameters | Payload Sent / Expected | Description                      |
-| --------- | --------------- | ---------- | ----------------------- | -------------------------------- |
-| `connect` | `/ws`           |            |                         | Initiates a WebSocket connection |
-| `message` | `/ws`           |            |                         | Message sent by client           |
-| `error`   | server → client |            |                         | Sent when client sends bad data  |
-| `close`   | `/ws`           |            |                         | Connection is closed             |
+| Event     | Description                      |
+| --------- | -------------------------------- |
+| `connect` | Initiates a WebSocket connection |
+| `message` | Message sent by client           |
+| `error`   | Sent when client sends bad data  |
+| `close`   | Connection is closed             |
 
 ## WebSocket message types
 
@@ -62,8 +63,8 @@ Messages **sent from the server to the client**.
   - **Description:** Notify the client that there was a goal.
   - **Payload:**
     - `scoringSide: string` — Scoring player side (`left` or `right`).
-- `player_left`
-  - **Description:** Inform the client that the other player left the game.
+- `tournament_end`
+  - **Description:** Notify the client that the tournament has ended.
   - **Payload:**
     - _(none)_
 - `error`

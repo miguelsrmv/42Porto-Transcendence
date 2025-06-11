@@ -6,6 +6,7 @@ import { scoreAnimation } from '../animations/animations.js';
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
+import { playType } from '../gameSettings/gameSettings.types.js';
 
 /**
  * Maximum speed a ball can reach.
@@ -97,10 +98,15 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
  * @param winningPlayer The player who won the game.
  * @param gameArea The game area containing the canvas and game state.
  */
-function endGame(winningPlayer: Player, gameArea: GameArea): void {
+function endGame(
+  winningPlayer: Player,
+  gameArea: GameArea,
+  playType: playType,
+  tournamentIsRunning: boolean,
+): void {
   gameArea.stop();
   gameArea.clear();
-  triggerEndGameMenu(winningPlayer.side, winningPlayer.side, stats, 'Local Play');
+  triggerEndGameMenu(winningPlayer.side, winningPlayer.side, stats, playType, tournamentIsRunning);
 }
 
 /**
@@ -111,7 +117,13 @@ function endGame(winningPlayer: Player, gameArea: GameArea): void {
  * @param rightPlayer The right player object.
  * @param gameArea The game area containing the canvas and game state.
  */
-export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
+export async function checkGoal(
+  leftPlayer: Player,
+  rightPlayer: Player,
+  gameArea: GameArea,
+  playType: playType,
+  tournamentIsRunning: boolean,
+) {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
@@ -120,22 +132,24 @@ export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameAre
     rightPlayer.increaseScore();
     paintScore('right', rightPlayer.getScore());
     scoreAnimation('right');
-    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
     stats.right.increaseGoals();
     stats.left.increaseSufferedGoals();
-    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
     await resetRound(leftPlayer, rightPlayer, gameArea);
   } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
     leftPlayer.increaseScore();
     paintScore('left', leftPlayer.getScore());
     scoreAnimation('left');
-    console.log(`Left player now has: ${leftPlayer.getScore()} points`);
     stats.left.increaseGoals();
     stats.right.increaseSufferedGoals();
     await resetRound(leftPlayer, rightPlayer, gameArea);
   }
   if (eitherPlayerHasWon(leftPlayer, rightPlayer))
-    endGame(leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer, gameArea);
+    endGame(
+      leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer,
+      gameArea,
+      playType,
+      tournamentIsRunning,
+    );
 }
 
 /**

@@ -56,7 +56,7 @@ function updateFormPlaceholder(): void {
   }
 
   const changeEmailField = document.getElementById('email-settings-container') as HTMLInputElement;
-  if (!changeUsernameField) {
+  if (!changeEmailField) {
     console.log('Could not find username field');
     return;
   }

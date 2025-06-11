@@ -1,8 +1,7 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { Attack } from './attack.js';
-import WebSocket from 'ws';
-import { PlayerInput } from './types.js';
+import { PlayerInput, Side } from './types.js';
 import { gameStats } from './gameStats.js';
 import { GameArea } from './gameArea.js';
 
@@ -11,13 +10,13 @@ export class Player {
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
   ball: Ball;
-  alias?: string;
+  alias: string;
   score: number;
   attack: Attack | null;
-  side: string;
-  socket: WebSocket;
+  side: Side;
   input: PlayerInput;
   powerBarFill: number;
+  isEliminated: boolean = false;
 
   constructor(
     id: string,
@@ -27,8 +26,7 @@ export class Player {
     alias: string,
     attackName: string | null,
     enemyAttackName: string | null,
-    side: string,
-    socket: WebSocket,
+    side: Side,
     stats: gameStats,
     gameArea: GameArea,
   ) {
@@ -42,7 +40,6 @@ export class Player {
       ? new Attack(attackName, enemyAttackName, ownPaddle, enemyPaddle, ball, side, stats, gameArea)
       : null;
     this.side = side;
-    this.socket = socket;
     this.input = PlayerInput.stop;
     this.powerBarFill = 0;
   }
