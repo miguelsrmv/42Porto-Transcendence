@@ -275,10 +275,6 @@ export class Tournament {
     const sessionsToStart = nextRoundSessions.filter(
       (session) => session.round === this.currentRound && !session.winner,
     );
-    console.log(
-      `Starting sessions: ${sessionsToStart.map((s) => JSON.stringify(s.players.map((p) => p.alias)))}`,
-    );
-    console.log();
     for (const session of sessionsToStart) void session.startGame();
   }
 
@@ -296,7 +292,7 @@ export class Tournament {
       const player1 = players[i];
       const player2 = players[i + 1];
 
-      const newSession = new GameSession(this.type, 'Tournament Play');
+      const newSession = new GameSession(this.type, 'Remote Tournament Play');
       newSession.players.push(player1);
       newSession.players.push(player2);
       newSession.round = this.currentRound;
@@ -310,7 +306,7 @@ export class Tournament {
   }
 
   async createOnePlayerSession(winner: PlayerInfo) {
-    const session = new GameSession(this.type, 'Tournament Play');
+    const session = new GameSession(this.type, 'Remote Tournament Play');
     await session.setPlayer(winner.socket, playerInfoToPlayerSettings(winner));
     session.round = this.currentRound;
     session.tournament = this;
