@@ -21,6 +21,8 @@ import type { gameStats } from '../game/gameStats/gameStatsTypes.js';
 
 import { TournamentPhase } from '../../ui/tournamentStatus/tournamentStatus.types.js';
 
+import type { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatus.types.js';
+
 import {
   getGameType,
   createCharacterLoop,
@@ -36,6 +38,7 @@ import { navigate } from '../../core/router.js';
 import { editGridLayout } from './localTournamentPlayerMenu.js';
 import { getRandomInt } from '../../utils/helpers.js';
 import { loadView } from '../../core/viewLoader.js';
+import { showTournamentStatus } from '../../ui/tournamentStatus/tournamentStatus.js';
 
 let tournamentSettings: tournamentSettings | undefined;
 
@@ -96,9 +99,9 @@ export async function initializeView(): Promise<void> {
   const playButton = document.getElementById('play-button');
   if (playButton) {
     playButton.innerText = 'Play Tournament!';
-    playButton.addEventListener('click', () => {
+    playButton.addEventListener('click', async () => {
       setTournamentSettings(gameType, 'Local Tournament Play');
-      initializeLocalTournament(tournamentSettings as tournamentSettings);
+      await initializeLocalTournament(tournamentSettings as tournamentSettings);
     });
   } else console.warn('Play Button not found');
 }
@@ -142,13 +145,13 @@ function setTournamentSettings(gameType: gameType, playType: playType): void {
     };
 
     tournamentPlayers.push(tournamentPlayer);
-  }
 
-  tournamentSettings = {
-    playType: playType,
-    gameType: gameType,
-    players: tournamentPlayers,
-  };
+    tournamentSettings = {
+      playType: playType,
+      gameType: gameType,
+      players: tournamentPlayers,
+    };
+  }
 }
 
 async function initializeLocalTournament(tournamentSettings: tournamentSettings): Promise<void> {
@@ -159,8 +162,9 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
     loadView('game-page');
     updateHUD(gameSettings, gameSettings.gameType);
     if (match === 7) tournamentIsRunning = false;
+    const waitForGameEnd = listenToGameEnd(tournamentSettings);
     initializeLocalGame(gameSettings, tournamentIsRunning);
-    await listenToGameEnd(tournamentSettings);
+    await waitForGameEnd;
   }
 }
 
@@ -230,8 +234,8 @@ function resetVariables(): void {
 function listenToGameEnd(tournamentSettings: tournamentSettings): Promise<gameEnd> {
   return new Promise((resolve) => {
     const eventHandler = (event: CustomEvent<gameEnd>) => {
-      console.log('I want this to happen once');
       updateTournamentResults(tournamentSettings, event.detail.matchStats);
+      showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
       resolve(event.detail);
     };
 
@@ -243,3 +247,20 @@ function updateTournamentResults(
   tournamentSettings: tournamentSettings,
   matchStats: gameStats,
 ): void {}
+
+function convertTournamentPlayer(players: tournamentPlayerSettings[]): tournamentPlayer[] {
+  let tournamentPlayers: tournamentPlayer[] = [];
+
+  for (let i = 0; i < players.length; i++) {
+    const tournamentPlayer: tournamentPlayer = {
+      userAlias: players[i].alias,
+      quarterFinalScore: players[i].quarterFinalScore,
+      semiFinalScore: players[i].semiFinalScore,
+      finalScore: players[i].finalScore,
+      avatarPath: players[i].avatar,
+    };
+    tournamentPlayers.push(tournamentPlayer);
+  }
+
+  return tournamentPlayers;
+}
