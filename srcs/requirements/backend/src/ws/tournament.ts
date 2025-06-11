@@ -130,7 +130,7 @@ export class Tournament {
       release();
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
-    await wait(10);
+    await wait(7);
     for (const session of firstRoundSessions) void session.startGame();
   }
 
@@ -271,7 +271,7 @@ export class Tournament {
     await this.clearPreviousRoundSessions();
     if (this.currentRound > 1)
       console.log(`Blockchain array: ${await contractProvider.getMatchedParticipants(this.id)}`);
-    await wait(10);
+    await wait(7);
     const sessionsToStart = nextRoundSessions.filter(
       (session) => session.round === this.currentRound && !session.winner,
     );
