@@ -39,9 +39,10 @@ export function getTemplateId(templateHost: string): string | undefined {
       return 'landing-template';
     case 'main-menu-page':
       return 'main-menu-template';
-    case 'local-play-page':
-    case 'remote-play-page':
-    case 'tournament-play-page':
+    case 'local-match-page':
+    case 'remote-match-page':
+    case 'local-tournament-page':
+    case 'remote-tournament-page':
       return 'game-menu-template';
     case 'settings-page':
       return 'settings-template';
@@ -84,4 +85,12 @@ export async function checkLoginStatus(): Promise<boolean> {
  */
 export function capitalize(word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+export function getRandomInt(min: number, max: number): number {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  const result = Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
+
+  return result;
 }

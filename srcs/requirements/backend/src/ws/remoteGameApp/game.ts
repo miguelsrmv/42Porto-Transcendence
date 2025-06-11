@@ -8,7 +8,6 @@ import {
 import { gameRunningState, GameState, ServerMessage } from './types.js';
 import { Player } from './player.js';
 import { GameArea } from './gameArea.js';
-import { GameSession } from '../gameSession.js';
 
 function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
   if (player.attack) player.attack.lastUsed = Date.now();
@@ -30,30 +29,9 @@ function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
   gameArea.intervals.push(interval);
 }
 
-function setPowerUpBar(gameArea: GameArea): void {
+export function setPowerUpBar(gameArea: GameArea): void {
   setPlayerPowerBarInterval(gameArea.leftPlayer, gameArea);
   setPlayerPowerBarInterval(gameArea.rightPlayer, gameArea);
-}
-
-export function initializeRemoteGame(gameSession: GameSession): void {
-  const [player1socket, player2socket] = Array.from(gameSession.players.keys());
-  const [p1id, p2id] = Array.from(gameSession.players.values());
-  const gameArea = new GameArea(
-    p1id,
-    p2id,
-    player1socket,
-    player2socket,
-    gameSession.settings,
-    gameSession,
-  );
-  gameArea.tournament = gameSession.tournament;
-  gameSession.gameArea = gameArea;
-  gameArea.tournament = gameSession.tournament;
-  setPowerUpBar(gameArea);
-  const gameInterval = setInterval(() => {
-    gameArea.gameLoop();
-  }, 20);
-  gameArea.intervals.push(gameInterval);
 }
 
 export async function updateGameArea(dt: number, gameArea: GameArea) {
@@ -82,13 +60,9 @@ export async function updateGameArea(dt: number, gameArea: GameArea) {
   } as GameState;
   // TODO: Filter before sending
   const gameStateMsg: ServerMessage = { type: 'game_state', state: gameState };
-  gameArea.broadcastSessionMessage(JSON.stringify(gameStateMsg));
+  gameArea.session.broadcastMessage(JSON.stringify(gameStateMsg));
 }
 
 export function getGameVersion(gameArea: GameArea): number {
   return gameArea.leftPlayer.getScore() + gameArea.rightPlayer.getScore();
-}
-
-export function endGameIfRunning(gameArea: GameArea): void {
-  if (gameArea.runningState !== gameRunningState.ended) gameArea.stop();
 }

@@ -1,7 +1,6 @@
 import { Ball } from './ball.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, PADDLE_LEN, GameArea } from './gameArea.js';
-import { MAX_BALL_SPEED } from './collisions.js';
-import { wait } from './helpers.js';
+import { wait } from '../helpers.js';
 import { gameStats } from './gameStats.js';
 import { Paddle } from './paddle.js';
 import { getGameVersion } from './game.js';
@@ -132,7 +131,7 @@ export class Attack {
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
 
-  attack(): void {
+  async attack() {
     if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable) return;
 
     this.lastUsed = Date.now();
@@ -147,7 +146,7 @@ export class Attack {
       this.gameArea.rightPlayer.powerBarFill = 0;
     }
 
-    this.activeAttack();
+    await this.activeAttack();
 
     this.attackIsAvailable = false;
   }

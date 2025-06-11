@@ -4,10 +4,11 @@ dev.db
 
 **/dist/
 
-/secrets
+**/.env
 
 *.log
-blockchain_address.txt
+**/blockchain_address.txt
 **/output/
+**/broadcast/
 settings.json
 avatar/

@@ -1,28 +1,11 @@
-export type attackIdentifier =
-  | 'Super Shroom'
-  | 'Egg Barrage'
-  | 'Spin Dash'
-  | 'Thunder Wave'
-  | 'Confusion'
-  | 'Magic Mirror'
-  | 'Mini'
-  | 'Giant Punch';
-
-export interface character {
-  name: string;
-  attack: attackIdentifier;
-  characterSelectPicturePath: string;
-  characterAvatarPicturePath: string;
-  accentColour: string;
-  selectHelpMessage: string;
-}
+import { character } from "./characterData";
 
 export interface background {
   name: string;
   imagePath: string;
 }
 
-export type playType = 'Local Play' | 'Remote Play' | 'Tournament Play';
+export type playType = 'Remote Play' | 'Remote Tournament Play';
 
 export type gameType = 'Classic Pong' | 'Crazy Pong';
 
@@ -44,6 +27,13 @@ export interface leanGameSettings {
   playerID: string;
   playType: playType;
   gameType: gameType;
+  alias: string;
+  paddleColour: string;
+  character: character | null;
+}
+
+export interface playerSettings {
+  playerID: string;
   alias: string;
   paddleColour: string;
   character: character | null;

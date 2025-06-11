@@ -6,17 +6,14 @@
 import type { gameType } from '../game/gameSettings/gameSettings.types.js';
 import {
   getGameType,
-  createBackgroundLoop,
   createCharacterLoop,
   setGameSettings,
   getLeanGameSettings,
-  updateHUD,
 } from '../game/gameSetup.js';
 import { initializeRemoteGame } from '../game/remoteGameApp/remoteGame.js';
-import { loadView } from '../../core/viewLoader.js';
-import { fadeIn, fadeOut } from '../../ui/animations.js';
-import { checkLoginStatus, wait } from '../../utils/helpers.js';
+import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
+import { showWaitingModal } from '../../ui/waitingNextGame.js';
 
 /**
  * @brief Initializes view for remote play
@@ -77,34 +74,4 @@ export async function initializeView(): Promise<void> {
       { once: true },
     );
   } else console.warn('Play Button not found');
-}
-
-async function showWaitingModal(): Promise<void> {
-  const gameSettingsMenu = document.getElementById('game-settings-menu');
-  if (!gameSettingsMenu) {
-    console.log('Game settings menu not found');
-    return;
-  }
-
-  const playButtonContainer = document.getElementById('play-button-container');
-  if (!playButtonContainer) {
-    console.log('Play Button Container not found');
-    return;
-  }
-
-  fadeOut(gameSettingsMenu);
-  fadeOut(playButtonContainer);
-
-  const waitingModal = document.getElementById('waiting-game-modal');
-  if (!waitingModal) {
-    console.log('Waiting modal not found');
-    return;
-  }
-
-  setTimeout(() => fadeIn(waitingModal), 750);
-
-  await wait(1);
-
-  waitingModal.classList.remove('animate-fade-in');
-  waitingModal.classList.add('animate-pulse');
 }
