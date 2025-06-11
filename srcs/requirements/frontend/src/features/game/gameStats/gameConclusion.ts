@@ -228,7 +228,7 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
       loadView(targetPage);
       forceRouteChange(targetPage);
     } else {
-      await waitForNextGame();
+      await waitForNextGame(); // TODO: Check why stats are not hiding!
       if (playType === 'Remote Tournament Play') {
         readyForNextGame();
       } else if (playType === 'Local Tournament Play') {
