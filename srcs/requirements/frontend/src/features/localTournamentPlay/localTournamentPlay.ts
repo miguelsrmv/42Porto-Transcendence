@@ -36,7 +36,7 @@ import { getAvatarList } from '../../ui/avatarData/avatarData.js';
 import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
 import { editGridLayout } from './localTournamentPlayerMenu.js';
-import { getRandomInt } from '../../utils/helpers.js';
+import { getRandomInt, wait } from '../../utils/helpers.js';
 import { loadView } from '../../core/viewLoader.js';
 import { showTournamentStatus } from '../../ui/tournamentStatus/tournamentStatus.js';
 
@@ -165,6 +165,7 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
     const waitForGameEnd = listenToGameEnd(tournamentSettings);
     initializeLocalGame(gameSettings, tournamentIsRunning);
     await waitForGameEnd;
+    await wait(10);
   }
 }
 
