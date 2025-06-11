@@ -165,7 +165,7 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
     const waitForGameEnd = listenToGameEnd(tournamentSettings);
     initializeLocalGame(gameSettings, tournamentIsRunning);
     await waitForGameEnd;
-    await wait(10);
+    await wait(5);
   }
 }
 
