@@ -209,7 +209,7 @@ export class GameSession {
   public async markAsDisconnected(playerId: string) {
     if (!this.tournament) return;
     const leavingPlayer = this.getPlayerInfo(playerId);
-    if (!leavingPlayer || leavingPlayer.isDisconnected) return;
+    if (!leavingPlayer) return;
     leavingPlayer.isDisconnected = true;
     console.log(`${leavingPlayer.alias} disconnected`);
     if (!this.gameArea) return;
@@ -217,7 +217,7 @@ export class GameSession {
     this.gameArea.stop();
     await this.tournamentPlayerLeftHandler(playerId, leavingPlayer);
   }
-  
+
   private async tournamentPlayerLeftHandler(playerId: string, leavingPlayer: PlayerInfo) {
     if (!this.tournament || !this.gameArea) return;
     const playerWhoLeft = this.gameArea.getPlayerById(playerId);
@@ -226,6 +226,7 @@ export class GameSession {
     this.sendGameEndToRemainingPlayer(playerWhoStayed);
     const stayingPlayer = this.players.find((p) => p.id === playerWhoStayed.id);
     if (!leavingPlayer || !stayingPlayer || stayingPlayer.isDisconnected) return;
+    console.log(`${leavingPlayer.alias} left the match with ${stayingPlayer.alias}`);
     if (this.round === 3)
       this.sendToPlayer(playerWhoStayed.id, JSON.stringify({ type: 'tournament_end' }));
     const data: BlockchainScoreData = {
