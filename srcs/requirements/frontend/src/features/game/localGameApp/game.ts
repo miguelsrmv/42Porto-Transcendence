@@ -21,7 +21,6 @@ import {
   deactivatePowerBarAnimation,
 } from '../animations/animations.js';
 import { gameStats } from '../gameStats/gameStatsTypes.js';
-import { wait } from '../../../utils/helpers.js';
 
 /** @brief Speed of the ball in the game. */
 export const SPEED = 9999; // TODO: CHange back to 250
@@ -280,7 +279,7 @@ export function initializeLocalGame(
  * @param currentTime Current time in milliseconds.
  */
 async function updateGameArea(currentTime: number) {
-  animationFrameId = requestAnimationFrame(updateGameArea);
+  if (myGameArea.state != gameState.ended) animationFrameId = requestAnimationFrame(updateGameArea);
 
   if (lastTime === 0) {
     lastTime = currentTime;
