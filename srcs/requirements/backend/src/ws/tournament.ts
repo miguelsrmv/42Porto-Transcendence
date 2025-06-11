@@ -279,7 +279,7 @@ export class Tournament {
       `Starting sessions: ${sessionsToStart.map((s) => JSON.stringify(s.players.map((p) => p.alias)))}`,
     );
     console.log();
-    for (const session of nextRoundSessions) void session.startGame();
+    for (const session of sessionsToStart) void session.startGame();
   }
 
   private broadcastStatus(players: PlayerInfo[]) {
