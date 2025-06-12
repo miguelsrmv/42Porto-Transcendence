@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { handleError } from '../../utils/errorHandler';
-import { getUserGlobalStats } from '../services/user.services';
+import { getUserGlobalStats, setJWTCookie, updateSession } from '../services/user.services';
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
@@ -11,49 +11,17 @@ import util from 'util';
 import { pipeline } from 'stream';
 import path from 'path';
 import { getUserRank } from '../services/leaderboard.services';
-
-const COOKIE_MAX_AGE = 2 * 60 * 60; // Valid for 2h
-
-export type UserCreate = {
-  username: string;
-  email: string;
-  password: string;
-  repeatPassword: string;
-};
-
-type UserLogin = {
-  email: string;
-  password: string;
-};
-
-export type UserUpdate = {
-  username?: string;
-  email?: string;
-  oldPassword?: string;
-  newPassword?: string;
-  repeatPassword?: string;
-};
-
-export type AvatarData = {
-  data: string;
-};
-
-export type DefaultAvatar = {
-  path: string;
-};
-
-export type VerifyToken = {
-  code: string;
-  password?: string;
-};
-
-export type Login2FAData = {
-  code: string;
-  email: string;
-  password: string;
-};
-
-type OnlineState = 'online' | 'offline' | 'inGame';
+import {
+  AvatarData,
+  DefaultAvatar,
+  Login2FAData,
+  OnlineState,
+  UserCreate,
+  UserLogin,
+  UserSessionData,
+  UserUpdate,
+  VerifyToken,
+} from '../../types';
 
 export async function getUserById(
   request: FastifyRequest<{ Params: IParams }>,
@@ -62,14 +30,17 @@ export async function getUserById(
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: request.params.id },
-      select: { username: true, lastActiveAt: true, avatarUrl: true },
+      select: { username: true, lastActiveAt: true, avatarUrl: true, sessionExpiresAt: true },
     });
     const friendScore = await prisma.leaderboard.findUnique({
       where: { userId: request.params.id },
     });
     const currentTime = Date.now() / 1000;
-    const elapsedTime = currentTime - user.lastActiveAt.getTime() / 1000;
-    const onlineState: OnlineState = elapsedTime > 5 * 60 ? 'offline' : 'online';
+    const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
+    let onlineState = 'offline';
+    // TODO: Review online state
+    if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
+      onlineState = 'online';
     // TODO: Add inGame logic
     reply.send({
       ...user,
@@ -143,6 +114,8 @@ export async function preLogin(request: FastifyRequest<{ Body: UserLogin }>, rep
         hashedPassword: true,
         salt: true,
         enabled2FA: true,
+        sessionToken: true,
+        sessionExpiresAt: true,
       },
     });
 
@@ -155,6 +128,13 @@ export async function preLogin(request: FastifyRequest<{ Body: UserLogin }>, rep
     if (!isMatch) {
       return reply.status(401).send({ message: 'Invalid credentials' });
     }
+
+    if (user.sessionToken && user.sessionExpiresAt && user.sessionExpiresAt > new Date()) {
+      return reply.status(403).send({
+        message: 'User is already logged in on another device or tab.',
+      });
+    }
+
     if (user.enabled2FA) return reply.status(206).send({ enabled2FA: true });
     reply.send({ enabled2FA: false });
   } catch (error) {
@@ -179,6 +159,8 @@ export async function login2FA(
         enabled2FA: true,
         secret2FA: true,
         avatarUrl: true,
+        sessionToken: true,
+        sessionExpiresAt: true,
       },
     });
 
@@ -190,6 +172,12 @@ export async function login2FA(
 
     if (!isMatch) {
       return reply.status(401).send({ message: 'Invalid credentials' });
+    }
+
+    if (user.sessionToken && user.sessionExpiresAt && user.sessionExpiresAt > new Date()) {
+      return reply.status(403).send({
+        message: 'User is already logged in on another device or tab.',
+      });
     }
     if (!user.enabled2FA) return reply.status(401).send({ message: '2FA not setup' });
     if (!user.secret2FA) return reply.status(401).send('2FA required but not setup.');
@@ -204,18 +192,14 @@ export async function login2FA(
     if (!verified)
       return reply.status(401).send('The two-factor authentication token is invalid or expired.');
 
-    const finalToken = request.server.jwt.sign({
+    const sessionId = await updateSession(user.id);
+    const userData: UserSessionData = {
       id: user.id,
+      username: user.username,
       email: user.email,
-      userName: user.username,
-    });
-
-    reply.setCookie('access_token', finalToken, {
-      path: '/',
-      httpOnly: true,
-      secure: true,
-      maxAge: COOKIE_MAX_AGE,
-    });
+      sessionId: sessionId,
+    };
+    setJWTCookie(request, reply, userData);
     reply.send({ avatar: user.avatarUrl });
   } catch (error) {
     handleError(error, reply);
@@ -234,6 +218,8 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
         salt: true,
         enabled2FA: true,
         avatarUrl: true,
+        sessionToken: true,
+        sessionExpiresAt: true,
       },
     });
 
@@ -246,20 +232,23 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
     if (!isMatch) {
       return reply.status(401).send({ message: 'Invalid credentials' });
     }
+
+    if (user.sessionToken && user.sessionExpiresAt && user.sessionExpiresAt > new Date()) {
+      return reply.status(403).send({
+        message: 'User is already logged in on another device or tab.',
+      });
+    }
+
     if (user.enabled2FA) return reply.status(401).send({ message: '2FA required' });
 
-    const token = request.server.jwt.sign({
+    const sessionId = await updateSession(user.id);
+    const userData: UserSessionData = {
       id: user.id,
+      username: user.username,
       email: user.email,
-      userName: user.username,
-    });
-
-    reply.setCookie('access_token', token, {
-      path: '/',
-      httpOnly: true,
-      secure: true,
-      maxAge: COOKIE_MAX_AGE,
-    });
+      sessionId: sessionId,
+    };
+    setJWTCookie(request, reply, userData);
     reply.send({ avatar: user.avatarUrl });
   } catch (error) {
     handleError(error, reply);
@@ -273,6 +262,10 @@ export async function checkLoginStatus(request: FastifyRequest, reply: FastifyRe
 
 export async function logout(request: FastifyRequest, reply: FastifyReply) {
   reply.clearCookie('access_token');
+  await prisma.user.update({
+    where: { id: request.user.id },
+    data: { sessionToken: null, sessionExpiresAt: null },
+  });
   reply.send({ message: 'Logout successful!' });
 }
 
@@ -325,19 +318,23 @@ export async function uploadCustomAvatar(
   request: FastifyRequest<{ Body: AvatarData }>,
   reply: FastifyReply,
 ) {
-  const pump = util.promisify(pipeline);
-  const parts = request.files();
-  const userId = request.user.id;
-  const avatarDir = path.resolve(__dirname, '../../../../avatar');
-  const filePath = path.join(avatarDir, `${userId}.png`);
-  for await (const part of parts) {
-    await pump(part.file, fs.createWriteStream(filePath));
+  try {
+    const pump = util.promisify(pipeline);
+    const parts = request.files();
+    const userId = request.user.id;
+    const avatarDir = path.resolve(__dirname, '../../../../avatar');
+    const filePath = path.join(avatarDir, `${userId}.png`);
+    for await (const part of parts) {
+      await pump(part.file, fs.createWriteStream(filePath));
+    }
+    await prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl: `../../../../static/avatar/custom/${userId}.png` },
+    });
+    reply.send({ message: 'Avatar uploaded.' });
+  } catch (error) {
+    handleError(error, reply);
   }
-  await prisma.user.update({
-    where: { id: userId },
-    data: { avatarUrl: `../../../../static/avatar/custom/${userId}.png` },
-  });
-  reply.send({ message: 'Avatar uploaded.' });
 }
 
 export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply) {
@@ -404,18 +401,14 @@ export async function verify2FA(
     if (!verified)
       return reply.status(401).send('The two-factor authentication token is invalid or expired.');
 
-    const finalToken = request.server.jwt.sign({
+    const sessionId = await updateSession(user.id);
+    const userData: UserSessionData = {
       id: user.id,
+      username: user.username,
       email: user.email,
-      userName: user.username,
-    });
-
-    reply.setCookie('access_token', finalToken, {
-      path: '/',
-      httpOnly: true,
-      secure: true,
-      maxAge: COOKIE_MAX_AGE,
-    });
+      sessionId: sessionId,
+    };
+    const finalToken = setJWTCookie(request, reply, userData);
     if (!user.enabled2FA) {
       await prisma.user.update({ where: { id: request.user.id }, data: { enabled2FA: true } });
     }
@@ -473,7 +466,6 @@ export async function disable2FA(
   }
 }
 
-// TODO: review, check if in game? or logout?
 export async function isUserOnline(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
@@ -481,10 +473,14 @@ export async function isUserOnline(
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: request.params.id },
-      select: { lastActiveAt: true },
+      select: { sessionExpiresAt: true, lastActiveAt: true },
     });
     const currentTime = Date.now() / 1000;
-    const isOnline = currentTime - user.lastActiveAt.getTime() / 1000 > 5 * 60 ? true : false;
+    const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
+    let isOnline = false;
+    // TODO: Review online state
+    if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
+      isOnline = true;
     reply.send(isOnline);
   } catch (error) {
     handleError(error, reply);
