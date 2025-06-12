@@ -26,8 +26,6 @@ export function triggerEndGameMenu(
   playType: playType,
   tournamentIsRunning: boolean = false,
 ): void {
-  console.trace('TRIGGERED END GAME MENU');
-
   const HUDSideToShow =
     playType === 'Local Play' || 'Local Tournament Play' ? winningPlayerSide : playerSide;
 
