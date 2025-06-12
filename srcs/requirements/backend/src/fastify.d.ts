@@ -11,7 +11,7 @@ type JwtUserPayload = {
   id: string;
   email: string;
   username: string;
-  twoFactorPending?: boolean;
+  sessionId: string;
 }
 
 declare module 'fastify' {
