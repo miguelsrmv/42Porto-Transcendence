@@ -26,6 +26,8 @@ export function triggerEndGameMenu(
   playType: playType,
   tournamentIsRunning: boolean = false,
 ): void {
+  console.trace('TRIGGERED END GAME MENU');
+
   const HUDSideToShow =
     playType === 'Local Play' || 'Local Tournament Play' ? winningPlayerSide : playerSide;
 
@@ -221,25 +223,24 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
     else playAgainButton.classList.add('hidden');
   }
 
-  // TODO: Check why event is being dispatched twice
-  playAgainButton.addEventListener(
-    'click',
-    () => {
-      restoreGameElements();
-      if (targetPage) {
-        loadView(targetPage);
-        forceRouteChange(targetPage);
-      } else {
-        if (playType === 'Remote Tournament Play') {
-          readyForNextGame();
-          waitForNextGame();
-        } else if (playType === 'Local Tournament Play') {
-          dispatchNextMatchEvent(stats);
-        }
+  async function onPlayAgainClick() {
+    restoreGameElements();
+    if (targetPage) {
+      loadView(targetPage);
+      forceRouteChange(targetPage);
+    } else {
+      await waitForNextGame(); // TODO: Check why stats are reappearing
+      if (playType === 'Remote Tournament Play') {
+        readyForNextGame();
+      } else if (playType === 'Local Tournament Play') {
+        dispatchNextMatchEvent(stats);
       }
-    },
-    { once: true },
-  );
+    }
+    playAgainButton!.removeEventListener('click', onPlayAgainClick);
+  }
+
+  playAgainButton.removeEventListener('click', onPlayAgainClick);
+  playAgainButton.addEventListener('click', onPlayAgainClick);
 }
 
 /**
