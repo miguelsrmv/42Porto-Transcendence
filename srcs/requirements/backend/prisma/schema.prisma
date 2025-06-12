@@ -9,23 +9,25 @@ datasource db {
 }
 
 model User {
-  id              String                  @id @default(uuid())
-  email           String                  @unique
-  username        String                  @unique
-  hashedPassword  String
-  salt            String                  @default("")
-  createdAt       DateTime                @default(now())
-  lastActiveAt    DateTime                @default(now())
-  avatarUrl       String                  @default("../../../../static/avatar/default/mario.png")
-  secret2FA       String?
-  enabled2FA      Boolean                 @default(false)
-  friendsSent     Friendship[]            @relation("SentRequests")
-  friendsReceived Friendship[]            @relation("ReceivedRequests")
-  matches1        Match[]                 @relation("MatchUser1")
-  matches2        Match[]                 @relation("MatchUser2")
-  matchesWon      Match[]                 @relation("MatchWinner")
-  leaderboard     Leaderboard[]
-  tournaments     TournamentParticipant[]
+  id               String                  @id @default(uuid())
+  email            String                  @unique
+  username         String                  @unique
+  hashedPassword   String
+  salt             String                  @default("")
+  createdAt        DateTime                @default(now())
+  lastActiveAt     DateTime                @default(now())
+  sessionToken     String?
+  sessionExpiresAt DateTime?
+  avatarUrl        String                  @default("../../../../static/avatar/default/mario.png")
+  secret2FA        String?
+  enabled2FA       Boolean                 @default(false)
+  friendsSent      Friendship[]            @relation("SentRequests")
+  friendsReceived  Friendship[]            @relation("ReceivedRequests")
+  matches1         Match[]                 @relation("MatchUser1")
+  matches2         Match[]                 @relation("MatchUser2")
+  matchesWon       Match[]                 @relation("MatchWinner")
+  leaderboard      Leaderboard[]
+  tournaments      TournamentParticipant[]
 }
 
 model Leaderboard {
