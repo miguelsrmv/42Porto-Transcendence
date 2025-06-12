@@ -7,15 +7,13 @@
 - Doxygen comments
 - Check play another game button is working after remote match
 - Next game button showing on tournament winner
+- Final match result in tournament not displaying correctly for loser (displaying winner)
 
 # Backend
 - join_game on WS connection?
 - Deal with re-connections and lag (player_lagging, player_reconnected)
-- Review heartbeat times
 
 - Review API endpoints' output
-- Allow user to be logged in on multiple computers? 
-- Check user stats match leaderboard
 - Remove unused functions/routes/types
 - Organize functions in each file
 - Test security
