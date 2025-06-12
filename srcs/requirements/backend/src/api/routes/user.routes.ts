@@ -8,18 +8,14 @@ import {
   checkLoginStatus,
   logout,
   getOwnUser,
-  UserUpdate,
   getUserStats,
   setup2FA,
   verify2FA,
   check2FAstatus,
   disable2FA,
-  VerifyToken,
   getAvatarPath,
   setDefaultAvatar,
-  AvatarData,
   uploadCustomAvatar,
-  DefaultAvatar,
   preLogin,
   login2FA,
   isUserOnline,
@@ -32,6 +28,7 @@ import {
 } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
 import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
+import { AvatarData, DefaultAvatar, UserUpdate, VerifyToken } from '../../types';
 
 // TODO: review request methods
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
