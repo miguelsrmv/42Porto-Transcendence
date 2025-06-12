@@ -153,6 +153,9 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
   let tournamentIsRunning: boolean = true;
   let phase: TournamentPhase = TournamentPhase.Quarter;
 
+  //TODO: Show beginning tournamentTree
+  //TODO: Make sure going back/foward/reload doesn't mess it
+
   for (let match = 1; match <= 7; match++) {
     if (match === 5) phase = TournamentPhase.Semi;
     else if (match === 7) {
@@ -162,10 +165,18 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
     const player1Number: number = getPlayerNumber(phase, tournamentSettings, 'left');
     const player2Number: number = getPlayerNumber(phase, tournamentSettings, 'right');
 
+    console.log('Match ', match, ': ', player1Number, ' vs ', player2Number);
     const gameSettings = createGameSettings(tournamentSettings, player1Number, player2Number);
+    console.log('Match ', match, ': ', gameSettings);
     loadView('game-page');
     updateHUD(gameSettings, gameSettings.gameType);
-    const waitForGameEnd = listenToGameEnd(tournamentSettings, phase, player1Number, player2Number);
+    const waitForGameEnd = listenToGameEnd(
+      tournamentSettings,
+      match,
+      phase,
+      player1Number,
+      player2Number,
+    );
     initializeLocalGame(gameSettings, tournamentIsRunning);
     await waitForGameEnd;
     await wait(5);
@@ -256,13 +267,13 @@ function getRandomAvatar(): string {
 // This function wraps the event listener in a Promise.
 function listenToGameEnd(
   tournamentSettings: tournamentSettings,
+  match: number,
   phase: TournamentPhase,
   player1Number: number,
   player2Number: number,
 ): Promise<gameEnd> {
   return new Promise((resolve) => {
     const eventHandler = (event: CustomEvent<gameEnd>) => {
-      console.log('TRIGGERED A GAME END EVENT');
       // NOTE: Start debugging from here!
       updateTournamentResults(
         tournamentSettings,
@@ -271,7 +282,8 @@ function listenToGameEnd(
         player2Number,
         event.detail.matchStats,
       );
-      showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
+      if (match === 4 || match == 6)
+        showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
       resolve(event.detail);
     };
 
@@ -289,9 +301,15 @@ function updateTournamentResults(
   if (phase == TournamentPhase.Quarter) {
     tournamentSettings.players[player1Number].quarterFinalScore = matchStats.left.goals.toString();
     tournamentSettings.players[player2Number].quarterFinalScore = matchStats.right.goals.toString();
+    matchStats.left.goals > matchStats.right.goals
+      ? (tournamentSettings.players[player1Number].phase = TournamentPhase.Semi)
+      : (tournamentSettings.players[player2Number].phase = TournamentPhase.Semi);
   } else if (phase == TournamentPhase.Semi) {
     tournamentSettings.players[player1Number].semiFinalScore = matchStats.left.goals.toString();
     tournamentSettings.players[player2Number].semiFinalScore = matchStats.right.goals.toString();
+    matchStats.left.goals > matchStats.right.goals
+      ? (tournamentSettings.players[player1Number].phase = TournamentPhase.Final)
+      : (tournamentSettings.players[player2Number].phase = TournamentPhase.Final);
   }
   if (phase == TournamentPhase.Final) {
     tournamentSettings.players[player1Number].finalScore = matchStats.left.goals.toString();

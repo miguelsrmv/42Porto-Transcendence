@@ -7,6 +7,7 @@
 - Doxygen comments
 - Check play another game button is working after remote match
 - Next game button showing on tournament winner
+- On Local Tournament: "Upload your avatar" should not be a valid avatar!!
 
 # Backend
 - How to deal with empty brackets? Sudden winner after first round?
