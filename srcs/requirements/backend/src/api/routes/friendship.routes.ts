@@ -8,14 +8,12 @@ import {
   addFriend,
   addFriendByUsername,
   deleteFriend,
-  FriendCreate,
-  FriendCreateUsername,
-  FriendUpdate,
   getUserFriends,
   getUserPendingFriends,
   updateFriendshipStatus,
 } from '../controllers/friendship.controller';
 import { getByIdSchema } from '../schemas/global.schema';
+import { FriendCreate, FriendCreateUsername, FriendUpdate } from '../../types';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function friendRoutes(fastify: FastifyInstance) {

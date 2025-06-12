@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { UserCreate, UserUpdate } from '../controllers/user.controller';
 import { removeEmptyStrings } from '../../utils/helpers';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
+import { UserCreate, UserUpdate } from '../../types';
 
 export async function userCreateValidation(
   request: FastifyRequest<{ Body: UserCreate }>,

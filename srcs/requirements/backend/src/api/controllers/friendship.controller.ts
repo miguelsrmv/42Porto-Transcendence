@@ -2,19 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { handleError } from '../../utils/errorHandler';
 import { FriendshipStatus } from '@prisma/client';
-
-export type FriendCreate = {
-  friendId: string;
-};
-
-export type FriendCreateUsername = {
-  username: string;
-};
-
-export type FriendUpdate = {
-  friendId: string;
-  status: FriendshipStatus;
-};
+import { FriendCreate, FriendCreateUsername, FriendUpdate } from '../../types';
 
 export async function getUserFriends(request: FastifyRequest, reply: FastifyReply) {
   try {
