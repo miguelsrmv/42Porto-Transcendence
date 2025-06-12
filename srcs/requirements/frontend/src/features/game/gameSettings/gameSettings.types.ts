@@ -1,3 +1,4 @@
+import { TournamentPhase } from 'ui/tournamentStatus/tournamentStatus.types.js';
 import { background } from '../backgroundData/backgroundData.types.js';
 import { character } from '../characterData/characterData.types.js';
 
@@ -64,6 +65,7 @@ export interface tournamentSettings {
  * This interface defines the structure for tournament settings, including play type, game type, and tournament players
  */
 export interface tournamentPlayerSettings {
+  playerNumber: number;
   alias: string;
   paddleColour: string;
   character: character | null;
@@ -71,6 +73,7 @@ export interface tournamentPlayerSettings {
   quarterFinalScore: string | null;
   semiFinalScore: string | null;
   finalScore: string | null;
+  phase: TournamentPhase;
 }
 
 /**
