@@ -39,10 +39,13 @@ import { editGridLayout } from './localTournamentPlayerMenu.js';
 import { getRandomInt, wait } from '../../utils/helpers.js';
 import { loadView } from '../../core/viewLoader.js';
 import { showTournamentStatus } from '../../ui/tournamentStatus/tournamentStatus.js';
+import { showWaitingModal, waitForNextTournamentGameCountdown } from '../../ui/waitingNextGame.js';
 
 const characterList = getCharacterList();
 
 let tournamentSettings: tournamentSettings | undefined;
+
+let localTournamentIsRunning: boolean = false;
 
 /**
  * @brief Initializes view for tournament play
@@ -150,25 +153,27 @@ function setTournamentSettings(gameType: gameType, playType: playType): void {
 }
 
 async function initializeLocalTournament(tournamentSettings: tournamentSettings): Promise<void> {
-  let tournamentIsRunning: boolean = true;
   let phase: TournamentPhase = TournamentPhase.Quarter;
+  localTournamentIsRunning = true;
+  showWaitingModal();
+  showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
+  await wait(5);
 
-  //TODO: Show beginning tournamentTree
   //TODO: Make sure going back/foward/reload doesn't mess it
 
   for (let match = 1; match <= 7; match++) {
+    if (!localTournamentIsRunning) return;
     if (match === 5) phase = TournamentPhase.Semi;
     else if (match === 7) {
       phase = TournamentPhase.Final;
-      tournamentIsRunning = false;
+      localTournamentIsRunning = false;
     }
     const player1Number: number = getPlayerNumber(phase, tournamentSettings, 'left');
     const player2Number: number = getPlayerNumber(phase, tournamentSettings, 'right');
-
+    loadView('game-page');
     console.log('Match ', match, ': ', player1Number, ' vs ', player2Number);
     const gameSettings = createGameSettings(tournamentSettings, player1Number, player2Number);
     console.log('Match ', match, ': ', gameSettings);
-    loadView('game-page');
     updateHUD(gameSettings, gameSettings.gameType);
     const waitForGameEnd = listenToGameEnd(
       tournamentSettings,
@@ -177,9 +182,9 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
       player1Number,
       player2Number,
     );
-    initializeLocalGame(gameSettings, tournamentIsRunning);
+    initializeLocalGame(gameSettings, localTournamentIsRunning);
     await waitForGameEnd;
-    await wait(5);
+    await waitForNextTournamentGameCountdown();
   }
 }
 
@@ -264,17 +269,15 @@ function getRandomAvatar(): string {
   return avatarList[avatarIndex].imagePath;
 }
 
-// This function wraps the event listener in a Promise.
 function listenToGameEnd(
   tournamentSettings: tournamentSettings,
-  match: number,
+  matchPlayed: number,
   phase: TournamentPhase,
   player1Number: number,
   player2Number: number,
 ): Promise<gameEnd> {
   return new Promise((resolve) => {
     const eventHandler = (event: CustomEvent<gameEnd>) => {
-      // NOTE: Start debugging from here!
       updateTournamentResults(
         tournamentSettings,
         phase,
@@ -282,7 +285,7 @@ function listenToGameEnd(
         player2Number,
         event.detail.matchStats,
       );
-      if (match === 4 || match == 6)
+      if (matchPlayed === 4 || matchPlayed == 6)
         showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
       resolve(event.detail);
     };
@@ -332,4 +335,8 @@ function convertTournamentPlayer(players: tournamentPlayerSettings[]): tournamen
   }
 
   return tournamentPlayers;
+}
+
+export function endLocalTournamentIfRunning(): void {
+  localTournamentIsRunning = false;
 }
