@@ -21,6 +21,8 @@ import type { gameStats } from '../game/gameStats/gameStatsTypes.js';
 
 import { TournamentPhase } from '../../ui/tournamentStatus/tournamentStatus.types.js';
 
+import type { tournamentPlayer } from '../../ui/tournamentStatus/tournamentStatus.types.js';
+
 import {
   getGameType,
   createCharacterLoop,
@@ -34,16 +36,13 @@ import { getAvatarList } from '../../ui/avatarData/avatarData.js';
 import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
 import { editGridLayout } from './localTournamentPlayerMenu.js';
-import { getRandomInt } from '../../utils/helpers.js';
+import { getRandomInt, wait } from '../../utils/helpers.js';
 import { loadView } from '../../core/viewLoader.js';
-
-let tournamentSettings: tournamentSettings | undefined;
+import { showTournamentStatus } from '../../ui/tournamentStatus/tournamentStatus.js';
 
 const characterList = getCharacterList();
 
-let match: number = 1;
-
-let phase: TournamentPhase = TournamentPhase.Quarter;
+let tournamentSettings: tournamentSettings | undefined;
 
 /**
  * @brief Initializes view for tournament play
@@ -56,9 +55,6 @@ export async function initializeView(): Promise<void> {
     navigate('landing-page');
     return;
   }
-
-  // Resets variable on page load
-  resetVariables();
 
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
@@ -96,9 +92,9 @@ export async function initializeView(): Promise<void> {
   const playButton = document.getElementById('play-button');
   if (playButton) {
     playButton.innerText = 'Play Tournament!';
-    playButton.addEventListener('click', () => {
+    playButton.addEventListener('click', async () => {
       setTournamentSettings(gameType, 'Local Tournament Play');
-      initializeLocalTournament(tournamentSettings as tournamentSettings);
+      await initializeLocalTournament(tournamentSettings as tournamentSettings);
     });
   } else console.warn('Play Button not found');
 }
@@ -132,6 +128,7 @@ function setTournamentSettings(gameType: gameType, playType: playType): void {
     } else character = null;
 
     let tournamentPlayer: tournamentPlayerSettings = {
+      playerNumber: i,
       alias: alias,
       paddleColour: paddleColour,
       character: character,
@@ -139,39 +136,62 @@ function setTournamentSettings(gameType: gameType, playType: playType): void {
       quarterFinalScore: '',
       semiFinalScore: '',
       finalScore: '',
+      phase: TournamentPhase.Quarter,
     };
 
     tournamentPlayers.push(tournamentPlayer);
-  }
 
-  tournamentSettings = {
-    playType: playType,
-    gameType: gameType,
-    players: tournamentPlayers,
-  };
+    tournamentSettings = {
+      playType: playType,
+      gameType: gameType,
+      players: tournamentPlayers,
+    };
+  }
 }
 
 async function initializeLocalTournament(tournamentSettings: tournamentSettings): Promise<void> {
   let tournamentIsRunning: boolean = true;
+  let phase: TournamentPhase = TournamentPhase.Quarter;
+
+  //TODO: Show beginning tournamentTree
+  //TODO: Make sure going back/foward/reload doesn't mess it
 
   for (let match = 1; match <= 7; match++) {
-    const gameSettings = createGameSettings(match, phase, tournamentSettings);
+    if (match === 5) phase = TournamentPhase.Semi;
+    else if (match === 7) {
+      phase = TournamentPhase.Final;
+      tournamentIsRunning = false;
+    }
+    const player1Number: number = getPlayerNumber(phase, tournamentSettings, 'left');
+    const player2Number: number = getPlayerNumber(phase, tournamentSettings, 'right');
+
+    console.log('Match ', match, ': ', player1Number, ' vs ', player2Number);
+    const gameSettings = createGameSettings(tournamentSettings, player1Number, player2Number);
+    console.log('Match ', match, ': ', gameSettings);
     loadView('game-page');
     updateHUD(gameSettings, gameSettings.gameType);
-    if (match === 7) tournamentIsRunning = false;
+    const waitForGameEnd = listenToGameEnd(
+      tournamentSettings,
+      match,
+      phase,
+      player1Number,
+      player2Number,
+    );
     initializeLocalGame(gameSettings, tournamentIsRunning);
-    await listenToGameEnd(tournamentSettings);
+    await waitForGameEnd;
+    await wait(5);
   }
 }
 
 function createGameSettings(
-  match: number,
-  phase: TournamentPhase,
   tournamentSettings: tournamentSettings,
+  player1Number: number,
+  player2Number: number,
 ): gameSettings {
-  const player1: tournamentPlayerSettings = getLeftPlayer(match, phase, tournamentSettings);
-  const player2: tournamentPlayerSettings = getRightPlayer(match, phase, tournamentSettings);
+  const player1 = tournamentSettings.players[player1Number];
+  const player2 = tournamentSettings.players[player2Number];
   const background: background = getRandomBackground();
+
   const gameSettings: gameSettings = {
     playType: tournamentSettings.playType,
     gameType: tournamentSettings.gameType,
@@ -188,20 +208,44 @@ function createGameSettings(
   return gameSettings;
 }
 
-function getLeftPlayer(
-  match: number,
+function getPlayerNumber(
   phase: TournamentPhase,
   tournamentSettings: tournamentSettings,
-): tournamentPlayerSettings {
-  return tournamentSettings.players[0];
-}
-
-function getRightPlayer(
-  match: number,
-  phase: TournamentPhase,
-  tournamentSettings: tournamentSettings,
-): tournamentPlayerSettings {
-  return tournamentSettings.players[1];
+  playerSide: string,
+): number {
+  let index: number = 0;
+  let count = playerSide == 'left' ? 1 : 2;
+  const players: tournamentPlayerSettings[] = tournamentSettings.players;
+  if (phase == TournamentPhase.Quarter) {
+    while (index < players.length) {
+      if (
+        players[index].quarterFinalScore == '' &&
+        players[index].phase == TournamentPhase.Quarter
+      ) {
+        count--;
+      }
+      if (!count) return index;
+      index++;
+    }
+  } else if (phase == TournamentPhase.Semi) {
+    while (index < players.length) {
+      if (players[index].semiFinalScore == '' && players[index].phase == TournamentPhase.Semi) {
+        count--;
+      }
+      if (!count) return index;
+      index++;
+    }
+  } else {
+    while (index < players.length) {
+      if (players[index].phase == TournamentPhase.Final) {
+        count--;
+      }
+      if (!count) return index;
+      index++;
+    }
+  }
+  // HACK: Only here because of LSP
+  return index;
 }
 
 function getRandomBackground(): background {
@@ -220,18 +264,26 @@ function getRandomAvatar(): string {
   return avatarList[avatarIndex].imagePath;
 }
 
-function resetVariables(): void {
-  match = 1;
-  tournamentSettings = undefined;
-  phase = TournamentPhase.Quarter;
-}
-
 // This function wraps the event listener in a Promise.
-function listenToGameEnd(tournamentSettings: tournamentSettings): Promise<gameEnd> {
+function listenToGameEnd(
+  tournamentSettings: tournamentSettings,
+  match: number,
+  phase: TournamentPhase,
+  player1Number: number,
+  player2Number: number,
+): Promise<gameEnd> {
   return new Promise((resolve) => {
     const eventHandler = (event: CustomEvent<gameEnd>) => {
-      console.log('I want this to happen once');
-      updateTournamentResults(tournamentSettings, event.detail.matchStats);
+      // NOTE: Start debugging from here!
+      updateTournamentResults(
+        tournamentSettings,
+        phase,
+        player1Number,
+        player2Number,
+        event.detail.matchStats,
+      );
+      if (match === 4 || match == 6)
+        showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
       resolve(event.detail);
     };
 
@@ -241,5 +293,43 @@ function listenToGameEnd(tournamentSettings: tournamentSettings): Promise<gameEn
 
 function updateTournamentResults(
   tournamentSettings: tournamentSettings,
+  phase: TournamentPhase,
+  player1Number: number,
+  player2Number: number,
   matchStats: gameStats,
-): void {}
+): void {
+  if (phase == TournamentPhase.Quarter) {
+    tournamentSettings.players[player1Number].quarterFinalScore = matchStats.left.goals.toString();
+    tournamentSettings.players[player2Number].quarterFinalScore = matchStats.right.goals.toString();
+    matchStats.left.goals > matchStats.right.goals
+      ? (tournamentSettings.players[player1Number].phase = TournamentPhase.Semi)
+      : (tournamentSettings.players[player2Number].phase = TournamentPhase.Semi);
+  } else if (phase == TournamentPhase.Semi) {
+    tournamentSettings.players[player1Number].semiFinalScore = matchStats.left.goals.toString();
+    tournamentSettings.players[player2Number].semiFinalScore = matchStats.right.goals.toString();
+    matchStats.left.goals > matchStats.right.goals
+      ? (tournamentSettings.players[player1Number].phase = TournamentPhase.Final)
+      : (tournamentSettings.players[player2Number].phase = TournamentPhase.Final);
+  }
+  if (phase == TournamentPhase.Final) {
+    tournamentSettings.players[player1Number].finalScore = matchStats.left.goals.toString();
+    tournamentSettings.players[player2Number].finalScore = matchStats.right.goals.toString();
+  }
+}
+
+function convertTournamentPlayer(players: tournamentPlayerSettings[]): tournamentPlayer[] {
+  let tournamentPlayers: tournamentPlayer[] = [];
+
+  for (let i = 0; i < players.length; i++) {
+    const tournamentPlayer: tournamentPlayer = {
+      userAlias: players[i].alias,
+      quarterFinalScore: players[i].quarterFinalScore,
+      semiFinalScore: players[i].semiFinalScore,
+      finalScore: players[i].finalScore,
+      avatarPath: players[i].avatar,
+    };
+    tournamentPlayers.push(tournamentPlayer);
+  }
+
+  return tournamentPlayers;
+}

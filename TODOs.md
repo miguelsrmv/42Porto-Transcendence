@@ -8,6 +8,7 @@
 - Check play another game button is working after remote match
 - Next game button showing on tournament winner
 - Add option to remove friends
+- On Local Tournament: "Upload your avatar" should not be a valid avatar!!
 
 # Backend
 - join_game on WS connection?
