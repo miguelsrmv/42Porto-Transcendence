@@ -5,7 +5,7 @@
 
 import { createAvatarLoop, handleSubmitAvatar, resetAvatarIndex } from './avatar.js';
 import { handleUserDataChange, resetFormData } from './form.js';
-import { handle2FA } from './2fa.js';
+import { handle2FA, reset2FAToggleVisuals } from './2fa.js';
 import { checkLoginStatus } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
 
@@ -37,6 +37,7 @@ export async function initializeView(): Promise<void> {
 function resetPageData(): void {
   resetAvatarIndex();
   resetFormData();
+  reset2FAToggleVisuals();
 }
 
 /**
