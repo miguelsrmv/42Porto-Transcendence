@@ -1,7 +1,5 @@
 # Frontend
-- Create local tournament
 - Edit player avatar on match stats show
-- Edit accent colour on match stats show
 - Edit match stats themselves
 - Do something with friends
 - Doxygen comments
