@@ -45,6 +45,15 @@ contract TournamentsStorage {
     }
 
     // GETTER FUNCTIONS *********************************************************
+
+    function getAllClassicTournamentsUUIDs() public view returns (string[] memory) {
+        return classicTournamentsUUID;
+    }
+
+    function getAllCrazyTournamentsUUIDs() public view returns (string[] memory) {
+        return crazyTournamentsUUID;
+    }
+
     function getTournament(string memory _tournamentId) public view returns (Tournament memory) {
         return tournamentsMap[_tournamentId];
     }
@@ -115,6 +124,10 @@ contract TournamentsStorage {
     {
         string[4] memory data;
 
+        data[1] = "";
+        data[2] = "";
+        data[3] = "";
+
         Tournament memory tournament = tournamentsMap[_tournamentId];
         for (uint256 i = 0; i < MAX_PARTICIPANTS; i++) {
             if (
@@ -133,11 +146,6 @@ contract TournamentsStorage {
                 data[dataIndex] = (tournament.scores[i]).toString();
                 dataIndex++;
             }
-        }
-
-        while (dataIndex < 3) {
-            data[dataIndex] = "";
-            dataIndex++;
         }
 
         return data;
