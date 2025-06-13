@@ -23,7 +23,7 @@ import {
 import { gameStats } from '../gameStats/gameStatsTypes.js';
 
 /** @brief Speed of the ball in the game. */
-export const SPEED = 9999; // TODO: CHange back to 250
+export const SPEED = 250;
 
 /** @brief Height of the game canvas. */
 export const CANVAS_HEIGHT = 720;
@@ -281,6 +281,10 @@ export function initializeLocalGame(
 async function updateGameArea(currentTime: number) {
   if (myGameArea.state != gameState.ended) animationFrameId = requestAnimationFrame(updateGameArea);
 
+  console.log(
+    `CountdownTimeLeft: ${countdownTimeLeft}, CountdownBlinkTimer: ${countdownBlinkTimer}, countdownVisible: ${countdownVisible}, isInitialCoutndownActive: ${isInitialCountdownActive}`,
+  );
+
   if (lastTime === 0) {
     lastTime = currentTime;
   }
@@ -391,15 +395,16 @@ export function paintScore(side: string, score: number): void {
  * @brief Ends the local game if it is currently running.
  */
 export function endLocalGameIfRunning(): void {
-  if (myGameArea.state !== gameState.ended) {
-    lastTime = 0;
-    countdownTimeLeft = 3;
-    countdownBlinkTimer = 0;
-    countdownVisible = true;
-    isInitialCountdownActive = true;
-    stats.reset();
-    deactivatePowerBarAnimation('left');
-    deactivatePowerBarAnimation('right');
-    myGameArea.stop();
-  }
+  // NOTE: Potential bug introduced. Removed if condition.
+  lastTime = 0;
+  countdownTimeLeft = 3;
+  countdownBlinkTimer = 0;
+  countdownVisible = true;
+  isInitialCountdownActive = true;
+  animationFrameId = null;
+  stats.reset();
+  deactivatePowerBarAnimation('left');
+  deactivatePowerBarAnimation('right');
+  myGameArea.inputHandler?.disable();
+  myGameArea.stop();
 }
