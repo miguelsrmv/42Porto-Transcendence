@@ -7,11 +7,13 @@
 - Doxygen comments
 - Check play another game button is working after remote match
 - Next game button showing on tournament winner
+- Add option to remove friends
 
 # Backend
 - join_game on WS connection?
 - Deal with re-connections and lag (player_lagging, player_reconnected)
 - Review heartbeat times
+- Create API to remove friends
 
 - Review API endpoints' output
 - Allow user to be logged in on multiple computers? 
