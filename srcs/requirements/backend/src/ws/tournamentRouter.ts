@@ -20,7 +20,7 @@ async function joinGameHandler(
     return;
   }
   if (!areGameSettingsValid(socket, userId, playerSettings)) return;
-  if (playerSettings.playType !== 'Tournament Play') {
+  if (playerSettings.playType !== 'Remote Tournament Play') {
     sendErrorMessage(socket, 'Attempting to join a Remote Game through the wrong route');
     closeSocket(socket);
     return;

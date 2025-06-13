@@ -1,5 +1,8 @@
 name: Docker Compose CI
 
+env:
+  DATA_PATH: ${{ secrets.DATA_PATH }}
+
 on:
   push:
     branches: [ "main" ]
