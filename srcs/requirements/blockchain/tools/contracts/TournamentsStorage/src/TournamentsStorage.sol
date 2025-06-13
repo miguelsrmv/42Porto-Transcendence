@@ -152,7 +152,7 @@ contract TournamentsStorage {
     }
 
     // ACTION FUNCTIONS *********************************************************
-    function createTournament(string memory _tournamentId, gameType _gameType) public {
+    function createTournament(string memory _tournamentId, gameType _gameType) public onlyOwner {
         Tournament memory newTournament;
 
         newTournament.typeOfGame = _gameType;
