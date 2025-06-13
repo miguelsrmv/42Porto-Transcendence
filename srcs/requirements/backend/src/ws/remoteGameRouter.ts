@@ -3,8 +3,9 @@ import { ClientMessage, PlayerInput } from './remoteGameApp/types';
 import { FastifyRequest } from 'fastify';
 import { leanGameSettings } from './remoteGameApp/settings';
 import { areGameSettingsValid, closeSocket, isPlayerInput, sendErrorMessage } from './helpers';
-import { GameSessionManager } from './gameSessionManager';
-import { playerManager } from './playerManager';
+import { GameSessionManager } from './managers/gameSessionManager';
+import { playerManager } from './managers/playerManager';
+import { reconnectionManager } from './managers/reconnectionManager';
 
 const sessionManager = new GameSessionManager();
 
@@ -93,8 +94,10 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
     try {
       const playerId = playerManager.getPlayerId(socket);
       if (!playerId) return;
-      await sessionManager.removePlayer(playerId);
+      // reconnectionManager.markDisconnected(playerId, async () => {
+      await sessionManager.removePlayerSessionManager(playerId);
       playerManager.unregister(socket);
+      // });
     } catch (err) {
       console.error('Error closing socket:', err);
     }

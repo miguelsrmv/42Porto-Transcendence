@@ -2,7 +2,6 @@ import { Ball } from './ball';
 import { gameStats } from './gameStats';
 import { Paddle } from './paddle';
 import { gameSettings, leanGameSettings } from './settings';
-import WebSocket from 'ws';
 
 export interface GameState {
   ball: Ball;
@@ -46,15 +45,17 @@ export type ClientMessage =
   | { type: 'stop_game' }
   | { type: 'ready_for_next_game' };
 
+export type Side = 'left' | 'right';
+
 export type ServerMessage =
   | { type: 'game_setup'; settings: gameSettings }
   | { type: 'game_start' }
   | { type: 'game_state'; state: GameState }
-  | { type: 'game_goal'; scoringSide: 'left' | 'right' }
+  | { type: 'game_goal'; scoringSide: Side }
   | {
       type: 'game_end';
-      winningPlayer: 'left' | 'right';
-      ownSide: 'left' | 'right';
+      winningPlayer: Side;
+      ownSide: Side;
       stats: gameStats;
     }
   | { type: 'player_left' }
