@@ -26,7 +26,10 @@
 - Remove populate from running automatically on project delivery
 
 NEW:
-- WAITING FOR NEXT GAME: too long?? 
+- WAITING FOR NEXT GAME: too long??
+
+BUG:
+- User gets logged out after changing password and is unable to login again
 
 # Blockchain
 - Test data persistence on Blockchain
