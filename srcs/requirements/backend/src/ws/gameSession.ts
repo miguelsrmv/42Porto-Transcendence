@@ -1,16 +1,17 @@
 import WebSocket from 'ws';
 import { gameSettings, gameType, playerSettings, playType } from './remoteGameApp/settings';
 import { GameArea } from './remoteGameApp/gameArea';
-import { BlockchainScoreData, Tournament, tournamentState } from './tournament';
+import { BlockchainScoreData, Tournament } from './tournament';
 import { Player } from './remoteGameApp/player';
 import { setPowerUpBar } from './remoteGameApp/game';
-import { ServerMessage } from './remoteGameApp/types';
+import { gameRunningState, ServerMessage } from './remoteGameApp/types';
 import { createMatchPlayerLeft } from './remoteGameApp/gameEnd';
 import { getAvatarFromPlayer } from '../api/services/user.services';
 import { getRandomBackground } from './remoteGameApp/backgroundData';
 import { updateLeaderboardRemote } from '../api/services/leaderboard.services';
 import { gameTypeToEnum } from '../utils/helpers';
 import { character } from './remoteGameApp/characterData';
+import { closeSocket, removeItem } from './helpers';
 
 export class PlayerInfo {
   id: string;
@@ -19,6 +20,8 @@ export class PlayerInfo {
   avatar: string;
   paddleColour: string;
   character: character | null;
+  isDisconnected: boolean = false;
+  lastConnectedAt: number = Date.now();
   readyForNextRound: boolean = false;
   scoreQuarterFinals?: number;
   scoreSemiFinals?: number;
@@ -81,45 +84,35 @@ export class GameSession {
     this.aliases.push(playerSettings.alias);
   }
 
-  async removePlayer(playerId: string) {
+  reconnectPlayer(playerId: string, newSocket: WebSocket) {
+    const player = this.getPlayerInfo(playerId);
+    if (!player) return;
+    player.socket = newSocket;
+    player.isDisconnected = false;
+  }
+
+  async removePlayerSession(playerId: string) {
     const playerToRemove = this.players.find((player) => player.id === playerId);
     if (!playerToRemove) return;
-    console.log(`Removing ${playerToRemove.alias}`);
-    const index = this.players.indexOf(playerToRemove);
-    if (index !== -1) this.players.splice(index, 1);
-    const indexAlias = this.aliases.indexOf(playerToRemove.alias);
-    if (indexAlias !== -1) this.aliases.splice(indexAlias, 1);
+    console.log(`Removing ${playerToRemove.alias} from session`);
+    removeItem(this.players, playerToRemove);
+    removeItem(this.aliases, playerToRemove.alias);
     if (!this.gameArea) return;
     this.gameArea.stop();
-    if (this.players.length === 0) return;
+    if (this.players.length === 0 || this.tournament) return;
+    await this.remotePlayerLeftHandle(playerId);
+  }
 
+  private async remotePlayerLeftHandle(playerId: string) {
+    if (!this.gameArea) return;
     const playerWhoLeft = this.gameArea.getPlayerById(playerId);
     if (playerWhoLeft.isEliminated) return; // score already saved in endGame
-
     const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
-    this.broadcastPlayerLeftMessage(playerWhoStayed);
-    if (this.tournament && this.tournament.state === tournamentState.ongoing) {
-      const player = this.players.find((p) => p.id === playerWhoStayed.id);
-      const leavingPlayer = this.players.find((p) => p.id === playerWhoLeft.id);
-      if (!player || !leavingPlayer) return;
-      // TODO: Check if order of users matter
-      const data: BlockchainScoreData = {
-        tournamentId: this.tournament.id,
-        gameType: gameTypeToEnum(this.tournament.type),
-        player1Data: [player.id, player.alias, player.character?.name ?? 'NONE'],
-        score1: 5, // hard-coded win
-        player2Data: [
-          leavingPlayer.id,
-          leavingPlayer.alias,
-          leavingPlayer.character?.name ?? 'NONE',
-        ],
-        score2: playerWhoLeft.score,
-      };
-      await this.tournament.updateSessionScore(this, playerWhoStayed.id, data);
-    } else {
-      await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
-      await updateLeaderboardRemote(playerWhoStayed, playerWhoLeft);
-    }
+    this.sendGameEndToRemainingPlayer(playerWhoStayed);
+    await createMatchPlayerLeft(playerWhoStayed, this.gameArea);
+    await updateLeaderboardRemote(playerWhoStayed, playerWhoLeft);
+    const winnerSocket = this.getPlayerSocket(playerWhoStayed.id);
+    if (winnerSocket) closeSocket(winnerSocket);
   }
 
   isFull(): boolean {
@@ -130,8 +123,16 @@ export class GameSession {
     return this.players.length === 0;
   }
 
+  hasDisconnectedPlayers(): boolean {
+    return this.players.some((p) => p.isDisconnected);
+  }
+
   getPlayers() {
     return this.players;
+  }
+
+  getPlayerInfo(playerId: string) {
+    return this.players.find((p) => p.id === playerId);
   }
 
   getPlayerIds() {
@@ -159,7 +160,7 @@ export class GameSession {
 
   broadcastEndGameMessage(winningPlayer: Player) {
     if (!this.gameArea) return;
-    const gameEndMsg = {
+    const gameEndMsg: ServerMessage = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,
       ownSide: 'left',
@@ -170,13 +171,11 @@ export class GameSession {
     this.sendToPlayer(this.gameArea.rightPlayer.id, JSON.stringify(gameEndMsg));
   }
 
-  broadcastPlayerLeftMessage(winningPlayer: Player) {
+  sendGameEndToRemainingPlayer(winningPlayer: Player) {
     if (!this.gameArea) return;
-    // Goals automatically set to 5 for remaining player
     this.gameArea.stats.setMaxGoals(winningPlayer.side);
     // TODO: Differentiate from normal game_end message?
-    console.log(`Player left from match with ${winningPlayer.alias}`);
-    const gameEndMsg = {
+    const gameEndMsg: ServerMessage = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,
       ownSide: winningPlayer.side,
@@ -203,8 +202,90 @@ export class GameSession {
     };
   }
 
+  private getConnectedPlayer() {
+    return this.players.find((p) => !p.isDisconnected);
+  }
+
+  public async markAsDisconnected(playerId: string) {
+    if (!this.tournament) return;
+    const leavingPlayer = this.getPlayerInfo(playerId);
+    if (!leavingPlayer) return;
+    leavingPlayer.isDisconnected = true;
+    console.log(`${leavingPlayer.alias} disconnected`);
+    if (!this.gameArea) return;
+    if (this.gameArea.runningState === gameRunningState.ended) return;
+    this.gameArea.stop();
+    await this.tournamentPlayerLeftHandler(playerId, leavingPlayer);
+  }
+
+  private async tournamentPlayerLeftHandler(playerId: string, leavingPlayer: PlayerInfo) {
+    if (!this.tournament || !this.gameArea) return;
+    const playerWhoLeft = this.gameArea.getPlayerById(playerId);
+    if (playerWhoLeft.isEliminated) return; // score already saved in endGame
+    const playerWhoStayed = this.gameArea.getOtherPlayer(playerWhoLeft);
+    this.sendGameEndToRemainingPlayer(playerWhoStayed);
+    const stayingPlayer = this.players.find((p) => p.id === playerWhoStayed.id);
+    if (!leavingPlayer || !stayingPlayer || stayingPlayer.isDisconnected) return;
+    console.log(`${leavingPlayer.alias} left the match with ${stayingPlayer.alias}`);
+    if (this.round === 3)
+      this.sendToPlayer(playerWhoStayed.id, JSON.stringify({ type: 'tournament_end' }));
+    const data: BlockchainScoreData = {
+      tournamentId: this.tournament.id,
+      gameType: gameTypeToEnum(this.tournament.type),
+      player1Data: [stayingPlayer.id, stayingPlayer.alias, stayingPlayer.character?.name ?? 'NONE'],
+      score1: 5, // hard-coded win
+      player2Data: [leavingPlayer.id, leavingPlayer.alias, leavingPlayer.character?.name ?? 'NONE'],
+      score2: playerWhoLeft.score,
+    };
+    this.winner = playerWhoStayed.id;
+    await this.tournament.updateSessionScore(this.round, playerWhoStayed.id, data);
+  }
+
+  private getLastToLeavePlayer() {
+    return this.players[0].lastConnectedAt > this.players[1].lastConnectedAt
+      ? this.players[0]
+      : this.players[1];
+  }
+
+  private getOtherPlayer(playerId: string) {
+    return this.players.find((p) => p.id !== playerId);
+  }
+
+  private async endSessionForfeit() {
+    if (!this.tournament) return;
+    let remainingPlayer = this.getConnectedPlayer();
+    if (!remainingPlayer) {
+      console.log(`Both players missing for match`);
+      remainingPlayer = this.getLastToLeavePlayer();
+    }
+    console.log(`${remainingPlayer.alias} auto-advances due to missing opponent`);
+    this.gameArea?.stop();
+    this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'game_start' } as ServerMessage));
+    const player = this.gameArea?.getPlayerById(remainingPlayer.id);
+    this.sendGameEndToRemainingPlayer(player!);
+    if (this.tournament.currentRound === 3)
+      this.sendToPlayer(remainingPlayer.id, JSON.stringify({ type: 'tournament_end' }));
+    const leavingPlayer = this.getOtherPlayer(remainingPlayer.id);
+    if (!leavingPlayer) return;
+    this.gameArea!.getPlayerById(leavingPlayer.id).isEliminated = true;
+    const data: BlockchainScoreData = {
+      tournamentId: this.tournament.id,
+      gameType: gameTypeToEnum(this.tournament.type),
+      player1Data: [
+        remainingPlayer.id,
+        remainingPlayer.alias,
+        remainingPlayer.character?.name ?? 'NONE',
+      ],
+      score1: 5, // hard-coded win
+      player2Data: [leavingPlayer.id, leavingPlayer.alias, leavingPlayer.character?.name ?? 'NONE'],
+      score2: 0, // hard-coded loss due to forfeit
+    };
+    this.winner = remainingPlayer.id;
+    await this.tournament.updateSessionScore(this.round, remainingPlayer.id, data);
+  }
+
   // TODO: Review if all these parameters are necessary
-  startGame() {
+  async startGame() {
     console.log(`Starting game between: ${this.players[0].alias} and ${this.players[1].alias}`);
     const response: ServerMessage = {
       type: 'game_setup',
@@ -218,6 +299,10 @@ export class GameSession {
       this,
     );
     this.gameArea.tournament = this.tournament;
+    if (this.hasDisconnectedPlayers()) {
+      await this.endSessionForfeit();
+      return;
+    }
     setPowerUpBar(this.gameArea);
     const gameInterval = setInterval(async () => {
       try {
@@ -232,8 +317,9 @@ export class GameSession {
   }
 
   async clear() {
+    if (this.players.length === 0) return;
     console.log('Clearing session');
-    await Promise.allSettled(this.players.map((player) => this.removePlayer(player.id)));
+    await Promise.allSettled(this.players.map((player) => this.removePlayerSession(player.id)));
     this.players.length = 0;
   }
 

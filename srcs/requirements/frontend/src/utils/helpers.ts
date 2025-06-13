@@ -86,3 +86,11 @@ export async function checkLoginStatus(): Promise<boolean> {
 export function capitalize(word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
+
+export function getRandomInt(min: number, max: number): number {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  const result = Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
+
+  return result;
+}

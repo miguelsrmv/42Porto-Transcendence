@@ -4,6 +4,12 @@ import { gameType, leanGameSettings, playerSettings, playType } from './remoteGa
 import { PlayerInput, ServerMessage, tournamentPlayer } from './remoteGameApp/types';
 import WebSocket from 'ws';
 
+export function removeItem<T>(array: T[], item: T): T[] {
+  const index = array.indexOf(item);
+  if (index !== -1) array.splice(index, 1);
+  return array;
+}
+
 export function wait(seconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
@@ -18,7 +24,7 @@ export function isGameType(type: string) {
 }
 
 export function isPlayType(type: string) {
-  const types: playType[] = ['Remote Play', 'Tournament Play'];
+  const types: playType[] = ['Remote Play', 'Remote Tournament Play'];
   return types.includes(type as playType);
 }
 

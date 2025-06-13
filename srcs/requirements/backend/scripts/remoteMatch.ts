@@ -1,9 +1,7 @@
 import { Browser, Cookie, firefox } from 'playwright';
 import https from 'https';
 import WebSocket from 'ws';
-import { wait } from '../src/ws/helpers';
 
-const NUM_CLIENTS = 8;
 const BASE_URL = 'https://padaria.42.pt';
 const CHARACTER = {
   name: 'Mario',
@@ -41,7 +39,7 @@ async function simulateClient(browser: Browser, index: number) {
   console.log(`[${index}] Logged in - ID: ${playerId}, token: ${token?.slice(0, 10)}...`);
 
   // Connect WebSocket
-  const ws = new WebSocket(`wss://${host}/ws/tournament`, {
+  const ws = new WebSocket(`wss://${host}/ws`, {
     agent: new https.Agent({ rejectUnauthorized: false }),
     headers: {
       cookie: `access_token=${token}`,
@@ -54,7 +52,7 @@ async function simulateClient(browser: Browser, index: number) {
       type: 'join_game',
       playerSettings: {
         playerID: playerId,
-        playType: 'Remote Tournament Play',
+        playType: 'Remote Play',
         gameType: 'Crazy Pong',
         alias: `test${index}`,
         paddleColour: '#ff0000',
@@ -76,11 +74,6 @@ async function simulateClient(browser: Browser, index: number) {
       case 'game_state': {
         return;
       }
-      case 'game_end': {
-        await wait(1);
-        if (ws.readyState === WebSocket.OPEN)
-          ws.send(JSON.stringify({ type: 'ready_for_next_game' }));
-      }
     }
 
     console.log(`[${index}] Received:`, data);
@@ -101,7 +94,7 @@ async function simulateClient(browser: Browser, index: number) {
   const browser = await firefox.launch({ headless: true });
   const clients = [];
   try {
-    for (let i = 1; i <= NUM_CLIENTS; i++) {
+    for (let i = 1; i <= 2; i++) {
       clients.push(await simulateClient(browser, i));
       await new Promise((res) => setTimeout(res, 300)); // stagger launch (optional)
     }
