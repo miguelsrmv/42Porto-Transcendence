@@ -54,7 +54,7 @@ async function simulateClient(browser: Browser, index: number) {
       type: 'join_game',
       playerSettings: {
         playerID: playerId,
-        playType: 'Tournament Play',
+        playType: 'Remote Tournament Play',
         gameType: 'Crazy Pong',
         alias: `test${index}`,
         paddleColour: '#ff0000',
