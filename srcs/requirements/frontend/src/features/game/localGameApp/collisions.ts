@@ -13,26 +13,7 @@ import { playType } from '../gameSettings/gameSettings.types.js';
  */
 export const MAX_BALL_SPEED: number = 1000;
 
-//
-// interface Ball {
-//   x: number;
-//   y: number;
-//   previousX: number;
-//   previousY: number;
-//   radius: number;
-//   speedX: number;
-//   speedY: number;
-//   bounceVertical(): void;
-//   bounceHorizontal(): void;
-//   reset(): void;
-// }
-//
-// interface Paddle {
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-// }
+let endGameMenuHasTriggered: boolean = false;
 
 /**
  * Checks if the ball has collided with the horizontal walls of the canvas.
@@ -106,7 +87,15 @@ function endGame(
 ): void {
   gameArea.stop();
   gameArea.clear();
-  triggerEndGameMenu(winningPlayer.side, winningPlayer.side, stats, playType, tournamentIsRunning);
+  if (!endGameMenuHasTriggered)
+    triggerEndGameMenu(
+      winningPlayer.side,
+      winningPlayer.side,
+      stats,
+      playType,
+      tournamentIsRunning,
+    );
+  endGameMenuHasTriggered = true;
 }
 
 /**
@@ -123,7 +112,7 @@ export async function checkGoal(
   gameArea: GameArea,
   playType: playType,
   tournamentIsRunning: boolean,
-) {
+): Promise<void> {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
@@ -143,13 +132,14 @@ export async function checkGoal(
     stats.right.increaseSufferedGoals();
     await resetRound(leftPlayer, rightPlayer, gameArea);
   }
-  if (eitherPlayerHasWon(leftPlayer, rightPlayer))
+  if (eitherPlayerHasWon(leftPlayer, rightPlayer)) {
     endGame(
       leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer,
       gameArea,
       playType,
       tournamentIsRunning,
     );
+  }
 }
 
 /**
@@ -247,6 +237,7 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
     return;
   }
 
+  endGameMenuHasTriggered = false;
   const pauseEvent = new CustomEvent('paused');
   const beforeTime = Date.now();
   leftPlayer.ball.reset();
