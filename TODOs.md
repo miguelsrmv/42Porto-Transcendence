@@ -9,6 +9,7 @@
 - Next game button showing on tournament winner
 - Add option to remove friends
 - On Local Tournament: "Upload your avatar" should not be a valid avatar!!
+- After 2FA activation, make toggle to be "active" every time the user enters the settings, giving him the option to opt-out
 
 # Backend
 - join_game on WS connection?
