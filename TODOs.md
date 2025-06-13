@@ -1,6 +1,5 @@
 # Frontend
 - Add remove button to friends
-- Next game button showing on tournament winner
 
 # Backend
 - join_game on WS connection?
