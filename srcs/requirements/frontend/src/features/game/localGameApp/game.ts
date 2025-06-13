@@ -24,7 +24,7 @@ import { gameStats } from '../gameStats/gameStatsTypes.js';
 import { wait } from '../../../utils/helpers.js';
 
 /** @brief Speed of the ball in the game. */
-export const SPEED = 250;
+export const SPEED = 9999; // TODO: CHange back to 250
 
 /** @brief Height of the game canvas. */
 export const CANVAS_HEIGHT = 720;
@@ -71,6 +71,10 @@ export let fakeBalls: Ball[] = [];
 
 let leftPlayer: Player;
 let rightPlayer: Player;
+
+let playType: playType;
+
+let tournamentIsRunning: boolean = false;
 
 /** @brief Game statistics. */
 export let stats: gameStats = new gameStats();
@@ -250,13 +254,18 @@ function setPlayers(
  * @brief Initializes a local game with the given settings.
  * @param gameSettings Settings for the game.
  */
-export function initializeLocalGame(gameSettings: gameSettings): void {
+export function initializeLocalGame(
+  gameSettings: gameSettings,
+  tournamentRunning: boolean = false,
+): void {
   const pongPage = document.getElementById('game-container') as HTMLElement | null;
   if (!pongPage) {
     console.error('Cannot start the game: game-container is missing.');
     return;
   }
 
+  playType = gameSettings.playType;
+  tournamentIsRunning = tournamentRunning;
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
@@ -325,7 +334,7 @@ async function updateGameArea(currentTime: number) {
   fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall, myGameArea));
   checkPaddleCollision(ball, leftPaddle, rightPaddle);
 
-  await checkGoal(leftPlayer, rightPlayer, myGameArea);
+  await checkGoal(leftPlayer, rightPlayer, myGameArea, playType, tournamentIsRunning);
 
   if (myGameArea.context) {
     leftPaddle.draw(myGameArea.context);

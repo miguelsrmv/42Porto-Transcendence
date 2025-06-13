@@ -60,6 +60,7 @@ export async function initializeView() {
           'from-yellow-700',
           'from-green-700',
           'from-purple-700',
+          'from-gray-700',
           'bg-gradient-to-t',
           'to-transparent',
         );
@@ -70,6 +71,7 @@ export async function initializeView() {
           'bg-yellow-700',
           'bg-green-700',
           'bg-purple-700',
+          'bg-gray-700',
           'transition-opacity',
           'duration-200',
           'group-hover:opacity-0',
@@ -79,16 +81,22 @@ export async function initializeView() {
     };
 
     disableButton(
-      'remote-play-button',
-      'remote-play-button-container',
-      'remote-play-button-container-text',
-      'remote-play-button-overlay',
+      'remote-match-button',
+      'remote-match-button-container',
+      'remote-match-button-container-text',
+      'remote-match-button-overlay',
     );
     disableButton(
-      'tournament-play-button',
-      'tournament-play-button-container',
-      'tournament-play-button-container-text',
-      'tournament-play-button-overlay',
+      'local-tournament-button',
+      'local-tournament-button-container',
+      'local-tournament-button-container-text',
+      'local-tournament-button-overlay',
+    );
+    disableButton(
+      'remote-tournament-button',
+      'remote-tournament-button-container',
+      'remote-tournament-button-container-text',
+      'remote-tournament-button-overlay',
     );
     disableButton(
       'rankings-button',
