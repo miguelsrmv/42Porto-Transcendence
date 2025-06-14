@@ -380,6 +380,7 @@ function setupRemoveFriendButton(clone: DocumentFragment, friendUUID: string): v
 
       if (!res.ok) {
         const data = await res.json();
+        console.log(data.message);
         throw Error(data.message || 'Request failed');
       }
     } catch (err) {
