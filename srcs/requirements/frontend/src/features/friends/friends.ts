@@ -364,7 +364,7 @@ function setupAddFriendButton(): void {
   });
 }
 
-function setupRemoveFriendButton(clone: DocumentFragment, friendUUID: string): void {
+function setupRemoveFriendButton(clone: DocumentFragment, friendUUID: friend): void {
   const removeFriendButton = clone.querySelector('#remove-friend-button');
   if (!removeFriendButton) {
     console.log("Couldn't find remove-friend-button");
@@ -380,7 +380,6 @@ function setupRemoveFriendButton(clone: DocumentFragment, friendUUID: string): v
 
       if (!res.ok) {
         const data = await res.json();
-        console.log(data.message);
         throw Error(data.message || 'Request failed');
       }
     } catch (err) {
