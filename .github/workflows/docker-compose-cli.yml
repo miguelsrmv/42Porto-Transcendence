@@ -1,8 +1,5 @@
 name: Docker Compose CI
 
-env:
-  DATA_PATH: ${{ secrets.DATA_PATH }}
-
 on:
   push:
     branches: [ "main" ]
@@ -32,6 +29,15 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+      
+      - name: 📝 Create .env file from secrets
+        run: |
+          echo "DATA_PATH=${{ secrets.DATA_PATH }}" >> srcs/.env
+          echo "DOMAIN_NAME=${{ secrets.DOMAIN_NAME }}" >> srcs/.env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> srcs/.env
+          echo "JWT_SIGN_SECRET=${{ secrets.JWT_SIGN_SECRET }}" >> srcs/.env
+          echo "COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}" >> srcs/.env
+          echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> srcs/.env
 
       - name: 🐳 Start Docker Services (with cache)
         run: |
@@ -52,3 +58,7 @@ jobs:
         run: |
           cd srcs
           docker compose down
+      
+      - name: 🧹 Remove temp .env
+        run: |
+          rm -f srcs/.env
