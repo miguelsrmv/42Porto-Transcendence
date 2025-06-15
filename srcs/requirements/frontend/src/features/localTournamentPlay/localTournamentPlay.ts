@@ -1,6 +1,6 @@
 /**
  * @file tournamentPlay.ts
- * @brief Handles the setup of the tournamnet play page.
+ * @brief Handles the setup of the local tournament play page.
  */
 
 import type {
@@ -29,7 +29,7 @@ import {
   getCharacterIndex,
   updateHUD,
 } from '../game/gameSetup.js';
-import { initializeLocalGame } from '../game/localGameApp/game.js';
+import { initializeLocalGame, endLocalGameIfRunning } from '../game/localGameApp/game.js';
 import { getCharacterList } from '../game/characterData/characterData.js';
 import { getBackgroundList } from '../../features/game/backgroundData/backgroundData.js';
 import { getAvatarList } from '../../ui/avatarData/avatarData.js';
@@ -48,9 +48,9 @@ let tournamentSettings: tournamentSettings | undefined;
 let localTournamentIsRunning: boolean = false;
 
 /**
- * @brief Initializes view for tournament play
- *
- * This function sets up the view for tournament play
+ * @brief Initializes the view for tournament play.
+ * @details Sets up the tournament play page, handles UI, and prepares event listeners.
+ * @returns Promise<void>
  */
 export async function initializeView(): Promise<void> {
   if (!(await checkLoginStatus())) {
@@ -102,6 +102,12 @@ export async function initializeView(): Promise<void> {
   } else console.warn('Play Button not found');
 }
 
+/**
+ * @brief Sets up tournament settings based on user input.
+ * @param gameType The type of game (Classic or Crazy Pong).
+ * @param playType The play mode.
+ * @returns void
+ */
 function setTournamentSettings(gameType: gameType, playType: playType): void {
   let tournamentPlayers: tournamentPlayerSettings[] = [];
 
@@ -152,14 +158,17 @@ function setTournamentSettings(gameType: gameType, playType: playType): void {
   }
 }
 
+/**
+ * @brief Initializes and runs the local tournament.
+ * @param tournamentSettings The settings for the tournament.
+ * @returns Promise<void>
+ */
 async function initializeLocalTournament(tournamentSettings: tournamentSettings): Promise<void> {
   let phase: TournamentPhase = TournamentPhase.Quarter;
   localTournamentIsRunning = true;
   showWaitingModal();
   showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
   await wait(5);
-
-  //TODO: Make sure going back/foward/reload doesn't mess it
 
   for (let match = 1; match <= 7; match++) {
     if (!localTournamentIsRunning) return;
@@ -171,9 +180,7 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
     const player1Number: number = getPlayerNumber(phase, tournamentSettings, 'left');
     const player2Number: number = getPlayerNumber(phase, tournamentSettings, 'right');
     loadView('game-page');
-    console.log('Match ', match, ': ', player1Number, ' vs ', player2Number);
     const gameSettings = createGameSettings(tournamentSettings, player1Number, player2Number);
-    console.log('Match ', match, ': ', gameSettings);
     updateHUD(gameSettings, gameSettings.gameType);
     const waitForGameEnd = listenToGameEnd(
       tournamentSettings,
@@ -182,12 +189,20 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
       player1Number,
       player2Number,
     );
+    endLocalGameIfRunning();
     initializeLocalGame(gameSettings, localTournamentIsRunning);
     await waitForGameEnd;
     await waitForNextTournamentGameCountdown();
   }
 }
 
+/**
+ * @brief Creates game settings for a match between two players.
+ * @param tournamentSettings The tournament settings.
+ * @param player1Number Index of player 1.
+ * @param player2Number Index of player 2.
+ * @returns gameSettings Object containing settings for the match.
+ */
 function createGameSettings(
   tournamentSettings: tournamentSettings,
   player1Number: number,
@@ -213,6 +228,13 @@ function createGameSettings(
   return gameSettings;
 }
 
+/**
+ * @brief Gets the player number for a given phase and side.
+ * @param phase The current tournament phase.
+ * @param tournamentSettings The tournament settings.
+ * @param playerSide 'left' or 'right' side.
+ * @returns number Index of the player.
+ */
 function getPlayerNumber(
   phase: TournamentPhase,
   tournamentSettings: tournamentSettings,
@@ -253,6 +275,10 @@ function getPlayerNumber(
   return index;
 }
 
+/**
+ * @brief Selects a random background for a match.
+ * @returns background The selected background object.
+ */
 function getRandomBackground(): background {
   const backgroundList = getBackgroundList();
 
@@ -261,14 +287,28 @@ function getRandomBackground(): background {
   return backgroundList[backgroundIndex];
 }
 
+/**
+ * @brief Selects a random avatar for a player.
+ * @returns string Path to the avatar image.
+ */
 function getRandomAvatar(): string {
   const avatarList: avatar[] = getAvatarList();
 
-  const avatarIndex = getRandomInt(0, avatarList.length - 1);
+  // NOTE: -2 to exclude "Upload your own" Avatar
+  const avatarIndex = getRandomInt(0, avatarList.length - 2);
 
   return avatarList[avatarIndex].imagePath;
 }
 
+/**
+ * @brief Listens for the end of a game and updates tournament results.
+ * @param tournamentSettings The tournament settings.
+ * @param matchPlayed The match number.
+ * @param phase The current phase.
+ * @param player1Number Index of player 1.
+ * @param player2Number Index of player 2.
+ * @returns Promise<gameEnd> Resolves when the game ends.
+ */
 function listenToGameEnd(
   tournamentSettings: tournamentSettings,
   matchPlayed: number,
@@ -294,6 +334,15 @@ function listenToGameEnd(
   });
 }
 
+/**
+ * @brief Updates tournament results after a match.
+ * @param tournamentSettings The tournament settings.
+ * @param phase The current phase.
+ * @param player1Number Index of player 1.
+ * @param player2Number Index of player 2.
+ * @param matchStats The statistics of the match.
+ * @returns void
+ */
 function updateTournamentResults(
   tournamentSettings: tournamentSettings,
   phase: TournamentPhase,
@@ -320,6 +369,11 @@ function updateTournamentResults(
   }
 }
 
+/**
+ * @brief Converts internal player settings to tournament player objects for UI.
+ * @param players Array of tournamentPlayerSettings.
+ * @returns tournamentPlayer[] Array of tournament player objects.
+ */
 function convertTournamentPlayer(players: tournamentPlayerSettings[]): tournamentPlayer[] {
   let tournamentPlayers: tournamentPlayer[] = [];
 
@@ -337,6 +391,10 @@ function convertTournamentPlayer(players: tournamentPlayerSettings[]): tournamen
   return tournamentPlayers;
 }
 
+/**
+ * @brief Ends the local tournament if it is running.
+ * @returns void
+ */
 export function endLocalTournamentIfRunning(): void {
   localTournamentIsRunning = false;
 }
