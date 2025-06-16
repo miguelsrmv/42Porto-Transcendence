@@ -61,7 +61,7 @@ export function fadeIn(element: HTMLElement): void {
 
 export function fadeOut(element: HTMLElement): void {
   element.classList.remove('animate-fade-in');
-  void element.offsetWidth; // <-- FORCE reflow
+  void element.offsetWidth;
   element.classList.add('animate-fade-out');
 
   setTimeout(() => element.classList.add('hidden'), 500);

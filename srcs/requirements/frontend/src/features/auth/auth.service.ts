@@ -60,8 +60,9 @@ async function loginWith2FA(data: Record<string, string>): Promise<void> {
   const loginForm = document.getElementById('login-form');
   const authForm = document.getElementById('2fa-form') as HTMLFormElement;
   const authInput = document.getElementById('authentication-code') as HTMLInputElement;
+  const error2FAMessageContainer = document.getElementById('error-2fa-code') as HTMLDivElement;
 
-  if (!loginForm || !authForm || !authInput) {
+  if (!loginForm || !authForm || !authInput || !error2FAMessageContainer) {
     console.error('Missing form elements for 2FA login');
     return;
   }
@@ -97,13 +98,10 @@ async function loginWith2FA(data: Record<string, string>): Promise<void> {
         });
 
         if (!response.ok) {
-          console.error(`HTTP error: ${response.status}`);
-          const errorLoginMessageContainer = document.getElementById('error-login-message');
-          if (errorLoginMessageContainer) {
-            errorLoginMessageContainer.classList.remove('hidden');
-            const errorMessage = await response.json();
-            errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
-          }
+          error2FAMessageContainer.classList.remove('hidden');
+          const errorMessage = await response.text();
+          console.log(errorMessage);
+          error2FAMessageContainer.innerText = errorMessage;
           reject('Failed 2FA login');
           return;
         }
