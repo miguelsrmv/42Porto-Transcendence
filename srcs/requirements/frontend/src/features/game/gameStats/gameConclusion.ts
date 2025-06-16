@@ -213,8 +213,8 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
   }
 
   let targetPage: string | null;
-  if (playType === 'Local Play') targetPage = 'local-play-page';
-  else if (playType === 'Remote Play') targetPage = 'remote-play-page';
+  if (playType === 'Local Play') targetPage = 'local-match-page';
+  else if (playType === 'Remote Play') targetPage = 'remote-match-page';
   else {
     targetPage = null;
     if (tournamentIsRunning) playAgainButton.innerText = 'Next game!';
@@ -222,6 +222,7 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
   }
 
   async function onPlayAgainClick() {
+    console.log('Target page is ', targetPage);
     restoreGameElements();
     if (targetPage) {
       loadView(targetPage);
