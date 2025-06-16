@@ -75,6 +75,8 @@ let playType: playType;
 
 let tournamentIsRunning: boolean = false;
 
+let powerBarInterval: number;
+
 /** @brief Game statistics. */
 export let stats: gameStats = new gameStats();
 
@@ -218,14 +220,17 @@ function setPlayers(
 
     let filledAnimationIsOn = false;
 
-    if (player.attack) player.attack.lastUsed = Date.now();
+    if (player.attack) {
+      player.attack.lastUsed = Date.now();
+    }
 
-    window.setInterval(() => {
+    powerBarInterval = window.setInterval(() => {
       if (player.attack && myGameArea.state === gameState.playing) {
         const lastUsed: number = player.attack.lastUsed;
         const coolDown: number = player.attack.attackCooldown;
         const currentTime: number = Date.now();
 
+        if (player.side == 'right') console.log(lastUsed);
         const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
         PlayerBar.style.width = `${percentage}%`;
 
@@ -233,6 +238,7 @@ function setPlayers(
           player.attack.attackIsAvailable = true;
           if (!filledAnimationIsOn) {
             activatePowerBarAnimation(`${player.side}`);
+            console.log();
             filledAnimationIsOn = true;
           }
         } else {
@@ -280,10 +286,6 @@ export function initializeLocalGame(
  */
 async function updateGameArea(currentTime: number) {
   if (myGameArea.state != gameState.ended) animationFrameId = requestAnimationFrame(updateGameArea);
-
-  console.log(
-    `CountdownTimeLeft: ${countdownTimeLeft}, CountdownBlinkTimer: ${countdownBlinkTimer}, countdownVisible: ${countdownVisible}, isInitialCoutndownActive: ${isInitialCountdownActive}`,
-  );
 
   if (lastTime === 0) {
     lastTime = currentTime;
@@ -405,6 +407,7 @@ export function endLocalGameIfRunning(): void {
   stats.reset();
   deactivatePowerBarAnimation('left');
   deactivatePowerBarAnimation('right');
+  clearInterval(powerBarInterval);
   myGameArea.inputHandler?.disable();
   myGameArea.stop();
 }
