@@ -23,7 +23,7 @@ import {
 import { gameStats } from '../gameStats/gameStatsTypes.js';
 
 /** @brief Speed of the ball in the game. */
-export const SPEED = 250;
+export const SPEED = 9999;
 
 /** @brief Height of the game canvas. */
 export const CANVAS_HEIGHT = 720;
@@ -74,6 +74,8 @@ let rightPlayer: Player;
 let playType: playType;
 
 let tournamentIsRunning: boolean = false;
+
+let powerBarInterval: number;
 
 /** @brief Game statistics. */
 export let stats: gameStats = new gameStats();
@@ -218,9 +220,11 @@ function setPlayers(
 
     let filledAnimationIsOn = false;
 
-    if (player.attack) player.attack.lastUsed = Date.now();
+    if (player.attack) {
+      player.attack.lastUsed = Date.now();
+    }
 
-    window.setInterval(() => {
+    powerBarInterval = window.setInterval(() => {
       if (player.attack && myGameArea.state === gameState.playing) {
         const lastUsed: number = player.attack.lastUsed;
         const coolDown: number = player.attack.attackCooldown;
@@ -233,6 +237,7 @@ function setPlayers(
           player.attack.attackIsAvailable = true;
           if (!filledAnimationIsOn) {
             activatePowerBarAnimation(`${player.side}`);
+            console.log();
             filledAnimationIsOn = true;
           }
         } else {
@@ -280,10 +285,6 @@ export function initializeLocalGame(
  */
 async function updateGameArea(currentTime: number) {
   if (myGameArea.state != gameState.ended) animationFrameId = requestAnimationFrame(updateGameArea);
-
-  console.log(
-    `CountdownTimeLeft: ${countdownTimeLeft}, CountdownBlinkTimer: ${countdownBlinkTimer}, countdownVisible: ${countdownVisible}, isInitialCoutndownActive: ${isInitialCountdownActive}`,
-  );
 
   if (lastTime === 0) {
     lastTime = currentTime;
@@ -405,6 +406,7 @@ export function endLocalGameIfRunning(): void {
   stats.reset();
   deactivatePowerBarAnimation('left');
   deactivatePowerBarAnimation('right');
+  clearInterval(powerBarInterval);
   myGameArea.inputHandler?.disable();
   myGameArea.stop();
 }
