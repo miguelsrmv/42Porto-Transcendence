@@ -1,12 +1,5 @@
 # Frontend
-- Create local tournament
-- Edit player avatar on match stats show
-- Edit accent colour on match stats show
-- Edit match stats themselves
-- Do something with friends
-- Doxygen comments
-- Check play another game button is working after remote match
-- Next game button showing on tournament winner
+- Add remove button to friends
 
 # Backend
 - join_game on WS connection?

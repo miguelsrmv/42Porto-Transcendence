@@ -213,33 +213,33 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
   }
 
   let targetPage: string | null;
-  if (playType === 'Local Play') targetPage = 'local-play-page';
-  else if (playType === 'Remote Play') targetPage = 'remote-play-page';
+  if (playType === 'Local Play') targetPage = 'local-match-page';
+  else if (playType === 'Remote Play') targetPage = 'remote-match-page';
   else {
     targetPage = null;
     if (tournamentIsRunning) playAgainButton.innerText = 'Next game!';
     else playAgainButton.classList.add('hidden');
   }
 
-  // TODO: Check why event is being dispatched twice
-  playAgainButton.addEventListener(
-    'click',
-    () => {
-      restoreGameElements();
-      if (targetPage) {
-        loadView(targetPage);
-        forceRouteChange(targetPage);
-      } else {
-        if (playType === 'Remote Tournament Play') {
-          readyForNextGame();
-          waitForNextGame();
-        } else if (playType === 'Local Tournament Play') {
-          dispatchNextMatchEvent(stats);
-        }
+  async function onPlayAgainClick() {
+    console.log('Target page is ', targetPage);
+    restoreGameElements();
+    if (targetPage) {
+      loadView(targetPage);
+      forceRouteChange(targetPage);
+    } else {
+      if (playType === 'Remote Tournament Play') {
+        await waitForNextGame(); // TODO: Check why stats are reappearing
+        readyForNextGame();
+      } else if (playType === 'Local Tournament Play') {
+        dispatchNextMatchEvent(stats);
       }
-    },
-    { once: true },
-  );
+    }
+    playAgainButton!.removeEventListener('click', onPlayAgainClick);
+  }
+
+  playAgainButton.removeEventListener('click', onPlayAgainClick);
+  playAgainButton.addEventListener('click', onPlayAgainClick);
 }
 
 /**
