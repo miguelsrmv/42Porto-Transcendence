@@ -151,7 +151,7 @@ export function handleUserDataChange(): void {
  * @param {string} username - The username to store in local storage.
  */
 function updateLocalStorageData(username: string): void {
-  window.localStorage.setItem('Username', username);
+  if (username.length) window.localStorage.setItem('Username', username);
 }
 
 /**
