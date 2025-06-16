@@ -23,7 +23,7 @@ import {
 import { gameStats } from '../gameStats/gameStatsTypes.js';
 
 /** @brief Speed of the ball in the game. */
-export const SPEED = 250;
+export const SPEED = 9999;
 
 /** @brief Height of the game canvas. */
 export const CANVAS_HEIGHT = 720;
@@ -230,7 +230,6 @@ function setPlayers(
         const coolDown: number = player.attack.attackCooldown;
         const currentTime: number = Date.now();
 
-        if (player.side == 'right') console.log(lastUsed);
         const percentage = Math.min(((currentTime - lastUsed) * 100) / coolDown, 100);
         PlayerBar.style.width = `${percentage}%`;
 
