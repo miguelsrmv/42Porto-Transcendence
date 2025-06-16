@@ -26,8 +26,6 @@ export function triggerEndGameMenu(
   playType: playType,
   tournamentIsRunning: boolean = false,
 ): void {
-  console.trace('TRIGGERED END GAME MENU');
-
   const HUDSideToShow =
     playType === 'Local Play' || 'Local Tournament Play' ? winningPlayerSide : playerSide;
 
@@ -229,8 +227,8 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
       loadView(targetPage);
       forceRouteChange(targetPage);
     } else {
-      await waitForNextGame(); // TODO: Check why stats are reappearing
       if (playType === 'Remote Tournament Play') {
+        await waitForNextGame(); // TODO: Check why stats are reappearing
         readyForNextGame();
       } else if (playType === 'Local Tournament Play') {
         dispatchNextMatchEvent(stats);

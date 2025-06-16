@@ -790,7 +790,7 @@
                     id="player-5-alias"
                     type="text"
                     class="shadow appearance-none border-b-2 border-purple-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-purple-300 focus:shadow-outline text-center transition-all duration-300"
-                    placeholder="Player 4"
+                    placeholder="Player 5"
                   />
                 </div>
                 <div id="player-5-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
@@ -1164,6 +1164,7 @@
               >
                 <div class="w-1/2 font-serpentine text-purple-400">Friend</div>
                 <div class="w-1/4 text-center font-serpentine text-purple-400">Status</div>
+                <div class="w-1/4"></div>
               </div>
 
               <div id="friends-list" class="flex-grow min-h-0 overflow-y-auto"></div>
@@ -1221,6 +1222,26 @@
         <span id="friend-online-status" class="inline-block px-3 py-1 rounded-full text-sm"
           >Online</span
         >
+      </div>
+      <div class="w-1/4 text-center">
+        <button
+          id="remove-friend-button"
+          class="bg-gray-600 hover:bg-red-600 text-gray-300 hover:text-white p-2 rounded-full transition-colors duration-200"
+          aria-label="Remove friend"
+          title="Remove friend"
+        >
+          <!-- Heroicon: x-mark -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </div>
   </template>
@@ -1305,7 +1326,7 @@
             </div>
 
             <div class="bg-gray-700 rounded-lg p-6 shadow-md overflow-hidden mb-6">
-              <h3 class="text-xl font-serpentine text-white mb-4">Recent Remote Matches</h3>
+              <h3 class="text-xl font-serpentine text-white mb-4">Recent Matches</h3>
               <div id="recent-matches" class="space-y-3">
                 <!-- Recent match items will be populated here -->
               </div>

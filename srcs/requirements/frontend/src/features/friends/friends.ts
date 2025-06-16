@@ -45,6 +45,7 @@ async function fillFriendList(): Promise<void> {
       const newFriend: friendData | null = await getFriendData(friendList[i]);
       if (newFriend) {
         updateNodeWithFriendData(clone, newFriend);
+        setupRemoveFriendButton(clone, friendList[i]);
         friendsListElement.appendChild(clone);
       }
     }
@@ -355,8 +356,34 @@ function setupAddFriendButton(): void {
         throw Error(data.message || 'Request failed');
       }
       searchInput.value = '';
+      fillFriendList();
     } catch (err) {
       console.error('Error sending friend request:', err);
+      alert(`Error: ${(err as Error).message}`);
+    }
+  });
+}
+
+function setupRemoveFriendButton(clone: DocumentFragment, friendUUID: friend): void {
+  const removeFriendButton = clone.querySelector('#remove-friend-button');
+  if (!removeFriendButton) {
+    console.log("Couldn't find remove-friend-button");
+    return;
+  }
+
+  removeFriendButton.addEventListener('click', async () => {
+    try {
+      const res = await fetch(`/api/friends/${friendUUID}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw Error(data.message || 'Request failed');
+      }
+    } catch (err) {
+      console.error('Error deleting friend', err);
       alert(`Error: ${(err as Error).message}`);
     }
   });

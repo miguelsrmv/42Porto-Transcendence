@@ -16,6 +16,7 @@ import * as rankingsModule from '../features/rankings/rankings.js';
 import * as settingsModule from '../features/settings/settings.js';
 //import * as gameModule from '../features/game/gamePage.js';
 import { endLocalGameIfRunning } from '../features/game/localGameApp/game.js';
+import { endLocalTournamentIfRunning } from '../features/localTournamentPlay/localTournamentPlay.js';
 
 type FeatureModule = {
   initializeView: () => void;
@@ -43,6 +44,9 @@ let currentView = '';
 function handleRouteChange(): void {
   // If a local game is running, stop it
   endLocalGameIfRunning();
+
+  // If a local tournament game is running, stop it
+  endLocalTournamentIfRunning();
 
   // Get the view name from the URL hash, trim the first #
   const viewName = window.location.hash.substring(1) || 'landing-page';
