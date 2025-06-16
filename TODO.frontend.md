@@ -1,4 +1,2 @@
-- Power bar flashing 
-- Background not selecting
-- Power bar flashing on stats
-' Next game'
+- 2FA Toggle not working after logout
+- Error message on wrong 2FA code
