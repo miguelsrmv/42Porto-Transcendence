@@ -7,7 +7,7 @@
 | `GET`    | `/users/:id`              |    `id` user id    |                                              | Get a specific user public data                                 |
 | `POST`   | `/users`                  |                    | username, email, password and repeatPassword | Create a new user                                               |
 | `PATCH`  | `/users`                  |                    |                data to update                | Update own user data                                            |
-| `DELETE` | `/users/:id`              |    `id` user id    |                                              | Delete a user                                                   |
+| `DELETE` | `/users`                  |                    |                   password                   | Delete own user                                                 |
 | `GET`    | `/users/isOnline/:id`     |    `id` user id    |                                              | Check if a user is online                                       |
 | `POST`   | `/users/preLogin`         |                    |              email and password              | Check if user has 2FA enabled                                   |
 | `POST`   | `/users/login`            |                    |              email and password              | Get JWT (if user is valid)                                      |
@@ -115,14 +115,21 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Delete a user (Protected):** `DELETE /users/:id`
+- **Delete own user (Protected):** `DELETE /users`
+
+### Request body example
+
+```json
+{
+  "password": "password"
+}
+```
 
 ### Response example
 
 ```json
 {
-  "email": "deleted_user@email.com",
-  "username": "deleted_username"
+  "message": "User deleted successfully"
 }
 ```
 

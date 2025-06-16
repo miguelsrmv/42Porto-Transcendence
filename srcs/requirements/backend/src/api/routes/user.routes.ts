@@ -22,13 +22,18 @@ import {
 } from '../controllers/user.controller';
 import {
   createUserSchema,
+  deleteUserSchema,
   login2FASchema,
   loginSchema,
   updateUserSchema,
 } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
-import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
-import { AvatarData, DefaultAvatar, UserUpdate, VerifyToken } from '../../types';
+import {
+  userCreateValidation,
+  userDeleteValidation,
+  userUpdateValidation,
+} from '../validation/users.validation';
+import { AvatarData, DefaultAvatar, UserDelete, UserUpdate, VerifyToken } from '../../types';
 
 // TODO: review request methods
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
@@ -70,9 +75,9 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: updateUserSchema, onRequest: [fastify.jwtAuth], preValidation: userUpdateValidation },
     updateUser,
   );
-  fastify.delete<{ Params: IParams }>(
-    '/:id',
-    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+  fastify.delete<{ Body: UserDelete }>(
+    '/',
+    { schema: deleteUserSchema, onRequest: [fastify.jwtAuth], preValidation: userDeleteValidation },
     deleteUser,
   );
   fastify.get<{ Params: IParams }>(
