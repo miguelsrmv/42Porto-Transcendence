@@ -47,7 +47,7 @@ export async function addFriend(
     const { friendId } = request.body;
 
     if (request.user.id === friendId)
-      return reply.status(400).send({ message: 'A user cannot befriend itself'});
+      return reply.status(400).send({ message: 'A user cannot befriend itself' });
     await prisma.friendship.create({
       data: {
         initiatorId: request.user.id,
@@ -68,7 +68,7 @@ export async function addFriendByUsername(
     const { username } = request.body;
 
     if (request.user.username === username)
-      return reply.status(400).send({ message: 'A user cannot befriend itself'});
+      return reply.status(400).send({ message: 'A user cannot befriend itself' });
     const friend = await prisma.user.findUniqueOrThrow({ where: { username: username } });
     const existingFriendship = await prisma.friendship.findUnique({
       where: {
@@ -80,7 +80,7 @@ export async function addFriendByUsername(
       },
     });
     if (existingFriendship)
-      return reply.status(400).send({ message: 'Friendship between users already exists.'});
+      return reply.status(400).send({ message: 'Friendship between users already exists.' });
     await prisma.friendship.create({
       data: {
         initiatorId: request.user.id,
@@ -126,12 +126,18 @@ export async function deleteFriend(
   try {
     const { id } = request.params;
 
-    await prisma.friendship.delete({
+    await prisma.friendship.deleteMany({
       where: {
-        initiatorId_recipientId: {
-          initiatorId: request.user.id,
-          recipientId: id,
-        },
+        OR: [
+          {
+            initiatorId: request.user.id,
+            recipientId: id,
+          },
+          {
+            initiatorId: id,
+            recipientId: request.user.id,
+          },
+        ],
       },
     });
     reply.send({ message: 'Friendship deleted' });
