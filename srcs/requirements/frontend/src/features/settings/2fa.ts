@@ -285,13 +285,15 @@ export function handle2FA(): void {
     return;
   }
 
+  //NOTE: Removed due to Tiago's bug finding. Check if it introduces any new bug
   // Only set up event listeners once
-  if (isEventSetupComplete) {
-    return;
-  }
+  // if (isEventSetupComplete) {
+  //   return;
+  // }
 
   // Set up toggle click handler
   twoFAtoggle.addEventListener('click', async (e) => {
+    console.log('Modal clicked');
     e.stopPropagation();
     openModal();
     await toggleQRModalView(twoFAtoggle.checked);
