@@ -89,18 +89,13 @@ export async function updateUser(
   }
 }
 
-// TODO: Only delete own user, get id from jwt
-export async function deleteUser(
-  request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply,
-) {
+export async function deleteUser(request: FastifyRequest, reply: FastifyReply) {
   try {
-    if (request.user.id !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
-    const user = await prisma.user.delete({
-      where: { id: request.params.id },
+    await prisma.user.delete({
+      where: { id: request.user.id },
       select: { username: true, email: true },
     });
-    reply.send(user);
+    reply.send({ message: 'User deleted successfully' });
   } catch (error) {
     handleError(error, reply);
   }

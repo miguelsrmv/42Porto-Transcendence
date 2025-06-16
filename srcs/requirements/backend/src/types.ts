@@ -12,6 +12,10 @@ export type UserLogin = {
   password: string;
 };
 
+export type UserDelete = {
+  password: string;
+};
+
 export type UserUpdate = {
   username?: string;
   email?: string;
