@@ -316,7 +316,6 @@ async function displayMatchData(id: string): Promise<void> {
       return;
     }
     const matchData: any = await response.json();
-    console.log('Match data: ', matchData);
     openStatsModal();
     await showMatchResults(matchData);
   } catch (error) {
@@ -457,6 +456,12 @@ function editStats(clone: DocumentFragment, matchData: matchData): void {
     return;
   }
 
+  const matchDate = clone.querySelector('#match-date') as HTMLParagraphElement;
+  if (!matchDate) {
+    console.log("Couldn't find match date element");
+    return;
+  }
+
   const stats = JSON.parse(matchData.stats);
 
   leftGoals.innerText = stats.left.goals;
@@ -464,6 +469,7 @@ function editStats(clone: DocumentFragment, matchData: matchData): void {
   leftSaves.innerText = stats.left.saves;
   rightSaves.innerText = stats.right.saves;
   maxBallSpeed.innerText = parseFloat(stats.maxSpeed).toFixed(2);
+  matchDate.innerText = matchData.createdAt.slice(0, 10);
   if (matchData.mode === 'CRAZY') {
     leftPowersUsed.innerText = stats.left.powersUsed;
     rightPowersUsed.innerText = stats.right.powersUsed;
