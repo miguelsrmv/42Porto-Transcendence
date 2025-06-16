@@ -3,42 +3,70 @@ pragma solidity ^0.8.28;
 
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
+/**
+ * @title TournamentsStorage
+ * @notice This contract manages the storage and logic for single-elimination tournaments.
+ * @dev It handles tournament creation, participant management, score tracking, and winner progression.
+ * The tournament bracket is represented by the `matchedParticipants` array, where the first
+ * `MAX_PARTICIPANTS` slots are the initial players, and subsequent slots represent winners' positions.
+ */
 contract TournamentsStorage {
+    // STATE VARIABLES **********************************************************
+
+    /// @notice The owner of the contract, set immutably at deployment.
     address private immutable i_owner;
-    uint256 public constant MAX_PARTICIPANTS = 8; // Must be power of 2
+
+    /// @notice The fixed number of participants for any tournament. Must be a power of 2.
+    uint256 public constant MAX_PARTICIPANTS = 8;
+
+    /// @notice Main mapping from a unique tournament ID (UUID) to its corresponding Tournament struct.
     mapping(string => Tournament) public tournamentsMap;
+
+    /// @notice An array of UUIDs for all tournaments of type CLASSIC.
     string[] public classicTournamentsUUID;
+
+    /// @notice An array of UUIDs for all tournaments of type CRAZY.
     string[] public crazyTournamentsUUID;
 
+    /// @dev Provides `.toString()` functionality for uint256.
     using Strings for uint256;
 
+    /// @notice Defines the type of game for a tournament.
     enum gameType {
         CLASSIC,
         CRAZY
     }
 
+    /// @notice Represents a single participant in a tournament.
     struct Participant {
-        string uniqueId;
-        string userAlias;
-        string character;
+        string uniqueId; // A unique identifier for the user.
+        string userAlias; // The user's display name.
+        string character; // The character or avatar chosen by the user.
     }
 
+    /// @notice Represents the entire state of a single tournament.
     struct Tournament {
-        gameType typeOfGame;
-        uint16[3] date;
-        uint256[3] time;
-        uint256 maxParticipants;
-        Participant[MAX_PARTICIPANTS] participants;
-        Participant[MAX_PARTICIPANTS * 2 - 1] matchedParticipants;
-        uint256[(MAX_PARTICIPANTS - 1) * 2] scores;
+        gameType typeOfGame; // The type of the tournament (CLASSIC or CRAZY).
+        uint16[3] date; // The creation date [day, month, year].
+        uint256[3] time; // The creation time [hour, minute, second] in UTC.
+        uint256 maxParticipants; // The maximum number of participants.
+        Participant[MAX_PARTICIPANTS] participants; // Initial list of registered participants.
+        Participant[MAX_PARTICIPANTS * 2 - 1] matchedParticipants; // The full tournament bracket.
+        uint256[(MAX_PARTICIPANTS - 1) * 2] scores; // Scores for each match.
     }
 
     // CONSTRUCTOR***************************************************************
+    /**
+     * @notice Sets the contract deployer as the owner.
+     */
     constructor() {
         i_owner = msg.sender;
     }
 
     // MODIFIERS ****************************************************************
+    /**
+     * @dev Throws an error if the caller of the function is not the owner.
+     */
     modifier onlyOwner() {
         require(i_owner == msg.sender, "Ownership Assertion: Caller of the function is not the owner.");
         _;
@@ -46,22 +74,46 @@ contract TournamentsStorage {
 
     // GETTER FUNCTIONS *********************************************************
 
+    /**
+     * @notice Retrieves all tournament UUIDs of the CLASSIC game type.
+     * @return string[] memory An array of classic tournament UUIDs.
+     */
     function getAllClassicTournamentsUUIDs() public view returns (string[] memory) {
         return classicTournamentsUUID;
     }
 
+    /**
+     * @notice Retrieves all tournament UUIDs of the CRAZY game type.
+     * @return string[] memory An array of crazy tournament UUIDs.
+     */
     function getAllCrazyTournamentsUUIDs() public view returns (string[] memory) {
         return crazyTournamentsUUID;
     }
 
+    /**
+     * @notice Fetches the complete Tournament struct for a given ID.
+     * @param _tournamentId The unique identifier of the tournament.
+     * @return Tournament memory The requested tournament's data.
+     */
     function getTournament(string memory _tournamentId) public view returns (Tournament memory) {
         return tournamentsMap[_tournamentId];
     }
 
+    /**
+     * @notice Fetches the initial list of participants for a given tournament.
+     * @param _tournamentId The unique identifier of the tournament.
+     * @return Participant[MAX_PARTICIPANTS] memory The array of initial participants.
+     */
     function getParticipants(string memory _tournamentId) public view returns (Participant[MAX_PARTICIPANTS] memory) {
         return tournamentsMap[_tournamentId].participants;
     }
 
+    /**
+     * @notice Fetches the full tournament bracket, including winners of each round.
+     * @dev The array size is `MAX_PARTICIPANTS * 2 - 1`, representing all players and match slots.
+     * @param _tournamentId The unique identifier of the tournament.
+     * @return Participant[MAX_PARTICIPANTS * 2 - 1] memory The tournament bracket.
+     */
     function getMatchedParticipants(string memory _tournamentId)
         public
         view
@@ -70,10 +122,23 @@ contract TournamentsStorage {
         return tournamentsMap[_tournamentId].matchedParticipants;
     }
 
+    /**
+     * @notice Fetches the scores for all matches in a tournament.
+     * @dev The array size is `(MAX_PARTICIPANTS - 1) * 2`. It maps directly to the `matchedParticipants` array.
+     * @param _tournamentId The unique identifier of the tournament.
+     * @return uint256[] memory The array of scores.
+     */
     function getScores(string memory _tournamentId) public view returns (uint256[(MAX_PARTICIPANTS - 1) * 2] memory) {
         return tournamentsMap[_tournamentId].scores;
     }
 
+    /**
+     * @notice Calculates a player's placement (e.g., "Final", "Semi-final") for up to three recent tournaments.
+     * @dev This function determines the round a player was eliminated in based on their last position in the `matchedParticipants` array.
+     * @param _userId The unique ID of the player.
+     * @param _data An array of the last three tournament IDs the player participated in.
+     * @return string[3] memory An array of strings describing the player's placement in each tournament.
+     */
     function getLastThreeTournamentsPosition(string memory _userId, string[] memory _data)
         public
         view
@@ -117,6 +182,12 @@ contract TournamentsStorage {
         return placements;
     }
 
+    /**
+     * @notice Retrieves a player's alias and their scores from each round they played in a specific tournament.
+     * @param _tournamentId The unique identifier of the tournament.
+     * @param _userId The unique ID of the player.
+     * @return string[4] memory An array containing the player's alias at index 0, followed by up to 3 scores.
+     */
     function getPlayerTournamentScores(string memory _tournamentId, string memory _userId)
         public
         view
@@ -152,31 +223,22 @@ contract TournamentsStorage {
     }
 
     // ACTION FUNCTIONS *********************************************************
+    /**
+     * @notice Creates a new, empty tournament with initialized data structures.
+     * @dev Can only be called by the contract owner. Automatically sets creation date and time.
+     * @param _tournamentId A unique string to identify the tournament.
+     * @param _gameType The type of game (CLASSIC or CRAZY).
+     */
     function createTournament(string memory _tournamentId, gameType _gameType) public onlyOwner {
-        Tournament memory newTournament;
+        Tournament storage newTournament = tournamentsMap[_tournamentId];
 
         newTournament.typeOfGame = _gameType;
         newTournament.date = getCurrentDate();
         newTournament.time = getCurrentTime();
         newTournament.maxParticipants = MAX_PARTICIPANTS;
 
-        for (uint256 i = 0; i < MAX_PARTICIPANTS; i++) {
-            newTournament.participants[i].uniqueId = "";
-            newTournament.participants[i].userAlias = "";
-            newTournament.participants[i].character = "";
-        }
-
-        for (uint256 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
-            newTournament.matchedParticipants[i].uniqueId = "";
-            newTournament.matchedParticipants[i].userAlias = "";
-            newTournament.matchedParticipants[i].character = "";
-        }
-
-        for (uint256 i = 0; i < (MAX_PARTICIPANTS - 1) * 2; i++) {
-            newTournament.scores[i] = 0;
-        }
-
-        tournamentsMap[_tournamentId] = newTournament;
+        // Note: Fixed-size arrays in storage are already zeroed out,
+        // explicit loops are not strictly necessary but can be left for clarity.
 
         if (_gameType == gameType.CLASSIC) {
             classicTournamentsUUID.push(_tournamentId);
@@ -185,6 +247,13 @@ contract TournamentsStorage {
         }
     }
 
+    /**
+     * @notice A helper function for the owner to create and immediately populate a tournament.
+     * @dev This is a convenience function that calls `createTournament` and then fills the initial participant slots.
+     * @param _tournamentId A unique string to identify the tournament.
+     * @param _gameType The type of game (CLASSIC or CRAZY).
+     * @param _participants An array of `Participant` structs to add to the tournament.
+     */
     function joinTournament(string memory _tournamentId, gameType _gameType, Participant[] memory _participants)
         public
         onlyOwner
@@ -192,23 +261,31 @@ contract TournamentsStorage {
         createTournament(_tournamentId, _gameType);
 
         for (uint256 i = 0; i < _participants.length; i++) {
-            tournamentsMap[_tournamentId].participants[i].uniqueId = _participants[i].uniqueId;
-            tournamentsMap[_tournamentId].participants[i].userAlias = _participants[i].userAlias;
-            tournamentsMap[_tournamentId].participants[i].character = _participants[i].character;
-            tournamentsMap[_tournamentId].matchedParticipants[i].uniqueId = _participants[i].uniqueId;
-            tournamentsMap[_tournamentId].matchedParticipants[i].userAlias = _participants[i].userAlias;
-            tournamentsMap[_tournamentId].matchedParticipants[i].character = _participants[i].character;
+            tournamentsMap[_tournamentId].participants[i] = _participants[i];
+            tournamentsMap[_tournamentId].matchedParticipants[i] = _participants[i];
         }
     }
 
+    /**
+     * @notice Advances a winning player to the next round in the bracket.
+     * @dev Calculates the winner's next position in the `matchedParticipants` array based on their current position.
+     * @param _tournamentId The identifier of the tournament.
+     * @param _winner The `Participant` struct of the winning player.
+     */
     function addWinner(string memory _tournamentId, Participant memory _winner) public onlyOwner {
         uint256 winnerNextIndex = findLastIndexOfPlayer(_tournamentId, _winner.uniqueId) / 2 + MAX_PARTICIPANTS;
-
-        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].uniqueId = _winner.uniqueId;
-        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].userAlias = _winner.userAlias;
-        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex].character = _winner.character;
+        tournamentsMap[_tournamentId].matchedParticipants[winnerNextIndex] = _winner;
     }
 
+    /**
+     * @notice Records the final scores for two players in a match.
+     * @dev Finds each player's latest position in the bracket to store the score correctly.
+     * @param _tournamentId The identifier of the tournament.
+     * @param _playerOneUniqueId The unique ID of the first player.
+     * @param _playerOneScore The score of the first player.
+     * @param _playerTwoUniqueId The unique ID of the second player.
+     * @param _playerTwoScore The score of the second player.
+     */
     function saveScore(
         string memory _tournamentId,
         string memory _playerOneUniqueId,
@@ -223,6 +300,15 @@ contract TournamentsStorage {
         tournamentsMap[_tournamentId].scores[updatedPlayerTwoIndex] = _playerTwoScore;
     }
 
+    /**
+     * @notice A combined function to save match scores and advance the winner.
+     * @dev Calls `saveScore` and then determines the winner based on scores to call `addWinner`.
+     * @param _tournamentId The identifier of the tournament.
+     * @param _playerOne The `Participant` struct for the first player.
+     * @param _playerOneScore The score of the first player.
+     * @param _playerTwo The `Participant` struct for the second player.
+     * @param _playerTwoScore The score of the second player.
+     */
     function saveScoreAndAddWinner(
         string memory _tournamentId,
         Participant memory _playerOne,
@@ -239,12 +325,26 @@ contract TournamentsStorage {
         }
     }
 
-    //HELPER FUNCTIONS **********************************************************
-    /* Find last index of a player in a tournament */
+    // HELPER FUNCTIONS **********************************************************
+
+    /**
+     * @notice Checks if a string is empty.
+     * @dev Compares the keccak256 hash of the input string with the hash of an empty string.
+     * @param str The string to check.
+     * @return bool True if the string is empty, false otherwise.
+     */
     function isEmptyString(string memory str) internal pure returns (bool) {
         return keccak256(abi.encodePacked(str)) == keccak256(abi.encodePacked(""));
     }
 
+    /**
+     * @notice Finds the most advanced position (highest index) of a player in the tournament bracket.
+     * @dev Iterates through the `matchedParticipants` array to find the last occurrence of a player.
+     * This index represents their current or final match slot.
+     * @param _tournamentId The identifier of the tournament.
+     * @param _playerName The unique ID of the player to find.
+     * @return uint256 The highest index of the player in the `matchedParticipants` array.
+     */
     function findLastIndexOfPlayer(string memory _tournamentId, string memory _playerName)
         public
         view
@@ -271,11 +371,22 @@ contract TournamentsStorage {
         return lastIndex;
     }
 
-    /* Get the current timestamp */
+    /**
+     * @notice Gets the current block timestamp.
+     * @dev Internal function to abstract away `block.timestamp`.
+     * @return uint256 The current block timestamp in UTC seconds.
+     */
     function getCurrentTimestamp() internal view returns (uint256) {
-        return block.timestamp; // Avalanche timestamp in UTC
+        return block.timestamp;
     }
 
+    /**
+     * @dev Converts a count of days since the Unix epoch to a calendar date (year, month, day).
+     * @param _days The number of days since 1970-01-01.
+     * @return year The calendar year.
+     * @return month The calendar month (1-12).
+     * @return day The calendar day (1-31).
+     */
     function _daysToDate(uint256 _days) internal pure returns (uint256 year, uint256 month, uint256 day) {
         int256 OFFSET19700101 = 2440588;
         int256 L = int256(_days) + 68569 + OFFSET19700101;
@@ -292,12 +403,21 @@ contract TournamentsStorage {
         return (uint256(_year), uint256(_month), uint256(_day));
     }
 
+    /**
+     * @notice Calculates the full UTC date and time from the block timestamp.
+     * @return year The current year.
+     * @return month The current month.
+     * @return day The current day.
+     * @return hour The current hour (0-23).
+     * @return minute The current minute (0-59).
+     * @return second The current second (0-59).
+     */
     function getCurrentDateTimeUTC()
         internal
         view
         returns (uint256 year, uint256 month, uint256 day, uint256 hour, uint256 minute, uint256 second)
     {
-        uint256 timestamp = block.timestamp;
+        uint256 timestamp = getCurrentTimestamp();
         uint256 SECONDS_PER_DAY = 86400;
         uint256 SECONDS_PER_HOUR = 3600;
         uint256 SECONDS_PER_MINUTE = 60;
@@ -310,27 +430,27 @@ contract TournamentsStorage {
         second = (secondsInDay % SECONDS_PER_HOUR) % SECONDS_PER_MINUTE;
 
         (year, month, day) = _daysToDate(daysSinceEpoch);
-
-        return (year, month, day, hour, minute, second);
     }
 
+    /**
+     * @notice Retrieves the current UTC date.
+     * @return date A fixed-size array [day, month, year].
+     */
     function getCurrentDate() internal view returns (uint16[3] memory date) {
         (uint256 year, uint256 month, uint256 day,,,) = getCurrentDateTimeUTC();
-
         date[0] = uint16(day);
         date[1] = uint16(month);
         date[2] = uint16(year);
-
-        return date;
     }
 
+    /**
+     * @notice Retrieves the current UTC time.
+     * @return time A fixed-size array [hour, minute, second].
+     */
     function getCurrentTime() internal view returns (uint256[3] memory time) {
         (,,, uint256 hour, uint256 minute, uint256 second) = getCurrentDateTimeUTC();
-
-        time[0] = uint256(hour);
-        time[1] = uint256(minute);
-        time[2] = uint256(second);
-
-        return time;
+        time[0] = hour;
+        time[1] = minute;
+        time[2] = second;
     }
 }
