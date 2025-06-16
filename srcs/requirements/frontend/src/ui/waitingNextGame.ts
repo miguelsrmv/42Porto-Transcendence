@@ -53,3 +53,36 @@ export async function waitForNextGame(): Promise<void> {
   waitingModal.classList.remove('animate-fade-in');
   waitingModal.classList.add('animate-pulse');
 }
+
+export async function waitForNextTournamentGameCountdown(): Promise<void> {
+  const gameStats = document.getElementById('game-stats');
+  if (!gameStats) {
+    console.log('Game stats not found');
+    return;
+  }
+
+  fadeOut(gameStats);
+
+  const waitingModal = document.getElementById('waiting-next-game-modal');
+  if (!waitingModal) {
+    console.log('Waiting modal not found');
+    return;
+  }
+
+  waitingModal.innerText = 'Next game in 5...';
+
+  setTimeout(() => fadeIn(waitingModal), 750);
+
+  await wait(1);
+
+  waitingModal.classList.remove('animate-fade-in');
+  waitingModal.classList.add('animate-pulse');
+
+  let i: number = 5;
+
+  while (i) {
+    waitingModal.innerText = `Next game in ${i}...`;
+    await wait(1);
+    i--;
+  }
+}

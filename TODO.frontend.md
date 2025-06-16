@@ -1,0 +1,2 @@
+- 2FA Toggle not working after logout
+- Error message on wrong 2FA code
