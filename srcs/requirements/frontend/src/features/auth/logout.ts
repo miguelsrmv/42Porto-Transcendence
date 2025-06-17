@@ -12,6 +12,7 @@
  * This function sends a DELETE request to the server to log out the user. It handles any
  * errors that occur during the logout process by logging them to the console.
  */
+
 export async function logoutUser() {
   try {
     await fetch('/api/users/logout', {

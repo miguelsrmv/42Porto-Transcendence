@@ -244,6 +244,12 @@
                 Submit Authentication code
               </button>
             </div>
+            <div
+              id="error-2fa-code"
+              role="alert"
+              aria-live="polite"
+              class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300"
+            ></div>
           </form>
         </div>
       </div>
@@ -1531,7 +1537,6 @@
             <p id="saves-title" class="font-serpentine text-green-600 text-2xl mr-4">Goals Saved</p>
             <p id="saves-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
-
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
             <p id="powers-used-title" class="font-serpentine text-green-600 text-2xl mr-4">
               Powers Used
@@ -1544,6 +1549,7 @@
             </p>
             <p id="max-ball-speed-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
+
           <div id="after-game-buttons" class="flex justify-center items-center p-4">
             <a
               href="#main-menu-page"
@@ -2007,6 +2013,11 @@
         <div class="flex bg-gray-800 rounded-lg p-4 w-full justify-center">
           <p class="text-green-600 text-3xl font-bold mr-2">Max Ball Speed</p>
           <p class="text-white text-3xl font-bold" id="max-speed">0</p>
+        </div>
+
+        <div class="flex bg-gray-800 rounded-lg p-4 w-full justify-center">
+          <p class="text-green-600 text-3xl font-bold mr-2">Match Date</p>
+          <p class="text-white text-3xl font-bold" id="match-date"></p>
         </div>
       </div>
 
