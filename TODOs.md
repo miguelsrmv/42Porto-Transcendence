@@ -10,6 +10,7 @@
 - On Local Tournament: "Upload your avatar" should not be a valid avatar!!
 - After 2FA activation, make toggle to be "active" every time the user enters the settings, giving him the option to opt-out
 - When removing friends, list does not refresh (removed friends remain until page refresh)
+- NGINX POST not allowed error when updating info (sometimes, when testing errors)
 
 # Backend
 - join_game on WS connection?
