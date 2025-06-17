@@ -77,9 +77,10 @@ export function areGameSettingsValid(
     return false;
   }
   if (!isValidHexColor(playerSettings.paddleColour)) playerSettings.paddleColour = '#000000';
-  const newAlias = playerSettings.alias.trim();
+  let newAlias = playerSettings.alias.trim();
+  if (newAlias.length > 80) newAlias = newAlias.substring(0, 80);
+  if (newAlias.length === 0) newAlias = 'empty';
   playerSettings.alias = newAlias;
-  if (newAlias.length === 0) playerSettings.alias = 'empty';
   return true;
 }
 
