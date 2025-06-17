@@ -50,6 +50,8 @@ export async function initializeView(): Promise<void> {
     }
   }
 
+  createBackgroundLoop();
+
   const playButton = document.getElementById('play-button');
   if (playButton) {
     playButton.addEventListener('click', () => {

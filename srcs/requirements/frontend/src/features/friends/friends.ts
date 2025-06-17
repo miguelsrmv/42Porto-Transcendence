@@ -27,7 +27,7 @@ export async function initializeView() {
   setupAddFriendButton();
 }
 
-/**
+/** #20
  * @brief Populates the friend list in the UI.
  *
  * Fetches the list of friends from the server and updates the DOM with the
