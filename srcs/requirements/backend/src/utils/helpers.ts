@@ -32,7 +32,7 @@ export function isValidEmail(email: string): boolean {
   const forbiddenCharsRegex = /[ *?!:;/\\'"#&=]/;
   if (forbiddenCharsRegex.test(email)) return false;
   // Basic email structure: alphanumerics or dots in local, and domain-like structure after @
-  const emailStructureRegex = /^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$/;
+  const emailStructureRegex = /^[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailStructureRegex.test(email)) return false;
   return true;
 }
