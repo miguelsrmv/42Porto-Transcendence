@@ -126,7 +126,7 @@ export async function deleteFriend(
   try {
     const { id } = request.params;
 
-    await prisma.friendship.deleteMany({
+    const friendships = await prisma.friendship.deleteMany({
       where: {
         OR: [
           {
@@ -140,6 +140,7 @@ export async function deleteFriend(
         ],
       },
     });
+    if (friendships.count === 0) reply.status(404).send({ message: 'Friendship not found' });
     reply.send({ message: 'Friendship deleted' });
   } catch (error) {
     handleError(error, reply);
