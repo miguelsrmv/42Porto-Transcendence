@@ -7,6 +7,36 @@ export function removeEmptyStrings<T extends Record<string, string>>(obj: T): Pa
   return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== '')) as Partial<T>;
 }
 
+export function hasInvalidChars(str: string): boolean {
+  return /[ *?!-":;,<>'#&=/@.\\]/.test(str);
+}
+
+export function isValidEmail(email: string): boolean {
+  const parts = email.split('@');
+  if (parts.length !== 2) return false;
+  const [local, domain] = parts;
+
+  if (
+    local.startsWith('.') ||
+    local.startsWith('-') ||
+    local.endsWith('.') ||
+    local.endsWith('-') ||
+    domain.startsWith('.') ||
+    domain.startsWith('-') ||
+    domain.endsWith('.') ||
+    domain.endsWith('-') ||
+    email.includes('..') ||
+    email.includes('--')
+  )
+    return false;
+  const forbiddenCharsRegex = /[ *?!:;/\\'"#&=]/;
+  if (forbiddenCharsRegex.test(email)) return false;
+  // Basic email structure: alphanumerics or dots in local, and domain-like structure after @
+  const emailStructureRegex = /^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$/;
+  if (!emailStructureRegex.test(email)) return false;
+  return true;
+}
+
 type TransformedUserUpdate = Omit<UserUpdate, 'newPassword' | 'repeatPassword'> & {
   hashedPassword?: string;
   salt?: string;
