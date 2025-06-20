@@ -1,11 +1,10 @@
 import WebSocket from 'ws';
-import { ClientMessage, PlayerInput } from './remoteGameApp/types';
+import { ClientMessage, PlayerInput } from '../remoteGameApp/types';
 import { FastifyRequest } from 'fastify';
-import { leanGameSettings } from './remoteGameApp/settings';
-import { areGameSettingsValid, closeSocket, isPlayerInput, sendErrorMessage } from './helpers';
-import { GameSessionManager } from './managers/gameSessionManager';
-import { playerManager } from './managers/playerManager';
-import { reconnectionManager } from './managers/reconnectionManager';
+import { leanGameSettings } from '../remoteGameApp/settings';
+import { areGameSettingsValid, closeSocket, isPlayerInput, sendErrorMessage } from '../helpers';
+import { GameSessionManager } from '../managers/gameSessionManager';
+import { playerManager } from '../managers/playerManager';
 
 const sessionManager = new GameSessionManager();
 
