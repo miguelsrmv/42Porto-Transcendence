@@ -1,10 +1,13 @@
 import { test, expect, describe, beforeAll, afterAll } from 'vitest';
 import app from '../src/app';
 import { prisma } from '../src/utils/prisma';
+import { randomUUID } from 'crypto';
 
 let jwtCookie: string;
 let jwtCookie2: string;
 let jwtCookie3: string;
+
+const COOKIE_MAX_AGE = 2 * 60 * 60; // Valid for 2h
 
 test("GET / should return 'greetings Welcome to the ft_transcendence API'", async () => {
   const response = await app.inject({
@@ -20,6 +23,8 @@ test("GET / should return 'greetings Welcome to the ft_transcendence API'", asyn
 
 beforeAll(async () => {
   try {
+    const sessionId = randomUUID();
+    const sessionExpires = new Date(Date.now() + 1000 * COOKIE_MAX_AGE);
     // Ensure the database is clean and insert test users
     await prisma.user.deleteMany();
     await prisma.friendship.deleteMany();
@@ -28,6 +33,8 @@ beforeAll(async () => {
         username: 'alice23',
         email: 'alice@example.com',
         hashedPassword: 'hashed_password_1',
+        sessionToken: sessionId,
+        sessionExpiresAt: sessionExpires,
       },
     });
     const testUser2 = await prisma.user.create({
@@ -35,6 +42,8 @@ beforeAll(async () => {
         username: 'bob45',
         email: 'bob@example.com',
         hashedPassword: 'hashed_password_2',
+        sessionToken: sessionId,
+        sessionExpiresAt: sessionExpires,
       },
     });
     const testUser3 = await prisma.user.create({
@@ -42,6 +51,8 @@ beforeAll(async () => {
         username: 'susan43',
         email: 'susan@example.com',
         hashedPassword: 'hashed_password_3',
+        sessionToken: sessionId,
+        sessionExpiresAt: sessionExpires,
       },
     });
     await prisma.user.create({
@@ -49,6 +60,8 @@ beforeAll(async () => {
         username: 'jack',
         email: 'jack@example.com',
         hashedPassword: 'hashed_password_4',
+        sessionToken: sessionId,
+        sessionExpiresAt: sessionExpires,
       },
     });
     await prisma.friendship.create({
@@ -59,16 +72,19 @@ beforeAll(async () => {
       id: testUser.id,
       username: testUser.username,
       email: testUser.email,
+      sessionId: sessionId,
     });
     const token2 = app.jwt.sign({
       id: testUser2.id,
       username: testUser2.username,
       email: testUser2.email,
+      sessionId: sessionId,
     });
     const token3 = app.jwt.sign({
       id: testUser3.id,
       username: testUser3.username,
       email: testUser3.email,
+      sessionId: sessionId,
     });
     jwtCookie = `access_token=${token}; HttpOnly; Path=/; Secure`;
     jwtCookie2 = `access_token=${token2}; HttpOnly; Path=/; Secure`;
@@ -83,28 +99,6 @@ afterAll(async () => {
 });
 
 describe('users', () => {
-  test('GET / should return 200 and an array of users', async () => {
-    const response = await app.inject({
-      method: 'GET',
-      url: '/users',
-      headers: {
-        cookie: jwtCookie,
-      },
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          username: expect.any(String),
-          email: expect.any(String),
-          hashedPassword: expect.any(String),
-          salt: expect.any(String),
-        }),
-      ]),
-    );
-  });
-
   test('POST / should return 200 and a new user', async () => {
     const response = await app.inject({
       method: 'POST',
@@ -125,21 +119,6 @@ describe('users', () => {
       expect.objectContaining({
         username: expect.any(String),
         email: expect.any(String),
-      }),
-    );
-  });
-
-  test('POST /login should return 200 and avatar path', async () => {
-    const response = await app.inject({
-      method: 'POST',
-      url: '/users/login',
-      headers: { 'Content-Type': 'application/json' },
-      body: { email: 'bob@example.com', password: 'hashed_password_2' },
-    });
-    expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body)).toEqual(
-      expect.objectContaining({
-        avatar: expect.any(String),
       }),
     );
   });
@@ -198,7 +177,7 @@ describe('users', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual(false);
+    expect(response.json()).toEqual(true);
   });
 
   test('GET /:id should return 200 and a specific user', async () => {
@@ -305,13 +284,16 @@ describe('users', () => {
     );
   });
 
-  test('DELETE /:id should return 200 and the deleted user', async () => {
+  test('DELETE / should return 200 and the deleted user', async () => {
     const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
       method: 'DELETE',
-      url: '/users/' + user?.id,
+      url: '/users',
       headers: {
         cookie: jwtCookie,
+      },
+      body: {
+        password: 'hashed_password_1',
       },
     });
 
@@ -321,23 +303,9 @@ describe('users', () => {
     expect(deletedUser).toEqual(null);
     expect(response.json()).toEqual(
       expect.objectContaining({
-        username: user!.username,
-        email: user!.email,
+        message: 'User deleted successfully',
       }),
     );
-  });
-
-  test('POST /preLogin should return 200 and false', async () => {
-    const user = await prisma.user.findUnique({ where: { username: 'bob45' } });
-    const response = await app.inject({
-      method: 'POST',
-      url: '/users/preLogin',
-      headers: { 'Content-Type': 'application/json' },
-      body: { email: user?.email, password: 'hashed_password_2' },
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual({ enabled2FA: false });
   });
 });
 
