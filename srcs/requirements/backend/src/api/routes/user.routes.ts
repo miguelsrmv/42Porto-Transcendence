@@ -35,21 +35,23 @@ import {
 } from '../validation/users.validation';
 import { AvatarData, DefaultAvatar, UserDelete, UserUpdate, VerifyToken } from '../../types';
 
-// TODO: review request methods
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
+  // TODO: Change to POST
   fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
   fastify.post('/preLogin', { schema: loginSchema }, preLogin);
   fastify.post('/login2FA', { schema: login2FASchema }, login2FA);
   fastify.post('/login', { schema: loginSchema }, login);
   fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
+  // TODO: Change to PATCH
   fastify.put<{ Body: DefaultAvatar }>(
     '/defaultAvatar',
     { onRequest: [fastify.jwtAuth] },
     setDefaultAvatar,
   );
+  // TODO: Change to PATCH
   fastify.put<{ Body: AvatarData }>(
     '/customAvatar',
     { onRequest: [fastify.jwtAuth] },
