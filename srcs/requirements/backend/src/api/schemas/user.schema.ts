@@ -57,7 +57,7 @@ export const deleteUserSchema = {
     type: 'object',
     required: ['password'],
     properties: {
-      username: { type: 'string', minLength: 3 },
+      password: { type: 'string', minLength: 3 },
     },
     additionalProperties: false,
   },
