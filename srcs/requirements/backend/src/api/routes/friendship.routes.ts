@@ -15,7 +15,6 @@ import {
 import { getByIdSchema } from '../schemas/global.schema';
 import { FriendCreate, FriendCreateUsername, FriendUpdate } from '../../types';
 
-// NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function friendRoutes(fastify: FastifyInstance) {
   fastify.get('/', { onRequest: [fastify.jwtAuth] }, getUserFriends);
   fastify.get('/pending', { onRequest: [fastify.jwtAuth] }, getUserPendingFriends);
