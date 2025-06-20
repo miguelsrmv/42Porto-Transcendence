@@ -30,3 +30,6 @@
 - Test data persistence on Blockchain
 - How to see data on Blockchain
 - If database is reset, how to see tournaments?
+
+# Global
+- Update documentation
