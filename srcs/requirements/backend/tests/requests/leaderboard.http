@@ -1,0 +1,6 @@
+# Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
+
+### LEADERBOARD 
+
+### Get user scores
+GET http://localhost:3000/leaderboard/ HTTP/1.1
