@@ -14,27 +14,40 @@ backend/
 |   |── populate_db.ts
 |
 |── src/
-|   |── controllers/                # Business logic (separates logic from routes)
-|   |   |── user.controller.ts
-|   |── middlewares/                # Fastify middlewares (e.g., authentication)
-|   |   |── auth.ts
-|   |── routes/                     # API routes
-|   |   |── user.routes.ts
-|   |── schemas/                    # Schemas for validation
-|   |   |── user.schemas.ts
-|   |── services/                   # Business logic
-|   |   |── user.schemas.ts
+|   |── api/                            # API logic for HTTP requests
+|   |   |── controllers/                # Route handlers (separates logic from routes)
+|   |   |   |── user.controller.ts
+|   |   |── middlewares/                # Fastify middlewares (e.g., authentication)
+|   |   |   |── auth.ts
+|   |   |── routes/                     # API routes
+|   |   |   |── user.routes.ts
+|   |   |── schemas/                    # Schemas for validation
+|   |   |   |── user.schemas.ts
+|   |   |── services/                   # Business logic
+|   |   |   |── user.schemas.ts
+|   |   |── validation/                 # Validation logic for preHandler hooks
+|   |   |   |── user.validation.ts
+|   |── ws/                             # WebSocket handling
+|   |   |── managers/                   # Manager classes
+|   |   |   |── gameSessionManager.ts
+|   |   |── handlers/                   # Handle WebSocket events
+|   |   |   |── remoteGameRouter.ts
+|   |   |── remoteGameApp/              # Remote game logic
+|   |   |   |── game.ts
+|   |   |── gameSession.ts              # Game Session class
+|   |   |── helpers.ts                  # Helper functions
+|   |   |── tournament.ts               # Tournament class
+|   |   |── websocket.routes.ts         # Websocket routes
 |   |── utils/                      # Utility functions/helpers
-|   |   |── defaults.ts             # Default values for non-entities
 |   |   |── errorHandler.ts         # Error handling
 |   |   |── hash.ts                 # Password hashing
+|   |   |── helpers.ts              # Helper functions
 |   |   |── prisma.ts               # Prisma client setup
 |   |   |── prismaExtensions.ts     # Prisma extensions
-|   |── validation/                 # Validation logic for preHandler hooks
-|   |   |── user.validation.ts
 |   |── app.ts                      # Fastify app setup
 |   |── server.ts                   # Fastify instance setup
 |   |── fastify.d.ts                # Declaration file to provide typescript type information about the Fastify app
+|   |── types.ts                    # Custom types used throughout the Fastify app
 |
 |── tests/
 |   |── requests/
@@ -63,18 +76,21 @@ backend/
 - `npx prisma generate` to generate a new prisma client
 
 ## Scripts
-- `npm run test` to run Vitest tests
+
 - `npm run populate` to populate the database
 - `npm run build` to compile ts files into js
 - `npm run build-dev` to compile ts files into js in watch mode for hot reload
 - `npm run dev` to launch the app locally (directly from ts file)
 - `npm run start` to launch the app (js)
 - `npm run start-dev` to launch the app with nodemon (js)
+- `npm run test` to run Vitest tests
+- `npm run test-db` to test database is up and running
+- `npm run db-reset` to reset the local database, apply any migrations, and generate a new prisma client instance
+- `npm run tournament` to run a full tournament without UI
+- `npm run open-tournament` to open 8 browser windows, log in users, and navigate to the join tournament page
+- `npm run login-tournament` to open 8 browser windows and log in users
 
-### Simulate Tournament script
-**Note:** The first time running the script, first run `npm install` to install dependencies and `npx playwright install firefox`. 
-Then run `npm run populate` inside the backend container (alternatively, run `make` on the root of the project directory).
-- Run `npm run dev-build` (to compile the ts file into js) and then run `npm run tournament` to run the script.
+**Note:** The first time running playwright scripts, first run `npm install` to install dependencies and `npx playwright install firefox`. Then run `npm run build-dev` (to compile the ts file into js) and then run the script.
 
 ## Notes
 
