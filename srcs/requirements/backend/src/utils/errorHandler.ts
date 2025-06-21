@@ -1,8 +1,8 @@
-import { FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { Prisma } from '@prisma/client';
 
 //TODO: Handle other error cases
-export function handleError(error: unknown, reply: FastifyReply) {
+export function handleError(error: unknown, request: FastifyRequest, reply: FastifyReply) {
   reply.log.error(error);
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     error.message = error.message.split('\n').pop()?.trim() || 'An unexpected error occurred';
@@ -13,6 +13,6 @@ export function handleError(error: unknown, reply: FastifyReply) {
   } else if (error instanceof Prisma.PrismaClientValidationError) {
     error.message = error.message.split('\n').pop()?.trim() || 'An unexpected error occurred';
     return reply.status(400).send(error);
-  }
+  } else if (error instanceof TypeError) return reply.status(400).send(error);
   return reply.status(500).send(error);
 }
