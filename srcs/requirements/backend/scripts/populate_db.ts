@@ -133,7 +133,6 @@ async function createMatches(users: User[]) {
       else score2 = 5;
       const match = await prisma.match.create({
         data: {
-          settings: '',
           stats: `{"left":{"goals":${score1},"sufferedGoals":${score2},"saves":0,"powersUsed":0},"right":{"goals":${score2},"sufferedGoals":${score1},"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
           user1Id: participants[0].id,
           user2Id: participants[1].id,
@@ -186,7 +185,6 @@ async function createTestUserMatches(users: User[]) {
     else score2 = 5;
     await prisma.match.create({
       data: {
-        settings: '',
         stats: `{"left":{"goals":${score1},"sufferedGoals":${score2},"saves":0,"powersUsed":0},"right":{"goals":${score2},"sufferedGoals":${score1},"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
         user1Id: testUser!.id,
         user2Id: users[i].id,

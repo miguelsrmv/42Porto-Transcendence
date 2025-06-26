@@ -57,8 +57,6 @@ enum FriendshipStatus {
   REJECTED
 }
 
-// TODO: Review if updatedAt is necessary
-// TODO: Add default empty strings for settings and stats
 model Match {
   id             String     @id @default(uuid())
   mode           GameMode   @default(CLASSIC)
@@ -75,8 +73,6 @@ model Match {
   winnerId       String?
   winner         User?      @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
   createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @default(now()) @updatedAt
-  settings       String
   stats          String
 }
 
