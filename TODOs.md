@@ -5,7 +5,6 @@
 - Edit match stats themselves
 - Do something with friends
 - Doxygen comments
-- Check play another game button is working after remote match
 - Next game button showing on tournament winner
 - On Local Tournament: "Upload your avatar" should not be a valid avatar!!
 - After 2FA activation, make toggle to be "active" every time the user enters the settings, giving him the option to opt-out
