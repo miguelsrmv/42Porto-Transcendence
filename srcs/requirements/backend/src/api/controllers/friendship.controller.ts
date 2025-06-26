@@ -38,6 +38,25 @@ export async function addFriend(
 
   if (request.user.id === friendId)
     return reply.status(400).send({ message: 'A user cannot befriend itself' });
+  const friend = await prisma.user.findUniqueOrThrow({ where: { id: friendId } });
+  const existingFriendship = await prisma.friendship.findFirst({
+    where: {
+      OR: [
+        {
+          initiatorId: friend.id,
+          recipientId: request.user.id,
+        },
+        {
+          initiatorId: request.user.id,
+          recipientId: friend.id,
+        },
+      ],
+    },
+  });
+  if (existingFriendship && existingFriendship.status === FriendshipStatus.ACCEPTED)
+    return reply.status(409).send({ message: 'Friendship between users already exists.' });
+  if (existingFriendship && existingFriendship.status === FriendshipStatus.PENDING)
+    return reply.status(409).send({ message: 'Friendship request already sent.' });
   await prisma.friendship.create({
     data: {
       initiatorId: request.user.id,
@@ -56,17 +75,24 @@ export async function addFriendByUsername(
   if (request.user.username === username)
     return reply.status(400).send({ message: 'A user cannot befriend itself' });
   const friend = await prisma.user.findUniqueOrThrow({ where: { username: username } });
-  const existingFriendship = await prisma.friendship.findUnique({
+  const existingFriendship = await prisma.friendship.findFirst({
     where: {
-      initiatorId_recipientId: {
-        initiatorId: friend.id,
-        recipientId: request.user.id,
-      },
-      status: FriendshipStatus.ACCEPTED,
+      OR: [
+        {
+          initiatorId: friend.id,
+          recipientId: request.user.id,
+        },
+        {
+          initiatorId: request.user.id,
+          recipientId: friend.id,
+        },
+      ],
     },
   });
-  if (existingFriendship)
-    return reply.status(400).send({ message: 'Friendship between users already exists.' });
+  if (existingFriendship && existingFriendship.status === FriendshipStatus.ACCEPTED)
+    return reply.status(409).send({ message: 'Friendship between users already exists.' });
+  if (existingFriendship && existingFriendship.status === FriendshipStatus.PENDING)
+    return reply.status(409).send({ message: 'Friendship request already sent.' });
   await prisma.friendship.create({
     data: {
       initiatorId: request.user.id,
@@ -76,6 +102,7 @@ export async function addFriendByUsername(
   reply.send({ message: 'Friendship created' });
 }
 
+// TODO: change to acceptFriendship
 export async function updateFriendshipStatus(
   request: FastifyRequest<{ Body: FriendUpdate }>,
   reply: FastifyReply,
