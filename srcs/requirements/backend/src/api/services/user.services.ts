@@ -49,7 +49,7 @@ export function setJWTCookie(
   const token = request.server.jwt.sign({
     id: userData.id,
     email: userData.email,
-    userName: userData.username,
+    username: userData.username,
     sessionId: userData.sessionId,
   });
   reply.setCookie('access_token', token, {
