@@ -11,7 +11,7 @@
 - After 2FA activation, make toggle to be "active" every time the user enters the settings, giving him the option to opt-out
 - NGINX POST not allowed error when updating info (sometimes, when testing errors)
 - Change avatar button not working on "Upload your design"
-- Send DELETE request when declining friendship
+- Send DELETE request when declining friendship instead of marking as Rejected? (How to manage rejected friendships?)
 
 # Backend
 - join_game on WS connection?
