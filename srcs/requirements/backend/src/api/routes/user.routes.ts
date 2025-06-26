@@ -38,7 +38,7 @@ import { AvatarData, DefaultAvatar, UserDelete, UserUpdate, VerifyToken } from '
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
-  // TODO: Change to POST
+  // TODO: Change to PATCH
   fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
   fastify.post('/preLogin', { schema: loginSchema }, preLogin);
   fastify.post('/login2FA', { schema: login2FASchema }, login2FA);

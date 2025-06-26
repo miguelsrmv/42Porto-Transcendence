@@ -284,7 +284,6 @@ export class GameSession {
     await this.tournament.updateSessionScore(this.round, remainingPlayer.id, data);
   }
 
-  // TODO: Review if all these parameters are necessary
   async startGame() {
     console.log(`Starting game between: ${this.players[0].alias} and ${this.players[1].alias}`);
     const response: ServerMessage = {
