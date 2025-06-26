@@ -47,7 +47,6 @@ function isValidCharacter(character: character): boolean {
   return characterList.some((c) => charactersAreEqual(c, character));
 }
 
-// TODO: Separate settings' parsing into another function
 export function areGameSettingsValid(
   socket: WebSocket,
   userId: string,

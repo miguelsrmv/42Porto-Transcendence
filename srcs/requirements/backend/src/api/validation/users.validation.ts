@@ -43,7 +43,7 @@ export async function userUpdateValidation(
   reply: FastifyReply,
 ) {
   if (!request.body.oldPassword)
-    return reply.status(401).send({ message: 'Old password required' });
+    return reply.status(400).send({ message: 'Old password required' });
 
   const { newPassword, repeatPassword } = request.body;
   if (
