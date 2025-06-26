@@ -115,7 +115,6 @@ export async function preLogin(request: FastifyRequest<{ Body: UserLogin }>, rep
   reply.send({ enabled2FA: false });
 }
 
-// TODO: review HTTP codes
 export async function login2FA(
   request: FastifyRequest<{ Body: Login2FAData }>,
   reply: FastifyReply,
@@ -151,8 +150,8 @@ export async function login2FA(
       message: 'User is already logged in on another device or tab.',
     });
   }
-  if (!user.enabled2FA) return reply.status(401).send({ message: '2FA not setup' });
-  if (!user.secret2FA) return reply.status(401).send('2FA required but not setup.');
+  if (!user.enabled2FA) return reply.status(403).send({ message: '2FA not setup' });
+  if (!user.secret2FA) return reply.status(403).send('2FA required but not setup.');
 
   const token = request.body.code;
 
@@ -207,7 +206,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
     });
   }
 
-  if (user.enabled2FA) return reply.status(401).send({ message: '2FA required' });
+  if (user.enabled2FA) return reply.status(403).send({ message: '2FA required' });
 
   const sessionId = await updateSession(user.id);
   const userData: UserSessionData = {
@@ -294,7 +293,7 @@ export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply
 export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
   const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
   if (user.enabled2FA)
-    return reply.status(400).send({ message: '2FA already setup for this user.' });
+    return reply.status(409).send({ message: '2FA already setup for this user.' });
 
   const secret = speakeasy.generateSecret({
     name: `ft_transcendence(${user.username})`,
@@ -315,14 +314,14 @@ export async function verify2FA(
   reply: FastifyReply,
 ) {
   if (!request.cookies.access_token)
-    return reply.status(400).send({ message: 'Access token not set.' });
+    return reply.status(401).send({ message: 'Access token not set.' });
 
   const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
   if (!user.secret2FA) {
-    return reply.status(401).send('2FA required but not setup.');
+    return reply.status(403).send('2FA required but not setup.');
   }
   if (!user.enabled2FA) {
-    if (!request.body.password) return reply.status(401).send('Password required.');
+    if (!request.body.password) return reply.status(400).send('Password required.');
     const isMatch = verifyPassword({
       candidatePassword: request.body.password,
       hash: user.hashedPassword,
@@ -365,12 +364,12 @@ export async function disable2FA(
   reply: FastifyReply,
 ) {
   if (!request.cookies.access_token)
-    return reply.status(400).send({ message: 'Access token not set.' });
+    return reply.status(401).send({ message: 'Access token not set.' });
   const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
-  if (!user.enabled2FA) return reply.status(401).send('2FA not setup.');
-  if (!user.secret2FA) return reply.status(401).send('2FA required but not setup.');
+  if (!user.enabled2FA) return reply.status(403).send('2FA not setup.');
+  if (!user.secret2FA) return reply.status(403).send('2FA required but not setup.');
 
-  if (!request.body.password) return reply.status(401).send('Password required.');
+  if (!request.body.password) return reply.status(400).send('Password required.');
   const isMatch = verifyPassword({
     candidatePassword: request.body.password,
     hash: user.hashedPassword,
