@@ -76,11 +76,19 @@ export function areGameSettingsValid(
     return false;
   }
   if (!isValidHexColor(playerSettings.paddleColour)) playerSettings.paddleColour = '#000000';
-  let newAlias = playerSettings.alias.trim();
-  if (newAlias.length > 80) newAlias = newAlias.substring(0, 80);
-  if (newAlias.length === 0) newAlias = 'empty';
-  playerSettings.alias = newAlias;
+  playerSettings.alias = normalizeAlias(playerSettings.alias);
   return true;
+}
+
+function normalizeAlias(alias: string): string {
+  const newAlias = alias
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_') // Replace non-alphanumerics with underscores
+    .replace(/^_+|_+$/g, '') // Trim leading/trailing underscores
+    .slice(0, 64);
+  if (newAlias.length === 0) return 'empty';
+  return newAlias;
 }
 
 export function sendErrorMessage(ws: WebSocket, message: string) {
