@@ -449,8 +449,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
     "user2Alias": "anna",
     "winnerId": "b3d2f55f-5000-440e-ae20-20d2fa732see",
     "createdAt": "2025-06-04T09:57:41.096Z",
-    "updatedAt": "2025-06-04T09:57:41.096Z",
-    "settings": "{\"playType\":\"Remote Play\",\"alias1\":\"ana123\",\"alias2\":\"chris123\",\"paddleColour1\":\"#ff0000\",\"paddleColour2\":\"#ff0000\",\"background\":\"Forest\"}",
     "stats": "{\"left\":{\"goals\":0,\"sufferedGoals\":5,\"saves\":0,\"powersUsed\":0},\"right\":{\"goals\":5,\"sufferedGoals\":0,\"saves\":0,\"powersUsed\":0},\"maxSpeed\":353.5533905932738}"
   }
 ]
@@ -476,7 +474,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ## Tournaments
 
-- **Get a specific tournament:** `/tournaments/:id`
+- **Get a specific tournament:** `GET /tournaments/:id`
 
 ### Response example
 
@@ -491,7 +489,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Get user's latest 3 tournaments:** `/tournaments/user:id`
+- **Get user's latest 3 tournaments:** `GET /tournaments/user:id`
 
 ### Response example
 
