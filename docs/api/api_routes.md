@@ -28,6 +28,7 @@
 | `POST`   | `/friends`                |                    |                   friendId                   | Create a friendship between the logged in user and another user |
 | `POST`   | `/friends/username`       |                    |                   username                   | Create a friendship between the logged in user and another user |
 | `PATCH`  | `/friends`                |                    |             friendId and status              | Update friendship status                                        |
+| `PATCH`  | `/friends/accept`         |                    |                   friendId                   | Change friendship status between users to accepted              |
 | `DELETE` | `/friends/:id`            |   `id` friend id   |                                              | Delete a friendship                                             |
 | `GET`    | `/matches/user/:id`       |    `id` user id    |                                              | Get all matches from a specific user                            |
 | `GET`    | `/matches/:id`            |   `id` match id    |                                              | Get a specific match                                            |
