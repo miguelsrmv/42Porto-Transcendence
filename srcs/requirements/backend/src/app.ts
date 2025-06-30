@@ -11,6 +11,7 @@ import FastifyWebSocket from '@fastify/websocket';
 import { setLastActiveAt } from './api/middlewares/activeStatus';
 import multipart from '@fastify/multipart';
 import { leaderboardRoutes } from './api/routes/leaderboard.routes';
+import { handleError } from './utils/errorHandler';
 
 dotenv.config();
 
@@ -22,6 +23,10 @@ const app = fastify({
       removeAdditional: false, // Do not remove additional properties in JSON schema validation
     },
   },
+});
+
+app.setErrorHandler((error, request, reply) => {
+  handleError(error, request, reply);
 });
 
 app.register(multipart);

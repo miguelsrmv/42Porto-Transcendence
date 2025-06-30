@@ -8,46 +8,50 @@ import {
   checkLoginStatus,
   logout,
   getOwnUser,
-  UserUpdate,
   getUserStats,
   setup2FA,
   verify2FA,
   check2FAstatus,
   disable2FA,
-  VerifyToken,
   getAvatarPath,
   setDefaultAvatar,
-  AvatarData,
   uploadCustomAvatar,
-  DefaultAvatar,
   preLogin,
   login2FA,
   isUserOnline,
 } from '../controllers/user.controller';
 import {
   createUserSchema,
+  deleteUserSchema,
   login2FASchema,
   loginSchema,
   updateUserSchema,
 } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
-import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
+import {
+  userCreateValidation,
+  userDeleteValidation,
+  userUpdateValidation,
+} from '../validation/users.validation';
+import { AvatarData, DefaultAvatar, UserDelete, UserUpdate, VerifyToken } from '../../types';
 
-// TODO: review request methods
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
+  // TODO: Change to PATCH
   fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
   fastify.post('/preLogin', { schema: loginSchema }, preLogin);
   fastify.post('/login2FA', { schema: login2FASchema }, login2FA);
   fastify.post('/login', { schema: loginSchema }, login);
   fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
+  // TODO: Change to PATCH
   fastify.put<{ Body: DefaultAvatar }>(
     '/defaultAvatar',
     { onRequest: [fastify.jwtAuth] },
     setDefaultAvatar,
   );
+  // TODO: Change to PATCH
   fastify.put<{ Body: AvatarData }>(
     '/customAvatar',
     { onRequest: [fastify.jwtAuth] },
@@ -73,9 +77,9 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: updateUserSchema, onRequest: [fastify.jwtAuth], preValidation: userUpdateValidation },
     updateUser,
   );
-  fastify.delete<{ Params: IParams }>(
-    '/:id',
-    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+  fastify.delete<{ Body: UserDelete }>(
+    '/',
+    { schema: deleteUserSchema, onRequest: [fastify.jwtAuth], preValidation: userDeleteValidation },
     deleteUser,
   );
   fastify.get<{ Params: IParams }>(

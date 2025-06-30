@@ -12,16 +12,12 @@ import {
   provider,
   contractProvider,
 } from '../api/services/blockchain.services';
-import {
-  closeSocket,
-  playerInfoToTournamentPlayer,
-  removeItem,
-  wait,
-} from './helpers';
+import { closeSocket, playerInfoToTournamentPlayer, removeItem, wait } from './helpers';
 import { Mutex } from 'async-mutex';
 import { getAvatarFromPlayer } from '../api/services/user.services';
 
 const NBR_PARTICIPANTS = 8;
+const WAITING_TIME = 5;
 
 const blockchainMutex = new Mutex();
 
@@ -129,7 +125,7 @@ export class Tournament {
       release();
     }
     await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
-    await wait(7);
+    await wait(WAITING_TIME);
     for (const session of firstRoundSessions) void session.startGame();
   }
 
@@ -269,7 +265,7 @@ export class Tournament {
     await this.clearPreviousRoundSessions();
     if (this.currentRound > 1)
       console.log(`Blockchain array: ${await contractProvider.getMatchedParticipants(this.id)}`);
-    await wait(7);
+    await wait(WAITING_TIME);
     const sessionsToStart = nextRoundSessions.filter(
       (session) => session.round === this.currentRound && !session.winner,
     );

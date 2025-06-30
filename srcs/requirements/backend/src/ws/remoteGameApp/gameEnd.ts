@@ -40,18 +40,6 @@ export function getCharacters(settings: gameSettings) {
   return [character1, character2];
 }
 
-// TODO: review filter later
-function filterGameSettings(settings: gameSettings) {
-  return JSON.stringify({
-    playType: settings.playType,
-    alias1: settings.alias1,
-    alias2: settings.alias2,
-    paddleColour1: settings.paddleColour1,
-    paddleColour2: settings.paddleColour2,
-    background: settings.background.name,
-  });
-}
-
 export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: GameArea) {
   const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
   const [character1, character2] = getCharacters(gameArea.settings);
@@ -67,7 +55,6 @@ export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: Gam
       user1Score: gameArea.leftPlayer === winningPlayer ? 5 : gameArea.stats.left.goals,
       user2Score: gameArea.rightPlayer === winningPlayer ? 5 : gameArea.stats.right.goals,
       mode: gameMode,
-      settings: filterGameSettings(gameArea.settings),
       stats: JSON.stringify(gameArea.stats),
     },
   });
@@ -89,7 +76,6 @@ async function createMatch(winningPlayer: Player, gameArea: GameArea) {
       user1Score: gameArea.stats.left.goals,
       user2Score: gameArea.stats.right.goals,
       mode: gameMode,
-      settings: filterGameSettings(gameArea.settings),
       stats: JSON.stringify(gameArea.stats),
     },
   });
