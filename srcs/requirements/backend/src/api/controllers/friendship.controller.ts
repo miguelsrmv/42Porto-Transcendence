@@ -102,7 +102,7 @@ export async function addFriendByUsername(
   reply.send({ message: 'Friendship created' });
 }
 
-// TODO: change to acceptFriendship
+// TODO: remove
 export async function updateFriendshipStatus(
   request: FastifyRequest<{ Body: FriendUpdate }>,
   reply: FastifyReply,
@@ -123,6 +123,35 @@ export async function updateFriendshipStatus(
     },
   });
   reply.send({ message: 'Friendship status updated' });
+}
+
+export async function acceptFriendship(
+  request: FastifyRequest<{ Body: FriendCreate }>,
+  reply: FastifyReply,
+) {
+  const userId = request.user.id;
+  const { friendId } = request.body;
+  const existingFriendship = await prisma.friendship.findFirstOrThrow({
+    where: {
+      initiatorId: friendId,
+      recipientId: userId,
+    },
+  });
+  if (existingFriendship.status === 'ACCEPTED')
+    return reply.status(409).send({ message: 'Friendship already accepted' });
+
+  await prisma.friendship.update({
+    where: {
+      initiatorId_recipientId: {
+        initiatorId: friendId,
+        recipientId: userId,
+      },
+    },
+    data: {
+      status: 'ACCEPTED',
+    },
+  });
+  reply.send({ message: 'Friendship accepted' });
 }
 
 export async function deleteFriend(
