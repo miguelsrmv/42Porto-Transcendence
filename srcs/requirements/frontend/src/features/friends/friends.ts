@@ -382,6 +382,7 @@ function setupRemoveFriendButton(clone: DocumentFragment, friendUUID: friend): v
         const data = await res.json();
         throw Error(data.message || 'Request failed');
       }
+      fillFriendList();
     } catch (err) {
       console.error('Error deleting friend', err);
       alert(`Error: ${(err as Error).message}`);

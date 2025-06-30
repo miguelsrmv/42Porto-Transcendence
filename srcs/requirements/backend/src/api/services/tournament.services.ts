@@ -2,7 +2,6 @@ import { prisma } from '../../utils/prisma';
 import { tournamentPlayer } from '../../ws/remoteGameApp/types';
 import { contractProvider } from './blockchain.services';
 
-// TODO: create tournament_status type data
 export async function processTournamentData(data: string[][], scores: number[]) {
   if (data.length !== 15 || scores.length !== 14) return;
 
