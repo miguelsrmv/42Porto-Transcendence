@@ -2,31 +2,8 @@
 
 ### MATCH 
 
-### Get all matches
-GET http://localhost:3000/matches HTTP/1.1
-
-### Get all matches from a player
-GET http://localhost:3000/matches/player/<id> HTTP/1.1
+### Get all matches from a user
+GET http://localhost:3000/matches/user/<id> HTTP/1.1
 
 ### Get a specific match
 GET http://localhost:3000/matches/<id> HTTP/1.1
-
-### Create a match
-POST http://localhost:3000/matches HTTP/1.1
-Content-Type: application/json
-
-{
-	"player1Id": "<id>",
-	"player2Id": "<id>",
-	"settings": "{\"map\":\"default\",\"ballSpeed\": 1,\"rounds\":5}"
-}
-
-### Update a match
-PATCH http://localhost:3000/matches/<id> HTTP/1.1
-Content-Type: application/json
-{
-	"duration": 120,
-	"winnerId": "<id>",
-	"player1Score": 3,
-	"player2Score": 2,
-}
