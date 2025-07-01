@@ -14,15 +14,10 @@
 - When a request to checkLoginStatus fails due to timeout, user turns to guest (local storage cleared) but cookie remains (logged in)
 
 # Backend
-- Allow delete users? (on delete cascade review)
-
 - Review API endpoints' output
  - GET /friends, GET /users/2FA/setup, GET /users/checkLoginStatus, GET /matches/user/:id
 - Remove unused functions/routes/types
  - GET /users/isOnline/:id
-- Organize functions in each file
-- Test security
-- Add more tests
 - Remove populate from running automatically on project delivery
 
 # Global
