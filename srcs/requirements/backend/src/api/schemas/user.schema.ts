@@ -51,14 +51,3 @@ export const login2FASchema = {
     additionalProperties: false,
   },
 };
-
-export const deleteUserSchema = {
-  body: {
-    type: 'object',
-    required: ['password'],
-    properties: {
-      password: { type: 'string', minLength: 3 },
-    },
-    additionalProperties: false,
-  },
-};
