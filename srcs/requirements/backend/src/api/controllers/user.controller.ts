@@ -35,7 +35,7 @@ export async function getUserById(
   const currentTime = Date.now() / 1000;
   const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
   let onlineState = 'offline';
-  // TODO: Review online state
+  // TODO: Review online state, absent?
   if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
     onlineState = 'online';
   reply.send({
@@ -72,14 +72,6 @@ export async function updateUser(
     select: { username: true, email: true },
   });
   reply.send(user);
-}
-
-export async function deleteUser(request: FastifyRequest, reply: FastifyReply) {
-  await prisma.user.delete({
-    where: { id: request.user.id },
-    select: { username: true, email: true },
-  });
-  reply.send({ message: 'User deleted successfully' });
 }
 
 export async function preLogin(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
