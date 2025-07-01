@@ -184,20 +184,6 @@ describe('users', () => {
     expect(response.json()).toEqual({ path: user?.avatarUrl });
   });
 
-  test('GET /isOnline/:id should return 200 and a false', async () => {
-    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
-    const response = await app.inject({
-      method: 'GET',
-      url: '/users/isOnline/' + user?.id,
-      headers: {
-        cookie: jwtCookie,
-      },
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual(true);
-  });
-
   test('GET /:id should return 200 and a specific user', async () => {
     const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({

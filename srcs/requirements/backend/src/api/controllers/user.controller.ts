@@ -391,21 +391,3 @@ export async function disable2FA(
   });
   return reply.send('Success');
 }
-
-// TODO: Remove, unused
-export async function isUserOnline(
-  request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply,
-) {
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { id: request.params.id },
-    select: { sessionExpiresAt: true, lastActiveAt: true },
-  });
-  const currentTime = Date.now() / 1000;
-  const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
-  let isOnline = false;
-  // TODO: Review online state
-  if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
-    isOnline = true;
-  reply.send(isOnline);
-}
