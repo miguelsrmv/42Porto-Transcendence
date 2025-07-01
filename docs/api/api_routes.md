@@ -8,7 +8,6 @@
 | `POST`   | `/users`                  |                    | username, email, password and repeatPassword | Create a new user                                               |
 | `PATCH`  | `/users`                  |                    |                data to update                | Update own user data                                            |
 | `DELETE` | `/users`                  |                    |                   password                   | Delete own user                                                 |
-| `GET`    | `/users/isOnline/:id`     |    `id` user id    |                                              | Check if a user is online                                       |
 | `POST`   | `/users/preLogin`         |                    |              email and password              | Check if user has 2FA enabled                                   |
 | `POST`   | `/users/login`            |                    |              email and password              | Get JWT (if user is valid)                                      |
 | `POST`   | `/users/login2FA`         |                    |          email, password and token           | Get JWT (if user and 2FA token are valid)                       |
@@ -131,16 +130,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 ```json
 {
   "message": "User deleted successfully"
-}
-```
-
-- **Check if a user is online (Protected):** `GET /users/isOnline/:id`
-
-### Response example
-
-```json
-{
-  "isOnline": true
 }
 ```
 
