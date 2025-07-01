@@ -29,7 +29,6 @@ export async function getUserPendingFriends(request: FastifyRequest, reply: Fast
   reply.send(pendingFriends);
 }
 
-// TODO: Review friendships (sender/recipient and opposite)
 export async function addFriend(
   request: FastifyRequest<{ Body: FriendCreate }>,
   reply: FastifyReply,

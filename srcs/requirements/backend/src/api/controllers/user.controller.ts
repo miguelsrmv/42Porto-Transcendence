@@ -38,7 +38,6 @@ export async function getUserById(
   // TODO: Review online state
   if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
     onlineState = 'online';
-  // TODO: Add inGame logic
   reply.send({
     ...user,
     rank: await getUserRank(request.params.id),
