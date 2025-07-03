@@ -33,6 +33,7 @@ async function jwtAuth(fastify: FastifyInstance) {
           !user.sessionExpiresAt ||
           user.sessionExpiresAt < new Date()
         ) {
+          reply.clearCookie('access_token');
           return reply.status(401).send({ message: 'Session invalid or expired' });
         }
       } catch (err) {
