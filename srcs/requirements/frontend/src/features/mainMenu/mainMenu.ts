@@ -12,14 +12,19 @@ import { userIsLoggedIn } from '../auth/auth.service.js';
  * This function sets up the main menu, depending on if the user has logged in or not
  */
 export async function initializeView() {
-  if (await userIsLoggedIn())
+  const isLoggedIn: boolean | undefined = await userIsLoggedIn();
+  if (isLoggedIn === true)
     document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
       showMenuHelperText(anchor);
     });
   else {
-    const availableButton = document.getElementById('local-play-button');
-    if (availableButton) {
-      showMenuHelperText(availableButton);
+    const localPlayButton = document.getElementById('local-match-button');
+    if (localPlayButton) {
+      showMenuHelperText(localPlayButton);
+    }
+    const localTournamentButton = document.getElementById('local-tournament-button');
+    if (localTournamentButton) {
+      showMenuHelperText(localTournamentButton);
     }
 
     window.localStorage.clear();
@@ -85,12 +90,6 @@ export async function initializeView() {
       'remote-match-button-container',
       'remote-match-button-container-text',
       'remote-match-button-overlay',
-    );
-    disableButton(
-      'local-tournament-button',
-      'local-tournament-button-container',
-      'local-tournament-button-container-text',
-      'local-tournament-button-overlay',
     );
     disableButton(
       'remote-tournament-button',

@@ -37,8 +37,7 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
       const errorLoginMessageContainer = document.getElementById('error-login-message');
       if (errorLoginMessageContainer) {
         errorLoginMessageContainer.classList.remove('hidden');
-        const errorMessage = await response.json();
-        errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+        errorLoginMessageContainer.innerText = 'An error ocurred, please try again later';
         return;
       }
     }
