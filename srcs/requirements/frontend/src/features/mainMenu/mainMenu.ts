@@ -12,8 +12,10 @@ import { userIsLoggedIn } from '../auth/auth.service.js';
  * This function sets up the main menu, depending on if the user has logged in or not
  */
 export async function initializeView() {
-  const isLoggedIn: boolean | undefined = await userIsLoggedIn();
-  if (isLoggedIn === true)
+  // NOTE: Changed from checking login status due to speed. Possible bug?!?!
+  const isLoggedIn: boolean = localStorage.getItem('ID') !== null;
+
+  if (isLoggedIn)
     document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
       showMenuHelperText(anchor);
     });

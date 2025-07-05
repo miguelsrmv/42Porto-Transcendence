@@ -152,7 +152,7 @@ async function loginWithout2FA(data: Record<string, string>): Promise<void> {
     }
 
     await fetchUserData();
-    window.location.hash = 'main-menu-page'; // Handle success (e.g., redirect)
+    window.location.hash = 'main-menu-page';
   } catch (error) {
     console.error('Login failed:', error);
   }
