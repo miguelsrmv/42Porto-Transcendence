@@ -224,16 +224,24 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
  *
  * @return A promise that resolves to a boolean indicating the login status.
  */
-export async function userIsLoggedIn(): Promise<boolean> {
+
+export async function userIsLoggedIn(): Promise<boolean | undefined> {
   try {
     const response = await fetch('/api/users/checkLoginStatus', {
       method: 'GET',
       credentials: 'include', // ensures HttpOnly cookie is sent
     });
-    return response.ok; // true if status is in 200–299 range
+
+    if (response.status >= 200 && response.status < 300) {
+      return true;
+    } else if (response.status === 401) {
+      return false;
+    } else {
+      return undefined;
+    }
   } catch (error) {
     console.error('Login check failed:', error);
-    return false;
+    return undefined;
   }
 }
 
