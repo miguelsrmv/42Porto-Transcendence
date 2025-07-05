@@ -17,6 +17,7 @@ import * as settingsModule from '../features/settings/settings.js';
 //import * as gameModule from '../features/game/gamePage.js';
 import { endLocalGameIfRunning } from '../features/game/localGameApp/game.js';
 import { endLocalTournamentIfRunning } from '../features/localTournamentPlay/localTournamentPlay.js';
+import { userIsLoggedIn } from '../features/auth/auth.service.js';
 
 type FeatureModule = {
   initializeView: () => void;
@@ -41,7 +42,7 @@ let currentView = '';
  * @brief Handles changes in the route based on the URL hash.
  * @returns A promise that resolves when the view is loaded.
  */
-function handleRouteChange(): void {
+async function handleRouteChange(): Promise<void> {
   // If a local game is running, stop it
   endLocalGameIfRunning();
 
@@ -49,11 +50,25 @@ function handleRouteChange(): void {
   endLocalTournamentIfRunning();
 
   // Get the view name from the URL hash, trim the first #
-  const viewName = window.location.hash.substring(1) || 'landing-page';
+  let viewName = window.location.hash.substring(1) || 'landing-page';
 
   // If already on that view, do nothing
   if (viewName == currentView) {
     return;
+  }
+
+  // Checks if user is authorized to visit page
+  if (
+    viewName !== 'local-match-page' &&
+    viewName !== 'local-tournament-page' &&
+    viewName !== 'landing-page' &&
+    viewName !== 'main-menu-page'
+  ) {
+    const loggedInStatus = await userIsLoggedIn();
+    if (!loggedInStatus) {
+      viewName = 'error-page';
+      window.localStorage.clear();
+    }
   }
 
   // Update currentView
@@ -63,7 +78,6 @@ function handleRouteChange(): void {
   try {
     loadView(viewName);
   } catch (error) {
-    console.error(`Error loading page "${viewName}":`, error);
     loadView('error-page');
     errorPageModule.initializeView(404);
     return;
@@ -123,10 +137,10 @@ const handleLinkClick = (event: MouseEvent): void => {
 /**
  * @brief Handles the popstate event for browser navigation (back/forward).
  */
-const handlePopState = (): void => {
+const handlePopState = async (): Promise<void> => {
   // When user clicks back/forward, handle the route change
   // The URL hash has already been updated by the browser
-  handleRouteChange();
+  await handleRouteChange();
 };
 
 /**
