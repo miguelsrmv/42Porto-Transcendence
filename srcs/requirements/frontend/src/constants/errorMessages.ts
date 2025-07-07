@@ -2,7 +2,7 @@ type ErrorMessages = {
   [key: string]: string;
 };
 
-//TODO: Else unkonwn error
+//TODO: Else unknown error
 //TODO: Explain why password / username are invalid ??
 export const loginErrorMessages: ErrorMessages = {
   'body/password must NOT have fewer than 6 characters': 'Invalid Password',
@@ -12,7 +12,7 @@ export const loginErrorMessages: ErrorMessages = {
     'User not found',
 };
 
-//TODO: Else unkonwn error
+//TODO: Else unknown error
 //TODO: Explain why password / username are invalid ??
 export const registerErrorMessages: ErrorMessages = {
   'body/username must NOT have fewer than 3 characters': 'Invalid Username (< 3 characters)',
@@ -31,7 +31,7 @@ export function getReadableErrorMessage(message: string): string {
   finalMessage = loginErrorMessages[message];
 
   if (!finalMessage)
-    finalMessage = 'An unexpected error ocurred. Please refresh the page and retry later.';
+    finalMessage = 'An unexpected error occurred. Please refresh the page and retry later.';
 
   return finalMessage;
 }
