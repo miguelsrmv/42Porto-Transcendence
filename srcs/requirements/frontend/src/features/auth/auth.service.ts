@@ -37,8 +37,7 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
       const errorLoginMessageContainer = document.getElementById('error-login-message');
       if (errorLoginMessageContainer) {
         errorLoginMessageContainer.classList.remove('hidden');
-        const errorMessage = await response.json();
-        errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+        errorLoginMessageContainer.innerText = 'An error ocurred, please try again later';
         return;
       }
     }
@@ -153,7 +152,7 @@ async function loginWithout2FA(data: Record<string, string>): Promise<void> {
     }
 
     await fetchUserData();
-    window.location.hash = 'main-menu-page'; // Handle success (e.g., redirect)
+    window.location.hash = 'main-menu-page';
   } catch (error) {
     console.error('Login failed:', error);
   }
@@ -224,16 +223,24 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
  *
  * @return A promise that resolves to a boolean indicating the login status.
  */
-export async function userIsLoggedIn(): Promise<boolean> {
+
+export async function userIsLoggedIn(): Promise<boolean | undefined> {
   try {
     const response = await fetch('/api/users/checkLoginStatus', {
       method: 'GET',
       credentials: 'include', // ensures HttpOnly cookie is sent
     });
-    return response.ok; // true if status is in 200–299 range
+
+    if (response.status >= 200 && response.status < 300) {
+      return true;
+    } else if (response.status === 401) {
+      return false;
+    } else {
+      return undefined;
+    }
   } catch (error) {
     console.error('Login check failed:', error);
-    return false;
+    return undefined;
   }
 }
 
