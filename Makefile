@@ -18,70 +18,70 @@ COMPOSE = docker compose -f ./srcs/docker-compose.yml
 all: up
 
 up:
-    @mkdir -p $(DB_DATA)
-    @mkdir -p $(BC_DATA)
-    @mkdir -p $(AVATAR_DATA)
-    @$(COMPOSE) up --build -d frontend backend
+	@mkdir -p $(DB_DATA)
+	@mkdir -p $(BC_DATA)
+	@mkdir -p $(AVATAR_DATA)
+	@$(COMPOSE) up --build -d frontend backend
 
 down:
-    @$(COMPOSE) down
+	@$(COMPOSE) down
 
 build:
-    @$(COMPOSE) build
+	@$(COMPOSE) build
 
 clean: down
-    @echo "** REMOVING IMAGES **"
-    @docker rmi -f $$(docker images -qa)
-    @echo "** REMOVING VOLUMES **"
-    @docker volume rm $$(docker volume ls -q)
-    @echo "** DELETING VOLUMES' DATA **"
-    @sudo rm -rf $(DB_DATA) $(BC_DATA) $(AVATAR_DATA)
+	@echo "** REMOVING IMAGES **"
+	@docker rmi -f $$(docker images -qa)
+	@echo "** REMOVING VOLUMES **"
+	@docker volume rm $$(docker volume ls -q)
+	@echo "** DELETING VOLUMES' DATA **"
+	@sudo rm -rf $(DB_DATA) $(BC_DATA) $(AVATAR_DATA)
 
 re: clean up
 
 prune:
-    @docker system prune -a
+	@docker system prune -a
 
 status:
-    @clear
-    @docker ps -a
-    @echo ""
-    @docker image ls
-    @echo ""
-    @docker volume ls
-    @echo ""
-    @docker network ls
-    @echo ""
+	@clear
+	@docker ps -a
+	@echo ""
+	@docker image ls
+	@echo ""
+	@docker volume ls
+	@echo ""
+	@docker network ls
+	@echo ""
 
 frontend:
-    @$(COMPOSE) build frontend
+	@$(COMPOSE) build frontend
 
 backend:
-    @$(COMPOSE) build backend
+	@$(COMPOSE) build backend
 
 bc:
-    @$(COMPOSE) build blockchain
+	@$(COMPOSE) build blockchain
 
 contract:
-    @echo "** DEPLOYING NEW SMART CONTRACT **"
-    @$(COMPOSE) run --build --rm blockchain
+	@echo "** DEPLOYING NEW SMART CONTRACT **"
+	@$(COMPOSE) run --build --rm blockchain
 
 frontend_clean:
-    $(COMPOSE) rm -sf frontend
-    @docker rmi -f frontend || true
+	$(COMPOSE) rm -sf frontend
+	@docker rmi -f frontend || true
 
 backend_clean:
-    $(COMPOSE) rm -sf backend
-    @docker rmi -f backend || true
+	$(COMPOSE) rm -sf backend
+	@docker rmi -f backend || true
 
 bc_clean:
-    $(COMPOSE) rm -sf blockchain
-    @docker rmi -f blockchain || true
+	$(COMPOSE) rm -sf blockchain
+	@docker rmi -f blockchain || true
 
 db_reset:
-    @docker exec -it backend sh -c "npm run populate"
+	@docker exec -it backend sh -c "npm run populate"
 
 test:
-    @./docs/scripts/build_dockerfile_test.sh  #Tests build
+	@./docs/scripts/build_dockerfile_test.sh  #Tests build
 
 .PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test db_reset contract
