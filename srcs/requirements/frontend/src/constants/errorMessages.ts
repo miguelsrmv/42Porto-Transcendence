@@ -24,3 +24,14 @@ export const registerErrorMessages: ErrorMessages = {
 };
 
 export const twoFAErrorMessages: ErrorMessages = {};
+
+export function getReadableErrorMessage(message: string): string {
+  let finalMessage: string | undefined;
+
+  finalMessage = loginErrorMessages[message];
+
+  if (!finalMessage)
+    finalMessage = 'An unexpected error ocurred. Please refresh the page and retry later.';
+
+  return finalMessage;
+}
