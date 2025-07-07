@@ -53,12 +53,6 @@ let localTournamentIsRunning: boolean = false;
  * @returns Promise<void>
  */
 export async function initializeView(): Promise<void> {
-  if (!(await checkLoginStatus())) {
-    alert('You need to be logged in to access this page');
-    navigate('landing-page');
-    return;
-  }
-
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
 
