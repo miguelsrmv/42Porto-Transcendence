@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { hasInvalidChars, isValidEmail, removeEmptyStrings } from '../../utils/helpers';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
-import { UserCreate, UserDelete, UserUpdate } from '../../types';
+import { UserCreate, UserUpdate } from '../../types';
 
 export async function userCreateValidation(
   request: FastifyRequest<{ Body: UserCreate }>,
@@ -10,14 +10,13 @@ export async function userCreateValidation(
 ) {
   for (const [key, value] of Object.entries(request.body)) {
     if (typeof value === 'string' && value.trim() === '')
-      reply.code(400).send({ message: `${key} cannot be empty or whitespace` });
+      return reply.code(400).send({ message: `${key} cannot be empty or whitespace` });
     else if (value.length > 320)
-      reply.code(400).send({ message: `${key} cannot have over 320 characters` });
+      return reply.code(400).send({ message: `${key} cannot have over 320 characters` });
     else if (key !== 'email' && hasInvalidChars(value))
-      reply.code(400).send({ message: `${key} cannot have invalid characters` });
+      return reply.code(400).send({ message: `${key} cannot have invalid characters` });
     else if (key === 'email' && !isValidEmail(value))
-      reply.code(400).send({ message: `Invalid email format` });
-    return;
+      return reply.code(400).send({ message: `Invalid email format` });
   }
   const { password, repeatPassword } = request.body;
   if (password !== repeatPassword) reply.code(400).send({ message: 'Passwords do not match' });
