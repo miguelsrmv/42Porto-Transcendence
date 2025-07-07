@@ -1,7 +1,7 @@
 export const createUserSchema = {
   body: {
     type: 'object',
-    required: ['email', 'username', 'password'],
+    required: ['email', 'username', 'password', 'repeatPassword'],
     properties: {
       email: { type: 'string', format: 'email' },
       username: { type: 'string', minLength: 3 },
