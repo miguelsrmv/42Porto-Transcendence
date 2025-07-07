@@ -5,6 +5,7 @@ import {
   updateFriendSchema,
 } from '../schemas/friendship.schema';
 import {
+  acceptFriendship,
   addFriend,
   addFriendByUsername,
   deleteFriend,
@@ -28,6 +29,12 @@ export async function friendRoutes(fastify: FastifyInstance) {
     { schema: createFriendByUsernameSchema, onRequest: [fastify.jwtAuth] },
     addFriendByUsername,
   );
+  fastify.patch<{ Body: FriendCreate }>(
+    '/accept',
+    { schema: createFriendSchema, onRequest: [fastify.jwtAuth] },
+    acceptFriendship,
+  );
+  // TODO: remove
   fastify.patch<{ Body: FriendUpdate }>(
     '/',
     { schema: updateFriendSchema, onRequest: [fastify.jwtAuth] },

@@ -8,7 +8,6 @@
 | `POST`   | `/users`                  |                    | username, email, password and repeatPassword | Create a new user                                               |
 | `PATCH`  | `/users`                  |                    |                data to update                | Update own user data                                            |
 | `DELETE` | `/users`                  |                    |                   password                   | Delete own user                                                 |
-| `GET`    | `/users/isOnline/:id`     |    `id` user id    |                                              | Check if a user is online                                       |
 | `POST`   | `/users/preLogin`         |                    |              email and password              | Check if user has 2FA enabled                                   |
 | `POST`   | `/users/login`            |                    |              email and password              | Get JWT (if user is valid)                                      |
 | `POST`   | `/users/login2FA`         |                    |          email, password and token           | Get JWT (if user and 2FA token are valid)                       |
@@ -28,6 +27,7 @@
 | `POST`   | `/friends`                |                    |                   friendId                   | Create a friendship between the logged in user and another user |
 | `POST`   | `/friends/username`       |                    |                   username                   | Create a friendship between the logged in user and another user |
 | `PATCH`  | `/friends`                |                    |             friendId and status              | Update friendship status                                        |
+| `PATCH`  | `/friends/accept`         |                    |                   friendId                   | Change friendship status between users to accepted              |
 | `DELETE` | `/friends/:id`            |   `id` friend id   |                                              | Delete a friendship                                             |
 | `GET`    | `/matches/user/:id`       |    `id` user id    |                                              | Get all matches from a specific user                            |
 | `GET`    | `/matches/:id`            |   `id` match id    |                                              | Get a specific match                                            |
@@ -130,16 +130,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 ```json
 {
   "message": "User deleted successfully"
-}
-```
-
-- **Check if a user is online (Protected):** `GET /users/isOnline/:id`
-
-### Response example
-
-```json
-{
-  "isOnline": true
 }
 ```
 
@@ -449,8 +439,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
     "user2Alias": "anna",
     "winnerId": "b3d2f55f-5000-440e-ae20-20d2fa732see",
     "createdAt": "2025-06-04T09:57:41.096Z",
-    "updatedAt": "2025-06-04T09:57:41.096Z",
-    "settings": "{\"playType\":\"Remote Play\",\"alias1\":\"ana123\",\"alias2\":\"chris123\",\"paddleColour1\":\"#ff0000\",\"paddleColour2\":\"#ff0000\",\"background\":\"Forest\"}",
     "stats": "{\"left\":{\"goals\":0,\"sufferedGoals\":5,\"saves\":0,\"powersUsed\":0},\"right\":{\"goals\":5,\"sufferedGoals\":0,\"saves\":0,\"powersUsed\":0},\"maxSpeed\":353.5533905932738}"
   }
 ]
@@ -476,7 +464,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ## Tournaments
 
-- **Get a specific tournament:** `/tournaments/:id`
+- **Get a specific tournament:** `GET /tournaments/:id`
 
 ### Response example
 
@@ -491,7 +479,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Get user's latest 3 tournaments:** `/tournaments/user:id`
+- **Get user's latest 3 tournaments:** `GET /tournaments/user:id`
 
 ### Response example
 
