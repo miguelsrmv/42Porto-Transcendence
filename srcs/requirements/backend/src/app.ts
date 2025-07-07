@@ -8,7 +8,7 @@ import { matchRoutes } from './api/routes/match.routes';
 import { tournamentRoutes } from './api/routes/tournament.routes';
 import { WSRoutes } from './ws/websocket.routes';
 import FastifyWebSocket from '@fastify/websocket';
-import { setLastActiveAt } from './api/middlewares/activeStatus';
+import { setLastActiveAt, updateSessionExpiration } from './api/middlewares/activeStatus';
 import multipart from '@fastify/multipart';
 import { leaderboardRoutes } from './api/routes/leaderboard.routes';
 import { handleError } from './utils/errorHandler';
@@ -40,10 +40,7 @@ app.register(cookie, {
   hook: 'onRequest',
 } as FastifyCookieOptions);
 
-app.get('/', async (request, reply) => {
-  reply.send({ greetings: 'Welcome to the ft_transcendence API' });
-});
-
+app.addHook('onReady', updateSessionExpiration);
 app.addHook('preHandler', setLastActiveAt);
 
 app.register(userRoutes, { prefix: '/users' });
@@ -51,5 +48,9 @@ app.register(friendRoutes, { prefix: '/friends' });
 app.register(matchRoutes, { prefix: '/matches' });
 app.register(tournamentRoutes, { prefix: '/tournaments' });
 app.register(leaderboardRoutes, { prefix: '/leaderboard' });
+
+app.get('/', async (request, reply) => {
+  reply.send({ greetings: 'Welcome to the ft_transcendence API' });
+});
 
 export default app;
