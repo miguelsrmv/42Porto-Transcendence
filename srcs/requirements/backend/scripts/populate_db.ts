@@ -89,6 +89,16 @@ async function createFriends(users: User[]) {
       });
     }
     const testUser = await prisma.user.findUnique({ where: { username: USERNAME } });
+    if (testUser?.id === user.id) continue;
+    const existingFriendship = await prisma.friendship.findFirst({
+      where: {
+        OR: [
+          { recipientId: testUser?.id, initiatorId: user.id },
+          { recipientId: user.id, initiatorId: testUser?.id },
+        ],
+      },
+    });
+    if (existingFriendship) continue;
     const testFriendship = await prisma.friendship.create({
       data: {
         initiatorId: user.id,
@@ -133,7 +143,6 @@ async function createMatches(users: User[]) {
       else score2 = 5;
       const match = await prisma.match.create({
         data: {
-          settings: '',
           stats: `{"left":{"goals":${score1},"sufferedGoals":${score2},"saves":0,"powersUsed":0},"right":{"goals":${score2},"sufferedGoals":${score1},"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
           user1Id: participants[0].id,
           user2Id: participants[1].id,
@@ -186,7 +195,6 @@ async function createTestUserMatches(users: User[]) {
     else score2 = 5;
     await prisma.match.create({
       data: {
-        settings: '',
         stats: `{"left":{"goals":${score1},"sufferedGoals":${score2},"saves":0,"powersUsed":0},"right":{"goals":${score2},"sufferedGoals":${score1},"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
         user1Id: testUser!.id,
         user2Id: users[i].id,
