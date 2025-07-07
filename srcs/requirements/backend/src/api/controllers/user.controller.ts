@@ -35,10 +35,9 @@ export async function getUserById(
   const currentTime = Date.now() / 1000;
   const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
   let onlineState = 'offline';
-  // TODO: Review online state
+  // TODO: Review online state, absent?
   if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
     onlineState = 'online';
-  // TODO: Add inGame logic
   reply.send({
     ...user,
     rank: await getUserRank(request.params.id),
@@ -73,14 +72,6 @@ export async function updateUser(
     select: { username: true, email: true },
   });
   reply.send(user);
-}
-
-export async function deleteUser(request: FastifyRequest, reply: FastifyReply) {
-  await prisma.user.delete({
-    where: { id: request.user.id },
-    select: { username: true, email: true },
-  });
-  reply.send({ message: 'User deleted successfully' });
 }
 
 export async function preLogin(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
@@ -391,22 +382,4 @@ export async function disable2FA(
     data: { secret2FA: null, enabled2FA: false },
   });
   return reply.send('Success');
-}
-
-// TODO: Remove, unused
-export async function isUserOnline(
-  request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply,
-) {
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { id: request.params.id },
-    select: { sessionExpiresAt: true, lastActiveAt: true },
-  });
-  const currentTime = Date.now() / 1000;
-  const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
-  let isOnline = false;
-  // TODO: Review online state
-  if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
-    isOnline = true;
-  reply.send(isOnline);
 }

@@ -174,7 +174,6 @@ export class GameSession {
   sendGameEndToRemainingPlayer(winningPlayer: Player) {
     if (!this.gameArea) return;
     this.gameArea.stats.setMaxGoals(winningPlayer.side);
-    // TODO: Differentiate from normal game_end message?
     const gameEndMsg: ServerMessage = {
       type: 'game_end',
       winningPlayer: winningPlayer.side,
