@@ -57,6 +57,7 @@ export function setJWTCookie(
     httpOnly: true,
     secure: true,
     maxAge: COOKIE_MAX_AGE,
+    sameSite: 'strict',
   });
   return token;
 }

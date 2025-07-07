@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 let jwtCookie: string;
 let jwtCookie2: string;
 let jwtCookie3: string;
+let matchId: string;
 
 const COOKIE_MAX_AGE = 2 * 60 * 60; // Valid for 2h
 
@@ -28,6 +29,7 @@ beforeAll(async () => {
     // Ensure the database is clean and insert test users
     await prisma.user.deleteMany();
     await prisma.friendship.deleteMany();
+    await prisma.match.deleteMany();
     const testUser = await prisma.user.create({
       data: {
         username: 'alice23',
@@ -64,6 +66,22 @@ beforeAll(async () => {
         sessionExpiresAt: sessionExpires,
       },
     });
+    const match = await prisma.match.create({
+      data: {
+        stats: `{"left":{"goals":5,"sufferedGoals":3,"saves":0,"powersUsed":0},"right":{"goals":3,"sufferedGoals":5,"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
+        user1Id: testUser3!.id,
+        user2Id: testUser2!.id,
+        user1Character: 'BOWSER',
+        user2Character: 'DK',
+        user1Alias: testUser3!.username,
+        user2Alias: testUser2!.username,
+        user1Score: 5,
+        user2Score: 3,
+        winnerId: testUser3!.id,
+        mode: 'CRAZY',
+      },
+    });
+    matchId = match.id;
     await prisma.friendship.create({
       data: { initiatorId: testUser2.id, recipientId: testUser3.id },
     });
@@ -166,20 +184,6 @@ describe('users', () => {
     expect(response.json()).toEqual({ path: user?.avatarUrl });
   });
 
-  test('GET /isOnline/:id should return 200 and a false', async () => {
-    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
-    const response = await app.inject({
-      method: 'GET',
-      url: '/users/isOnline/' + user?.id,
-      headers: {
-        cookie: jwtCookie,
-      },
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual(true);
-  });
-
   test('GET /:id should return 200 and a specific user', async () => {
     const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     const response = await app.inject({
@@ -202,7 +206,7 @@ describe('users', () => {
   });
 
   test('GET /:id/stats should return 200 and a specific user stats', async () => {
-    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
+    const user = await prisma.user.findUnique({ where: { username: 'jack' } });
     const response = await app.inject({
       method: 'GET',
       url: '/users/' + user?.id + '/stats',
@@ -338,6 +342,34 @@ describe('friends', () => {
     expect(response.json()).toEqual({ message: 'Friendship created' });
   });
 
+  test('POST /username should return 200 and an add a new friend', async () => {
+    const friend = await prisma.user.findUnique({ where: { username: 'newUser' } });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/friends/username',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: jwtCookie2,
+      },
+      body: { username: 'newUser' },
+    });
+
+    const user2 = await prisma.user.findUnique({ where: { username: 'bob45' } });
+    const friendship = await prisma.friendship.findUnique({
+      where: {
+        initiatorId_recipientId: {
+          initiatorId: user2!.id,
+          recipientId: friend!.id,
+        },
+      },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(friendship).toEqual(
+      expect.objectContaining({ initiatorId: user2!.id, recipientId: friend!.id }),
+    );
+    expect(response.json()).toEqual({ message: 'Friendship created' });
+  });
+
   test('GET /pending should return 200 and an array of pending friends', async () => {
     const response = await app.inject({
       method: 'GET',
@@ -411,6 +443,65 @@ describe('leaderboard', () => {
         expect.objectContaining({
           score: 0,
           userId: expect.any(String),
+        }),
+      ]),
+    );
+  });
+});
+
+describe('matches', () => {
+  test(`GET /:id should return 200 and a match's details`, async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: `/matches/${matchId}`,
+      headers: {
+        cookie: jwtCookie2,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+        expect.objectContaining({
+          createdAt: expect.any(String),
+          mode: 'CRAZY',
+          stats: `{"left":{"goals":5,"sufferedGoals":3,"saves":0,"powersUsed":0},"right":{"goals":3,"sufferedGoals":5,"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
+          user1Id: expect.any(String),
+          user2Id: expect.any(String),
+          user1Character: 'BOWSER',
+          user2Character: 'DK',
+          user1Alias: expect.any(String),
+          user2Alias: expect.any(String),
+        }),
+    );
+  });
+
+  test(`GET /user/:id should return 200 and a user's matches`, async () => {
+    const user = await prisma.user.findUnique({ where: { username: 'bob45' } });
+    const response = await app.inject({
+      method: 'GET',
+      url: `/matches/user/${user?.id}`,
+      headers: {
+        cookie: jwtCookie2,
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(String),
+          createdAt: expect.any(String),
+          mode: 'CRAZY',
+          stats: `{"left":{"goals":5,"sufferedGoals":3,"saves":0,"powersUsed":0},"right":{"goals":3,"sufferedGoals":5,"saves":0,"powersUsed":0},"maxSpeed":353.5533905932738}`,
+          user1Id: expect.any(String),
+          user2Id: expect.any(String),
+          user1Character: 'BOWSER',
+          user2Character: 'DK',
+          user1Alias: expect.any(String),
+          user2Alias: expect.any(String),
+          user1Score: 5,
+          user2Score: 3,
+          winnerId: expect.any(String),
         }),
       ]),
     );

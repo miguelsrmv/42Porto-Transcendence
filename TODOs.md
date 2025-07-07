@@ -11,18 +11,13 @@
 - NGINX POST not allowed error when updating info (sometimes, when testing errors)
 - Change avatar button not working on "Upload your design"
 - Send DELETE request when declining friendship instead of marking as Rejected? (How to manage rejected friendships?)
+- When a request to checkLoginStatus fails due to timeout, user turns to guest (local storage cleared) but cookie remains (logged in)
 
 # Backend
-- join_game on WS connection?
-- Deal with re-connections and lag? (player_lagging, player_reconnected)
-
 - Review API endpoints' output
  - GET /friends, GET /users/2FA/setup, GET /users/checkLoginStatus, GET /matches/user/:id
-- Remove unused functions/routes/types
- - GET /users/isOnline/:id
-- Organize functions in each file
-- Test security
-- Add more tests
+- Change route HTTP methods
+ - DELETE /logout, PUT /defaultAvatar, and PUT /customAvatar to PATCH
 - Remove populate from running automatically on project delivery
 
 # Global

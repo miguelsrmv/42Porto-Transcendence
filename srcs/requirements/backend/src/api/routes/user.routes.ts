@@ -3,7 +3,6 @@ import {
   getUserById,
   createUser,
   updateUser,
-  deleteUser,
   login,
   checkLoginStatus,
   logout,
@@ -18,22 +17,16 @@ import {
   uploadCustomAvatar,
   preLogin,
   login2FA,
-  isUserOnline,
 } from '../controllers/user.controller';
 import {
   createUserSchema,
-  deleteUserSchema,
   login2FASchema,
   loginSchema,
   updateUserSchema,
 } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
-import {
-  userCreateValidation,
-  userDeleteValidation,
-  userUpdateValidation,
-} from '../validation/users.validation';
-import { AvatarData, DefaultAvatar, UserDelete, UserUpdate, VerifyToken } from '../../types';
+import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
+import { AvatarData, DefaultAvatar, UserUpdate, VerifyToken } from '../../types';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
@@ -67,20 +60,10 @@ export async function userRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     getUserById,
   );
-  fastify.get<{ Params: IParams }>(
-    '/isOnline/:id',
-    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
-    isUserOnline,
-  );
   fastify.patch<{ Body: UserUpdate }>(
     '/',
     { schema: updateUserSchema, onRequest: [fastify.jwtAuth], preValidation: userUpdateValidation },
     updateUser,
-  );
-  fastify.delete<{ Body: UserDelete }>(
-    '/',
-    { schema: deleteUserSchema, onRequest: [fastify.jwtAuth], preValidation: userDeleteValidation },
-    deleteUser,
   );
   fastify.get<{ Params: IParams }>(
     '/:id/stats',
