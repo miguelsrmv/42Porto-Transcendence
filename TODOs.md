@@ -12,6 +12,7 @@
 - Change avatar button not working on "Upload your design"
 - Send DELETE request when declining friendship instead of marking as Rejected? (How to manage rejected friendships?)
 - When a request to checkLoginStatus fails due to timeout, user turns to guest (local storage cleared) but cookie remains (logged in)
+- At login after backend stops and restarts 'An error occurred, please try again later' message remains. Error message not updating
 
 # Backend
 - Review API endpoints' output
