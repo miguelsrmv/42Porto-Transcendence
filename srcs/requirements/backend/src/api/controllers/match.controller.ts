@@ -9,7 +9,7 @@ export async function getUserMatches(
     where: {
       OR: [{ user1Id: request.params.id }, { user2Id: request.params.id }],
     },
-    orderBy: { updatedAt: 'desc' },
+    orderBy: { createdAt: 'desc' },
   });
   reply.send(matches);
 }
