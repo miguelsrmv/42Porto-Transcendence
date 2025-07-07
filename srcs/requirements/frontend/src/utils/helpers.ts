@@ -66,10 +66,14 @@ export function getTemplateId(templateHost: string): string | undefined {
  *
  * @return A promise that resolves to true if the user is logged in, false otherwise.
  */
+
 export async function checkLoginStatus(): Promise<boolean> {
   const loggedInStatus = await userIsLoggedIn();
 
-  if (!loggedInStatus) window.localStorage.clear();
+  if (loggedInStatus === false) window.localStorage.clear();
+  else if (loggedInStatus === undefined) alert('An error ocurred checking your login status');
+
+  // NOTE: This will assume an undefined error (such as backend dropping) won't log out the user!
 
   return localStorage.getItem('ID') !== null;
 }
