@@ -8,7 +8,7 @@ export const loginErrorMessages: ErrorMessages = {
   'body/password must NOT have fewer than 6 characters': 'Invalid Password',
   'body/email must match format "email"': 'Invalid Email',
   'Invalid credentials': 'Email and Password do not match',
-  'An operation failed because it depends on one or more records that were required but not found. Expected a record, found none.':
+  'An operation failed because it depends on one or more records that were required but not found. No record was found for a query.':
     'User not found',
 };
 
@@ -21,6 +21,10 @@ export const registerErrorMessages: ErrorMessages = {
   'Passwords do not match': 'Passwords do not match',
   'Unique constraint failed on the fields: (`username`)': 'Username already in use',
   'Unique constraint failed on the fields: (`email`)': 'Email already in use',
+  'username cannot have invalid characters': 'Invalid Username',
+  'username cannot be empty or whitespace': 'Username field is mandatory',
+  'email cannot be empty or whitespace': 'Email field is mandatory',
+  'Invalid email format': 'Invalid Email'
 };
 
 export const twoFAErrorMessages: ErrorMessages = {};
