@@ -8,7 +8,7 @@ export function removeEmptyStrings<T extends Record<string, string>>(obj: T): Pa
 }
 
 export function hasInvalidChars(str: string): boolean {
-  return /[ *?!-":;,<>'#&=/@.\\]/.test(str);
+  return /[ *?!\-":;,<>'#&=/@.\\]/.test(str);
 }
 
 export function isValidEmail(email: string): boolean {
