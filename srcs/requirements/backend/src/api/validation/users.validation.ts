@@ -1,5 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { hasInvalidChars, isValidEmail, removeEmptyStrings } from '../../utils/helpers';
+import {
+  hasInvalidChars,
+  isPasswordValid,
+  isValidEmail,
+  removeEmptyStrings,
+} from '../../utils/helpers';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
 import { UserCreate, UserUpdate } from '../../types';
@@ -24,6 +29,10 @@ export async function userCreateValidation(
       return reply.code(400).send({ message: `Invalid email format` });
   }
   const { password, repeatPassword } = request.body;
+  if (!isPasswordValid(password))
+    return reply.code(400).send({
+      message: `Password must include an uppercase letter, a lowercase letter, and a number`,
+    });
   if (password !== repeatPassword) reply.code(400).send({ message: 'Passwords do not match' });
 }
 

@@ -24,7 +24,9 @@ export const registerErrorMessages: ErrorMessages = {
   'username cannot have invalid characters': 'Invalid Username',
   'username cannot be empty or whitespace': 'Username field is mandatory',
   'email cannot be empty or whitespace': 'Email field is mandatory',
-  'Invalid email format': 'Invalid Email'
+  'Invalid email format': 'Invalid Email',
+  'Password must include an uppercase letter, a lowercase letter, and a number':
+    'Password must include an uppercase letter, a lowercase letter, and a number',
 };
 
 export const twoFAErrorMessages: ErrorMessages = {};

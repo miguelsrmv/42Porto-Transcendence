@@ -12,7 +12,6 @@
 - Change avatar button not working on "Upload your design"
 
 # Backend
-- Add password policy?
 - Review API endpoints' output
  - GET /friends, GET /users/2FA/setup, GET /users/checkLoginStatus, GET /matches/user/:id
 - Change route HTTP methods
