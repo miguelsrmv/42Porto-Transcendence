@@ -9,11 +9,16 @@ export async function userCreateValidation(
   reply: FastifyReply,
 ) {
   for (const [key, value] of Object.entries(request.body)) {
-    if (typeof value === 'string' && value.trim() === '')
+    if (
+      typeof value === 'string' &&
+      key !== 'password' &&
+      key !== 'repeatPassword' &&
+      value.trim() === ''
+    )
       return reply.code(400).send({ message: `${key} cannot be empty or whitespace` });
     else if (value.length > 320)
       return reply.code(400).send({ message: `${key} cannot have over 320 characters` });
-    else if (key !== 'email' && hasInvalidChars(value))
+    else if (key === 'username' && hasInvalidChars(value))
       return reply.code(400).send({ message: `${key} cannot have invalid characters` });
     else if (key === 'email' && !isValidEmail(value))
       return reply.code(400).send({ message: `Invalid email format` });
