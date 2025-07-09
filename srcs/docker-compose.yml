@@ -48,6 +48,8 @@ services:
     volumes:
       - ./requirements/blockchain:/app
       - ./requirements/blockchain/conf/output:/output
+    secrets:
+      - private_key
 
 volumes:
   backend_db:
@@ -77,3 +79,7 @@ networks:
   private-transcendence-network:
     name: private-transcendence-network
     driver: bridge
+
+secrets:
+  private_key:
+    file: ../secrets/private_key.txt
