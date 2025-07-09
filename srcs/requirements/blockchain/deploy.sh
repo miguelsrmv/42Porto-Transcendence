@@ -22,6 +22,8 @@ rm -rf /output/deploy.log
 
 CONTRACT_ADDRESS=$(cat /output/blockchain_address.txt)
 
+sleep 5
+
 forge verify-contract \
     $CONTRACT_ADDRESS \
     src/TournamentsStorage.sol:TournamentsStorage \
