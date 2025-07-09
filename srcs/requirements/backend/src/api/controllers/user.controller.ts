@@ -20,6 +20,7 @@ import {
   UserUpdate,
   VerifyToken,
 } from '../../types';
+import { avatarImagePaths } from '../../../scripts/avatarData';
 
 export async function getUserById(
   request: FastifyRequest<{ Params: IParams }>,
@@ -250,6 +251,8 @@ export async function setDefaultAvatar(
   reply: FastifyReply,
 ) {
   if (!request.body.path) return reply.status(400).send({ message: 'Path to avatar required.' });
+  if (!avatarImagePaths.includes(request.body.path))
+    return reply.status(400).send({ message: 'Path to avatar invalid.' });
   await prisma.user.update({
     where: { id: request.user.id },
     data: { avatarUrl: request.body.path },
@@ -257,6 +260,7 @@ export async function setDefaultAvatar(
   reply.send({ message: 'Path to avatar updated successfully.' });
 }
 
+// TODO: Check file size and type
 export async function uploadCustomAvatar(
   request: FastifyRequest<{ Body: AvatarData }>,
   reply: FastifyReply,
