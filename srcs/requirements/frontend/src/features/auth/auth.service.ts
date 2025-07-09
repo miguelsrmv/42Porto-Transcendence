@@ -7,7 +7,11 @@
  * to perform these operations.
  */
 
-import { loginErrorMessages, registerErrorMessages } from '../../constants/errorMessages.js';
+import {
+  loginErrorMessages,
+  registerErrorMessages,
+  getReadableErrorMessage,
+} from '../../constants/errorMessages.js';
 
 /**
  * @brief Attempts to log in a user.
@@ -32,12 +36,23 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
     });
 
     if (!response.ok) {
-      console.error(`HTTP error" ${response.status}`);
+      console.error(`HTTP error: ${response.status}`);
       console.log('Response:', response);
       const errorLoginMessageContainer = document.getElementById('error-login-message');
+
       if (errorLoginMessageContainer) {
+        let message: string =
+          'An unexpected error ocurred. Please refresh the page and retry later.';
+
+        try {
+          const data = await response.json();
+          message = getReadableErrorMessage(data?.message);
+        } catch (e) {
+          console.warn('Failed to parse error response JSON:', e);
+        }
+
         errorLoginMessageContainer.classList.remove('hidden');
-        errorLoginMessageContainer.innerText = 'An error ocurred, please try again later';
+        errorLoginMessageContainer.innerText = message;
         return;
       }
     }
