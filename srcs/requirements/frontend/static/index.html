@@ -1645,7 +1645,7 @@
       </h1>
 
       <!-- User-Friendly Error Message -->
-      <h2 id="error-message" class="text-3xl mb-12 max-w-3xl mt-6">
+      <h2 id="error-message" class="text-3xl mb-12 max-w-3xl">
         A skill issue was detected between the chair and the computer's screen.
       </h2>
 
@@ -1878,12 +1878,7 @@
         class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
       >
         <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
-          <form
-            id="password-confirm-form"
-            class="flex flex-col p-6 sm:p-8 space-y-6"
-            action="#"
-            method="post"
-          >
+          <form id="password-confirm-form" class="flex flex-col p-6 sm:p-8 space-y-6">
             <h2 class="text-2xl font-bold text-center text-gray-800">
               Please confirm changes with your (old) password
             </h2>
@@ -1903,7 +1898,7 @@
             </div>
             <button
               id="change-confirm-button"
-              type="button"
+              type="submit"
               class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold"
             >
               Confirm

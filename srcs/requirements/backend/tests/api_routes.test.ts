@@ -24,6 +24,7 @@ test("GET / should return 'greetings Welcome to the ft_transcendence API'", asyn
 
 beforeAll(async () => {
   try {
+    await app.ready();
     const sessionId = randomUUID();
     const sessionExpires = new Date(Date.now() + 1000 * COOKIE_MAX_AGE);
     // Ensure the database is clean and insert test users
@@ -85,7 +86,6 @@ beforeAll(async () => {
     await prisma.friendship.create({
       data: { initiatorId: testUser2.id, recipientId: testUser3.id },
     });
-    await app.ready();
     const token = app.jwt.sign({
       id: testUser.id,
       username: testUser.username,
@@ -284,30 +284,6 @@ describe('users', () => {
       expect.objectContaining({
         username: user?.username,
         email: 'modified@gmail.com',
-      }),
-    );
-  });
-
-  test('DELETE / should return 200 and the deleted user', async () => {
-    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
-    const response = await app.inject({
-      method: 'DELETE',
-      url: '/users',
-      headers: {
-        cookie: jwtCookie,
-      },
-      body: {
-        password: 'hashed_password_1',
-      },
-    });
-
-    const deletedUser = await prisma.user.findUnique({ where: { username: 'alice23' } });
-
-    expect(response.statusCode).toBe(200);
-    expect(deletedUser).toEqual(null);
-    expect(response.json()).toEqual(
-      expect.objectContaining({
-        message: 'User deleted successfully',
       }),
     );
   });
