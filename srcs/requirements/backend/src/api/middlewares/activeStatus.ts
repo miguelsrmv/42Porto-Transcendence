@@ -9,3 +9,10 @@ export async function setLastActiveAt(request: FastifyRequest) {
     data: { lastActiveAt: new Date() },
   });
 }
+
+export async function updateSessionExpiration() {
+  await prisma.user.updateMany({
+    where: { sessionExpiresAt: { gt: new Date() } },
+    data: { sessionExpiresAt: new Date() },
+  });
+}
