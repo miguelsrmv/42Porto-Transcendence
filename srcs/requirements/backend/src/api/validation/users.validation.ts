@@ -13,22 +13,10 @@ export async function userCreateValidation(
   request: FastifyRequest<{ Body: UserCreate }>,
   reply: FastifyReply,
 ) {
-  for (const [key, value] of Object.entries(request.body)) {
-    if (
-      typeof value === 'string' &&
-      key !== 'password' &&
-      key !== 'repeatPassword' &&
-      value.trim() === ''
-    )
-      return reply.code(400).send({ message: `${key} cannot be empty or whitespace` });
-    else if (value.length > 320)
-      return reply.code(400).send({ message: `${key} cannot have over 320 characters` });
-    else if (key === 'username' && hasInvalidChars(value))
-      return reply.code(400).send({ message: `${key} cannot have invalid characters` });
-    else if (key === 'email' && !isValidEmail(value))
-      return reply.code(400).send({ message: `Invalid email format` });
-  }
-  const { password, repeatPassword } = request.body;
+  const { password, repeatPassword, username, email } = request.body;
+  if (hasInvalidChars(username))
+    return reply.code(400).send({ message: `username cannot have invalid characters` });
+  if (!isValidEmail(email)) return reply.code(400).send({ message: `Invalid email format` });
   if (!isPasswordValid(password))
     return reply.code(400).send({
       message: `Password must include an uppercase letter, a lowercase letter, and a number`,
@@ -43,25 +31,23 @@ export async function userUpdateValidation(
   if (!request.body.oldPassword)
     return reply.status(400).send({ message: 'Old password required' });
 
-  const { newPassword, repeatPassword } = request.body;
+  request.body = removeEmptyStrings(request.body);
+  const { email, username, newPassword, repeatPassword } = request.body;
+  if (username && hasInvalidChars(username))
+    return reply.code(400).send({ message: `username cannot have invalid characters` });
+  if (email && !isValidEmail(email))
+    return reply.code(400).send({ message: `Invalid email format` });
+  if (newPassword && !isPasswordValid(newPassword))
+    return reply.code(400).send({
+      message: `Password must include an uppercase letter, a lowercase letter, and a number`,
+    });
+
   if (
     (newPassword && repeatPassword && newPassword !== repeatPassword) ||
     (!newPassword && repeatPassword) ||
     (newPassword && !repeatPassword)
   )
     return reply.code(400).send({ message: 'Passwords do not match' });
-
-  request.body = removeEmptyStrings(request.body);
-  for (const [key, value] of Object.entries(request.body)) {
-    if (typeof value === 'string' && value.trim() === '')
-      return reply.code(400).send({ message: `${key} cannot be empty or whitespace` });
-    else if (value.length > 320)
-      return reply.code(400).send({ message: `${key} cannot have over 320 characters` });
-    else if (key !== 'email' && hasInvalidChars(value))
-      return reply.code(400).send({ message: `${key} cannot have invalid characters` });
-    else if (key === 'email' && !isValidEmail(value))
-      return reply.code(400).send({ message: `Invalid email format` });
-  }
 
   const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
   const isMatch = verifyPassword({
