@@ -262,7 +262,6 @@ export async function setDefaultAvatar(
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'multipart/form-data'];
 
-// TODO: Check file size and type
 export async function uploadCustomAvatar(
   request: FastifyRequest<{ Body: AvatarData }>,
   reply: FastifyReply,
