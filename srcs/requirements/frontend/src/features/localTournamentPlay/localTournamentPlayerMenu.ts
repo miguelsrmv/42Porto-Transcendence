@@ -119,7 +119,7 @@ function resizeGrid(settingsMenu: HTMLElement) {
       return;
     }
 
-    characterDisplay.classList.remove('w-48', 'h-48', 'p-3');
+    characterDisplay.classList.remove('w-36', 'h-36', 'p-3');
     characterDisplay.classList.add('w-12', 'h-12');
 
     const characterSelect = player.querySelector(`#character-select-${i}`);
