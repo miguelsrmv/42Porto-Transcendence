@@ -13,9 +13,7 @@
 
 # Backend
 - Review API endpoints' output
- - GET /friends, GET /users/2FA/setup, GET /matches/user/:id
-- Change route HTTP methods
- - DELETE /logout, PUT /defaultAvatar, and PUT /customAvatar to PATCH
+ - GET /friends, GET /friends/pending, GET /users/2FA/setup, GET /matches/user/:id
 - Remove populate from running automatically on project delivery
 
 # Global
