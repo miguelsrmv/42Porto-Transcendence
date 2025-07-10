@@ -16,5 +16,9 @@ export function handleError(error: unknown, request: FastifyRequest, reply: Fast
     return reply.status(400).send(error);
   }
   if (error instanceof TypeError) return reply.status(400).send(error);
+  if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+    error.message = 'There was an unexpected problem with the database';
+    return reply.status(500).send(error);
+  }
   return reply.status(500).send(error);
 }

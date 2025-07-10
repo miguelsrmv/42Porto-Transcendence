@@ -8,7 +8,15 @@ export function removeEmptyStrings<T extends Record<string, string>>(obj: T): Pa
 }
 
 export function hasInvalidChars(str: string): boolean {
-  return /[ *?!-":;,<>'#&=/@.\\]/.test(str);
+  return /[ *?!\-":;,<>'#&=/@.\\]/.test(str);
+}
+
+export function isPasswordValid(password: string): boolean {
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+
+  return hasUppercase && hasLowercase && hasNumber;
 }
 
 export function isValidEmail(email: string): boolean {
