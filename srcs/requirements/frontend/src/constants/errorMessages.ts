@@ -8,6 +8,8 @@ export const errorMessages: ErrorMessages = {
   'Invalid credentials': 'Email and Password do not match',
   'An operation failed because it depends on one or more records that were required but not found. No record was found for a query.':
     'User not found',
+  'User is already logged in on another device or tab.':
+    'User is already logged in on another device or tab.',
   'body/username must NOT have fewer than 3 characters': 'Invalid Username (< 3 characters)',
   'body/password must NOT have fewer than 6 characters': 'Invalid Password (< 6 characters)',
   'body/password must NOT have more than 72 characters': 'Password too long (> 72 characters)',

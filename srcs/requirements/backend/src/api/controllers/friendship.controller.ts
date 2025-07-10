@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { FriendshipStatus } from '@prisma/client';
-import { FriendCreate, FriendCreateUsername, FriendUpdate } from '../../types';
+import { FriendCreate, FriendCreateUsername } from '../../types';
 
 export async function getUserFriends(request: FastifyRequest, reply: FastifyReply) {
   const friends = await prisma.friendship.findMany({
@@ -99,29 +99,6 @@ export async function addFriendByUsername(
     },
   });
   reply.send({ message: 'Friendship created' });
-}
-
-// TODO: remove
-export async function updateFriendshipStatus(
-  request: FastifyRequest<{ Body: FriendUpdate }>,
-  reply: FastifyReply,
-) {
-  const userId = request.user.id;
-  const { friendId } = request.body;
-  const { status } = request.body;
-
-  await prisma.friendship.update({
-    where: {
-      initiatorId_recipientId: {
-        initiatorId: friendId,
-        recipientId: userId,
-      },
-    },
-    data: {
-      status: status,
-    },
-  });
-  reply.send({ message: 'Friendship status updated' });
 }
 
 export async function acceptFriendship(
