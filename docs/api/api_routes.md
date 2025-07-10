@@ -7,11 +7,10 @@
 | `GET`    | `/users/:id`              |    `id` user id    |                                              | Get a specific user public data                                 |
 | `POST`   | `/users`                  |                    | username, email, password and repeatPassword | Create a new user                                               |
 | `PATCH`  | `/users`                  |                    |                data to update                | Update own user data                                            |
-| `DELETE` | `/users`                  |                    |                   password                   | Delete own user                                                 |
 | `POST`   | `/users/preLogin`         |                    |              email and password              | Check if user has 2FA enabled                                   |
 | `POST`   | `/users/login`            |                    |              email and password              | Get JWT (if user is valid)                                      |
 | `POST`   | `/users/login2FA`         |                    |          email, password and token           | Get JWT (if user and 2FA token are valid)                       |
-| `DELETE` | `/users/logout`           |                    |                                              | Logout user                                                     |
+| `PATCH`  | `/users/logout`           |                    |                                              | Logout user                                                     |
 | `GET`    | `/users/checkLoginStatus` |                    |                                              | Check if user is logged in                                      |
 | `GET`    | `/users/:id/stats`        |    `id` user id    |                                              | Get match stats of that user                                    |
 | `POST`   | `/users/2FA/verify`       |                    |             token (and password)             | Checks if user enters valid token for 2FA                       |
@@ -19,8 +18,8 @@
 | `GET`    | `/users/2FA/setup`        |                    |                                              | Sets up 2FA for the user                                        |
 | `GET`    | `/users/2FA/disable`      |                    |                                              | Disables 2FA for the user                                       |
 | `GET`    | `/users/getAvatarPath`    |                    |                                              | Get user's avatar image path                                    |
-| `PUT`    | `/users/defaultAvatar`    |                    |                     path                     | Updates avatar image path to a default                          |
-| `PUT`    | `/users/customAvatar`     |                    |                 avatar data                  | Uploads custom avatar image                                     |
+| `PATCH`  | `/users/defaultAvatar`    |                    |                     path                     | Updates avatar image path to a default                          |
+| `PATCH`  | `/users/customAvatar`     |                    |                 avatar data                  | Uploads custom avatar image                                     |
 | `GET`    | `/leaderboard`            |                    |                                              | Get leaderboard                                                 |
 | `GET`    | `/friends`                |                    |                                              | Get all friends of logged in user                               |
 | `GET`    | `/friends/pending`        |                    |                                              | Get pending friends of logged in user                           |
@@ -114,24 +113,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Delete own user (Protected):** `DELETE /users`
-
-### Request body example
-
-```json
-{
-  "password": "password"
-}
-```
-
-### Response example
-
-```json
-{
-  "message": "User deleted successfully"
-}
-```
-
 - **Check if user has 2FA enabled:** `POST /users/preLogin`
 
 ### Request body example
@@ -204,7 +185,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Logout a user (Protected):** `DELETE /users/logout`
+- **Logout a user (Protected):** `PATCH /users/logout`
 
 ### Response example
 
@@ -273,7 +254,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Updates avatar image path to a default (Protected):** `PUT /users/defaultAvatar`
+- **Updates avatar image path to a default (Protected):** `PATCH /users/defaultAvatar`
 
 ### Request body example
 
@@ -291,7 +272,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Uploads custom avatar image (Protected):** `PUT /users/customAvatar`
+- **Uploads custom avatar image (Protected):** `PATCH /users/customAvatar`
 
 ### Request body example
 

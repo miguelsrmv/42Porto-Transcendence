@@ -34,9 +34,6 @@ content-type: application/json
 	"oldPassword": "password"
 }
 
-### Delete user from database
-DELETE http://localhost:3000/users HTTP/1.1
-
 ### Login user and get a JWT token
 POST http://localhost:3000/users/login HTTP/1.1
 content-type: application/json
@@ -66,7 +63,7 @@ content-type: application/json
 }
 
 ### Logout user from browser
-DELETE http://localhost:3000/users/logout HTTP/1.1
+PATCH http://localhost:3000/users/logout HTTP/1.1
 
 ### Check a user's stats
 GET http://localhost:3000/users/<id>/stats HTTP/1.1
@@ -87,7 +84,7 @@ GET http://localhost:3000/users/2FA/check HTTP/1.1
 GET http://localhost:3000/users/2FA/setup HTTP/1.1
 
 ### Updates avatar image path to a default
-PUT http://localhost:3000/users/defaultAvatar HTTP/1.1
+PATCH http://localhost:3000/users/defaultAvatar HTTP/1.1
 content-type: application/json
 
 {

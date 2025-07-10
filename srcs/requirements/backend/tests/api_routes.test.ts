@@ -251,9 +251,9 @@ describe('users', () => {
     );
   });
 
-  test('PUT /defaultAvatar should return 200 and an updated user', async () => {
+  test('PATCH /defaultAvatar should return 200 and an updated user', async () => {
     const response = await app.inject({
-      method: 'PUT',
+      method: 'PATCH',
       url: '/users/defaultAvatar',
       headers: { 'Content-Type': 'application/json', cookie: jwtCookie },
       body: { path: '../../../../static/avatar/default/mega_man.png' },
