@@ -16,7 +16,7 @@
 export async function logoutUser() {
   try {
     await fetch('/api/users/logout', {
-      method: 'DELETE',
+      method: 'PATCH',
       credentials: 'include',
     });
     window.localStorage.clear();
