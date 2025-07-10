@@ -31,17 +31,6 @@ export function triggerEndGameMenu(
       ? winningPlayerSide
       : playerSide;
 
-  console.log(
-    'winningPlayerSide: ',
-    winningPlayerSide,
-    ' \nplayerSide: ',
-    playerSide,
-    '\nplayType: ',
-    playType,
-    ' \nHUDSideToShow: ',
-    HUDSideToShow,
-  );
-
   const playerHUD = document.getElementById(`${HUDSideToShow}-hud`);
   if (!playerHUD) {
     console.warn('No winner HUD');
