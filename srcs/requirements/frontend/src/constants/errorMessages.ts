@@ -12,6 +12,7 @@ export const loginErrorMessages: ErrorMessages = {
   'Invalid credentials': 'Email and Password do not match',
   'An operation failed because it depends on one or more records that were required but not found. No record was found for a query.':
     'User not found',
+  'User is already logged in on another device or tab.': 'User is already logged in on another device or tab.',
 };
 
 //TODO: Else unknown error
