@@ -92,7 +92,7 @@ export function handleSubmitAvatar(): void {
   async function sendImagePath(): Promise<void> {
     try {
       const response = await fetch('/api/users/defaultAvatar', {
-        method: 'PUT',
+        method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export function handleSubmitAvatar(): void {
 
         try {
           const response = await fetch('/api/users/customAvatar', {
-            method: 'PUT',
+            method: 'PATCH',
             credentials: 'include',
             body: formData,
           });
