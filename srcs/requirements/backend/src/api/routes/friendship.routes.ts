@@ -1,9 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import {
-  createFriendByUsernameSchema,
-  createFriendSchema,
-  updateFriendSchema,
-} from '../schemas/friendship.schema';
+import { createFriendByUsernameSchema, createFriendSchema } from '../schemas/friendship.schema';
 import {
   acceptFriendship,
   addFriend,
@@ -11,10 +7,9 @@ import {
   deleteFriend,
   getUserFriends,
   getUserPendingFriends,
-  updateFriendshipStatus,
 } from '../controllers/friendship.controller';
 import { getByIdSchema } from '../schemas/global.schema';
-import { FriendCreate, FriendCreateUsername, FriendUpdate } from '../../types';
+import { FriendCreate, FriendCreateUsername } from '../../types';
 
 export async function friendRoutes(fastify: FastifyInstance) {
   fastify.get('/', { onRequest: [fastify.jwtAuth] }, getUserFriends);
@@ -33,12 +28,6 @@ export async function friendRoutes(fastify: FastifyInstance) {
     '/accept',
     { schema: createFriendSchema, onRequest: [fastify.jwtAuth] },
     acceptFriendship,
-  );
-  // TODO: remove
-  fastify.patch<{ Body: FriendUpdate }>(
-    '/',
-    { schema: updateFriendSchema, onRequest: [fastify.jwtAuth] },
-    updateFriendshipStatus,
   );
   fastify.delete<{ Params: IParams }>(
     '/:id',
