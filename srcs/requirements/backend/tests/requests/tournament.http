@@ -1,5 +1,7 @@
 # Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
 
+# Change 'http://localhost:3000/' to 'https://padaria.42.pt/api/' to test through Frontend container
+
 ### TOURNAMENT
 
 ### Get a specific tournament's participants' data
