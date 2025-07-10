@@ -2,10 +2,7 @@
 
 # Change 'http://localhost:3000/' to 'https://padaria.42.pt/api/' to test through Frontend container
 
-### MATCH 
+### LEADERBOARD 
 
-### Get all matches from a user
-GET http://localhost:3000/matches/user/<id> HTTP/1.1
-
-### Get a specific match
-GET http://localhost:3000/matches/<id> HTTP/1.1
+### Get user scores
+GET http://localhost:3000/leaderboard/ HTTP/1.1

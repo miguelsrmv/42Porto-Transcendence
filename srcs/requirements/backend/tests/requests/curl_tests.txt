@@ -1,17 +1,14 @@
-# Get all users from database
-curl http://localhost:3000/users/
-
-### Get user by id
-curl http://localhost:3000/users/<id>
+# Change 'http://localhost:3000/' to 'https://padaria.42.pt/api/' to test through Frontend container
+# Use curl -k to accept self-signed certificates
 
 ### Create a new user
-curl http://localhost:3000/users/create --request POST -H "content-type: application/json" --data '{"username": "newUser3", "email": "newUser2@gmail.com", "password": "secure123441"}'
+curl --request POST http://localhost:3000/users -H "content-type: application/json" --data '{"username": "newUser2", "email": "newUser2@gmail.com", "password": "Secure123441", "repeatPassword": "Secure123441"}'
 
-### Update user info (only username or email, for now)
-curl http://localhost:3000/users/<id> --request PATCH -H "content-type: application/json" --data '{"data": {"username": "modified", "email": "modified@gmail.com"}}'
+### Check if user has 2FA enabled
+curl --request POST http://localhost:3000/users/preLogin -H "content-type: application/json" --data '{"email": "newUser2@gmail.com", "password": "Secure123441"}'
 
-### Delete user from database
-curl --request DELETE http://localhost:3000/users/<id>
+### Login user
+curl --request POST http://localhost:3000/users/login -H "content-type: application/json" --data '{"email": "newUser2@gmail.com", "password": "Secure123441"}'
 
-### Login user and get a JWT token
-curl --request POST http://localhost:3000/users/login -H "content-type: application/json" --data '{"email": "newUser2@gmail.com", "password": "secure123441"}'
+### Login user with 2FA
+curl --request POST http://localhost:3000/users/login2FA -H "content-type: application/json" --data '{"email": "newUser2@gmail.com", "password": "Secure123441", "code": "152436"}'
