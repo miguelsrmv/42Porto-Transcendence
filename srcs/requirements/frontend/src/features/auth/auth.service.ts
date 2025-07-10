@@ -7,11 +7,7 @@
  * to perform these operations.
  */
 
-import {
-  loginErrorMessages,
-  registerErrorMessages,
-  getReadableErrorMessage,
-} from '../../constants/errorMessages.js';
+import { errorMessages, getReadableErrorMessage } from '../../constants/errorMessages.js';
 
 /**
  * @brief Attempts to log in a user.
@@ -161,7 +157,7 @@ async function loginWithout2FA(data: Record<string, string>): Promise<void> {
       if (errorLoginMessageContainer) {
         errorLoginMessageContainer.classList.remove('hidden');
         const errorMessage = await response.json();
-        errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+        errorLoginMessageContainer.innerText = errorMessages[errorMessage.message];
       }
       return;
     }
@@ -216,7 +212,7 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
       if (errorRegisterMessageContainer) {
         errorRegisterMessageContainer.classList.remove('hidden');
         const errorMessage = await response.json();
-        errorRegisterMessageContainer.innerText = registerErrorMessages[errorMessage.message];
+        errorRegisterMessageContainer.innerText = errorMessages[errorMessage.message];
         return;
       }
     }
