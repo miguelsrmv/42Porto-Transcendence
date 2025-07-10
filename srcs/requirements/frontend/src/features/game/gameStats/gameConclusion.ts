@@ -27,7 +27,20 @@ export function triggerEndGameMenu(
   tournamentIsRunning: boolean = false,
 ): void {
   const HUDSideToShow =
-    playType === 'Local Play' || 'Local Tournament Play' ? winningPlayerSide : playerSide;
+    playType === 'Local Play' || playType === 'Local Tournament Play'
+      ? winningPlayerSide
+      : playerSide;
+
+  console.log(
+    'winningPlayerSide: ',
+    winningPlayerSide,
+    ' \nplayerSide: ',
+    playerSide,
+    '\nplayType: ',
+    playType,
+    ' \nHUDSideToShow: ',
+    HUDSideToShow,
+  );
 
   const playerHUD = document.getElementById(`${HUDSideToShow}-hud`);
   if (!playerHUD) {
