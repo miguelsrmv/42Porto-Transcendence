@@ -6,8 +6,7 @@ import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
 import { transformUserUpdate } from '../../utils/helpers';
 import fs from 'fs';
-import util from 'util';
-import { pipeline } from 'stream';
+import { fileTypeFromBuffer } from 'file-type';
 import path from 'path';
 import { getUserRank } from '../services/leaderboard.services';
 import {
@@ -20,6 +19,7 @@ import {
   UserUpdate,
   VerifyToken,
 } from '../../types';
+import { avatarImagePaths } from '../../../scripts/avatarData';
 
 export async function getUserById(
   request: FastifyRequest<{ Params: IParams }>,
@@ -250,6 +250,8 @@ export async function setDefaultAvatar(
   reply: FastifyReply,
 ) {
   if (!request.body.path) return reply.status(400).send({ message: 'Path to avatar required.' });
+  if (!avatarImagePaths.includes(request.body.path))
+    return reply.status(400).send({ message: 'Path to avatar invalid.' });
   await prisma.user.update({
     where: { id: request.user.id },
     data: { avatarUrl: request.body.path },
@@ -257,17 +259,28 @@ export async function setDefaultAvatar(
   reply.send({ message: 'Path to avatar updated successfully.' });
 }
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'multipart/form-data'];
+
 export async function uploadCustomAvatar(
   request: FastifyRequest<{ Body: AvatarData }>,
   reply: FastifyReply,
 ) {
-  const pump = util.promisify(pipeline);
   const parts = request.files();
   const userId = request.user.id;
   const avatarDir = path.resolve(__dirname, '../../../../avatar');
   const filePath = path.join(avatarDir, `${userId}.png`);
   for await (const part of parts) {
-    await pump(part.file, fs.createWriteStream(filePath));
+    if (!part.mimetype || !ALLOWED_MIME_TYPES.includes(part.mimetype))
+      return reply.status(400).send({ message: 'Unsupported file type' });
+    const buffer = await part.toBuffer();
+    if (buffer.length > MAX_FILE_SIZE)
+      return reply.status(400).send({ message: 'File too large. Max 1MB allowed.' });
+    const fileType = await fileTypeFromBuffer(buffer);
+    if (!fileType || !ALLOWED_MIME_TYPES.includes(fileType.mime)) {
+      return reply.status(400).send({ message: 'Invalid file content' });
+    }
+    await fs.promises.writeFile(filePath, buffer);
   }
   await prisma.user.update({
     where: { id: userId },
