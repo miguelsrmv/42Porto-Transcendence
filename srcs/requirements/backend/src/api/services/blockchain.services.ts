@@ -9,7 +9,7 @@ const RPC_URL = 'https://api.avax-test.network/ext/bc/C/rpc'; // C-Chain
 const CONTRACT_ADDRESS = fs
   .readFileSync('/app/data/blockchain/blockchain_address.txt', 'utf-8')
   .trim();
-const PRIVATE_KEY = process.env.PRIVATE_KEY!;
+const PRIVATE_KEY = fs.readFileSync('/run/secrets/private_key', 'utf-8').trim();
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 const contractSigner = new ethers.Contract(CONTRACT_ADDRESS, abi, wallet);
