@@ -35,6 +35,8 @@ services:
       - ./requirements/backend/dist:/app/dist
       - ./requirements/blockchain/conf/output:/app/data/blockchain
       - backend_avatar:/app/avatar
+    secrets:
+      - private_key
     
   blockchain:
     container_name: blockchain
