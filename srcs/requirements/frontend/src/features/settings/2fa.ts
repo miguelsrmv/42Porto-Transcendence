@@ -388,7 +388,7 @@ async function disable2FA(): Promise<boolean> {
   const { tokenElement, passwordElement, twoFAtoggle } = getElements();
   if (!tokenElement || !passwordElement || !twoFAtoggle) {
     console.error('Required elements for disable2FA not found.');
-    showModalError(getReadableErrorMessage('Client error: form elements missing.'));
+    showModalError('Client error: form elements missing');
     return false;
   }
 
@@ -419,7 +419,7 @@ async function disable2FA(): Promise<boolean> {
     return true;
   } catch (error) {
     console.error(`2FA disable network/js error: ${error}`);
-    showModalError('Network error during 2FA disable.');
+    showModalError('Network error during 2FA disable');
     await reset2FAToggleVisuals(); // Revert toggle
     return false;
   }
@@ -433,7 +433,7 @@ async function enable2FA(): Promise<boolean> {
   const { tokenElement, passwordElement, twoFAtoggle } = getElements();
   if (!tokenElement || !passwordElement || !twoFAtoggle) {
     console.error('Required elements for enable2FA not found.');
-    showModalError('Client error: form elements missing.');
+    showModalError('Client error: form elements missing');
     return false;
   }
 
@@ -464,7 +464,7 @@ async function enable2FA(): Promise<boolean> {
     return true;
   } catch (error) {
     console.error(`2FA enable network/js error: ${error}`);
-    showModalError('Network error during 2FA enable.');
+    showModalError('Network error during 2FA enable');
     await reset2FAToggleVisuals(); // Revert toggle
     return false;
   }
