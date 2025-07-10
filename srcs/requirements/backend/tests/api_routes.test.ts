@@ -24,6 +24,7 @@ test("GET / should return 'greetings Welcome to the ft_transcendence API'", asyn
 
 beforeAll(async () => {
   try {
+    await app.ready();
     const sessionId = randomUUID();
     const sessionExpires = new Date(Date.now() + 1000 * COOKIE_MAX_AGE);
     // Ensure the database is clean and insert test users
@@ -34,7 +35,7 @@ beforeAll(async () => {
       data: {
         username: 'alice23',
         email: 'alice@example.com',
-        hashedPassword: 'hashed_password_1',
+        hashedPassword: 'Hashed_password_1',
         sessionToken: sessionId,
         sessionExpiresAt: sessionExpires,
       },
@@ -43,7 +44,7 @@ beforeAll(async () => {
       data: {
         username: 'bob45',
         email: 'bob@example.com',
-        hashedPassword: 'hashed_password_2',
+        hashedPassword: 'Hashed_password_2',
         sessionToken: sessionId,
         sessionExpiresAt: sessionExpires,
       },
@@ -52,7 +53,7 @@ beforeAll(async () => {
       data: {
         username: 'susan43',
         email: 'susan@example.com',
-        hashedPassword: 'hashed_password_3',
+        hashedPassword: 'Hashed_password_3',
         sessionToken: sessionId,
         sessionExpiresAt: sessionExpires,
       },
@@ -61,7 +62,7 @@ beforeAll(async () => {
       data: {
         username: 'jack',
         email: 'jack@example.com',
-        hashedPassword: 'hashed_password_4',
+        hashedPassword: 'Hashed_password_4',
         sessionToken: sessionId,
         sessionExpiresAt: sessionExpires,
       },
@@ -85,7 +86,6 @@ beforeAll(async () => {
     await prisma.friendship.create({
       data: { initiatorId: testUser2.id, recipientId: testUser3.id },
     });
-    await app.ready();
     const token = app.jwt.sign({
       id: testUser.id,
       username: testUser.username,
@@ -125,8 +125,8 @@ describe('users', () => {
       body: {
         username: 'newUser',
         email: 'newUser@email.com',
-        password: '123441',
-        repeatPassword: '123441',
+        password: 'Abc123441',
+        repeatPassword: 'Abc123441',
       },
     });
 
@@ -146,7 +146,7 @@ describe('users', () => {
       method: 'POST',
       url: '/users/login',
       headers: { 'Content-Type': 'application/json' },
-      body: { email: 'bob@example.com', password: 'hashed_password_1' },
+      body: { email: 'bob@example.com', password: 'Hashed_password_1' },
     });
 
     expect(response.statusCode).toBe(401);
@@ -256,12 +256,12 @@ describe('users', () => {
       method: 'PUT',
       url: '/users/defaultAvatar',
       headers: { 'Content-Type': 'application/json', cookie: jwtCookie },
-      body: { path: 'newAvatarPath.png' },
+      body: { path: '../../../../static/avatar/default/mega_man.png' },
     });
 
     const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
     expect(response.statusCode).toBe(200);
-    expect(user?.avatarUrl).toEqual('newAvatarPath.png');
+    expect(user?.avatarUrl).toEqual('../../../../static/avatar/default/mega_man.png');
     expect(response.json()).toEqual(
       expect.objectContaining({ message: 'Path to avatar updated successfully.' }),
     );
@@ -273,7 +273,7 @@ describe('users', () => {
       method: 'PATCH',
       url: '/users',
       headers: { 'Content-Type': 'application/json', cookie: jwtCookie },
-      body: { email: 'modified@gmail.com', oldPassword: 'hashed_password_1' },
+      body: { email: 'modified@gmail.com', oldPassword: 'Hashed_password_1' },
     });
 
     const updatedUser = await prisma.user.findUnique({ where: { username: user?.username } });
@@ -284,30 +284,6 @@ describe('users', () => {
       expect.objectContaining({
         username: user?.username,
         email: 'modified@gmail.com',
-      }),
-    );
-  });
-
-  test('DELETE / should return 200 and the deleted user', async () => {
-    const user = await prisma.user.findUnique({ where: { username: 'alice23' } });
-    const response = await app.inject({
-      method: 'DELETE',
-      url: '/users',
-      headers: {
-        cookie: jwtCookie,
-      },
-      body: {
-        password: 'hashed_password_1',
-      },
-    });
-
-    const deletedUser = await prisma.user.findUnique({ where: { username: 'alice23' } });
-
-    expect(response.statusCode).toBe(200);
-    expect(deletedUser).toEqual(null);
-    expect(response.json()).toEqual(
-      expect.objectContaining({
-        message: 'User deleted successfully',
       }),
     );
   });

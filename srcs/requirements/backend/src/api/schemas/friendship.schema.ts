@@ -1,3 +1,5 @@
+import { LEN_USERNAME } from './user.schema';
+
 export const createFriendSchema = {
   body: {
     type: 'object',
@@ -14,7 +16,7 @@ export const createFriendByUsernameSchema = {
     type: 'object',
     required: ['username'],
     properties: {
-      username: { type: 'string', minLength: 3 },
+      username: { type: 'string', minLength: 3, maxLength: LEN_USERNAME },
     },
     additionalProperties: false,
   },
