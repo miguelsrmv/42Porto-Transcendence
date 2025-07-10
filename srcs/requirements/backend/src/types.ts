@@ -59,8 +59,3 @@ export type FriendCreate = {
 export type FriendCreateUsername = {
   username: string;
 };
-
-export type FriendUpdate = {
-  friendId: string;
-  status: FriendshipStatus;
-};
