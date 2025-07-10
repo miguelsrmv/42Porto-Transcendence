@@ -7,7 +7,7 @@
  * to perform these operations.
  */
 
-import { loginErrorMessages, registerErrorMessages } from '../../constants/errorMessages.js';
+import { errorMessages, getReadableErrorMessage } from '../../constants/errorMessages.js';
 
 /**
  * @brief Attempts to log in a user.
@@ -32,13 +32,23 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
     });
 
     if (!response.ok) {
-      console.error(`HTTP error" ${response.status}`);
+      console.error(`HTTP error: ${response.status}`);
       console.log('Response:', response);
       const errorLoginMessageContainer = document.getElementById('error-login-message');
+
       if (errorLoginMessageContainer) {
+        let message: string =
+          'An unexpected error ocurred. Please refresh the page and retry later.';
+
+        try {
+          const data = await response.json();
+          message = getReadableErrorMessage(data?.message);
+        } catch (e) {
+          console.warn('Failed to parse error response JSON:', e);
+        }
+
         errorLoginMessageContainer.classList.remove('hidden');
-        const errorMessage = await response.json();
-        errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+        errorLoginMessageContainer.innerText = message;
         return;
       }
     }
@@ -147,13 +157,13 @@ async function loginWithout2FA(data: Record<string, string>): Promise<void> {
       if (errorLoginMessageContainer) {
         errorLoginMessageContainer.classList.remove('hidden');
         const errorMessage = await response.json();
-        errorLoginMessageContainer.innerText = loginErrorMessages[errorMessage.message];
+        errorLoginMessageContainer.innerText = errorMessages[errorMessage.message];
       }
       return;
     }
 
     await fetchUserData();
-    window.location.hash = 'main-menu-page'; // Handle success (e.g., redirect)
+    window.location.hash = 'main-menu-page';
   } catch (error) {
     console.error('Login failed:', error);
   }
@@ -202,7 +212,7 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
       if (errorRegisterMessageContainer) {
         errorRegisterMessageContainer.classList.remove('hidden');
         const errorMessage = await response.json();
-        errorRegisterMessageContainer.innerText = registerErrorMessages[errorMessage.message];
+        errorRegisterMessageContainer.innerText = errorMessages[errorMessage.message];
         return;
       }
     }
@@ -224,16 +234,24 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
  *
  * @return A promise that resolves to a boolean indicating the login status.
  */
-export async function userIsLoggedIn(): Promise<boolean> {
+
+export async function userIsLoggedIn(): Promise<boolean | undefined> {
   try {
     const response = await fetch('/api/users/checkLoginStatus', {
       method: 'GET',
       credentials: 'include', // ensures HttpOnly cookie is sent
     });
-    return response.ok; // true if status is in 200–299 range
+
+    if (response.status >= 200 && response.status < 300) {
+      return true;
+    } else if (response.status === 401) {
+      return false;
+    } else {
+      return undefined;
+    }
   } catch (error) {
     console.error('Login check failed:', error);
-    return false;
+    return undefined;
   }
 }
 

@@ -1,24 +1,37 @@
 # Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
 
+# Change 'http://localhost:3000/' to 'https://padaria.42.pt/api/' to test through Frontend container
+
 ### FRIENDSHIP
 
-### Get all friends of a player
-GET http://localhost:3000/players/<id>/friends HTTP/1.1
+### Get all accepted friends of logged in player
+GET http://localhost:3000/friends/ HTTP/1.1
 
-### Add a friend to a player
+### Get pending friend requests of logged in player
+GET http://localhost:3000/friends/pending HTTP/1.1
+
+### Add a friend to logged in player
 POST http://localhost:3000/friends/ HTTP/1.1
 content-type: application/json
 
 {
-	"initiatorId": "<id>",
-	"recipientId": "<id>"
+	"friendId": "<id>"
 }
 
-### Update a friendship status
-PATCH http://localhost:3000/friends/<id> HTTP/1.1
+### Add a friend to logged in player by username
+POST http://localhost:3000/friends/username HTTP/1.1
 content-type: application/json
 
 {
+	"username": "username"
+}
+
+### Update a friendship status
+PATCH http://localhost:3000/friends/ HTTP/1.1
+content-type: application/json
+
+{
+	"friendId": "<id>",
 	"status": "ACCEPTED"
 }
 

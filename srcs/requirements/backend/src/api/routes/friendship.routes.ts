@@ -1,23 +1,16 @@
 import { FastifyInstance } from 'fastify';
+import { createFriendByUsernameSchema, createFriendSchema } from '../schemas/friendship.schema';
 import {
-  createFriendByUsernameSchema,
-  createFriendSchema,
-  updateFriendSchema,
-} from '../schemas/friendship.schema';
-import {
+  acceptFriendship,
   addFriend,
   addFriendByUsername,
   deleteFriend,
-  FriendCreate,
-  FriendCreateUsername,
-  FriendUpdate,
   getUserFriends,
   getUserPendingFriends,
-  updateFriendshipStatus,
 } from '../controllers/friendship.controller';
 import { getByIdSchema } from '../schemas/global.schema';
+import { FriendCreate, FriendCreateUsername } from '../../types';
 
-// NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function friendRoutes(fastify: FastifyInstance) {
   fastify.get('/', { onRequest: [fastify.jwtAuth] }, getUserFriends);
   fastify.get('/pending', { onRequest: [fastify.jwtAuth] }, getUserPendingFriends);
@@ -31,10 +24,10 @@ export async function friendRoutes(fastify: FastifyInstance) {
     { schema: createFriendByUsernameSchema, onRequest: [fastify.jwtAuth] },
     addFriendByUsername,
   );
-  fastify.patch<{ Body: FriendUpdate }>(
-    '/',
-    { schema: updateFriendSchema, onRequest: [fastify.jwtAuth] },
-    updateFriendshipStatus,
+  fastify.patch<{ Body: FriendCreate }>(
+    '/accept',
+    { schema: createFriendSchema, onRequest: [fastify.jwtAuth] },
+    acceptFriendship,
   );
   fastify.delete<{ Params: IParams }>(
     '/:id',

@@ -39,7 +39,12 @@ import { editGridLayout } from './localTournamentPlayerMenu.js';
 import { getRandomInt, wait } from '../../utils/helpers.js';
 import { loadView } from '../../core/viewLoader.js';
 import { showTournamentStatus } from '../../ui/tournamentStatus/tournamentStatus.js';
-import { showWaitingModal, waitForNextTournamentGameCountdown } from '../../ui/waitingNextGame.js';
+import {
+  displayTournamentTree,
+  showWaitingModal,
+  waitForNextTournamentGameCountdown,
+} from '../../ui/waitingNextGame.js';
+import { showHowToPlay } from '../../ui/controls.js';
 
 const characterList = getCharacterList();
 
@@ -53,11 +58,7 @@ let localTournamentIsRunning: boolean = false;
  * @returns Promise<void>
  */
 export async function initializeView(): Promise<void> {
-  if (!(await checkLoginStatus())) {
-    alert('You need to be logged in to access this page');
-    navigate('landing-page');
-    return;
-  }
+  showHowToPlay('Local Tournament Play');
 
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
@@ -192,6 +193,7 @@ async function initializeLocalTournament(tournamentSettings: tournamentSettings)
     endLocalGameIfRunning();
     initializeLocalGame(gameSettings, localTournamentIsRunning);
     await waitForGameEnd;
+    if (match === 4 || match === 6) await displayTournamentTree();
     await waitForNextTournamentGameCountdown();
   }
 }
@@ -325,8 +327,9 @@ function listenToGameEnd(
         player2Number,
         event.detail.matchStats,
       );
-      if (matchPlayed === 4 || matchPlayed == 6)
+      if (matchPlayed === 4 || matchPlayed == 6) {
         showTournamentStatus(convertTournamentPlayer(tournamentSettings.players));
+      }
       resolve(event.detail);
     };
 

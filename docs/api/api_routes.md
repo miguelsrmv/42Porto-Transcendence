@@ -7,12 +7,10 @@
 | `GET`    | `/users/:id`              |    `id` user id    |                                              | Get a specific user public data                                 |
 | `POST`   | `/users`                  |                    | username, email, password and repeatPassword | Create a new user                                               |
 | `PATCH`  | `/users`                  |                    |                data to update                | Update own user data                                            |
-| `DELETE` | `/users/:id`              |    `id` user id    |                                              | Delete a user                                                   |
-| `GET`    | `/users/isOnline/:id`     |    `id` user id    |                                              | Check if a user is online                                       |
 | `POST`   | `/users/preLogin`         |                    |              email and password              | Check if user has 2FA enabled                                   |
 | `POST`   | `/users/login`            |                    |              email and password              | Get JWT (if user is valid)                                      |
 | `POST`   | `/users/login2FA`         |                    |          email, password and token           | Get JWT (if user and 2FA token are valid)                       |
-| `DELETE` | `/users/logout`           |                    |                                              | Logout user                                                     |
+| `PATCH`  | `/users/logout`           |                    |                                              | Logout user                                                     |
 | `GET`    | `/users/checkLoginStatus` |                    |                                              | Check if user is logged in                                      |
 | `GET`    | `/users/:id/stats`        |    `id` user id    |                                              | Get match stats of that user                                    |
 | `POST`   | `/users/2FA/verify`       |                    |             token (and password)             | Checks if user enters valid token for 2FA                       |
@@ -20,14 +18,14 @@
 | `GET`    | `/users/2FA/setup`        |                    |                                              | Sets up 2FA for the user                                        |
 | `GET`    | `/users/2FA/disable`      |                    |                                              | Disables 2FA for the user                                       |
 | `GET`    | `/users/getAvatarPath`    |                    |                                              | Get user's avatar image path                                    |
-| `PUT`    | `/users/defaultAvatar`    |                    |                     path                     | Updates avatar image path to a default                          |
-| `PUT`    | `/users/customAvatar`     |                    |                 avatar data                  | Uploads custom avatar image                                     |
+| `PATCH`  | `/users/defaultAvatar`    |                    |                     path                     | Updates avatar image path to a default                          |
+| `PATCH`  | `/users/customAvatar`     |                    |                 avatar data                  | Uploads custom avatar image                                     |
 | `GET`    | `/leaderboard`            |                    |                                              | Get leaderboard                                                 |
 | `GET`    | `/friends`                |                    |                                              | Get all friends of logged in user                               |
 | `GET`    | `/friends/pending`        |                    |                                              | Get pending friends of logged in user                           |
 | `POST`   | `/friends`                |                    |                   friendId                   | Create a friendship between the logged in user and another user |
 | `POST`   | `/friends/username`       |                    |                   username                   | Create a friendship between the logged in user and another user |
-| `PATCH`  | `/friends`                |                    |             friendId and status              | Update friendship status                                        |
+| `PATCH`  | `/friends/accept`         |                    |                   friendId                   | Change friendship status between users to accepted              |
 | `DELETE` | `/friends/:id`            |   `id` friend id   |                                              | Delete a friendship                                             |
 | `GET`    | `/matches/user/:id`       |    `id` user id    |                                              | Get all matches from a specific user                            |
 | `GET`    | `/matches/:id`            |   `id` match id    |                                              | Get a specific match                                            |
@@ -115,27 +113,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Delete a user (Protected):** `DELETE /users/:id`
-
-### Response example
-
-```json
-{
-  "email": "deleted_user@email.com",
-  "username": "deleted_username"
-}
-```
-
-- **Check if a user is online (Protected):** `GET /users/isOnline/:id`
-
-### Response example
-
-```json
-{
-  "isOnline": true
-}
-```
-
 - **Check if user has 2FA enabled:** `POST /users/preLogin`
 
 ### Request body example
@@ -208,7 +185,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Logout a user (Protected):** `DELETE /users/logout`
+- **Logout a user (Protected):** `PATCH /users/logout`
 
 ### Response example
 
@@ -277,7 +254,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Updates avatar image path to a default (Protected):** `PUT /users/defaultAvatar`
+- **Updates avatar image path to a default (Protected):** `PATCH /users/defaultAvatar`
 
 ### Request body example
 
@@ -295,7 +272,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Uploads custom avatar image (Protected):** `PUT /users/customAvatar`
+- **Uploads custom avatar image (Protected):** `PATCH /users/customAvatar`
 
 ### Request body example
 
@@ -393,14 +370,21 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Update a friendship status (Protected):** `PATCH /friends`
+- **Accept a friendship (Protected):** `PATCH friends/accept`
 
 ### Request body example
 
 ```json
 {
-  "friendId": "d232f55f-5000-440e-ae20-20d2fa7c2dbe",
-  "status": "PENDING" // or "ACCEPTED", "REJECTED"
+  "friendId": "d232f55f-5000-440e-ae20-20d2fa7c2dbe"
+}
+```
+
+### Response example
+
+```json
+{
+  "message": "Friendship accepted"
 }
 ```
 
@@ -442,8 +426,6 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
     "user2Alias": "anna",
     "winnerId": "b3d2f55f-5000-440e-ae20-20d2fa732see",
     "createdAt": "2025-06-04T09:57:41.096Z",
-    "updatedAt": "2025-06-04T09:57:41.096Z",
-    "settings": "{\"playType\":\"Remote Play\",\"alias1\":\"ana123\",\"alias2\":\"chris123\",\"paddleColour1\":\"#ff0000\",\"paddleColour2\":\"#ff0000\",\"background\":\"Forest\"}",
     "stats": "{\"left\":{\"goals\":0,\"sufferedGoals\":5,\"saves\":0,\"powersUsed\":0},\"right\":{\"goals\":5,\"sufferedGoals\":0,\"saves\":0,\"powersUsed\":0},\"maxSpeed\":353.5533905932738}"
   }
 ]
@@ -469,7 +451,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 
 ## Tournaments
 
-- **Get a specific tournament:** `/tournaments/:id`
+- **Get a specific tournament:** `GET /tournaments/:id`
 
 ### Response example
 
@@ -484,7 +466,7 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Get user's latest 3 tournaments:** `/tournaments/user:id`
+- **Get user's latest 3 tournaments:** `GET /tournaments/user:id`
 
 ### Response example
 
