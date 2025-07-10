@@ -23,7 +23,7 @@ import {
 import { gameStats } from '../gameStats/gameStatsTypes.js';
 
 /** @brief Speed of the ball in the game. */
-export const SPEED = 9999;
+export const SPEED = 250;
 
 /** @brief Height of the game canvas. */
 export const CANVAS_HEIGHT = 720;

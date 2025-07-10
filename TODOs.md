@@ -1,7 +1,5 @@
 # Frontend
-- Powerbar animations
-- "Aesthetic" API routes
-
+t 
 # Backend
 - Review API endpoints' output
  - GET /friends, GET /users/2FA/setup, GET /users/checkLoginStatus, GET /matches/user/:id
@@ -13,6 +11,4 @@
 - Update documentation
 
 # Before submission
-- Make sure ball speed is normal
 - Check TODOs throughout code
-- Remove console logs for received data for remote games
