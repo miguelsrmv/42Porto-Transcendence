@@ -17,6 +17,7 @@ import {
 import { initializeLocalGame } from '../game/localGameApp/game.js';
 
 import { loadView } from '../../core/viewLoader.js';
+import { showHowToPlay } from '../../ui/controls.js';
 
 /**
  * @brief Initializes view for local play
@@ -24,6 +25,8 @@ import { loadView } from '../../core/viewLoader.js';
  * This function sets up the pre-game page for local play
  */
 export async function initializeView(): Promise<void> {
+  showHowToPlay('Local Play');
+
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
 

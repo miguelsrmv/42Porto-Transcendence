@@ -272,6 +272,9 @@ export function initializeLocalGame(
   tournamentIsRunning = tournamentRunning;
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
+  // HACK:
+  deactivatePowerBarAnimation('left');
+  deactivatePowerBarAnimation('right');
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
   stats.reset();
