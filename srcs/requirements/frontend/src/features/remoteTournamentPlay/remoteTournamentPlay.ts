@@ -15,7 +15,7 @@ import { initializeRemoteGame } from '../game/remoteGameApp/remoteGame.js';
 import { checkLoginStatus, wait } from '../../utils/helpers.js';
 import { navigate } from '../../core/router.js';
 import { fadeIn, fadeOut } from '../../ui/animations.js';
-
+import { showHowToPlay } from '../../ui/controls.js';
 /**
  * @brief Initializes view for tournament play
  *
@@ -27,6 +27,8 @@ export async function initializeView(): Promise<void> {
     navigate('landing-page');
     return;
   }
+
+  showHowToPlay('Remote Tournament Play');
 
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
