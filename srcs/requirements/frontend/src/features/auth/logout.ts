@@ -9,14 +9,14 @@
 /**
  * @brief Logs out the current user.
  *
- * This function sends a DELETE request to the server to log out the user. It handles any
+ * This function sends a PATCH request to the server to log out the user. It handles any
  * errors that occur during the logout process by logging them to the console.
  */
 
 export async function logoutUser() {
   try {
     await fetch('/api/users/logout', {
-      method: 'DELETE',
+      method: 'PATCH',
       credentials: 'include',
     });
     window.localStorage.clear();

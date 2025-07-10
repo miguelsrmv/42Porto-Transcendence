@@ -23,7 +23,7 @@ import {
 import { gameStats } from '../gameStats/gameStatsTypes.js';
 
 /** @brief Speed of the ball in the game. */
-export const SPEED = 9999;
+export const SPEED = 250;
 
 /** @brief Height of the game canvas. */
 export const CANVAS_HEIGHT = 720;
@@ -75,7 +75,7 @@ let playType: playType;
 
 let tournamentIsRunning: boolean = false;
 
-let powerBarInterval: number;
+export let powerBarInterval: number[] = [];
 
 /** @brief Game statistics. */
 export let stats: gameStats = new gameStats();
@@ -224,7 +224,9 @@ function setPlayers(
       player.attack.lastUsed = Date.now();
     }
 
-    powerBarInterval = window.setInterval(() => {
+    let powerBarNumber: number = player.side === 'left' ? 0 : 1;
+
+    powerBarInterval[powerBarNumber] = window.setInterval(() => {
       if (player.attack && myGameArea.state === gameState.playing) {
         const lastUsed: number = player.attack.lastUsed;
         const coolDown: number = player.attack.attackCooldown;
@@ -237,7 +239,6 @@ function setPlayers(
           player.attack.attackIsAvailable = true;
           if (!filledAnimationIsOn) {
             activatePowerBarAnimation(`${player.side}`);
-            console.log();
             filledAnimationIsOn = true;
           }
         } else {
@@ -272,6 +273,9 @@ export function initializeLocalGame(
   tournamentIsRunning = tournamentRunning;
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
+  // HACK:
+  deactivatePowerBarAnimation('left');
+  deactivatePowerBarAnimation('right');
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
   stats.reset();
@@ -406,7 +410,8 @@ export function endLocalGameIfRunning(): void {
   stats.reset();
   deactivatePowerBarAnimation('left');
   deactivatePowerBarAnimation('right');
-  clearInterval(powerBarInterval);
+  clearInterval(powerBarInterval[0]);
+  clearInterval(powerBarInterval[1]);
   myGameArea.inputHandler?.disable();
   myGameArea.stop();
 }

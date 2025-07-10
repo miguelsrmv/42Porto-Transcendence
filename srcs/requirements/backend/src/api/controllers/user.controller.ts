@@ -212,7 +212,7 @@ export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply:
 
 export async function checkLoginStatus(request: FastifyRequest, reply: FastifyReply) {
   const token = request.cookies.access_token;
-  if (token) reply.send('User is logged in');
+  if (token) reply.send({ message: 'User is logged in' });
 }
 
 export async function logout(request: FastifyRequest, reply: FastifyReply) {

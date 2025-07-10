@@ -3,7 +3,7 @@
  * @brief Handles Two-Factor Authentication (2FA) UI and API interactions.
  */
 
-import { twoFAErrorMessages } from '../../constants/errorMessages.js';
+import { getReadableErrorMessage } from '../../constants/errorMessages.js';
 
 /**
  * @brief Retrieves and centralizes DOM elements used in the 2FA modal.
@@ -42,17 +42,11 @@ function getElements() {
  * @param messageKey The key for a predefined error message.
  * @param customMessage A custom error message to display (optional).
  */
-function showModalError(messageKey: string | undefined, customMessage?: string) {
+function showModalError(messageKey: string) {
   const { errorContainer } = getElements();
   if (errorContainer) {
     errorContainer.classList.remove('hidden');
-    if (customMessage) {
-      errorContainer.innerText = customMessage;
-    } else if (messageKey && twoFAErrorMessages[messageKey]) {
-      errorContainer.innerText = twoFAErrorMessages[messageKey];
-    } else {
-      errorContainer.innerText = 'An unexpected error occurred.';
-    }
+    errorContainer.innerText = getReadableErrorMessage(messageKey);
   }
 }
 
@@ -363,10 +357,7 @@ async function toggleQRModalView(intendingToEnable: boolean): Promise<void> {
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'SETUP_REQUEST_FAILED' }));
-        showModalError(
-          errorData.message,
-          !twoFAErrorMessages[errorData.message] ? 'Failed to load QR code.' : undefined,
-        );
+        showModalError(errorData.message);
         qrCodeImage.classList.add('hidden');
         return;
       }
@@ -375,7 +366,6 @@ async function toggleQRModalView(intendingToEnable: boolean): Promise<void> {
       qrCodeImage.alt = '2FA QR Code';
     } catch (error) {
       console.error(`QR Code get error: ${error}`);
-      showModalError(undefined, 'Network error while fetching QR code.');
       qrCodeImage.classList.add('hidden');
     }
   } else {
@@ -398,7 +388,7 @@ async function disable2FA(): Promise<boolean> {
   const { tokenElement, passwordElement, twoFAtoggle } = getElements();
   if (!tokenElement || !passwordElement || !twoFAtoggle) {
     console.error('Required elements for disable2FA not found.');
-    showModalError(undefined, 'Client error: form elements missing.');
+    showModalError('Client error: form elements missing');
     return false;
   }
 
@@ -420,12 +410,7 @@ async function disable2FA(): Promise<boolean> {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'DISABLE_REQUEST_FAILED' }));
       console.error('2FA disable API error:', response.status, errorData);
-      showModalError(
-        errorData.message,
-        !twoFAErrorMessages[errorData.message]
-          ? `Failed to disable 2FA (${response.status}).`
-          : undefined,
-      );
+      showModalError(errorData.message);
       await reset2FAToggleVisuals(); // Revert toggle to actual server state
       return false;
     }
@@ -434,7 +419,7 @@ async function disable2FA(): Promise<boolean> {
     return true;
   } catch (error) {
     console.error(`2FA disable network/js error: ${error}`);
-    showModalError(undefined, 'Network error during 2FA disable.');
+    showModalError('Network error during 2FA disable');
     await reset2FAToggleVisuals(); // Revert toggle
     return false;
   }
@@ -448,7 +433,7 @@ async function enable2FA(): Promise<boolean> {
   const { tokenElement, passwordElement, twoFAtoggle } = getElements();
   if (!tokenElement || !passwordElement || !twoFAtoggle) {
     console.error('Required elements for enable2FA not found.');
-    showModalError(undefined, 'Client error: form elements missing.');
+    showModalError('Client error: form elements missing');
     return false;
   }
 
@@ -470,12 +455,7 @@ async function enable2FA(): Promise<boolean> {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'VERIFY_REQUEST_FAILED' }));
       console.error('2FA enable/verify API error:', response.status, errorData);
-      showModalError(
-        errorData.message,
-        !twoFAErrorMessages[errorData.message]
-          ? `Failed to enable 2FA (${response.status}).`
-          : undefined,
-      );
+      showModalError(errorData.message);
       await reset2FAToggleVisuals();
       return false;
     }
@@ -484,7 +464,7 @@ async function enable2FA(): Promise<boolean> {
     return true;
   } catch (error) {
     console.error(`2FA enable network/js error: ${error}`);
-    showModalError(undefined, 'Network error during 2FA enable.');
+    showModalError('Network error during 2FA enable');
     await reset2FAToggleVisuals(); // Revert toggle
     return false;
   }

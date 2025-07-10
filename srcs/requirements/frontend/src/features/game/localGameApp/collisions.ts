@@ -7,6 +7,7 @@ import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { playType } from '../gameSettings/gameSettings.types.js';
+import { powerBarInterval } from './game.js';
 
 /**
  * Maximum speed a ball can reach.
@@ -133,6 +134,8 @@ export async function checkGoal(
     await resetRound(leftPlayer, rightPlayer, gameArea);
   }
   if (eitherPlayerHasWon(leftPlayer, rightPlayer)) {
+    clearInterval(powerBarInterval[0]);
+    clearInterval(powerBarInterval[1]);
     endGame(
       leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer,
       gameArea,
