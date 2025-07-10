@@ -12,3 +12,4 @@ dev.db
 **/broadcast/
 settings.json
 avatar/
+/secrets

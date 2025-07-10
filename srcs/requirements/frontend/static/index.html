@@ -53,7 +53,7 @@
         <button
           id="enter-button"
           data-target="main-menu-template"
-          class="text-5xl text-white md:text-6xl lg:text-7xl font-serpentine absolute bottom-[10vh] md:bottom-[15vh] left-1/2 -translate-x-1/2 opacity-0 invisible transition-all duration-500 ease-in-out hover:text-gray-700 hover:scale-105 active:scale-100"
+          class="cursor-pointer text-5xl text-white md:text-6xl lg:text-7xl font-serpentine absolute bottom-[10vh] md:bottom-[15vh] left-1/2 -translate-x-1/2 opacity-0 invisible transition-all duration-500 ease-in-out hover:text-gray-700 hover:scale-105 active:scale-100"
         >
           Enter
         </button>
@@ -418,24 +418,35 @@
       </div>
       <div
         id="menu-helper-text"
-        class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine text-white"
+        class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine text-white mb-3"
       ></div>
     </div>
   </template>
 
   <template id="game-menu-template">
     <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center">
-      <div id="game-menu-inner" class="w-[85%] h-[95%] flex flex-col overflow-auto">
+      <div id="game-menu-inner" class="w-[80%] h-[90%] flex flex-col overflow-hidden">
         <!-- Game Type Selection -->
-        <div id="game-type-selection" class="flex-grow p-6 flex flex-col -mt-4 min-w-[800px]">
-          <h2 class="text-4xl font-bold font-serpentine text-center mb-8 text-white">
-            Select Your Game
-          </h2>
-          <div class="grid grid-cols-2 gap-8 flex-1 min-w-[800px]">
+        <div
+          id="game-type-selection"
+          class="flex-grow p-6 flex flex-col -mt-4 min-w-[800px] justify-between"
+        >
+          <div class="flex justify-between items-center mb-8">
+            <h2 class="text-4xl font-bold font-serpentine text-white text-center flex-1">
+              Select Your Game
+            </h2>
+            <div
+              id="how-to"
+              class="cursor-pointer text-sm text-white font-serpentine ml-4 whitespace-nowrap"
+            >
+              How to play?
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-8 flex-1 min-w-[600px]">
             <!-- Classic Pong Button -->
             <button id="classic-pong-button" class="game-type-button group">
               <div
-                class="relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-blue-500"
+                class="cursor-pointer relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-blue-500"
               >
                 <img
                   src="/static/images/pokemon_trainer_female.png"
@@ -458,7 +469,7 @@
             <!-- Crazy Pong Button -->
             <button id="crazy-pong-button" class="game-type-button group">
               <div
-                class="relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-red-500"
+                class="cursor-pointer relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-red-500"
               >
                 <img
                   src="/static/images/pokemon_trainer_male.png"
@@ -482,21 +493,21 @@
 
         <!-- Game Settings Menu -->
         <div id="game-settings-menu" class="flex-grow flex flex-col hidden">
-          <div id="settings-columns" class="flex flex-row gap-6 h-full overflow-hidden">
+          <div id="settings-columns" class="flex flex-row gap-6 h-[90%]">
             <!-- Player 1 Settings -->
             <div
               id="player-1-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-red-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-red-500/30 hover:-translate-y-1"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-red-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-red-400">
                 Player 1
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-1-name" class="mb-6 w-3/4">
+                <div id="player-1-name" class="mb-3 w-3/4">
                   <label
                     id="player-1-alias-label"
                     for="player-1-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -506,7 +517,7 @@
                     placeholder="Player"
                   />
                 </div>
-                <div id="player-1-paddle-colour" class="mt-6 mb-6 w-3/4 text-center">
+                <div id="player-1-paddle-colour" class="mt-3 mb-3 w-3/4 text-center">
                   <label
                     id="player-1-paddle-colour-input-label"
                     for="player-1-paddle-colour-input"
@@ -520,20 +531,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-1-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-1-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-1" class="flex items-center gap-6">
                     <button
                       id="prev-character-1"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-1"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-red-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-red-400"
                     >
                       <img
                         id="character-img-1"
@@ -544,7 +555,7 @@
                     </div>
                     <button
                       id="next-character-1"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -562,15 +573,15 @@
               id="player-2-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-blue-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-blue-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-blue-400">
                 Player 2
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-2-name" class="mb-6 w-3/4">
+                <div id="player-2-name" class="mb-3 w-3/4">
                   <label
                     id="player-2-alias-label"
                     for="player-2-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -580,7 +591,7 @@
                     placeholder="Opponent"
                   />
                 </div>
-                <div id="player-2-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-2-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
                     id="player-2-paddle-colour-input-label"
                     for="player-2-paddle-colour-input"
@@ -594,20 +605,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-2-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-2-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-2" class="flex items-center gap-6">
                     <button
                       id="prev-character-2"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-2"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-blue-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-blue-400"
                     >
                       <img
                         id="character-img-2"
@@ -618,7 +629,7 @@
                     </div>
                     <button
                       id="next-character-2"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -635,15 +646,15 @@
               id="player-3-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-green-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-1 hidden"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-green-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-green-400">
                 Player 3
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-3-name" class="mb-6 w-3/4">
+                <div id="player-3-name" class="mb-3 w-3/4">
                   <label
                     id="player-3-alias-label"
                     for="player-3-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -653,7 +664,7 @@
                     placeholder="Player 3"
                   />
                 </div>
-                <div id="player-3-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-3-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
                     id="player-3-paddle-colour-input-label"
                     for="player-3-paddle-colour-input"
@@ -667,20 +678,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-3-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-3-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-3" class="flex items-center gap-6">
                     <button
                       id="prev-character-3"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-3"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-green-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-green-400"
                     >
                       <img
                         id="character-img-3"
@@ -691,7 +702,7 @@
                     </div>
                     <button
                       id="next-character-3"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -708,15 +719,15 @@
               id="player-4-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-yellow-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/30 hover:-translate-y-1 hidden"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-yellow-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-yellow-400">
                 Player 4
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-4-name" class="mb-6 w-3/4">
+                <div id="player-4-name" class="mb-3 w-3/4">
                   <label
                     id="player-4-alias-label"
                     for="player-4-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -726,7 +737,7 @@
                     placeholder="Player 4"
                   />
                 </div>
-                <div id="player-4-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-4-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
                     id="player-4-paddle-colour-input-label"
                     for="player-4-paddle-colour-input"
@@ -740,20 +751,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-4-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-4-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-4" class="flex items-center gap-6">
                     <button
                       id="prev-character-4"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-4"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-yellow-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-yellow-400"
                     >
                       <img
                         id="character-img-4"
@@ -764,7 +775,7 @@
                     </div>
                     <button
                       id="next-character-4"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -781,15 +792,15 @@
               id="player-5-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-1 hidden"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-purple-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-purple-400">
                 Player 5
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-5-name" class="mb-6 w-3/4">
+                <div id="player-5-name" class="mb-3 w-3/4">
                   <label
                     id="player-5-alias-label"
                     for="player-5-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -799,7 +810,7 @@
                     placeholder="Player 5"
                   />
                 </div>
-                <div id="player-5-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-5-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
                     id="player-5-paddle-colour-input-label"
                     for="player-5-paddle-colour-input"
@@ -813,20 +824,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-5-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-5-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-5" class="flex items-center gap-6">
                     <button
                       id="prev-character-5"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-5"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-purple-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-purple-400"
                     >
                       <img
                         id="character-img-5"
@@ -837,7 +848,7 @@
                     </div>
                     <button
                       id="next-character-5"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -853,15 +864,15 @@
               id="player-6-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-gray-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-gray-500/30 hover:-translate-y-1 hidden"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-gray-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-gray-400">
                 Player 6
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-6-name" class="mb-6 w-3/4">
+                <div id="player-6-name" class="mb-3 w-3/4">
                   <label
                     id="player-6-alias-label"
                     for="player-6-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -871,7 +882,7 @@
                     placeholder="Player 6"
                   />
                 </div>
-                <div id="player-6-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-6-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
                     id="player-6-paddle-colour-input-label"
                     for="player-6-paddle-colour-input"
@@ -885,20 +896,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-6-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-6-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-6" class="flex items-center gap-6">
                     <button
                       id="prev-character-6"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-6"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-gray-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-gray-400"
                     >
                       <img
                         id="character-img-6"
@@ -909,7 +920,7 @@
                     </div>
                     <button
                       id="next-character-6"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -925,15 +936,15 @@
               id="player-7-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-teal-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-1 hidden"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-teal-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-teal-400">
                 Player 7
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-7-name" class="mb-6 w-3/4">
+                <div id="player-7-name" class="mb-3 w-3/4">
                   <label
                     id="player-7-alias-label"
                     for="player-7-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -943,7 +954,7 @@
                     placeholder="Player 7"
                   />
                 </div>
-                <div id="player-7-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-7-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
                     id="player-7-paddle-colour-input-label"
                     for="player-7-paddle-colour-input"
@@ -957,20 +968,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-7-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-7-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-7" class="flex items-center gap-6">
                     <button
                       id="prev-character-7"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-7"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-teal-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-teal-400"
                     >
                       <img
                         id="character-img-7"
@@ -981,7 +992,7 @@
                     </div>
                     <button
                       id="next-character-7"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -997,15 +1008,15 @@
               id="player-8-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-cyan-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/30 hover:-translate-y-1 hidden"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-cyan-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-cyan-400">
                 Player 8
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-8-name" class="mb-6 w-3/4">
+                <div id="player-8-name" class="mb-3 w-3/4">
                   <label
                     id="player-8-alias-label"
                     for="player-8-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
@@ -1015,7 +1026,7 @@
                     placeholder="Player 8"
                   />
                 </div>
-                <div id="player-8-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-8-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
                     id="player-8-paddle-colour-input-label"
                     for="player-8-paddle-colour-input"
@@ -1029,20 +1040,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-8-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-8-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
                   <div id="character-select-8" class="flex items-center gap-6">
                     <button
                       id="prev-character-8"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-8"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-cyan-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-cyan-400"
                     >
                       <img
                         id="character-img-8"
@@ -1053,7 +1064,7 @@
                     </div>
                     <button
                       id="next-character-8"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -1071,7 +1082,7 @@
               id="board-settings-content"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-1"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-purple-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-purple-400">
                 Board Background
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
@@ -1099,13 +1110,13 @@
                 <div class="flex items-center mt-4 gap-4">
                   <button
                     id="prev-background"
-                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
+                    class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
                   >
                     &lt; Previous
                   </button>
                   <button
                     id="next-background"
-                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
+                    class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
                   >
                     Next &gt;
                   </button>
@@ -1116,10 +1127,10 @@
         </div>
 
         <!-- Play Button -->
-        <div id="play-button-container" class="flex justify-center mt-4">
+        <div id="play-button-container" class="flex justify-center">
           <button
             id="play-button"
-            class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider hidden"
+            class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider hidden"
           >
             Play Game!
           </button>
@@ -1158,7 +1169,7 @@
               </div>
               <button
                 id="add-friend-button"
-                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center"
+                class="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center"
               >
                 <span class="mr-2">+</span> Add Friend
               </button>
@@ -1232,7 +1243,7 @@
       <div class="w-1/4 text-center">
         <button
           id="remove-friend-button"
-          class="bg-gray-600 hover:bg-red-600 text-gray-300 hover:text-white p-2 rounded-full transition-colors duration-200"
+          class="cursor-pointer bg-gray-600 hover:bg-red-600 text-gray-300 hover:text-white p-2 rounded-full transition-colors duration-200"
           aria-label="Remove friend"
           title="Remove friend"
         >
@@ -1271,13 +1282,13 @@
       <div class="flex space-x-2">
         <button
           id="friend-request-accept-button"
-          class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
+          class="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
         >
           Accept
         </button>
         <button
           id="friend-request-decline-button"
-          class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
+          class="cursor-pointer bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
         >
           Decline
         </button>
@@ -1332,7 +1343,7 @@
             </div>
 
             <div class="bg-gray-700 rounded-lg p-6 shadow-md overflow-hidden mb-6">
-              <h3 class="text-xl font-serpentine text-white mb-4">Recent Matches</h3>
+              <h3 class="text-xl font-serpentine text-white mb-4">Recent Remote Matches</h3>
               <div id="recent-matches" class="space-y-3">
                 <!-- Recent match items will be populated here -->
               </div>
@@ -1554,13 +1565,13 @@
             <a
               href="#main-menu-page"
               id="go-back-to-main-menu-button"
-              class="bg-gray-800 text-gray-700 border-gray-300 hover:bg-gray-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider mr-6"
+              class="cursor-pointer bg-gray-800 text-gray-700 border-gray-300 hover:bg-gray-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider mr-6"
             >
               Go back to main menu
             </a>
             <button
               id="play-again-button"
-              class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider ml-6"
+              class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider ml-6"
             >
               Play another Game!
             </button>
@@ -1588,7 +1599,7 @@
             >&#8617;</span
           >
           <div
-            class="absolute inset-0 bg-gradient-to-r from-gray-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
+            class="cursor-pointer absolute inset-0 bg-gradient-to-r from-gray-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
           ></div>
         </div>
         <div
@@ -1601,7 +1612,7 @@
         <span id="player-name" class="font-semibold">Username</span>
         <button
           id="nav-settings-button"
-          class="rounded-full overflow-hidden"
+          class="cursor-pointer rounded-full overflow-hidden"
           style="width: 40px; height: 40px"
         >
           <img
@@ -1664,7 +1675,7 @@
   <template id="settings-template">
     <div id="player-global-settings" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
       <div class="flex flex-row gap-6 h-full">
-        <div class="flex flex-col w-1/3 h-full min-w-[400px] min-h-[800px]">
+        <div class="flex flex-col w-1/3 h-full min-w-[400px]">
           <div
             id="player-avatar-settings"
             class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
@@ -1678,7 +1689,7 @@
             >
               <button
                 id="previous-avatar"
-                class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 mr-2 text-4xl"
+                class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 mr-2 text-4xl"
               >
                 &lt
               </button>
@@ -1694,7 +1705,7 @@
               </div>
               <button
                 id="next-avatar"
-                class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 ml-2 text-4xl"
+                class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 ml-2 text-4xl"
               >
                 &gt
               </button>
@@ -1703,14 +1714,14 @@
               <input type="file" id="customAvatarInput" accept="image/*" style="display: none" />
               <button
                 id="avatar-submit-button"
-                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+                class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
               >
                 Change Avatar
               </button>
             </div>
           </div>
         </div>
-        <div class="flex flex-col w-full h-full min-w-[800px] min-h-[800px]">
+        <div class="flex flex-col w-full h-full min-w-[800px] overflow-y-scroll">
           <div
             id="user-account-settings"
             class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
@@ -1721,7 +1732,7 @@
 
             <div
               id="settings-container"
-              class="flex flex-col h-3/5 justify-center items-center bg-gray-700 rounded-lg gap-6"
+              class="flex flex-col h-4/5 justify-center items-center bg-gray-700 rounded-lg gap-4"
             >
               <div class="bg-gray-800 rounded-lg p-4 text-center w-4/5">
                 <label
@@ -1787,7 +1798,7 @@
             <div class="flex p-4 justify-center items-center gap-2">
               <button
                 id="settings-submit-button"
-                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+                class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
               >
                 Submit
               </button>
@@ -1911,7 +1922,7 @@
 
   <template id="recent-matches-template">
     <div
-      class="recent-match flex justify-between items-center bg-gray-800 rounded-lg p-3 hover:scale-105 duration-200"
+      class="cursor-pointer recent-match flex justify-between items-center bg-gray-800 rounded-lg p-3 hover:scale-105 duration-200"
     >
       <div class="flex items-center">
         <div id="recent-match-score-indicator" class="w-3 h-3 rounded-full mr-2"></div>
@@ -1923,7 +1934,7 @@
 
   <template id="recent-tournaments-template">
     <div
-      class="recent-tournament flex justify-between items-center bg-gray-800 rounded-lg p-3 hover:scale-105 duration-200"
+      class="recent-tournament cursor-pointer flex justify-between items-center bg-gray-800 rounded-lg p-3 hover:scale-105 duration-200"
     >
       <div class="flex items-center">
         <div
