@@ -21,8 +21,8 @@ services:
     container_name: backend
     image: backend
     build: ./requirements/backend
-    ports:
-      - 3000:3000
+    expose:
+      - '3000'
     env_file:
       - .env
     restart: unless-stopped
@@ -35,6 +35,8 @@ services:
       - ./requirements/backend/dist:/app/dist
       - ./requirements/blockchain/conf/output:/app/data/blockchain
       - backend_avatar:/app/avatar
+    secrets:
+      - private_key
     
   blockchain:
     container_name: blockchain
@@ -48,6 +50,8 @@ services:
     volumes:
       - ./requirements/blockchain:/app
       - ./requirements/blockchain/conf/output:/output
+    secrets:
+      - private_key
 
 volumes:
   backend_db:
@@ -77,3 +81,7 @@ networks:
   private-transcendence-network:
     name: private-transcendence-network
     driver: bridge
+
+secrets:
+  private_key:
+    file: ../secrets/private_key.txt

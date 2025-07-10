@@ -1,3 +1,5 @@
+import { LEN_USERNAME } from './user.schema';
+
 export const createFriendSchema = {
   body: {
     type: 'object',
@@ -14,19 +16,7 @@ export const createFriendByUsernameSchema = {
     type: 'object',
     required: ['username'],
     properties: {
-      username: { type: 'string', minLength: 3 },
-    },
-    additionalProperties: false,
-  },
-};
-
-export const updateFriendSchema = {
-  body: {
-    type: 'object',
-    required: ['friendId', 'status'],
-    properties: {
-      friendId: { type: 'string', format: 'uuid' },
-      status: { type: 'string', enum: ['PENDING', 'ACCEPTED', 'REJECTED'] },
+      username: { type: 'string', minLength: 3, maxLength: LEN_USERNAME },
     },
     additionalProperties: false,
   },

@@ -60,7 +60,7 @@ export function activatePowerBarAnimation(side: string) {
 export function deactivatePowerBarAnimation(side: string) {
   const powerBarFill = document.getElementById(`${side}-character-power-bar-fill`);
   if (!powerBarFill) {
-    console.warn(`PowerBar Fill in the ${side} not found`);
+    //console.warn(`PowerBar Fill in the ${side} not found`);
     return;
   }
   // Stop the animation

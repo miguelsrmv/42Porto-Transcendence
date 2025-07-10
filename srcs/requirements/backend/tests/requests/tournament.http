@@ -1,45 +1,11 @@
 # Using VScode extension REST Client (install it and click on 'Send Request' that appears above each request, separate requests with '###')
 
+# Change 'http://localhost:3000/' to 'https://padaria.42.pt/api/' to test through Frontend container
+
 ### TOURNAMENT
 
-### Get tournament status
+### Get a specific tournament's participants' data
 GET http://localhost:3000/tournaments/<id> HTTP/1.1
 
-### Get all tournaments from a specific user
+### Get data (position and type) on the last three tournaments from a specific user
 GET http://localhost:3000/tournaments/user/<id> HTTP/1.1
-
-### Get specific tournament
-GET http://localhost:3000/tournaments/<id> HTTP/1.1
-
-### Create a new tournament
-POST http://localhost:3000/tournaments/ HTTP/1.1
-content-type: application/json
-
-{
-	"name": "newTournament",
-	"maxParticipants": 4,
-	"createdBy": "<id>",
-	"settings": "{\"map\":\"testing\",\"rounds\":3}"
-}
-
-### Update a tournament
-PATCH http://localhost:3000/tournaments/<id> HTTP/1.1
-content-type: application/json
-
-{
-	"status": "ACTIVE",
-	"currentRound": 2,
-}
-
-### Delete a tournament
-DELETE http://localhost:3000/tournaments/<id> HTTP/1.1
-
-### Add a player to a tournament
-POST http://localhost:3000/tournaments/participant HTTP/1.1
-content-type: application/json
-
-{
-	"playerId": "122722f0-d381-4958-b862-f56ed590204c",
-	"alias": "newAlias",
-	"character": "NONE"
-}
