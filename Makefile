@@ -21,7 +21,7 @@ up:
 	@mkdir -p $(DB_DATA)
 	@mkdir -p $(BC_DATA)
 	@mkdir -p $(AVATAR_DATA)
-	@$(COMPOSE) up --build -d
+	@$(COMPOSE) up --build -d frontend backend
 
 down:
 	@$(COMPOSE) down
@@ -62,6 +62,10 @@ backend:
 bc:
 	@$(COMPOSE) build blockchain
 
+contract:
+	@echo "** DEPLOYING NEW SMART CONTRACT **"
+	@$(COMPOSE) run --build --rm blockchain
+
 frontend_clean:
 	$(COMPOSE) rm -sf frontend
 	@docker rmi -f frontend || true
@@ -77,7 +81,7 @@ bc_clean:
 db_reset:
 	@docker exec -it backend sh -c "npm run populate"
 
-test: 
+test:
 	@./docs/scripts/build_dockerfile_test.sh  #Tests build
 
-.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test db_reset
+.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test db_reset contract
