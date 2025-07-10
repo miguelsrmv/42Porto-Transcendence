@@ -277,20 +277,37 @@ async function changeFriendship(
   status: string,
   friendRequest: HTMLDivElement,
 ): Promise<void> {
-  try {
-    const response = await fetch(`/api/friends`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ friendId: requestingFriendId, status: status }),
-    });
-    friendRequest.classList.add('hidden');
-    fillFriendList();
-  } catch (error) {
-    console.log(`Got error: ${error}`);
+  if (status === 'ACCEPTED') {
+    try {
+      const response = await fetch(`/api/friends/accept`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ friendId: requestingFriendId }),
+      });
+    } catch (error) {
+      console.log(`Got error: ${error}`);
+      return;
+    }
+  } else if (status === 'REJECTED') {
+    try {
+      const res = await fetch(`/api/friends/${requestingFriendId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw Error(data.message || 'Request failed');
+      }
+    } catch (err) {
+      console.error('Error deleting friend', err);
+      return;
+    }
   }
+  friendRequest.classList.add('hidden');
+  fillFriendList();
 }
 
 /**
