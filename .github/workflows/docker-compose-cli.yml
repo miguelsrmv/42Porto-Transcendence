@@ -37,7 +37,8 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> srcs/.env
           echo "JWT_SIGN_SECRET=${{ secrets.JWT_SIGN_SECRET }}" >> srcs/.env
           echo "COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}" >> srcs/.env
-          echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> srcs/.env
+          mkdir secrets
+          echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> secrets/private_key.txt
 
       - name: 🐳 Start Docker Services (with cache)
         run: |
