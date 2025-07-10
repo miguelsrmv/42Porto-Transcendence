@@ -209,7 +209,7 @@ contract TournamentsStorage {
             }
         }
         uint256 dataIndex = 1;
-        for (uint256 i = 0; i < MAX_PARTICIPANTS * 2 - 1; i++) {
+        for (uint256 i = 0; i < MAX_PARTICIPANTS * 2 - 2; i++) {
             if (
                 keccak256(abi.encodePacked(tournament.matchedParticipants[i].uniqueId))
                     == keccak256(abi.encodePacked(_userId))
