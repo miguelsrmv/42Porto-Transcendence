@@ -26,7 +26,6 @@
 | `GET`    | `/friends/pending`        |                    |                                              | Get pending friends of logged in user                           |
 | `POST`   | `/friends`                |                    |                   friendId                   | Create a friendship between the logged in user and another user |
 | `POST`   | `/friends/username`       |                    |                   username                   | Create a friendship between the logged in user and another user |
-| `PATCH`  | `/friends`                |                    |             friendId and status              | Update friendship status                                        |
 | `PATCH`  | `/friends/accept`         |                    |                   friendId                   | Change friendship status between users to accepted              |
 | `DELETE` | `/friends/:id`            |   `id` friend id   |                                              | Delete a friendship                                             |
 | `GET`    | `/matches/user/:id`       |    `id` user id    |                                              | Get all matches from a specific user                            |
@@ -390,14 +389,21 @@ If running the app locally (e.g. `npx tsx server.ts`), the endpoint is `http://l
 }
 ```
 
-- **Update a friendship status (Protected):** `PATCH /friends`
+- **Accept a friendship (Protected):** `PATCH friends/accept`
 
 ### Request body example
 
 ```json
 {
-  "friendId": "d232f55f-5000-440e-ae20-20d2fa7c2dbe",
-  "status": "PENDING" // or "ACCEPTED", "REJECTED"
+  "friendId": "d232f55f-5000-440e-ae20-20d2fa7c2dbe"
+}
+```
+
+### Response example
+
+```json
+{
+  "message": "Friendship accepted"
 }
 ```
 
