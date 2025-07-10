@@ -359,20 +359,20 @@ describe('friends', () => {
     expect(response.json()).toEqual(expect.arrayContaining([{ initiatorId: expect.any(String) }]));
   });
 
-  test('PATCH / should return 200 and update friendship status', async () => {
+  test('PATCH /accept should return 200 and update friendship status', async () => {
     const friend = await prisma.user.findUnique({ where: { username: 'bob45' } });
     const response = await app.inject({
       method: 'PATCH',
-      url: '/friends',
+      url: '/friends/accept',
       headers: {
         'Content-Type': 'application/json',
         cookie: jwtCookie3,
       },
-      body: { friendId: friend?.id, status: 'ACCEPTED' },
+      body: { friendId: friend?.id },
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual({ message: 'Friendship status updated' });
+    expect(response.json()).toEqual({ message: 'Friendship accepted' });
   });
 
   test('GET / should return 200 and an array of user friends ids', async () => {
