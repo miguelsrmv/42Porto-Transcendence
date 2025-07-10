@@ -3,6 +3,7 @@ type ErrorMessages = {
 };
 
 export const errorMessages: ErrorMessages = {
+  // Login & Register error codes
   'body/email must match format "email"': 'Invalid Email',
   'Invalid credentials': 'Email and Password do not match',
   'An operation failed because it depends on one or more records that were required but not found. No record was found for a query.':
@@ -19,6 +20,11 @@ export const errorMessages: ErrorMessages = {
   'Invalid email format': 'Invalid Email',
   'Password must include an uppercase letter, a lowercase letter, and a number':
     'Password must include an uppercase letter, a lowercase letter, and a number',
+
+  // 2FA error codes
+  'Network error during 2FA enable': 'Network error during 2FA enable',
+  'Client error: form elements missing': 'Client error: form elements missing',
+  'Network error during 2FA disable': 'Network error during 2FA disable',
 };
 
 export function getReadableErrorMessage(message: string): string {
