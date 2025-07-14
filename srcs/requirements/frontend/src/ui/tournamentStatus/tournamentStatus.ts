@@ -170,6 +170,9 @@ function playerHasWon(
   const opponent: tournamentPlayer =
     i % 2 ? trimmedParticipants[i - 1] : trimmedParticipants[i + 1];
 
+  // FIX: Fixed David's issue, I believe?
+  if (player == undefined || opponent == undefined) return false;
+
   const playerScore = getMatchScore(player, phase);
   const opponentScore = getMatchScore(opponent, phase);
 
