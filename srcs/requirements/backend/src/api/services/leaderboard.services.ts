@@ -1,5 +1,6 @@
 import { prisma } from '../../utils/prisma';
 import { Player } from '../../ws/remoteGameApp/player';
+import { PlayerScore } from '../../ws/tournament';
 
 export async function getUserRank(id: string) {
   const userLeaderboard = await prisma.leaderboard.findUniqueOrThrow({
@@ -36,11 +37,16 @@ export async function updateLeaderboardRemote(winningPlayer: Player, losingPlaye
   }
 }
 
-export async function updateLeaderboardTournament(winningPlayerId: string, round: number) {
-  if (round > 3) return;
-  const increments = [1, 3, 8];
-  await prisma.leaderboard.update({
-    where: { userId: winningPlayerId },
-    data: { score: { increment: increments[round - 1] } },
-  });
+export async function updateLeaderboardTournament(scores: PlayerScore[]) {
+  const finalScores: Record<string, number> = {};
+  for (const score of scores) {
+    if (finalScores[score.playerId]) finalScores[score.playerId] += score.score;
+    else finalScores[score.playerId] = score.score;
+  }
+  for (const playerId in finalScores) {
+    await prisma.leaderboard.update({
+      where: { userId: playerId },
+      data: { score: { increment: finalScores[playerId] } },
+    });
+  }
 }
