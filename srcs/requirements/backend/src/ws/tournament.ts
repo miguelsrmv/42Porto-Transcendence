@@ -36,6 +36,11 @@ export interface BlockchainScoreData {
   score2: number;
 }
 
+export interface PlayerScore {
+  playerId: string;
+  score: number;
+}
+
 export class Tournament {
   sessions: GameSession[] = [];
   state: tournamentState = tournamentState.creating;
@@ -46,6 +51,7 @@ export class Tournament {
   roundWinners: PlayerInfo[] = [];
   roundStarting: boolean = false;
   aliases: string[] = [];
+  scores: PlayerScore[] = [];
 
   constructor(type: gameType) {
     this.type = type;
@@ -143,8 +149,15 @@ export class Tournament {
     );
   }
 
+  private async addWinnerScore(winner: string, round: number) {
+    if (round > 3) return;
+    const increments = [1, 3, 8];
+    this.scores.push({ playerId: winner, score: increments[round - 1] });
+    if (round === 3) await updateLeaderboardTournament(this.scores);
+  }
+
   public async updateSessionScore(round: number, winner: string, data: BlockchainScoreData) {
-    await updateLeaderboardTournament(winner, round);
+    await this.addWinnerScore(winner, round);
     this.setPlayerScore(data.player1Data[0], data.score1);
     this.setPlayerScore(data.player2Data[0], data.score2);
     const release = await blockchainMutex.acquire();
