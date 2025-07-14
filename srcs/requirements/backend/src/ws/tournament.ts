@@ -130,7 +130,6 @@ export class Tournament {
     } finally {
       release();
     }
-    await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
     await wait(WAITING_TIME);
     for (const session of firstRoundSessions) void session.startGame();
   }
@@ -153,7 +152,10 @@ export class Tournament {
     if (round > 3) return;
     const increments = [1, 3, 8];
     this.scores.push({ playerId: winner, score: increments[round - 1] });
-    if (round === 3) await updateLeaderboardTournament(this.scores);
+    if (round === 3) {
+      await updateLeaderboardTournament(this.scores);
+      await this.addTournamentToDB(this.id, this.type, this.getAllPlayerIds());
+    }
   }
 
   public async updateSessionScore(round: number, winner: string, data: BlockchainScoreData) {
