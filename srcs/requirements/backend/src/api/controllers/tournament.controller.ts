@@ -12,6 +12,8 @@ export async function getTournamentStatus(
   );
   const scores: number[] = await contractProvider.getScores(request.params.id);
   const data = await processTournamentData(rawParticipants, scores);
+  if (!data || data?.length === 0)
+    return reply.status(404).send({ message: 'Tournament not found' });
   reply.send(data);
 }
 
@@ -19,6 +21,8 @@ export async function getUserLastTournaments(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
+  const user = await prisma.user.findUnique({ where: { id: request.params.id } });
+  if (!user) return reply.status(404).send({ message: 'User not found' });
   const tournaments = await prisma.tournamentParticipant.findMany({
     where: { userId: request.params.id },
     select: { tournamentId: true, tournamentType: true },
