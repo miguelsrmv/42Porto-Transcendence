@@ -9,7 +9,7 @@ forge script script/DeployTournamentsStorage.s.sol:DeployTournamentsStorage \
     --chain 43113 \
     --rpc-url https://api.avax-test.network/ext/bc/C/rpc \
     --private-key $PRIVATE_KEY \
-    --broadcast --verify -vvv \
+    --broadcast -vvv \
 | tee /output/deploy.log
 
 # Uncomment the following command to deploy the contract on Anvil (Foundry)
