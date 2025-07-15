@@ -8,5 +8,9 @@ export async function matchRoutes(fastify: FastifyInstance) {
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     getMatchById,
   );
-  fastify.get<{ Params: IParams }>('/user/:id', { onRequest: [fastify.jwtAuth] }, getUserMatches);
+  fastify.get<{ Params: IParams }>(
+    '/user/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    getUserMatches,
+  );
 }
