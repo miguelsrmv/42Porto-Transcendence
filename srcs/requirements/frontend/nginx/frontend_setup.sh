@@ -3,6 +3,8 @@
 # Get environment variables updated on the nginx_config file
 envsubst '$DOMAIN_NAME' < /etc/nginx/conf.d/nginx_template.conf > /etc/nginx/conf.d/default.conf
 
+rm /etc/nginx/conf.d/nginx_template.conf
+
 # Check if certificate already exists
 if [ ! -f /etc/ssl/nginx-selfsigned.pem ]; then
     echo "Generating self-signed SSL certificate..."
