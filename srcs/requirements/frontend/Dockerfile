@@ -10,13 +10,12 @@ RUN npm install -g typescript tailwindcss @tailwindcss/cli
 # Set working directory
 WORKDIR /app
 
-# Copy TypeScript and Tailwind files, and their configs
-RUN mkdir -p src
+# Copy dependency files
 COPY ./src ./src
+COPY ./static ./static
 COPY ./tsconfig.json ./
 COPY ./tailwind.config.js ./
-COPY ./package.json ./
-COPY ./package-lock.json ./
+COPY ./package*.json ./
 
 # Installs dependencies
 RUN npm install
@@ -32,17 +31,18 @@ RUN npm run build-tailwind
 # ----------------------------------
 FROM nginx:latest
 
-COPY --from=builder /app /var/www/ft_transcendence
-#TODO: Once project is finalized, change to only copy from /app/dist?
-#NOTE: AS LONG AS WE'RE ON HOT RELOADING, THE FIRST CONTAINER IS "WRONG" BECAUSE "dist/" WILL BE OVERWRITTEN BY OUR EMPTY DIST
-#FIX: Run "npm run build" or both --watch commands while on dev environment
+# Copy files from builder to the new compiler
+COPY --from=builder /app/dist /var/www/ft_transcendence/dist
+COPY --from=builder /app/static /var/www/ft_transcendence/static
 
+# Copy Nginx config
 COPY ./nginx/nginx_template.conf /etc/nginx/conf.d/nginx_template.conf
 
+# Setup Frontend
 COPY ./nginx/frontend_setup.sh /
-
 RUN chmod +x /frontend_setup.sh
 
+# Port to expose
 EXPOSE 443
 
 ENTRYPOINT ["./frontend_setup.sh"]
