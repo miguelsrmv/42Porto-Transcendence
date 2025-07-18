@@ -2,7 +2,7 @@
 # First image: Compiles Typescript to Javascript and Tailwind to CSS
 # ----------------------------------
 
-FROM node:23.11-slim as builder
+FROM node:23.11-slim AS builder
 
 # Install TypeScript globally
 RUN npm install -g typescript tailwindcss @tailwindcss/cli
