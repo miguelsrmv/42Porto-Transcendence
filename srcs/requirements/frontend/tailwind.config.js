@@ -1,8 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './static/index.html', // or wherever your HTML files are located
-  ],
+  content: ['./static/index.html', './src/**/*.ts'],
   theme: {
     extend: {
       transitionProperty: {
