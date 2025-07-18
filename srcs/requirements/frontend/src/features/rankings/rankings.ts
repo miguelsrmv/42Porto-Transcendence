@@ -892,7 +892,7 @@ function setupLeaderboardClick(): void {
 
     if (playerRowElement) {
       const userId = playerRowElement.getAttribute('data-user-id') as string;
-      console.log('User id is ', userId);
+      //console.log('User id is ', userId);
       renderLeftPanel(userId);
     }
   });
