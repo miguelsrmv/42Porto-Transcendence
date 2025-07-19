@@ -2,7 +2,7 @@ import { Browser, firefox } from 'playwright';
 
 const NUM_CLIENTS = 8;
 const BASE_URL = 'https://padaria.42.pt';
-const MOCK_PASSWORD = '123456789';
+const MOCK_PASSWORD = '123456789Ab';
 
 async function simulateClient(browser: Browser, index: number) {
   const context = await browser.newContext({ ignoreHTTPSErrors: true });

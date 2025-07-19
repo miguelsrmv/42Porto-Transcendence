@@ -13,7 +13,7 @@ const CHARACTER = {
   accentColour: 'red',
   selectHelpMessage: "Eat one to increase your paddle's size!",
 };
-const MOCK_PASSWORD = '123456789';
+const MOCK_PASSWORD = '123456789Ab';
 
 async function simulateClient(browser: Browser, index: number) {
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
