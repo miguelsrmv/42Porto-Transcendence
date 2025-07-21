@@ -526,29 +526,5 @@ export const abi = [
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "tournamentsMap",
-    "inputs": [
-      {
-        "name": "",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "typeOfGame",
-        "type": "uint8",
-        "internalType": "enum TournamentsStorage.gameType"
-      },
-      {
-        "name": "maxParticipants",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
   }
 ];
