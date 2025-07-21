@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "populate": "npx tsx scripts/populate_db.ts",
+    "populate-tournament": "npx tsx scripts/populate_tournament.ts",
     "start": "node dist/src/server.js",
     "dev": "npx tsx src/server.ts",
     "start-dev": "npx nodemon --legacy-watch --signal SIGTERM dist/src/server.js",
@@ -16,9 +17,6 @@
     "open-tournament": "node dist/scripts/openTournament.js",
     "login-tournament": "node dist/scripts/autoLogin.js",
     "db-reset": "npx prisma migrate reset"
-  },
-  "prisma": {
-    "seed": "npx tsx scripts/populate_db.ts"
   },
   "keywords": [],
   "author": "",
