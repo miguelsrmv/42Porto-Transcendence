@@ -1,7 +1,7 @@
 import { Browser, Cookie, firefox } from 'playwright';
 import https from 'https';
 import WebSocket from 'ws';
-import { wait } from '../src/ws/helpers';
+import { wait } from '../../src/ws/helpers';
 
 const NUM_CLIENTS = 8;
 const BASE_URL = 'https://padaria.42.pt';
