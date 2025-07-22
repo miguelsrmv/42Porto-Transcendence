@@ -59,9 +59,6 @@ frontend:
 backend:
 	@$(COMPOSE) build backend
 
-bc:
-	@$(COMPOSE) build blockchain
-
 contract:
 	@echo "** DEPLOYING NEW SMART CONTRACT **"
 	@$(COMPOSE) run --build --rm blockchain
@@ -74,14 +71,10 @@ backend_clean:
 	$(COMPOSE) rm -sf backend
 	@docker rmi -f backend || true
 
-bc_clean:
-	$(COMPOSE) rm -sf blockchain
-	@docker rmi -f blockchain || true
-
 db_reset:
 	@docker exec -it backend sh -c "npm run populate"
 
 test:
 	@./docs/scripts/build_dockerfile_test.sh  #Tests build
 
-.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test db_reset contract
+.PHONY: all up down build clean re prune status frontend backend frontend_clean backend_clean test db_reset contract
