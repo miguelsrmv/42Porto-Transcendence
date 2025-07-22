@@ -18,7 +18,7 @@ function getElements() {
   const qrCodeImage = document.getElementById('QR-code') as HTMLImageElement | null;
   const tokenElement = document.getElementById('auth-code') as HTMLInputElement | null;
   const passwordElement = document.getElementById('QRCode-password') as HTMLInputElement | null;
-  const errorContainer = document.getElementById('error-2fa-message') as HTMLElement | null;
+  const errorContainer = document.getElementById('error-2fa-message') as HTMLDivElement | null;
   const form = document.getElementById('QRCode-form') as HTMLFormElement | null;
   const closeModalButton = document.getElementById('close-modal-btn') as HTMLButtonElement | null;
 
