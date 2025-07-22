@@ -2,7 +2,7 @@ import { Browser, firefox } from 'playwright';
 
 const NUM_CLIENTS = 8;
 const BASE_URL = 'https://padaria.42.pt';
-const MOCK_PASSWORD = '123456789';
+const MOCK_PASSWORD = '123456789Ab';
 
 async function simulateClient(browser: Browser, index: number) {
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
@@ -15,13 +15,6 @@ async function simulateClient(browser: Browser, index: number) {
   await page.fill('#login-email', `test${index}@example.com`);
   await page.fill('#login-password', MOCK_PASSWORD);
   await page.click('button#login-submit-button');
-
-  await page.waitForSelector('a#remote-tournament-button', { timeout: 5000 });
-  await page.click('a#remote-tournament-button');
-  await page.waitForSelector('#crazy-pong-button', { timeout: 5000 });
-  await page.click('button#crazy-pong-button');
-  await page.waitForSelector('button#play-button', { timeout: 5000 });
-  await page.click('button#play-button');
 }
 
 void (async () => {

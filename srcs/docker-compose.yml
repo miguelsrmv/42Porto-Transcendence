@@ -26,10 +26,7 @@ services:
     networks:
       - private-transcendence-network
     volumes:
-      - ./requirements/backend:/app
       - backend_db:/app/data
-      - node_modules:/app/node_modules # Prevents overwriting dependencies
-      - ./requirements/backend/dist:/app/dist
       - ./requirements/blockchain/conf/output:/app/data/blockchain
       - backend_avatar:/app/avatar
     secrets:
@@ -63,13 +60,6 @@ volumes:
       type: none
       device: ${DATA_PATH}/avatar
       o: bind
-  node_modules:
-    # server_volume:
-    #  driver: local
-    #driver_opts:
-    #  type: none
-    #  device: ./requirements/server/public/
-    #  o: bind
 
 networks:
   public-transcendence-network:
