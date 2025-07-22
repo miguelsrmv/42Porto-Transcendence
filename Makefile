@@ -31,16 +31,18 @@ build:
 
 clean: down
 	@echo "** REMOVING IMAGES **"
-	@docker rmi -f $$(docker images -qa)
+	@docker rmi -f $$(docker images -qa) 2>/dev/null || true
 	@echo "** REMOVING VOLUMES **"
-	@docker volume rm $$(docker volume ls -q)
+	@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 	@echo "** DELETING VOLUMES' DATA **"
 	@sudo rm -rf $(DB_DATA) $(BC_DATA) $(AVATAR_DATA)
 
-re: clean up
-
 prune:
 	@docker system prune -a
+
+fclean: clean prune
+
+re: clean up
 
 status:
 	@clear
@@ -57,4 +59,4 @@ contract:
 	@echo "** DEPLOYING NEW SMART CONTRACT **"
 	@$(COMPOSE) run --build --rm blockchain
 
-.PHONY: all up down build clean re prune status contract
+.PHONY: all up down build clean fclean re prune status contract
