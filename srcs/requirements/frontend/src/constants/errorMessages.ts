@@ -27,11 +27,13 @@ export const errorMessages: ErrorMessages = {
   'Network error during 2FA enable': 'Network error during 2FA enable',
   'Client error: form elements missing': 'Client error: form elements missing',
   'Network error during 2FA disable': 'Network error during 2FA disable',
+  'body/code must match pattern "^[0-9]{6,8}$"': 'Invalid Authentication Code',
+  'Password incorrect.': 'Invalid password'
 };
 
 export function getReadableErrorMessage(message: string): string {
   let finalMessage: string | undefined;
-
+  console.log(`Error message: ${message}`);
   finalMessage = errorMessages[message];
 
   if (!finalMessage)
