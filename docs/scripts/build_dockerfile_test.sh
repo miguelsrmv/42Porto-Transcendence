@@ -45,7 +45,7 @@ echo "✅ All networks exist."
 
 # 5️⃣ Check Volumes
 echo "💾 Checking Docker volumes..."
-volumes=("backend_db" "node_modules")
+volumes=("backend_db" "backend_avatar")
 for volume in "${volumes[@]}"; do
   if ! docker volume ls | grep -q "$volume"; then
     echo "❌ Volume $volume is missing!"
