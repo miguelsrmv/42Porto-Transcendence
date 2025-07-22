@@ -1,4 +1,5 @@
 import { prisma } from '../../utils/prisma';
+import { removeItem } from '../../ws/helpers';
 import { tournamentPlayer } from '../../ws/remoteGameApp/types';
 import { contractProvider } from './blockchain.services';
 
@@ -48,6 +49,10 @@ export async function processTournamentData(data: string[][], scores: number[]) 
 
   const finalPlayers: tournamentPlayer[] = Object.values(mergedPlayers);
   for (const player of finalPlayers) {
+    if (!player.id || player.id.length === 0) {
+      removeItem(finalPlayers, player);
+      continue;
+    }
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: player.id },
       select: { avatarUrl: true },

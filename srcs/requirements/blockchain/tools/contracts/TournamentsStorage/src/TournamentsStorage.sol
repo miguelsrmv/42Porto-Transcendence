@@ -20,7 +20,7 @@ contract TournamentsStorage {
     uint256 public constant MAX_PARTICIPANTS = 8;
 
     /// @notice Main mapping from a unique tournament ID (UUID) to its corresponding Tournament struct.
-    mapping(string => Tournament) public tournamentsMap;
+    mapping(string => Tournament) private tournamentsMap;
 
     /// @notice An array of UUIDs for all tournaments of type CLASSIC.
     string[] public classicTournamentsUUID;
@@ -425,7 +425,7 @@ contract TournamentsStorage {
         uint256 daysSinceEpoch = timestamp / SECONDS_PER_DAY;
         uint256 secondsInDay = timestamp % SECONDS_PER_DAY;
 
-        hour = secondsInDay / SECONDS_PER_HOUR;
+        hour = (secondsInDay / SECONDS_PER_HOUR) + 1;
         minute = (secondsInDay % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE;
         second = (secondsInDay % SECONDS_PER_HOUR) % SECONDS_PER_MINUTE;
 

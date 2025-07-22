@@ -9,7 +9,11 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY src/ ./src
+COPY scripts/ ./scripts
+COPY prisma/ ./prisma
+COPY init.sh ./
+COPY tsconfig.json ./
 
 RUN chmod 755 ./init.sh
 
