@@ -7,6 +7,8 @@ CREATE TABLE "User" (
     "salt" TEXT NOT NULL DEFAULT '',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "lastActiveAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "sessionToken" TEXT,
+    "sessionExpiresAt" DATETIME,
     "avatarUrl" TEXT NOT NULL DEFAULT '../../../../static/avatar/default/mario.png',
     "secret2FA" TEXT,
     "enabled2FA" BOOLEAN NOT NULL DEFAULT false
@@ -42,10 +44,11 @@ CREATE TABLE "Match" (
     "user2Score" INTEGER NOT NULL DEFAULT 0,
     "user1Character" TEXT,
     "user2Character" TEXT,
+    "user1Alias" TEXT NOT NULL,
+    "user2Alias" TEXT NOT NULL,
     "winnerId" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "settings" TEXT NOT NULL,
+    "stats" TEXT NOT NULL,
     CONSTRAINT "Match_user1Id_fkey" FOREIGN KEY ("user1Id") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Match_user2Id_fkey" FOREIGN KEY ("user2Id") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Match_winnerId_fkey" FOREIGN KEY ("winnerId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE

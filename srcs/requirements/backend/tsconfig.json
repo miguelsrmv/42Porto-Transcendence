@@ -11,6 +11,10 @@
   "include": [
     "src/**/*",
     "scripts/*",
+    "scripts/playwright/openTournament.ts",
+    "scripts/playwright/autoLogin.ts",
+    "scripts/playwright/remoteMatch.ts",
+    "scripts/playwright/simulateTournament.ts"
   ] /* Specify the files to be included in compilation */,
   "exclude": ["node_modules"] /* Specify the files to be excluded from compilation */
 }

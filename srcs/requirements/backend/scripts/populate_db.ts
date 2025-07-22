@@ -23,11 +23,11 @@ const CHARACTERS = [
 // Test users
 const USERNAME = 'ana123';
 const EMAIL = 'ana123@example.com';
-const TEST_PASSWORD = '123456789';
+const TEST_PASSWORD = '123456789Ab';
 
 const USERNAME2 = 'chris123';
 const EMAIL2 = 'chris123@example.com';
-const TEST_PASSWORD2 = '123456789';
+const TEST_PASSWORD2 = '123456789Ab';
 
 async function seedUsers() {
   await prisma.user.deleteMany();
