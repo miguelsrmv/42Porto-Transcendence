@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { Prisma } from '@prisma/client';
 
-//TODO: Handle other error cases ?
 export function handleError(error: unknown, request: FastifyRequest, reply: FastifyReply) {
   reply.log.error(error);
   if (error instanceof Prisma.PrismaClientKnownRequestError) {

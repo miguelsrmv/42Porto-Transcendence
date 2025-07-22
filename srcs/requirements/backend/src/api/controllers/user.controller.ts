@@ -35,7 +35,6 @@ export async function getUserById(
   const currentTime = Date.now() / 1000;
   const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
   let onlineState = 'offline';
-  // TODO: Review online state, absent?
   if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
     onlineState = 'online';
   reply.send({
