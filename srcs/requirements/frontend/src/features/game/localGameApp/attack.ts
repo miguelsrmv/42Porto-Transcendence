@@ -207,7 +207,6 @@ export class Attack {
    * This attack temporarily increases the player's paddle size for the duration of the effect.
    */
   async superShroom(): Promise<void> {
-    console.log(`Super shroom called by ${this.side}`);
     const growth = PADDLE_LEN * 0.25;
 
     const startingVersion = getGameVersion();

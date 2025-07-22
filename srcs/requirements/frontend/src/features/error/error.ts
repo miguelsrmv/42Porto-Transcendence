@@ -42,5 +42,5 @@ export async function initializeView(errorCode: number): Promise<void> {
     errorMessageElement.textContent = `Error ${errorCode}: ${message}`;
   }
 
-  console.error(`Error ${errorCode}: ${message}`);
+  // console.error(`Error ${errorCode}: ${message}`);
 }

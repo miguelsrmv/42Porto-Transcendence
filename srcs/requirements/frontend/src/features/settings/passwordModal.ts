@@ -78,7 +78,8 @@ function waitForPasswordModal(): Promise<string> {
       }
     };
 
-    const handleConfirmClick = () => {
+    const handleConfirmClick = (event: MouseEvent) => {
+      event.preventDefault();
       const password = passwordInput.value;
       if (!password) {
         alert('Password cannot be empty.');
