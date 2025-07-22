@@ -53,28 +53,8 @@ status:
 	@docker network ls
 	@echo ""
 
-frontend:
-	@$(COMPOSE) build frontend
-
-backend:
-	@$(COMPOSE) build backend
-
 contract:
 	@echo "** DEPLOYING NEW SMART CONTRACT **"
 	@$(COMPOSE) run --build --rm blockchain
 
-frontend_clean:
-	$(COMPOSE) rm -sf frontend
-	@docker rmi -f frontend || true
-
-backend_clean:
-	$(COMPOSE) rm -sf backend
-	@docker rmi -f backend || true
-
-db_reset:
-	@docker exec -it backend sh -c "npm run populate"
-
-test:
-	@./docs/scripts/build_dockerfile_test.sh  #Tests build
-
-.PHONY: all up down build clean re prune status frontend backend frontend_clean backend_clean test db_reset contract
+.PHONY: all up down build clean re prune status contract
