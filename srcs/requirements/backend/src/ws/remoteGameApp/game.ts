@@ -58,7 +58,6 @@ export async function updateGameArea(dt: number, gameArea: GameArea) {
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
-  // TODO: Filter before sending
   const gameStateMsg: ServerMessage = { type: 'game_state', state: gameState };
   gameArea.session.broadcastMessage(JSON.stringify(gameStateMsg));
 }
