@@ -469,5 +469,3 @@ async function enable2FA(): Promise<boolean> {
     return false;
   }
 }
-
-//TODO: Display error messages on modal

@@ -109,7 +109,9 @@ async function loginWith2FA(data: Record<string, string>): Promise<void> {
 
         if (!response.ok) {
           error2FAMessageContainer.classList.remove('hidden');
-          const errorData = await response.json().catch(() => ({ message: 'VERIFY_REQUEST_FAILED' }));
+          const errorData = await response
+            .json()
+            .catch(() => ({ message: 'VERIFY_REQUEST_FAILED' }));
           error2FAMessageContainer.innerText = getReadableErrorMessage(errorData.message);
           reject('Failed 2FA login');
           return;
@@ -204,9 +206,7 @@ export async function attemptRegister(this: HTMLFormElement, event: Event) {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      //TODO: Remove before delivering project!?
       console.error(`HTTP error" ${response.status}`);
-      console.log('Response:', response);
       const errorRegisterMessageContainer = document.getElementById('error-register-message');
       if (errorRegisterMessageContainer) {
         errorRegisterMessageContainer.classList.remove('hidden');
