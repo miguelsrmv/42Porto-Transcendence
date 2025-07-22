@@ -40,7 +40,6 @@ export function initializeView(): void {
         // Else, trigger the modal
         else triggerLoginModal();
       } catch (error) {
-        // TODO: Decide how to handle login check errors - maybe show modal anyway?
         console.error('Error checking login status:', error);
       }
     });
