@@ -20,7 +20,7 @@ import { endLocalTournamentIfRunning } from '../features/localTournamentPlay/loc
 import { userIsLoggedIn } from '../features/auth/auth.service.js';
 
 type FeatureModule = {
-  initializeView: () => void;
+  initializeView: (errorCode?: number) => void;
 };
 
 export const routes: { [key: string]: FeatureModule } = {
@@ -33,6 +33,7 @@ export const routes: { [key: string]: FeatureModule } = {
   'friends-page': friendModule as FeatureModule,
   'rankings-page': rankingsModule as FeatureModule,
   'settings-page': settingsModule as FeatureModule,
+  'error-page': errorPageModule as FeatureModule,
   //  'game-page': gameModule as FeatureModule,
 };
 

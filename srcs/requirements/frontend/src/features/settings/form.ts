@@ -58,6 +58,7 @@ export function handleUserDataChange(): void {
         if (success) {
           updateLocalStorageData(userData.username);
           updateHeaderData();
+          alert('User data updated successfully!');
         }
       }
     } else {
@@ -72,7 +73,6 @@ export function handleUserDataChange(): void {
    */
 
   async function submitUserData(): Promise<boolean> {
-    console.log('I got to this function');
     try {
       const response = await fetch('/api/users/', {
         method: 'PATCH',

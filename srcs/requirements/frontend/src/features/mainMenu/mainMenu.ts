@@ -49,6 +49,7 @@ export async function initializeView() {
           'duration-200',
           'hover:scale-105',
           'hover:shadow-2xl',
+          'cursor-pointer',
         );
         button.removeAttribute('href');
         button.removeAttribute('data-target');
