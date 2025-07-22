@@ -141,7 +141,7 @@ export async function login2FA(
     });
   }
   if (!user.enabled2FA) return reply.status(403).send({ message: '2FA not setup' });
-  if (!user.secret2FA) return reply.status(403).send('2FA required but not setup.');
+  if (!user.secret2FA) return reply.status(403).send({ message: '2FA required but not setup.' });
 
   const token = request.body.code;
 
@@ -151,7 +151,9 @@ export async function login2FA(
     token,
   });
   if (!verified)
-    return reply.status(401).send('The two-factor authentication token is invalid or expired.');
+    return reply
+      .status(401)
+      .send({ message: 'The two-factor authentication token is invalid or expired.' });
 
   const sessionId = await updateSession(user.id);
   const userData: UserSessionData = {
@@ -321,16 +323,16 @@ export async function verify2FA(
 
   const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
   if (!user.secret2FA) {
-    return reply.status(403).send('2FA required but not setup.');
+    return reply.status(403).send({ message: '2FA required but not setup.' });
   }
   if (!user.enabled2FA) {
-    if (!request.body.password) return reply.status(400).send('Password required.');
+    if (!request.body.password) return reply.status(400).send({ message: 'Password required.' });
     const isMatch = verifyPassword({
       candidatePassword: request.body.password,
       hash: user.hashedPassword,
       salt: user.salt,
     });
-    if (!isMatch) return reply.status(401).send('Password incorrect.');
+    if (!isMatch) return reply.status(401).send({ message: 'Password incorrect.' });
   }
 
   const token = request.body.code;
@@ -341,7 +343,9 @@ export async function verify2FA(
     token,
   });
   if (!verified)
-    return reply.status(401).send('The two-factor authentication token is invalid or expired.');
+    return reply
+      .status(401)
+      .send({ message: 'The two-factor authentication token is invalid or expired.' });
 
   const sessionId = await updateSession(user.id);
   const userData: UserSessionData = {
@@ -369,16 +373,16 @@ export async function disable2FA(
   if (!request.cookies.access_token)
     return reply.status(401).send({ message: 'Access token not set.' });
   const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
-  if (!user.enabled2FA) return reply.status(403).send('2FA not setup.');
-  if (!user.secret2FA) return reply.status(403).send('2FA required but not setup.');
+  if (!user.enabled2FA) return reply.status(403).send({ message: '2FA not setup.' });
+  if (!user.secret2FA) return reply.status(403).send({ message: '2FA required but not setup.' });
 
-  if (!request.body.password) return reply.status(400).send('Password required.');
+  if (!request.body.password) return reply.status(400).send({ message: 'Password required.' });
   const isMatch = verifyPassword({
     candidatePassword: request.body.password,
     hash: user.hashedPassword,
     salt: user.salt,
   });
-  if (!isMatch) return reply.status(401).send('Password incorrect.');
+  if (!isMatch) return reply.status(401).send({ message: 'Password incorrect.' });
 
   const token = request.body.code;
 
@@ -388,10 +392,12 @@ export async function disable2FA(
     token,
   });
   if (!verified)
-    return reply.status(401).send('The two-factor authentication token is invalid or expired.');
+    return reply
+      .status(401)
+      .send({ message: 'The two-factor authentication token is invalid or expired.' });
   await prisma.user.update({
     where: { id: request.user.id },
     data: { secret2FA: null, enabled2FA: false },
   });
-  return reply.send('Success');
+  return reply.send({ message: 'Success' });
 }
