@@ -58,6 +58,7 @@ export function handleUserDataChange(): void {
         if (success) {
           updateLocalStorageData(userData.username);
           updateHeaderData();
+          alert('User data updated successfully!');
         }
       }
     } else {
