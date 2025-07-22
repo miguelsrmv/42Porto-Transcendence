@@ -120,16 +120,11 @@ function toggleLoginMenu(): void {
   const loginForm = document.getElementById('login-form') as HTMLFormElement;
 
   if (loginForm) {
-    // Only attach the listener once
-    //if (!loginFormListenerAttached) {
     const loginButton = document.getElementById('login-submit-button');
     if (loginButton) {
       loginButton.addEventListener('click', function (event) {
         attemptLogin(loginForm, event);
       });
-      //loginFormListenerAttached = true;
-      //TODO: Check if this is a bug or not?
-      // }
     }
 
     const showRegisterButton = document.getElementById('show-register-button');
