@@ -60,7 +60,6 @@ export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: Gam
   });
 }
 
-// TODO: filter stats saved
 async function createMatch(winningPlayer: Player, gameArea: GameArea) {
   const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
   const [character1, character2] = getCharacters(gameArea.settings);
