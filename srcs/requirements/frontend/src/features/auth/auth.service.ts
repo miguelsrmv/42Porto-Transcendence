@@ -109,9 +109,8 @@ async function loginWith2FA(data: Record<string, string>): Promise<void> {
 
         if (!response.ok) {
           error2FAMessageContainer.classList.remove('hidden');
-          const errorMessage = await response.text();
-          console.log(errorMessage);
-          error2FAMessageContainer.innerText = errorMessage;
+          const errorData = await response.json().catch(() => ({ message: 'VERIFY_REQUEST_FAILED' }));
+          error2FAMessageContainer.innerText = getReadableErrorMessage(errorData.message);
           reject('Failed 2FA login');
           return;
         }
