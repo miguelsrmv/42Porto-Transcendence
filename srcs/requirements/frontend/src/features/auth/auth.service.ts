@@ -33,7 +33,7 @@ export async function attemptLogin(form: HTMLFormElement, event: Event) {
 
     if (!response.ok) {
       console.error(`HTTP error: ${response.status}`);
-      console.log('Response:', response);
+      //console.log('Response:', response);
       const errorLoginMessageContainer = document.getElementById('error-login-message');
 
       if (errorLoginMessageContainer) {

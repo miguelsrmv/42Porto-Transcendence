@@ -12,9 +12,6 @@ services:
       - public-transcendence-network
       - private-transcendence-network
     volumes:
-      - ./requirements/frontend:/app
-      - ./requirements/frontend/static:/var/www/ft_transcendence/static
-      - ./requirements/frontend/dist:/var/www/ft_transcendence/dist
       - backend_avatar:/var/www/ft_transcendence/static/avatar/custom
 
   backend:
