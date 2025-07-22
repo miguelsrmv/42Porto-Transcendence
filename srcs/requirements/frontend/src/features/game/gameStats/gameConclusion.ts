@@ -49,8 +49,6 @@ export function triggerEndGameMenu(
 
   hideGameElements();
   showStatsMenu(HUDSideToShow, stats, playerHUDcopy, colour, HUDSideToShow === winningPlayerSide);
-  // TODO: Remove is it's working properly. Workaround because I didn't get tournament_end before
-  // if (tournamentIsRunning) tournamentIsRunning = winningPlayerSide === playerSide;
   updateButtons(playType, tournamentIsRunning, stats);
 }
 
@@ -230,7 +228,7 @@ function updateButtons(playType: playType, tournamentIsRunning: boolean, stats: 
       forceRouteChange(targetPage);
     } else {
       if (playType === 'Remote Tournament Play') {
-        await waitForNextGame(); // TODO: Check why stats are reappearing
+        await waitForNextGame();
         readyForNextGame();
       } else if (playType === 'Local Tournament Play') {
         dispatchNextMatchEvent(stats);
