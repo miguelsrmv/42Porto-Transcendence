@@ -28,7 +28,8 @@ export const errorMessages: ErrorMessages = {
   'Client error: form elements missing': 'Client error: form elements missing',
   'Network error during 2FA disable': 'Network error during 2FA disable',
   'body/code must match pattern "^[0-9]{6,8}$"': 'Invalid Authentication Code',
-  'Password incorrect.': 'Invalid password'
+  'Password incorrect.': 'Invalid password',
+  'The two-factor authentication token is invalid or expired.': 'Authentication code is invalid or expired',
 };
 
 export function getReadableErrorMessage(message: string): string {
