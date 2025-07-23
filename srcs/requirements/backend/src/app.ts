@@ -36,7 +36,6 @@ app.register(FastifyWebSocket);
 app.register(WSRoutes);
 
 app.register(cookie, {
-  secret: process.env.COOKIE_SECRET,
   hook: 'onRequest',
 } as FastifyCookieOptions);
 
