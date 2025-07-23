@@ -7,7 +7,6 @@ dev.db
 **/.env
 
 *.log
-**/output/
 **/broadcast/
 settings.json
 avatar/
