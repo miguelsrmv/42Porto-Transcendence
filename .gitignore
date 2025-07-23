@@ -12,4 +12,4 @@ dev.db
 settings.json
 avatar/
 secrets
-srcs/requirements/blockchain/conf/output
+srcs/requirements/blockchain/conf/output/contract_address.txt
