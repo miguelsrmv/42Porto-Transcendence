@@ -5,12 +5,5 @@ data
 secrets
 srcs/.env
 
-# Frontend
-srcs/requirements/frontend/**/*.png
-srcs/requirements/frontend/**/*.jpg
-
-# Backend
-srcs/requirements/backend/avatar
-
 # Blockchain
 srcs/requirements/conf/output/blockchain_address.txt
