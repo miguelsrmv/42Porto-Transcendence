@@ -4,6 +4,3 @@ data
 # Secrets
 secrets
 srcs/.env
-
-# Blockchain
-srcs/requirements/conf/output/blockchain_address.txt

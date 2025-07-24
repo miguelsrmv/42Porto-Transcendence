@@ -6,9 +6,9 @@
   "scripts": {
     "build-ts": "tsc",
     "build-tailwind": "npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles/tailwind.css",
-    "build": "npm run build-ts && npm run build-tailwind",
+    "build": "npm run build-ts && npm run build-tailwind"
   },
-  "author": "",
+  "author": "miguel",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
