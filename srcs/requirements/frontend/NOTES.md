@@ -1,4 +1,3 @@
-Generated markdown
 # Project Structure Overview
 
 This document provides a detailed overview of the frontend directory structure for the **ft_transcendence** project. Our frontend is a **Single Page Application (SPA)** built with TypeScript and styled with Tailwind CSS. It is designed to be modular, maintainable, and easy for new developers to navigate.
@@ -45,7 +44,6 @@ Generated code
 | **`/src`**           | The heart of the application, containing all the TypeScript source code that drives the application's logic and interactivity.                                          |
 | **`/static`**        | Contains all public assets like images, fonts, and the main `index.html` file. These files are served directly to the browser without processing.                       |
 | **`/nginx`**         | Configuration and setup scripts for the Nginx web server that serves the application in the production Docker container.                                                  |
-| **`/output`**        | The directory where the compiled and bundled production-ready code (minified JS, CSS) is placed after a build process.                                                  |
 | **`Dockerfile`**     | Instructions for building the frontend's production Docker image. It typically involves compiling the source code and setting up the Nginx server.                        |
 | **`NOTES.md`**       | This documentation file, explaining the project structure.                                                                                                             |
 | **`package.json`**   | Defines project metadata, scripts (`dev`, `build`), and lists all Node.js dependencies (e.g., TypeScript, Tailwind CSS) and dev dependencies.                             |
@@ -97,7 +95,7 @@ A collection of generic, reusable helper functions (e.g., DOM manipulation, data
 
 ## 3. The `/static` Directory: Assets
 
-This directory contains all files served directly by the web server. The asset library is not publicaly available due to copyright.
+This directory contains all files served directly by the web server. The asset library is not publicly available due to copyright.
 
 -   **`index.html`**: The single HTML shell for the SPA.
 -   **`/avatar`**: Contains a vast collection of default avatars for users to choose from (themed around Nintendo characters), as well as a location for custom-uploaded avatars.
