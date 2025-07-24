@@ -14,6 +14,7 @@ DB_DATA = $(PWD)/data/backend_db
 AVATAR_DATA = $(PWD)/data/avatar
 BC_DATA = $(PWD)/data/blockchain
 COMPOSE = docker compose -f ./srcs/docker-compose.yml
+BLOCKCHAIN_ADDRESS = $(PWD)/srcs/requirements/blockchain/conf/output/blockchain_address.txt
 
 all: up
 
@@ -21,6 +22,9 @@ up:
 	@mkdir -p $(DB_DATA)
 	@mkdir -p $(BC_DATA)
 	@mkdir -p $(AVATAR_DATA)
+	@if [ ! -s $(BLOCKCHAIN_ADDRESS) ]; then \
+		make contract; \
+	fi
 	@$(COMPOSE) up --build -d frontend backend
 
 down:
@@ -35,12 +39,12 @@ clean: down
 	@echo "** REMOVING VOLUMES **"
 	@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 	@echo "** DELETING VOLUMES' DATA **"
-	@sudo rm -rf $(DB_DATA) $(BC_DATA) $(AVATAR_DATA)
+	@sudo rm -rf $(DB_DATA) $(BC_DATA) $(AVATAR_DATA) data
 
 prune:
 	@docker system prune -a
 
-fclean: clean prune
+fclean: clean prune clear-blockchain-address
 
 re: clean up
 
@@ -59,4 +63,9 @@ contract:
 	@echo "** DEPLOYING NEW SMART CONTRACT **"
 	@$(COMPOSE) run --build --rm blockchain
 
-.PHONY: all up down build clean fclean re prune status contract
+
+clear-blockchain-address:
+	@echo "** CLEANING BLOCKCHAIN ADDRESS **"
+	@> $(BLOCKCHAIN_ADDRESS)
+
+.PHONY: all up down build clean fclean re prune status contract clear-blockchain-address
