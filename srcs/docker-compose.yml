@@ -39,8 +39,6 @@ services:
     env_file:
       - .env
     restart: "no"
-    networks:
-      - private-transcendence-network
     volumes:
       - ./requirements/blockchain:/app
       - ./requirements/blockchain/conf/output:/output
