@@ -19,7 +19,6 @@ The architecture follows a **feature-based** (or **feature-slicing**) methodolog
 │   ├── constants/
 │   ├── core/
 │   ├── features/
-│   ├── services/
 │   ├── styles/
 │   ├── ui/
 │   └── utils/
@@ -114,3 +113,24 @@ These files are crucial for creating and serving a production-ready version of o
 
 -   **`Dockerfile`**: Defines a multi-stage build to compile the TypeScript project and serve the resulting static files in a lightweight `nginx` container.
 -   **`/nginx`**: Contains the Nginx configuration, which is essential for routing all user navigation to `index.html` so the client-side router can take over, a standard practice for SPAs.
+    -   **`nginx_template.conf`**: This is the core server configuration. It's essential for an SPA because it includes a `try_files` directive that redirects all navigation requests to `index.html`. This allows the client-side router in `src/core/router.ts` to handle the URL and render the correct view.
+    -   **`frontend_setup.sh`**: This script likely runs when the Docker container starts. Its purpose is to take the `nginx_template.conf` and substitute any necessary environment variables (e.g., the backend API URL) into it, creating the final `nginx.conf` that the server will use. This makes the container's configuration flexible and portable across different environments.
+
+
+## 5. Key Architectural Concepts
+
+Beyond the file structure, several key architectural decisions shape this project.
+
+### Feature-Sliced Design
+As noted, the project is organized by "features" rather than by file type (e.g., putting all services in one folder, all components in another). This encapsulation means that to understand or modify the "Friends" page, a developer primarily needs to look inside the `src/features/friends/` directory. This makes the codebase easier to reason about and reduces the risk of unintended side effects.
+
+### TypeScript for Type Safety
+The extensive use of TypeScript, including dedicated `.types.ts` files (e.g., `friends.types.ts`), is a core principle. This provides:
+-   **Compile-time error checking:** Catching bugs before the code is even run.
+-   **Intelligent Code Completion:** Greatly improves developer productivity and reduces the need to look up data structures.
+-   **Self-documenting Code:** The types themselves act as documentation for the expected shape of data (e.g., what properties a `User` object has).
+
+### Separation of Game Logic (Local vs. Remote)
+A critical and sophisticated design choice is the separation of the game engine within `src/features/game/`:
+-   **`/localGameApp`**: This is the **complete game engine**. It contains all the physics, collision detection, player input handling, and state management needed to run a full game entirely on the client. It is the single source of truth for local multiplayer games.
+-   **`/remoteGameApp`**: This module is significantly "dumber." Its primary job is to connect to the backend's WebSocket server and **render the game state** it receives. It does not run its own physics simulation. This client-server model prevents cheating in online matches, as the server is the single authority on the game's state.
