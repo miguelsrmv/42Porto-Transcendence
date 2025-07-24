@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2018" /* Specify ECMAScript target version */,
+    "target": "ES2020" /* Specify ECMAScript target version */,
     "module": "CommonJS" /* Specify module system */,
     "outDir": "./dist" /* Output directory for compiled files */,
     "esModuleInterop": true /* Enable interoperability between CommonJS and ES Modules */,
@@ -8,6 +8,13 @@
     "strict": true /* Enable strict type-checking */,
     "skipLibCheck": true /* Skip type checking of declaration files */
   },
-  "include": ["src/**/*", "src/fastify.d.ts", "scripts/*"] /* Specify the files to be included in compilation */,
+  "include": [
+    "src/**/*",
+    "scripts/*",
+    "scripts/playwright/openTournament.ts",
+    "scripts/playwright/autoLogin.ts",
+    "scripts/playwright/remoteMatch.ts",
+    "scripts/playwright/simulateTournament.ts"
+  ] /* Specify the files to be included in compilation */,
   "exclude": ["node_modules"] /* Specify the files to be excluded from compilation */
 }

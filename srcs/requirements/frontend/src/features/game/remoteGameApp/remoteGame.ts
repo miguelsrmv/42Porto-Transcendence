@@ -6,23 +6,27 @@
  * and receiving messages via WebSocket to control game flow and player interactions.
  */
 
-import type {
-  gameSettings,
-  leanGameSettings,
-  gameType,
-} from '../gameSettings/gameSettings.types.js';
+import type { leanGameSettings, gameType } from '../gameSettings/gameSettings.types.js';
 import { updateHUD } from '../gameSetup.js';
 import { loadView } from '../../../core/viewLoader.js';
-import { updateBackground, renderGame } from './renderGame.js';
+import {
+  updateBackground,
+  startGameArea,
+  renderGame,
+  renderGoal,
+  resetVariables,
+} from './renderGame.js';
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
+import { showTournamentStatus } from '../../../ui/tournamentStatus/tournamentStatus.js';
 
 /**
- * @brief Indicates whether a game is currently running.
+ * @brief Indicates whether a game or tournamet is currently running.
  *
- * This variable is used to track the state of the game and ensure proper handling
+ * These variables are used to track the state of the game and ensure proper handling
  * of game-related events and WebSocket communication.
  */
 let gameIsRunning: boolean = false;
+let tournamentIsRunning: boolean = false;
 
 /**
  * @brief WebSocket connection for the remote game.
@@ -41,7 +45,9 @@ let webSocket: WebSocket;
  * @param leanGameSettings The settings for the game, including player preferences and game type.
  */
 export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
-  webSocket = new WebSocket('wss://padaria.42.pt/ws');
+  if (leanGameSettings.playType === 'Remote Play')
+    webSocket = new WebSocket(`wss:/${window.location.host}/ws`);
+  else webSocket = new WebSocket(`wss:/${window.location.host}/ws/tournament`);
 
   const joinGameMsg = { type: 'join_game', playerSettings: leanGameSettings };
 
@@ -53,38 +59,78 @@ export function initializeRemoteGame(leanGameSettings: leanGameSettings) {
       if (webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify({ type: 'ping' }));
       }
-    }, 30000);
+    }, 20000);
   };
 
   window.addEventListener(
     'popstate',
     () => {
-      const stopMessage = JSON.stringify({ type: 'stop_game' });
-      if (gameIsRunning) {
-        gameIsRunning = false;
-        webSocket.send(stopMessage);
-      }
-
-      if (webSocket.readyState === WebSocket.OPEN) {
-        webSocket.close();
-      }
+      stopGame();
     },
-    { once: true },
+    {
+      once: true,
+    },
   );
+
+  window.addEventListener('beforeunload', (event) => {
+    stopGame();
+    event.preventDefault();
+  });
 
   webSocket.onmessage = (event) => {
     const messageData = JSON.parse(event.data);
+    //console.log('Message: ', messageData);
     if (messageData.type === 'game_setup') {
       const gameSettings = messageData.settings;
       loadView('game-page');
       updateHUD(gameSettings, gameSettings.gameType);
       updateBackground(gameSettings.background.imagePath);
       addKeyEventListeners(gameSettings.gameType);
+      if (gameSettings.playType === 'Remote Tournament Play') tournamentIsRunning = true;
     } else if (messageData.type === 'game_start') {
       gameIsRunning = true;
-      renderGame(webSocket);
+      startGameArea();
+    } else if (messageData.type === 'game_state' && gameIsRunning) {
+      renderGame(messageData);
+    } else if (messageData.type === 'game_goal' && gameIsRunning) {
+      renderGoal(messageData.scoringSide);
+    } else if (messageData.type === 'tournament_end') {
+      tournamentIsRunning = false;
+    } else if (messageData.type === 'game_end' && gameIsRunning) {
+      gameIsRunning = false;
+      triggerEndGameMenu(
+        messageData.winningPlayer,
+        messageData.ownSide,
+        messageData.stats,
+        leanGameSettings.playType,
+        tournamentIsRunning,
+      );
+      resetVariables();
+    } else if (messageData.type === 'tournament_status') {
+      showTournamentStatus(messageData.participants);
     }
   };
+}
+
+/**
+ * @brief Stops the game
+ *
+ * This function sends message to backend for when a game is over. It also closes the websocket.
+ * */
+function stopGame(): void {
+  const stopMessage = JSON.stringify({ type: 'stop_game' });
+
+  if (gameIsRunning) {
+    gameIsRunning = false;
+    setTimeout(() => {
+      if (webSocket.readyState === WebSocket.OPEN) {
+        webSocket.close();
+      }
+    }, 100);
+  } else if (webSocket.readyState === WebSocket.OPEN) {
+    webSocket.close();
+    webSocket.send(stopMessage);
+  }
 }
 
 /**
@@ -115,4 +161,11 @@ function addKeyEventListeners(gameType: gameType): void {
 
   window.addEventListener('keydown', keyDownHandler);
   window.addEventListener('keyup', keyUpHandler);
+}
+
+/**
+ * @brief Sends message to Websocket signaling being ready for the next game
+ */
+export function readyForNextGame(): void {
+  webSocket.send(JSON.stringify({ type: 'ready_for_next_game' }));
 }

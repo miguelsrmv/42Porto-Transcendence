@@ -17,6 +17,7 @@ import {
 import { initializeLocalGame } from '../game/localGameApp/game.js';
 
 import { loadView } from '../../core/viewLoader.js';
+import { showHowToPlay } from '../../ui/controls.js';
 
 /**
  * @brief Initializes view for local play
@@ -24,11 +25,10 @@ import { loadView } from '../../core/viewLoader.js';
  * This function sets up the pre-game page for local play
  */
 export async function initializeView(): Promise<void> {
+  showHowToPlay('Local Play');
+
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
-
-  // Creates background loop
-  createBackgroundLoop();
 
   // Hides game type menu
   const gameTypeSelection = document.getElementById('game-type-selection');
@@ -40,26 +40,20 @@ export async function initializeView(): Promise<void> {
   if (gameSettingsMenu) gameSettingsMenu.classList.remove('hidden');
   else console.warn('Game Settings Menu not found.');
 
-  // Toggle second player
-  const player2Settings = document.getElementById('player-2-settings');
-  if (player2Settings) player2Settings.classList.remove('hidden');
-  else console.warn('Player 2 Settings not found.');
-
   // If Crazy Pong, toggles character select section, adjusts sizes & activates character loop
   if (gameType === 'Crazy Pong') {
-    // Unhides character selection
-    const characterSelect1 = document.getElementById('player-1-character');
-    if (characterSelect1) characterSelect1.classList.remove('hidden');
-    else console.warn('Character Select 1 not found.');
+    for (let i: number = 1; i <= 2; i++) {
+      // Unhides character selection
+      const characterSelect = document.getElementById(`player-${i}-character`);
+      if (characterSelect) characterSelect.classList.remove('hidden');
+      else console.warn(`Character Select ${i} not found.`);
 
-    const characterSelect2 = document.getElementById('player-2-character');
-    if (characterSelect2) characterSelect2.classList.remove('hidden');
-    else console.warn('Character Select 2 not found.');
-
-    // Creates character loop (for both players)
-    createCharacterLoop();
-    createCharacterLoop(2);
+      // Creates character loop
+      createCharacterLoop(i);
+    }
   }
+
+  createBackgroundLoop();
 
   const playButton = document.getElementById('play-button');
   if (playButton) {

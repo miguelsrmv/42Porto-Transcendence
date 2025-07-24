@@ -36,13 +36,17 @@ export class Paddle {
     this.speedModifier = 1;
   }
 
+  isPaddleVisible: boolean = true;
+
   /**
    * @brief Draws the paddle on the canvas.
    * @param ctx The canvas rendering context.
    */
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    if (this.isPaddleVisible) {
+      ctx.fillStyle = this.color;
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
   }
 
   /**
@@ -84,7 +88,7 @@ export class Paddle {
    * @param modifier The new speed modifier.
    */
   setSpeedModifier(modifier: number): void {
-    this.speedModifier = modifier;
+    this.speedModifier *= modifier;
   }
 
   /**
@@ -95,5 +99,10 @@ export class Paddle {
     this.speedY = 0;
     this.speedModifier = 1;
     this.height = PADDLE_LEN;
+    this.isPaddleVisible = true;
+  }
+
+  setIsPaddleVisible(visibility: boolean) {
+    this.isPaddleVisible = visibility;
   }
 }

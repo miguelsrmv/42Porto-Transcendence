@@ -8,9 +8,6 @@
 
 import { wait } from '../../../utils/helpers.js';
 
-// TODO: Check why the power bar sometimes activates out of nowhere
-// TODO: Try to export the animations to tailwindcss
-//
 /**
  * @brief Activates the power bar animation for a specified side.
  *
@@ -63,7 +60,7 @@ export function activatePowerBarAnimation(side: string) {
 export function deactivatePowerBarAnimation(side: string) {
   const powerBarFill = document.getElementById(`${side}-character-power-bar-fill`);
   if (!powerBarFill) {
-    console.warn(`PowerBar Fill in the ${side} not found`);
+    //console.warn(`PowerBar Fill in the ${side} not found`);
     return;
   }
   // Stop the animation
@@ -97,15 +94,7 @@ export function powerUpAnimation(side: string) {
 
   // Handle power bar animation if it exists
   if (powerBar) {
-    // Get current power or use default
-    const currentPower = parseFloat(powerBar.style.width) || 45;
-
-    // Calculate new power (increase by 25%, cap at 100%)
-    const newPower = Math.min(currentPower + 25, 100);
-
-    // Apply animation class and set new width
     powerBar.classList.add('power-increase');
-    powerBar.style.width = newPower + '%';
   }
 
   // Temporarily increase border width for emphasis

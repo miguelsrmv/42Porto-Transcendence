@@ -12,15 +12,24 @@ import { userIsLoggedIn } from '../auth/auth.service.js';
  * This function sets up the main menu, depending on if the user has logged in or not
  */
 export async function initializeView() {
-  if (await userIsLoggedIn())
+  // NOTE: Changed from checking login status due to speed. Possible bug?!?!
+  const isLoggedIn: boolean = localStorage.getItem('ID') !== null;
+
+  if (isLoggedIn)
     document.querySelectorAll('#main-menu-buttons a[data-target]').forEach(function (anchor) {
       showMenuHelperText(anchor);
     });
   else {
-    const availableButton = document.getElementById('local-play-button');
-    if (availableButton) {
-      showMenuHelperText(availableButton);
+    const localPlayButton = document.getElementById('local-match-button');
+    if (localPlayButton) {
+      showMenuHelperText(localPlayButton);
     }
+    const localTournamentButton = document.getElementById('local-tournament-button');
+    if (localTournamentButton) {
+      showMenuHelperText(localTournamentButton);
+    }
+
+    window.localStorage.clear();
 
     const disableButton = (
       buttonId: string,
@@ -40,6 +49,7 @@ export async function initializeView() {
           'duration-200',
           'hover:scale-105',
           'hover:shadow-2xl',
+          'cursor-pointer',
         );
         button.removeAttribute('href');
         button.removeAttribute('data-target');
@@ -58,6 +68,7 @@ export async function initializeView() {
           'from-yellow-700',
           'from-green-700',
           'from-purple-700',
+          'from-gray-700',
           'bg-gradient-to-t',
           'to-transparent',
         );
@@ -68,6 +79,7 @@ export async function initializeView() {
           'bg-yellow-700',
           'bg-green-700',
           'bg-purple-700',
+          'bg-gray-700',
           'transition-opacity',
           'duration-200',
           'group-hover:opacity-0',
@@ -77,16 +89,16 @@ export async function initializeView() {
     };
 
     disableButton(
-      'remote-play-button',
-      'remote-play-button-container',
-      'remote-play-button-container-text',
-      'remote-play-button-overlay',
+      'remote-match-button',
+      'remote-match-button-container',
+      'remote-match-button-container-text',
+      'remote-match-button-overlay',
     );
     disableButton(
-      'tournament-play-button',
-      'tournament-play-button-container',
-      'tournament-play-button-container-text',
-      'tournament-play-button-overlay',
+      'remote-tournament-button',
+      'remote-tournament-button-container',
+      'remote-tournament-button-container-text',
+      'remote-tournament-button-overlay',
     );
     disableButton(
       'rankings-button',

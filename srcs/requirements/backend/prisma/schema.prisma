@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  // output = "../generated/client"
+  output = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -9,74 +9,71 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  email          String   @unique
-  username       String   @unique
-  hashedPassword String
-  salt           String   @default("")
-  createdAt      DateTime @default(now())
-  player         Player?
+  id               String                  @id @default(uuid())
+  email            String                  @unique
+  username         String                  @unique
+  hashedPassword   String
+  salt             String                  @default("")
+  createdAt        DateTime                @default(now())
+  lastActiveAt     DateTime                @default(now())
+  sessionToken     String?
+  sessionExpiresAt DateTime?
+  avatarUrl        String                  @default("../../../../static/avatar/default/mario.png")
+  secret2FA        String?
+  enabled2FA       Boolean                 @default(false)
+  friendsSent      Friendship[]            @relation("SentRequests")
+  friendsReceived  Friendship[]            @relation("ReceivedRequests")
+  matches1         Match[]                 @relation("MatchUser1")
+  matches2         Match[]                 @relation("MatchUser2")
+  matchesWon       Match[]                 @relation("MatchWinner")
+  leaderboard      Leaderboard[]
+  tournaments      TournamentParticipant[]
 }
 
-// TODO: Manage user online status somewhere else
-model Player {
-  id                 String                  @id @default(uuid())
-  name               String?
-  bio                String?
-  avatarUrl          String?
-  user               User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             String                  @unique
-  friends            Friendship[]            @relation("PlayerToFriends")
-  friendOf           Friendship[]            @relation("FriendsToPlayer")
-  matches1           Match[]                 @relation("MatchPlayer1")
-  matches2           Match[]                 @relation("MatchPlayer2")
-  matchesWon         Match[]                 @relation("MatchWinner")
-  tournamentsCreated Tournament[]
-  leaderboard        Leaderboard[]
-  tournaments        TournamentParticipant[]
+model Leaderboard {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  score  Int    @default(0)
 }
 
 model Friendship {
-  id        String           @id @default(uuid())
-  player    Player           @relation("PlayerToFriends", fields: [playerId], references: [id], onDelete: Cascade)
-  playerId  String
-  friendOf  Player           @relation("FriendsToPlayer", fields: [friendId], references: [id], onDelete: Cascade)
-  friendId  String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @default(now()) @updatedAt
-  status    FriendshipStatus @default(PENDING)
+  id          String           @id @default(uuid())
+  initiator   User             @relation("SentRequests", fields: [initiatorId], references: [id], onDelete: Cascade)
+  initiatorId String
+  recipient   User             @relation("ReceivedRequests", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @default(now()) @updatedAt
+  status      FriendshipStatus @default(PENDING)
 
-  @@unique([playerId, friendId])
+  @@unique([initiatorId, recipientId])
+  @@unique([recipientId, initiatorId])
 }
 
 enum FriendshipStatus {
   PENDING
   ACCEPTED
-  BLOCKED
+  REJECTED
 }
 
 model Match {
-  id               String      @id @default(uuid())
-  mode             MatchMode   @default(CLASSIC)
-  duration         Int         @default(0)
-  player1Id        String
-  player1          Player      @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
-  player2Id        String
-  player2          Player      @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
-  player1Score     Int         @default(0)
-  player2Score     Int         @default(0)
-  player1Character Character?
-  player2Character Character?
-  winnerId         String?
-  winner           Player?     @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
-  tournamentId     String?
-  tournament       Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  roundNumber      Int?
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @default(now()) @updatedAt
-  settings         String
-
-  @@unique([player1Id, player2Id, tournamentId])
+  id             String     @id @default(uuid())
+  mode           GameMode   @default(CLASSIC)
+  user1Id        String
+  user1          User       @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2Id        String
+  user2          User       @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  user1Score     Int        @default(0)
+  user2Score     Int        @default(0)
+  user1Character Character?
+  user2Character Character?
+  user1Alias     String
+  user2Alias     String
+  winnerId       String?
+  winner         User?      @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime   @default(now())
+  stats          String
 }
 
 enum Character {
@@ -87,54 +84,26 @@ enum Character {
   SONIC
   KIRBY
   YOSHI
-  SAMUS
   DK
   MEWTWO
+  BOWSER
+  SAMUS
+  CAPFALCON
+  SNAKE
 }
 
-enum MatchMode {
+enum GameMode {
   CLASSIC
-  CUSTOM
-}
-
-model Leaderboard {
-  id       String @id @default(uuid())
-  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId String
-  classic  Int    @default(0)
-  custom   Int    @default(0)
-}
-
-model Tournament {
-  id              String                  @id @default(uuid())
-  name            String?
-  createdAt       DateTime                @default(now())
-  updatedAt       DateTime                @default(now()) @updatedAt
-  matches         Match[]
-  createdBy       Player                  @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  createdById     String
-  settings        String
-  maxParticipants Int                     @default(8)
-  status          TournamentStatus        @default(PENDING)
-  currentRound    Int                     @default(1)
-  participants    TournamentParticipant[]
-}
-
-enum TournamentStatus {
-  PENDING
-  ACTIVE
-  COMPLETED
+  CRAZY
 }
 
 model TournamentParticipant {
-  id           String     @id @default(uuid())
-  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  tournamentId String
-  player       Player     @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId     String
-  alias        String
-  character    Character?
+  id             String   @id @default(uuid())
+  tournamentId   String
+  tournamentType GameMode
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  createdAt      DateTime @default(now())
 
-  @@unique([tournamentId, playerId])
-  @@unique([tournamentId, alias])
+  @@unique([tournamentId, userId])
 }

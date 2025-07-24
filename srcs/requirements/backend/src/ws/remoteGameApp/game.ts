@@ -1,15 +1,12 @@
-import { setupInput, handleInput } from './input.js';
-import WebSocket from 'ws';
+import { handleInput } from './input.js';
 import {
   checkWallCollision,
   checkPaddleCollision,
   checkGoal,
   checkFakeBallWallCollision,
 } from './collisions.js';
-import { gameSettings } from './settings.js';
-import { ClientMessage, gameRunningState, GameState, ServerMessage } from './types.js';
+import { gameRunningState, GameState, ServerMessage } from './types.js';
 import { Player } from './player.js';
-import { removePlayer } from './sessionManagement.js';
 import { GameArea } from './gameArea.js';
 
 function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
@@ -32,42 +29,9 @@ function setPlayerPowerBarInterval(player: Player, gameArea: GameArea) {
   gameArea.intervals.push(interval);
 }
 
-function setPowerUpBar(gameArea: GameArea): void {
+export function setPowerUpBar(gameArea: GameArea): void {
   setPlayerPowerBarInterval(gameArea.leftPlayer, gameArea);
   setPlayerPowerBarInterval(gameArea.rightPlayer, gameArea);
-}
-
-function closeGameHandler(socket1: WebSocket, socket2: WebSocket, gameArea: GameArea) {
-  const playerLeft: ServerMessage = { type: 'player_left' };
-  socket1.on('message', (message) => {
-    const parsedMessage: ClientMessage = JSON.parse(message.toString());
-    if (parsedMessage.type === 'stop_game') {
-      gameArea.stop();
-      removePlayer(socket1);
-      if (socket2.readyState === WebSocket.OPEN) socket2.send(JSON.stringify(playerLeft));
-      removePlayer(socket2);
-    }
-  });
-}
-
-function setCloseGame(player1socket: WebSocket, player2socket: WebSocket, gameArea: GameArea) {
-  closeGameHandler(player1socket, player2socket, gameArea);
-  closeGameHandler(player2socket, player1socket, gameArea);
-}
-
-export function initializeRemoteGame(
-  player1socket: WebSocket,
-  player2socket: WebSocket,
-  gameSettings: gameSettings,
-): void {
-  const gameArea = new GameArea(player1socket, player2socket, gameSettings);
-  setupInput(gameArea);
-  setPowerUpBar(gameArea);
-  setCloseGame(player1socket, player2socket, gameArea);
-  const gameInterval = setInterval(() => {
-    gameArea.gameLoop();
-  }, 20);
-  gameArea.intervals.push(gameInterval);
 }
 
 export async function updateGameArea(dt: number, gameArea: GameArea) {
@@ -94,15 +58,10 @@ export async function updateGameArea(dt: number, gameArea: GameArea) {
     leftAnimation: gameArea.leftAnimation,
     rightAnimation: gameArea.rightAnimation,
   } as GameState;
-  // TODO: Filter before sending
   const gameStateMsg: ServerMessage = { type: 'game_state', state: gameState };
-  gameArea.broadcastSessionMessage(JSON.stringify(gameStateMsg));
+  gameArea.session.broadcastMessage(JSON.stringify(gameStateMsg));
 }
 
 export function getGameVersion(gameArea: GameArea): number {
   return gameArea.leftPlayer.getScore() + gameArea.rightPlayer.getScore();
-}
-
-export function endGameIfRunning(gameArea: GameArea): void {
-  if (gameArea.runningState !== gameRunningState.ended) gameArea.stop();
 }

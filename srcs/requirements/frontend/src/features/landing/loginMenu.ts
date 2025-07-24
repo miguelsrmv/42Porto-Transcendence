@@ -117,19 +117,14 @@ function handleModalTransitionEnd(event: TransitionEvent): void {
  * event listeners for form submission and navigation to the registration form.
  */
 function toggleLoginMenu(): void {
-  const loginForm = document.getElementById('login-form');
+  const loginForm = document.getElementById('login-form') as HTMLFormElement;
 
   if (loginForm) {
-    // Only attach the listener once
-    if (!loginFormListenerAttached) {
-      const loginButton = document.getElementById('login-submit-button');
-      if (loginButton) {
-        loginButton.addEventListener('click', function (event) {
-          attemptLogin.call(loginForm as HTMLFormElement, event);
-        });
-        //loginFormListenerAttached = true;
-        //TODO: Check if this is a bug or not?
-      }
+    const loginButton = document.getElementById('login-submit-button');
+    if (loginButton) {
+      loginButton.addEventListener('click', function (event) {
+        attemptLogin(loginForm, event);
+      });
     }
 
     const showRegisterButton = document.getElementById('show-register-button');
@@ -153,8 +148,9 @@ function toggleLoginMenu(): void {
  * registration form when the register button is clicked.
  */
 function handleRegisterButtonClick(): void {
-  const loginForm = document.getElementById('login-form');
+  const loginForm = document.getElementById('login-form') as HTMLFormElement;
   if (loginForm) {
+    cleanForm(loginForm, 'error-login-message');
     loginForm.classList.toggle('hidden');
   }
   toggleRegisterMenu();
@@ -203,8 +199,9 @@ function toggleRegisterMenu(): void {
  * to the login form when the back button is clicked.
  */
 function handleBackRegisterClick(): void {
-  const registerForm = document.getElementById('register-form');
+  const registerForm = document.getElementById('register-form') as HTMLFormElement;
   if (registerForm) {
+    cleanForm(registerForm, 'error-register-message');
     registerForm.classList.toggle('hidden');
   }
 
@@ -213,5 +210,14 @@ function handleBackRegisterClick(): void {
     loginForm.classList.toggle('hidden');
   } else {
     console.warn('#login-form not found.');
+  }
+}
+
+function cleanForm(form: HTMLFormElement, errorMessageId: string): void {
+  form.reset();
+  const errorMessage = document.getElementById(errorMessageId);
+  if (errorMessage) {
+    errorMessage.innerText = '';
+    errorMessage.classList.add('hidden');
   }
 }

@@ -9,25 +9,31 @@ import * as landingPageModule from '../features/landing/landing.js';
 import * as mainMenuModule from '../features/mainMenu/mainMenu.js';
 import * as localPlayModule from '../features/localPlay/localPlay.js';
 import * as remotePlayModule from '../features/remotePlay/remotePlay.js';
-import * as tournamentPlayModule from '../features/tournamentPlay/tournamentPlay.js';
+import * as remoteTournamentPlayModule from '../features/remoteTournamentPlay/remoteTournamentPlay.js';
+import * as localTournamentPlayModule from '../features/localTournamentPlay/localTournamentPlay.js';
 import * as friendModule from '../features/friends/friends.js';
 import * as rankingsModule from '../features/rankings/rankings.js';
+import * as settingsModule from '../features/settings/settings.js';
 //import * as gameModule from '../features/game/gamePage.js';
 import { endLocalGameIfRunning } from '../features/game/localGameApp/game.js';
-//import { endRemoteGameIfRunning } from '../features/game/remoteGameApp/remoteGame.js';
+import { endLocalTournamentIfRunning } from '../features/localTournamentPlay/localTournamentPlay.js';
+import { userIsLoggedIn } from '../features/auth/auth.service.js';
 
 type FeatureModule = {
-  initializeView: () => void;
+  initializeView: (errorCode?: number) => void;
 };
 
 export const routes: { [key: string]: FeatureModule } = {
   'landing-page': landingPageModule as FeatureModule,
   'main-menu-page': mainMenuModule as FeatureModule,
-  'local-play-page': localPlayModule as FeatureModule,
-  'remote-play-page': remotePlayModule as FeatureModule,
-  'tournament-play-page': tournamentPlayModule as FeatureModule,
+  'local-match-page': localPlayModule as FeatureModule,
+  'remote-match-page': remotePlayModule as FeatureModule,
+  'local-tournament-page': localTournamentPlayModule as FeatureModule,
+  'remote-tournament-page': remoteTournamentPlayModule as FeatureModule,
   'friends-page': friendModule as FeatureModule,
   'rankings-page': rankingsModule as FeatureModule,
+  'settings-page': settingsModule as FeatureModule,
+  'error-page': errorPageModule as FeatureModule,
   //  'game-page': gameModule as FeatureModule,
 };
 
@@ -37,20 +43,33 @@ let currentView = '';
  * @brief Handles changes in the route based on the URL hash.
  * @returns A promise that resolves when the view is loaded.
  */
-function handleRouteChange(): void {
+async function handleRouteChange(): Promise<void> {
   // If a local game is running, stop it
   endLocalGameIfRunning();
 
-  // TODO: Check if it's necessary. I don't think it is?...
-  // If a remote game is running, stop it
-  //endRemoteGameIfRunning();
+  // If a local tournament game is running, stop it
+  endLocalTournamentIfRunning();
 
   // Get the view name from the URL hash, trim the first #
-  const viewName = window.location.hash.substring(1) || 'landing-page';
+  let viewName = window.location.hash.substring(1) || 'landing-page';
 
   // If already on that view, do nothing
   if (viewName == currentView) {
     return;
+  }
+
+  // Checks if user is authorized to visit page
+  if (
+    viewName !== 'local-match-page' &&
+    viewName !== 'local-tournament-page' &&
+    viewName !== 'landing-page' &&
+    viewName !== 'main-menu-page'
+  ) {
+    const loggedInStatus = await userIsLoggedIn();
+    if (!loggedInStatus) {
+      viewName = 'error-page';
+      window.localStorage.clear();
+    }
   }
 
   // Update currentView
@@ -60,7 +79,6 @@ function handleRouteChange(): void {
   try {
     loadView(viewName);
   } catch (error) {
-    console.error(`Error loading page "${viewName}":`, error);
     loadView('error-page');
     errorPageModule.initializeView(404);
     return;
@@ -120,10 +138,10 @@ const handleLinkClick = (event: MouseEvent): void => {
 /**
  * @brief Handles the popstate event for browser navigation (back/forward).
  */
-const handlePopState = (): void => {
+const handlePopState = async (): Promise<void> => {
   // When user clicks back/forward, handle the route change
   // The URL hash has already been updated by the browser
-  handleRouteChange();
+  await handleRouteChange();
 };
 
 /**
@@ -154,6 +172,14 @@ export function navigate(viewName: string, replace: boolean = false): void {
  * @brief Initializes the router by setting up event listeners and handling the initial route.
  */
 export function initializeRouter() {
+  // If reload, send to main page
+  const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+  if (navEntry?.type === 'reload') {
+    // Send them to main menu instead
+    window.location.replace('/');
+    return;
+  }
+
   // Listen for clicks on potential navigation links
   document.addEventListener('click', handleLinkClick);
 

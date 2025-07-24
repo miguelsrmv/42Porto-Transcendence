@@ -1,44 +1,45 @@
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { Attack } from './attack.js';
-import WebSocket from 'ws';
-import { PlayerInput } from './types.js';
+import { PlayerInput, Side } from './types.js';
 import { gameStats } from './gameStats.js';
 import { GameArea } from './gameArea.js';
 
 export class Player {
+  id: string;
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
   ball: Ball;
-  alias?: string;
+  alias: string;
   score: number;
   attack: Attack | null;
-  side: string;
-  socket: WebSocket;
+  side: Side;
   input: PlayerInput;
   powerBarFill: number;
+  isEliminated: boolean = false;
 
   constructor(
+    id: string,
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
     alias: string,
     attackName: string | null,
-    side: string,
-    socket: WebSocket,
+    enemyAttackName: string | null,
+    side: Side,
     stats: gameStats,
     gameArea: GameArea,
   ) {
+    this.id = id;
     this.ownPaddle = ownPaddle;
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.alias = alias;
     this.score = 0;
     this.attack = attackName
-      ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side, stats, gameArea)
+      ? new Attack(attackName, enemyAttackName, ownPaddle, enemyPaddle, ball, side, stats, gameArea)
       : null;
     this.side = side;
-    this.socket = socket;
     this.input = PlayerInput.stop;
     this.powerBarFill = 0;
   }

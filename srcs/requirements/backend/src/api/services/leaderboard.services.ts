@@ -1,0 +1,52 @@
+import { prisma } from '../../utils/prisma';
+import { Player } from '../../ws/remoteGameApp/player';
+import { PlayerScore } from '../../ws/tournament';
+
+export async function getUserRank(id: string) {
+  const userLeaderboard = await prisma.leaderboard.findUniqueOrThrow({
+    where: { userId: id },
+  });
+  const userScore = userLeaderboard.score;
+  const betterPlayers = await prisma.leaderboard.count({
+    where: { score: { gt: userScore } },
+  });
+  return betterPlayers + 1;
+}
+
+export async function getUserScore(id: string) {
+  const userLeaderboard = await prisma.leaderboard.findUniqueOrThrow({
+    where: { userId: id },
+  });
+  return userLeaderboard.score;
+}
+
+export async function updateLeaderboardRemote(winningPlayer: Player, losingPlayer: Player) {
+  await prisma.leaderboard.update({
+    where: { userId: winningPlayer.id },
+    data: { score: { increment: 3 } },
+  });
+
+  const losingPlayerRecord = await prisma.leaderboard.findUnique({
+    where: { userId: losingPlayer.id },
+  });
+  if (losingPlayerRecord && losingPlayerRecord.score > 0) {
+    await prisma.leaderboard.update({
+      where: { userId: losingPlayer.id },
+      data: { score: { decrement: 1 } },
+    });
+  }
+}
+
+export async function updateLeaderboardTournament(scores: PlayerScore[]) {
+  const finalScores: Record<string, number> = {};
+  for (const score of scores) {
+    if (finalScores[score.playerId]) finalScores[score.playerId] += score.score;
+    else finalScores[score.playerId] = score.score;
+  }
+  for (const playerId in finalScores) {
+    await prisma.leaderboard.update({
+      where: { userId: playerId },
+      data: { score: { increment: finalScores[playerId] } },
+    });
+  }
+}

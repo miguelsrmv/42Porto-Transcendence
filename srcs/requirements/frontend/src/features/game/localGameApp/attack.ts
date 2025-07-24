@@ -46,6 +46,7 @@ export class Attack {
   enemyPaddle: Paddle;
   ball: Ball;
   attackName: string | undefined;
+  enemyAttackName: string | null;
   side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
@@ -67,6 +68,7 @@ export class Attack {
    */
   constructor(
     attackName: string | undefined,
+    enemyAttackName: string | null,
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
@@ -76,6 +78,7 @@ export class Attack {
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.attackName = attackName;
+    this.enemyAttackName = enemyAttackName;
     this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
@@ -83,17 +86,17 @@ export class Attack {
       'Super Shroom': {
         handler: async () => this.superShroom(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Egg Barrage': {
         handler: async () => this.eggBarrage(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Spin Dash': {
         handler: async () => this.spinDash(),
-        duration: 2,
-        cooldown: 10000,
+        duration: 3,
+        cooldown: 8000,
       },
       'Thunder Wave': {
         handler: async () => this.thunderWave(),
@@ -103,26 +106,48 @@ export class Attack {
       Confusion: {
         handler: async () => this.confusion(),
         duration: 4,
-        cooldown: 7500,
+        cooldown: 10000,
       },
-      'Magic Mirror': {
-        handler: async () => this.magicMirror(),
+      'Gale Boomerang': {
+        handler: async () => this.galeBoomerang(),
         duration: 0,
-        cooldown: 7500,
+        cooldown: 14000,
       },
-      Mini: {
-        handler: async () => this.mini(),
-        duration: 5,
-        cooldown: 5000,
+      'The Amazing Mirror': {
+        handler: async () => this.theAmazingMirror(),
+        duration: 4,
+        cooldown: 10000,
       },
       'Giant Punch': {
         handler: async () => this.giantPunch(),
         duration: 4,
+        cooldown: 8000,
+      },
+      'Morph Ball': {
+        handler: async () => this.morphBall(),
+        duration: 4,
+        cooldown: 8000,
+      },
+      'Falcon Dive': {
+        handler: async () => this.falconDive(),
+        duration: 4,
+        cooldown: 6000,
+      },
+      'Shell Decoy': {
+        handler: async () => this.shellDecoy(),
+        duration: 6,
+        cooldown: 8000,
+      },
+      Sabotage: {
+        handler: async () => this.sabotage(),
+        duration: 6,
         cooldown: 10000,
       },
     };
 
-    this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    if (attackName !== 'The Amazing Mirror')
+      this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    else this.activeAttack = this.attackMap[enemyAttackName as attackIdentifier].handler;
     this.attackDuration = this.attackMap[attackName as attackIdentifier].duration;
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
@@ -180,7 +205,6 @@ export class Attack {
    * This attack temporarily increases the player's paddle size for the duration of the effect.
    */
   async superShroom(): Promise<void> {
-    console.log(`Super shroom called by ${this.side}`);
     const growth = PADDLE_LEN * 0.25;
 
     const startingVersion = getGameVersion();
@@ -243,17 +267,8 @@ export class Attack {
 
     const startingSpeedX = this.ball.speedX;
     const startingSpeedY = this.ball.speedY;
-
-    const currentSpeedXMag = Math.abs(startingSpeedX);
-    const boostedSpeedXMag = currentSpeedXMag * growthFactor;
-    const cappedSpeedXMag = Math.min(boostedSpeedXMag, MAX_BALL_SPEED);
-    const newSpeedX = cappedSpeedXMag * Math.sign(startingSpeedX);
-
-    const currentSpeedYMag = Math.abs(startingSpeedY);
-    const boostedSpeedYMag = currentSpeedYMag * growthFactor;
-    const cappedSpeedYMag = Math.min(boostedSpeedYMag, MAX_BALL_SPEED);
-    const newSpeedY = cappedSpeedYMag * Math.sign(startingSpeedY);
-
+    const newSpeedX = startingSpeedX * growthFactor;
+    const newSpeedY = startingSpeedY * growthFactor;
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
     await wait(this.attackDuration);
@@ -261,13 +276,8 @@ export class Attack {
     if (!this.gameVersionHasChanged(startingVersion)) {
       const currentSpeedX = this.ball.speedX;
       const currentSpeedY = this.ball.speedY;
-
-      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
-      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
-
-      const scaleFactor = originalMagnitude / currentMagnitude;
-      const revertedSpeedX = currentSpeedX * scaleFactor;
-      const revertedSpeedY = currentSpeedY * scaleFactor;
+      const revertedSpeedX = currentSpeedX * (1 / growthFactor);
+      const revertedSpeedY = currentSpeedY * (1 / growthFactor);
 
       this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
     }
@@ -312,35 +322,20 @@ export class Attack {
   }
 
   /**
-   * @brief Executes the Magic Mirror attack.
+   * @brief Executes the Gale Boomerang attack.
    *
    * This attack instantly reverses the ball's vertical direction.
    */
-  async magicMirror(): Promise<void> {
+  async galeBoomerang(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
   /**
-   * @brief Executes the Mini attack.
+   * @brief Uses the enemy's attack.
    *
-   * This attack temporarily reduces the ball's size for the duration of the effect.
+   * This attack does nothing for cases of mirror Kirby matches
    */
-  async mini(): Promise<void> {
-    const startingVersion = getGameVersion();
-
-    const shrinkFactor = 0.5;
-
-    const oldRadius = this.ball.radius;
-    const newRadius = oldRadius * shrinkFactor;
-
-    this.ball.setRadius(newRadius);
-
-    await wait(this.attackDuration);
-
-    if (!this.gameVersionHasChanged(startingVersion)) {
-      this.ball.setRadius(oldRadius);
-    }
-  }
+  async theAmazingMirror(): Promise<void> {}
 
   /**
    * @brief Executes the Giant Punch attack.
@@ -348,7 +343,6 @@ export class Attack {
    * This attack temporarily reduces the opponent's paddle size for the duration of the effect.
    */
   async giantPunch(): Promise<void> {
-    console.log('Giant punch called');
     const startingVersion = getGameVersion();
 
     const shrink = PADDLE_LEN * 0.4;
@@ -368,6 +362,87 @@ export class Attack {
       const newOriginalY = this.enemyPaddle.y;
       this.enemyPaddle.setHeight(this.enemyPaddle.height + shrink);
       this.enemyPaddle.setY(newOriginalY + yOffset);
+    }
+  }
+
+  /**
+   * @brief Executes the Morph Ball attack.
+   *
+   * This attack temporarily reduces the ball's speed
+   */
+  async morphBall(): Promise<void> {
+    const startingVersion = getGameVersion(); // Check score changes
+
+    const slowFactor = 0.75; // Speed multiplier
+
+    const startingSpeedX = this.ball.speedX;
+    const startingSpeedY = this.ball.speedY;
+    const newSpeedX = startingSpeedX * slowFactor;
+    const newSpeedY = startingSpeedY * slowFactor;
+    this.ball.setSpeed(newSpeedX, newSpeedY);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      const currentSpeedX = this.ball.speedX;
+      const currentSpeedY = this.ball.speedY;
+      const revertedSpeedX = currentSpeedX * (1 / slowFactor);
+      const revertedSpeedY = currentSpeedY * (1 / slowFactor);
+
+      this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
+    }
+  }
+
+  /**
+   * @brief Executes the Falcon Dive attack.
+   *
+   * This attack temporarily increases the users' paddle speed for the duration of the effect.
+   */
+  async falconDive(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    const growthFactor = 2;
+
+    this.ownPaddle.setSpeedModifier(growthFactor);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.ownPaddle.setSpeedModifier(1);
+    }
+  }
+
+  /**
+   * @brief Executes the Hide in Shell attack.
+   *
+   * This attack temporarily makes the ball invisible.
+   */
+  async shellDecoy(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    this.ball.setIsVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.ball.setIsVisible(true);
+    }
+  }
+
+  /**
+   * @brief Executes the sabotage attack.
+   *
+   * This attack temporarily makes the opponent's paddle invisible.
+   */
+  async sabotage(): Promise<void> {
+    const startingVersion = getGameVersion();
+
+    this.enemyPaddle.setIsPaddleVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setIsPaddleVisible(true);
     }
   }
 }

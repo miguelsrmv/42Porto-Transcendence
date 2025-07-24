@@ -1,0 +1,130 @@
+import { prisma } from '../../utils/prisma';
+import { GameArea } from './gameArea';
+import { Player } from './player';
+import { Character } from '@prisma/client';
+import { gameSettings } from './settings';
+import { gameTypeToEnum, gameTypeToGameMode } from '../../utils/helpers';
+import { updateLeaderboardRemote } from '../../api/services/leaderboard.services';
+import { BlockchainScoreData } from '../tournament';
+import { closeSocket } from '../helpers';
+import { ServerMessage } from './types';
+
+const characterNameToCharacter: Record<string, Character> = {
+  Mario: Character.MARIO,
+  Pikachu: Character.PIKACHU,
+  Yoshi: Character.YOSHI,
+  Bowser: Character.BOWSER,
+  Sonic: Character.SONIC,
+  Kirby: Character.KIRBY,
+  Mewtwo: Character.MEWTWO,
+  Link: Character.LINK,
+  Samus: Character.SAMUS,
+  'Captain Falcon': Character.CAPFALCON,
+  Snake: Character.SNAKE,
+  'Donkey Kong': Character.DK,
+};
+
+export function getCharacters(settings: gameSettings) {
+  let character1: Character;
+  let character2: Character;
+  if (!settings.character1) {
+    character1 = Character.NONE;
+  } else {
+    character1 = characterNameToCharacter[settings.character1.name];
+  }
+  if (!settings.character2) {
+    character2 = Character.NONE;
+  } else {
+    character2 = characterNameToCharacter[settings.character2.name];
+  }
+  return [character1, character2];
+}
+
+export async function createMatchPlayerLeft(winningPlayer: Player, gameArea: GameArea) {
+  const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
+  const [character1, character2] = getCharacters(gameArea.settings);
+  await prisma.match.create({
+    data: {
+      user1Id: gameArea.leftPlayer.id,
+      user2Id: gameArea.rightPlayer.id,
+      user1Character: character1,
+      user2Character: character2,
+      user1Alias: gameArea.leftPlayer.alias,
+      user2Alias: gameArea.rightPlayer.alias,
+      winnerId: winningPlayer.id,
+      user1Score: gameArea.leftPlayer === winningPlayer ? 5 : gameArea.stats.left.goals,
+      user2Score: gameArea.rightPlayer === winningPlayer ? 5 : gameArea.stats.right.goals,
+      mode: gameMode,
+      stats: JSON.stringify(gameArea.stats),
+    },
+  });
+}
+
+async function createMatch(winningPlayer: Player, gameArea: GameArea) {
+  const gameMode = gameTypeToGameMode(gameArea.settings.gameType);
+  const [character1, character2] = getCharacters(gameArea.settings);
+  await prisma.match.create({
+    data: {
+      user1Id: gameArea.leftPlayer.id,
+      user2Id: gameArea.rightPlayer.id,
+      user1Character: character1,
+      user2Character: character2,
+      user1Alias: gameArea.leftPlayer.alias,
+      user2Alias: gameArea.rightPlayer.alias,
+      winnerId: winningPlayer.id,
+      user1Score: gameArea.stats.left.goals,
+      user2Score: gameArea.stats.right.goals,
+      mode: gameMode,
+      stats: JSON.stringify(gameArea.stats),
+    },
+  });
+}
+
+export async function endGame(winningPlayer: Player, gameArea: GameArea) {
+  if (gameArea.isEnding) return;
+  gameArea.isEnding = true;
+  gameArea.stop();
+  const losingPlayer: Player = gameArea.getOtherPlayer(winningPlayer);
+  losingPlayer.isEliminated = true;
+  if (gameArea.tournament) {
+    const endTournamentMSg = JSON.stringify({ type: 'tournament_end' } as ServerMessage);
+    gameArea.session.sendToPlayer(losingPlayer.id, endTournamentMSg);
+    if (gameArea.tournament.currentRound === 3) {
+      gameArea.session.sendToPlayer(winningPlayer.id, endTournamentMSg);
+    }
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
+    const winningPlayerInfo = gameArea.session.players.find((p) => p.id === winningPlayer.id);
+    const losingPlayerInfo = gameArea.session.players.find((p) => p.id === losingPlayer.id);
+    if (!winningPlayerInfo || !losingPlayerInfo) return;
+    const data: BlockchainScoreData = {
+      tournamentId: gameArea.tournament.id,
+      gameType: gameTypeToEnum(gameArea.tournament.type),
+      player1Data: [
+        winningPlayerInfo.id,
+        winningPlayerInfo.alias,
+        winningPlayerInfo.character?.name ?? 'NONE',
+      ],
+      score1: winningPlayer.score,
+      player2Data: [
+        losingPlayerInfo.id,
+        losingPlayerInfo.alias,
+        losingPlayerInfo.character?.name ?? 'NONE',
+      ],
+      score2: losingPlayer.score,
+    };
+    console.log(`Game ended, winner: ${winningPlayer.alias}`);
+    const socket = gameArea.session.getPlayerSocket(losingPlayer.id);
+    gameArea.session.winner = winningPlayer.id;
+    if (socket) closeSocket(socket);
+    await gameArea.tournament.updateSessionScore(gameArea.session.round, winningPlayer.id, data);
+  } else {
+    gameArea.session.broadcastEndGameMessage(winningPlayer);
+    await createMatch(winningPlayer, gameArea);
+    await updateLeaderboardRemote(winningPlayer, losingPlayer);
+    const loserSocket = gameArea.session.getPlayerSocket(losingPlayer.id);
+    const winnerSocket = gameArea.session.getPlayerSocket(winningPlayer.id);
+    if (!loserSocket || !winnerSocket) return;
+    closeSocket(loserSocket);
+    closeSocket(winnerSocket);
+  }
+}

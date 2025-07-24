@@ -35,6 +35,7 @@ export class Player {
     ball: Ball,
     alias: string,
     attackName: string | null,
+    enemyAttackName: string | null,
     side: string,
   ) {
     this.ownPaddle = ownPaddle;
@@ -42,7 +43,9 @@ export class Player {
     this.ball = ball;
     this.alias = alias;
     this.score = 0;
-    this.attack = attackName ? new Attack(attackName, ownPaddle, enemyPaddle, ball, side) : null;
+    this.attack = attackName
+      ? new Attack(attackName, enemyAttackName, ownPaddle, enemyPaddle, ball, side)
+      : null;
     this.side = side;
   }
 

@@ -1,6 +1,7 @@
-import { Ball, ballCountdown } from './ball.js';
+import { Ball } from './ball.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, GameArea, SPEED } from './gameArea.js';
-import { wait } from './helpers.js';
+import { endGame } from './gameEnd.js';
+import { wait } from '../helpers.js';
 import { Paddle } from './paddle.js';
 import { Player } from './player.js';
 import { gameRunningState, ServerMessage } from './types.js';
@@ -35,21 +36,6 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
   return leftPlayer.getScore() === 5 || rightPlayer.getScore() === 5;
 }
 
-function endGame(winningPlayer: Player, gameArea: GameArea): void {
-  gameArea.stop();
-  const gameEndMsg = {
-    type: 'game_end',
-    winningPlayer: winningPlayer.side,
-    ownSide: 'left',
-    stats: gameArea.stats,
-  };
-  if (gameArea.leftPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.leftPlayer.socket.send(JSON.stringify(gameEndMsg));
-  gameEndMsg.ownSide = 'right';
-  if (gameArea.rightPlayer.socket.readyState === WebSocket.OPEN)
-    gameArea.rightPlayer.socket.send(JSON.stringify(gameEndMsg));
-}
-
 // Checks if ball reached vertical canvas limits
 export async function checkGoal(gameArea: GameArea) {
   if (gameArea.leftPlayer.ball.x - gameArea.leftPlayer.ball.radius <= 0) {
@@ -57,23 +43,24 @@ export async function checkGoal(gameArea: GameArea) {
     gameArea.stats.right.increaseGoals();
     gameArea.stats.left.increaseSufferedGoals();
     const gameGoal: ServerMessage = { type: 'game_goal', scoringSide: 'right' };
-    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
+    gameArea.session.broadcastMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   } else if (gameArea.leftPlayer.ball.x + gameArea.leftPlayer.ball.radius >= CANVAS_WIDTH) {
     gameArea.leftPlayer.increaseScore();
     gameArea.stats.left.increaseGoals();
     gameArea.stats.right.increaseSufferedGoals();
     const gameGoal: ServerMessage = { type: 'game_goal', scoringSide: 'left' };
-    gameArea.broadcastSessionMessage(JSON.stringify(gameGoal));
+    gameArea.session.broadcastMessage(JSON.stringify(gameGoal));
     await resetRound(gameArea);
   }
-  if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer))
-    endGame(
+  if (eitherPlayerHasWon(gameArea.leftPlayer, gameArea.rightPlayer)) {
+    await endGame(
       gameArea.leftPlayer.getScore() > gameArea.rightPlayer.getScore()
         ? gameArea.leftPlayer
         : gameArea.rightPlayer,
       gameArea,
     );
+  }
 }
 
 // Checks if ball went over paddle x coordinate
@@ -141,7 +128,7 @@ async function resetRound(gameArea: GameArea) {
   gameArea.rightPlayer.ownPaddle.reset();
   gameArea.fakeBalls.splice(0, gameArea.fakeBalls.length);
   gameArea.runningState = gameRunningState.paused;
-  ballCountdown(gameArea.ball);
+  gameArea.leftPlayer.ball.countdown();
   await wait(3);
   const newTime = Date.now();
   gameArea.leftAnimation = false;

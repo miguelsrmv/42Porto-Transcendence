@@ -1,12 +1,6 @@
+# Database
 data
-node_modules
-dev.db
 
-**/dist/
-
-/secrets
-
-*.log
-blockchain_address.txt
-**/output/
-settings.json
+# Secrets
+secrets
+srcs/.env

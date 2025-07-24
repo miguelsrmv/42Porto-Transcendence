@@ -1,190 +1,49 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
-import { handleError } from '../../utils/errorHandler';
-import { Character, TournamentStatus } from '@prisma/client';
-import { defaultGameSettings } from '../../utils/defaults';
-import {
-  createTournamentParticipant,
-  createTournamentByPlayer,
-} from '../services/tournament.services';
+import { contractProvider } from '../services/blockchain.services';
+import { processTournamentData } from '../services/tournament.services';
 
-export type TournamentCreate = {
-  name?: string;
-  maxParticipants: number;
-  createdBy: string;
-  settings?: string;
-};
-
-type TournamentUpdate = {
-  status: TournamentStatus;
-  currentRound: number;
-};
-
-export type TournamentPlayer = {
-  tournamentId?: string;
-  playerId: string;
-  alias: string;
-  character: Character;
-};
-
-export async function getAllTournaments(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    const tournaments = await prisma.tournament.findMany({
-      include: {
-        participants: true,
-        matches: true,
-      },
-    });
-    reply.send(tournaments);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
-export async function getPlayerTournaments(
+export async function getTournamentStatus(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
-  try {
-    const tournaments = await prisma.tournament.findMany({
-      include: {
-        participants: true,
-      },
-      where: {
-        participants: {
-          some: {
-            playerId: request.params.id,
-          },
-        },
-      },
-    });
-    reply.send(tournaments);
-  } catch (error) {
-    handleError(error, reply);
-  }
+  const rawParticipants: string[][] = await contractProvider.getMatchedParticipants(
+    request.params.id,
+  );
+  const scores: number[] = await contractProvider.getScores(request.params.id);
+  const data = await processTournamentData(rawParticipants, scores);
+  if (!data || data?.length === 0)
+    return reply.status(404).send({ message: 'Tournament not found' });
+  reply.send(data);
 }
 
-export async function getTournamentById(
+export async function getUserLastTournaments(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
-  try {
-    const tournament = await prisma.tournament.findUniqueOrThrow({
-      where: { id: request.params.id },
-      include: {
-        participants: true,
-      },
-    });
-    reply.send(tournament);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
-// Unused for business logic
-export async function createTournament(
-  request: FastifyRequest<{ Body: TournamentCreate }>,
-  reply: FastifyReply,
-) {
-  try {
-    const { name, maxParticipants, createdBy } = request.body;
-    const { settings } = request.body;
-
-    const finalSettings = { ...defaultGameSettings, ...(settings ? JSON.parse(settings) : {}) };
-
-    const tournament = await prisma.tournament.create({
-      data: {
-        name: name,
-        maxParticipants: maxParticipants ?? 8,
-        settings: JSON.stringify(finalSettings),
-        createdBy: {
-          connect: { id: createdBy },
-        },
-      },
-    });
-
-    reply.send(tournament);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
-// Unused for business logic
-// TODO: create function updateTournamentMatches
-export async function updateTournament(
-  request: FastifyRequest<{ Params: IParams; Body: TournamentUpdate }>,
-  reply: FastifyReply,
-) {
-  try {
-    const { status, currentRound } = request.body;
-
-    const tournament = await prisma.tournament.update({
-      where: { id: request.params.id },
-      data: {
-        status: status,
-        currentRound: currentRound,
-      },
-    });
-    reply.send(tournament);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
-export async function startTournament(
-  request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply,
-) {
-  try {
-    const tournament = await prisma.tournament.update({
-      where: { id: request.params.id },
-      data: {
-        status: TournamentStatus.ACTIVE,
-      },
-    });
-    reply.send(tournament);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
-export async function deleteTournament(
-  request: FastifyRequest<{ Params: IParams }>,
-  reply: FastifyReply,
-) {
-  try {
-    const tournament = await prisma.tournament.delete({
-      where: { id: request.params.id },
-    });
-    reply.send(tournament);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
-
-export async function addPlayerToTournament(
-  request: FastifyRequest<{ Body: TournamentPlayer }>,
-  reply: FastifyReply,
-) {
-  try {
-    if (!request.body.tournamentId) {
-      const newTournament = await createTournamentByPlayer(request.body.playerId);
-      request.body.tournamentId = newTournament.id;
-    }
-    const newParticipant = await createTournamentParticipant(request.body);
-
-    const updatedTournament = await prisma.tournament.update({
-      where: { id: request.body.tournamentId },
-      data: {
-        participants: {
-          connect: { id: newParticipant.id },
-        },
-      },
-      include: { participants: true },
-    });
-
-    reply.send(updatedTournament);
-  } catch (error) {
-    handleError(error, reply);
-  }
+  const user = await prisma.user.findUnique({ where: { id: request.params.id } });
+  if (!user) return reply.status(404).send({ message: 'User not found' });
+  const tournaments = await prisma.tournamentParticipant.findMany({
+    where: { userId: request.params.id },
+    select: { tournamentId: true, tournamentType: true },
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  });
+  const ids = tournaments.map((t) => t.tournamentId);
+  const fixedIds: [string, string, string] = [
+    ...ids.slice(0, 3), // get at most 3 entries
+    '',
+    '',
+    '', // add empty strings
+  ].slice(0, 3) as [string, string, string];
+  const positions = await contractProvider.getLastThreeTournamentsPosition(
+    request.params.id,
+    fixedIds,
+  );
+  const data = tournaments.map((t, index) => ({
+    tournamentId: t.tournamentId,
+    tournamentType: t.tournamentType,
+    position: positions[index] ?? null,
+  }));
+  reply.send(data);
 }

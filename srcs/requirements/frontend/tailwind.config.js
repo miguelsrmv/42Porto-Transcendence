@@ -1,8 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './static/index.html', // or wherever your HTML files are located
-  ],
+  content: ['./static/index.html', './src/**/*.ts'],
   theme: {
     extend: {
       transitionProperty: {
@@ -64,6 +62,30 @@ module.exports = {
     'border-orange-500',
     'text-orange-400',
     'hover:shadow-orange-500/30',
+    'bg-amber-500',
+    'border-amber-500',
+    'text-amber-400',
+    'hover:shadow-amber-500/300',
+    'bg-indigo-500',
+    'border-indigo-500',
+    'text-indigo-400',
+    'hover:shadow-indigo-500/300',
+    'bg-lime-500',
+    'border-lime-500',
+    'text-lime-400',
+    'hover:shadow-lime-500/300',
+    'bg-zinc-500',
+    'border-zinc-500',
+    'text-zinc-400',
+    'hover:shadow-zinc-500/300',
+    'from-yellow-900/30',
+    'from-green-900/30',
+    'bg-yellow-500/20',
+    'bg-green-500/20',
+    'text-yellow-300',
+    'text-green-300',
+    'border-yellow-400',
+    'border-green-400',
   ],
 
   plugins: [require('tailwindcss-textshadow')],

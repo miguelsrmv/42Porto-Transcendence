@@ -19,9 +19,11 @@ export type gameSettingKey =
   | 'playType'
   | 'gameType'
   | 'player1Alias'
+  | 'player1Avatar'
   | 'player1PaddleColour'
   | 'player1Character'
   | 'player2Alias'
+  | 'player2Avatar'
   | 'player2PaddleColour'
   | 'player2Character'
   | 'background'
@@ -33,14 +35,16 @@ export type gameSettingKey =
 const settings: Partial<gameSettings> = {};
 
 /**
- * @brief Index for the current character selection for player 1.
+ * @brief Index for current character sleections of players 1 to 8.
  */
 let currentCharacterIndex1: number = 0;
-
-/**
- * @brief Index for the current character selection for player 2.
- */
 let currentCharacterIndex2: number = 0;
+let currentCharacterIndex3: number = 0;
+let currentCharacterIndex4: number = 0;
+let currentCharacterIndex5: number = 0;
+let currentCharacterIndex6: number = 0;
+let currentCharacterIndex7: number = 0;
+let currentCharacterIndex8: number = 0;
 
 /**
  * @brief Index for the current background selection.
@@ -134,6 +138,18 @@ export function createCharacterLoop(player_number: number = 1) {
     } else if (player_number === 2) {
       currentCharacterIndex2 = currentCharacterIndex;
       settings.character2 = characterList[currentCharacterIndex];
+    } else if (player_number === 3) {
+      currentCharacterIndex3 = currentCharacterIndex;
+    } else if (player_number === 4) {
+      currentCharacterIndex4 = currentCharacterIndex;
+    } else if (player_number === 5) {
+      currentCharacterIndex5 = currentCharacterIndex;
+    } else if (player_number === 6) {
+      currentCharacterIndex6 = currentCharacterIndex;
+    } else if (player_number === 7) {
+      currentCharacterIndex7 = currentCharacterIndex;
+    } else if (player_number === 8) {
+      currentCharacterIndex8 = currentCharacterIndex;
     }
   }
 
@@ -235,7 +251,7 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   const player1InputAlias = document.getElementById('player-1-alias') as HTMLInputElement;
   if (player1InputAlias) {
     const inputValue = player1InputAlias.value.trim();
-    settings.alias1 = inputValue !== '' ? inputValue : 'Player 1';
+    settings.alias1 = inputValue !== '' ? inputValue : getPlayer1Alias();
   } else console.warn('Player 1 alias input form not found');
 
   const player1PaddleColour = document.getElementById(
@@ -253,10 +269,14 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   }
 
   if (settings.playType === 'Local Play') {
+    const player1AvatarPath = window.localStorage.getItem('AvatarPath');
+    if (player1AvatarPath) settings.avatar1 = player1AvatarPath;
+    if (player1AvatarPath) settings.avatar2 = player1AvatarPath;
+
     const player2InputAlias = document.getElementById('player-2-alias') as HTMLInputElement;
     if (player2InputAlias) {
       const inputValue2 = player2InputAlias.value.trim();
-      settings.alias2 = inputValue2 !== '' ? inputValue2 : 'Player 2';
+      settings.alias2 = inputValue2 !== '' ? inputValue2 : 'Opponent';
     } else console.warn('Player 2 alias input form not found');
 
     const player2PaddleColour = document.getElementById(
@@ -271,6 +291,14 @@ export function setGameSettings(gameType: gameType, playType: playType) {
   }
 
   settings.background = backgroundList[backgroundIndex];
+}
+
+function getPlayer1Alias(): string {
+  const aliasName = window.localStorage.getItem('Username');
+
+  if (!aliasName) return 'Player';
+
+  return aliasName;
 }
 
 /**
@@ -314,6 +342,12 @@ export function updateHUD(gameSettings: gameSettings, gameType: gameType): void 
 
   const rightAlias = document.getElementById('right-alias');
   if (rightAlias) rightAlias.innerText = gameSettings.alias2;
+
+  const leftAvatar = document.getElementById('left-player-avatar') as HTMLImageElement;
+  leftAvatar.src = gameSettings.avatar1;
+
+  const rightAvatar = document.getElementById('right-player-avatar') as HTMLImageElement;
+  rightAvatar.src = gameSettings.avatar2;
 
   if (gameType == 'Crazy Pong') {
     const leftCharacter = gameSettings.character1;
@@ -365,4 +399,15 @@ export function updateHUD(gameSettings: gameSettings, gameType: gameType): void 
       });
     }
   }
+}
+
+export function getCharacterIndex(i: number): number {
+  if (i == 1) return currentCharacterIndex1;
+  else if (i === 2) return currentCharacterIndex2;
+  else if (i === 3) return currentCharacterIndex3;
+  else if (i === 4) return currentCharacterIndex4;
+  else if (i === 5) return currentCharacterIndex5;
+  else if (i === 6) return currentCharacterIndex6;
+  else if (i === 7) return currentCharacterIndex7;
+  else return currentCharacterIndex8;
 }

@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ft_transcendence</title>
-    <link rel="icon" href="./static/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="./dist/styles/tailwind.css" />
-    <script type="module" src="../dist/app.js"></script>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/dist/styles/tailwind.css" />
+    <script type="module" src="/dist/app.js"></script>
   </head>
 
   <body id="body" class="h-screen w-screen flex flex-col bg-gray-800">
@@ -32,20 +32,20 @@
   </body>
 
   <template id="landing-template">
-    <div class="relative w-full h-full overflow-hidden">
+    <div class="relative w-full h-full overflow-hidden min-w-[900px] min-h-[600px]">
       <div
         id="title-screen"
-        class="w-full h-full flex flex-col items-center justify-center text-center relative"
+        class="w-full h-full flex flex-col items-center justify-start pt-[5vh] text-center relative"
       >
         <img
           id="main-title"
           src="./static/images/supersmash_titlescreen_white.png"
-          class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto"
+          class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto max-h-[40vh] min-h-[600px]"
           alt="Game Title Screen"
         />
         <div
           id="sub-title"
-          class="text-4xl text-white md:text-5xl lg:text-6xl font-serpentine mx-auto tracking-wide absolute bottom-[25vh] md:bottom-[30vh] left-0 right-0 opacity-0 invisible transition-opacity duration-700 ease-in-out"
+          class="text-white text-6xl font-serpentine tracking-wide absolute bottom-[33vh] mx-auto opacity-0 invisible transition-opacity duration-700 ease-in-out"
         >
           Transcendence
         </div>
@@ -53,7 +53,7 @@
         <button
           id="enter-button"
           data-target="main-menu-template"
-          class="text-5xl text-white md:text-6xl lg:text-7xl font-serpentine absolute bottom-[10vh] md:bottom-[15vh] left-0 right-0 opacity-0 invisible transition-all duration-500 ease-in-out hover:text-gray-700 hover:scale-105 active:scale-100"
+          class="cursor-pointer text-5xl text-white md:text-6xl lg:text-7xl font-serpentine absolute bottom-[10vh] md:bottom-[15vh] left-1/2 -translate-x-1/2 opacity-0 invisible transition-all duration-500 ease-in-out hover:text-gray-700 hover:scale-105 active:scale-100"
         >
           Enter
         </button>
@@ -102,7 +102,7 @@
             <button
               id="login-submit-button"
               type="submit"
-              class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold"
+              class="cursor-pointer w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold"
             >
               Login
             </button>
@@ -112,7 +112,7 @@
               <button
                 id="show-register-button"
                 type="button"
-                class="font-medium text-blue-600 hover:text-red-500 focus:outline-none focus:underline"
+                class="cursor-pointer font-medium text-blue-600 hover:text-red-500 focus:outline-none focus:underline"
               >
                 Register here!
               </button>
@@ -121,7 +121,7 @@
             <a
               href="#main-menu-page"
               id="guest-button"
-              class="block text-center w-full bg-gray-100 text-gray-700 py-2.5 px-4 mt-2 rounded-md border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out font-semibold"
+              class="cursor-pointer block text-center w-full bg-gray-100 text-gray-700 py-2.5 px-4 mt-2 rounded-md border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out font-semibold"
             >
               Play as Guest
             </a>
@@ -201,7 +201,7 @@
             <button
               id="register-submit-button"
               type="submit"
-              class="w-full bg-green-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out font-semibold"
+              class="cursor-pointer w-full bg-green-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out font-semibold"
             >
               Register
             </button>
@@ -211,11 +211,45 @@
               <button
                 id="show-login-button"
                 type="button"
-                class="font-medium text-green-600 hover:text-green-500 focus:outline-none focus:underline"
+                class="cursor-pointer font-medium text-green-600 hover:text-green-500 focus:outline-none focus:underline"
               >
                 Login here!
               </button>
             </div>
+          </form>
+
+          <form
+            id="2fa-form"
+            class="flex flex-col p-6 sm:p-8 space-y-6 hidden"
+            action="#"
+            method="post"
+          >
+            <label for="2fa-code" class="block text-sm font-medium text-gray-700"
+              >Authentication Code</label
+            >
+            <input
+              type="text"
+              id="authentication-code"
+              name="2FA code"
+              required
+              autocomplete=""
+              class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+            />
+            <div class="text-sm text-center text-gray-600 pt-2">
+              <button
+                id="2-fa-submit-button"
+                type="submit"
+                class="w-full bg-green-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out font-semibold"
+              >
+                Submit Authentication code
+              </button>
+            </div>
+            <div
+              id="error-2fa-code"
+              role="alert"
+              aria-live="polite"
+              class="hidden w-full text-sm text-red-700 bg-red-100 p-3 rounded-md border border-red-300"
+            ></div>
           </form>
         </div>
       </div>
@@ -223,12 +257,12 @@
   </template>
 
   <template id="main-menu-template">
-    <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col">
+    <div id="main-menu" class="w-[85%] h-full mx-auto flex flex-col min-w-[800px] min-h-[800px]">
       <div id="main-menu-buttons" class="w-full h-[80%] gap-4 flex mt-6">
         <a
-          href="#local-play-page"
-          id="local-play-button"
-          data-target="local-play-page"
+          href="#local-match-page"
+          id="local-match-button"
+          data-target="local-match-page"
           data-helper-message="Play locally with friends!"
           class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-700 rounded overflow-hidden"
         >
@@ -238,23 +272,23 @@
             class="w-full h-full object-cover"
           />
           <div
-            id="local-play-button-container-text"
+            id="local-match-button-container-text"
             class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-red-700 to-transparent h-1/2 flex items-end justify-start p-4"
           >
             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-              Local Play
+              Local Match
             </h3>
           </div>
           <div
-            id="local-play-button-overlay"
+            id="local-match-button-overlay"
             class="absolute inset-0 bg-red-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
           ></div>
         </a>
 
         <a
-          href="#remote-play-page"
-          id="remote-play-button"
-          data-target="remote-play-page"
+          href="#remote-match-page"
+          id="remote-match-button"
+          data-target="remote-match-page"
           data-helper-message="Play online!"
           class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-700 rounded overflow-hidden"
         >
@@ -264,41 +298,67 @@
             class="w-full h-full object-cover"
           />
           <div
-            id="remote-play-button-container-text"
+            id="remote-match-button-container-text"
             class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-yellow-700 to-transparent h-1/2 flex items-end justify-start p-4"
           >
             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-              Remote Play
+              Remote Match
             </h3>
           </div>
           <div
-            id="remote-play-button-overlay"
+            id="remote-match-button-overlay"
             class="absolute inset-0 bg-yellow-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
           ></div>
         </a>
 
         <a
-          href="#tournament-play-page"
-          id="tournament-play-button"
-          data-target="tournament-play-page"
-          data-helper-message="Play in a tournament!"
-          class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-700 rounded overflow-hidden"
+          href="#local-tournament-page"
+          id="local-tournament-button"
+          data-target="local-tournament-page"
+          data-helper-message="Play a local tournament!"
+          class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-zinc-700 rounded overflow-hidden"
         >
           <img
-            src="/static/images/tournamentplay.jpg"
-            alt="Tournament Play"
+            src="/static/images/localtournamentplay.jpg"
+            alt="Local Tournament Play"
             class="w-full h-full object-cover"
           />
           <div
-            id="tournament-play-button-container-text"
-            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4"
+            id="local-tournament-button-container-text"
+            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-zinc-700 to-transparent h-1/2 flex items-end justify-start p-4"
           >
             <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
-              Tournament Play
+              Local Tournament
             </h3>
           </div>
           <div
-            id="tournament-play-button-overlay"
+            id="local-tournament-button-overlay"
+            class="absolute inset-0 bg-zinc-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
+          ></div>
+        </a>
+
+        <a
+          href="#remote-tournament-page"
+          id="remote-tournament-button"
+          data-target="remote-tournament-page"
+          data-helper-message="Play an online tournament!"
+          class="relative flex-1 cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-700 rounded overflow-hidden"
+        >
+          <img
+            src="/static/images/remotetournamentplay.jpg"
+            alt="Remote Tournament Play"
+            class="w-full h-full object-cover"
+          />
+          <div
+            id="remote-tournament-button-container-text"
+            class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-700 to-transparent h-1/2 flex items-end justify-start p-4"
+          >
+            <h3 class="font-bold uppercase text-white font-serpentine text-4xl px-2 py-1">
+              Remote Tournament
+            </h3>
+          </div>
+          <div
+            id="remote-tournament-button-overlay"
             class="absolute inset-0 bg-blue-700 opacity-30 transition-opacity duration-200 group-hover:opacity-0"
           ></div>
         </a>
@@ -358,24 +418,35 @@
       </div>
       <div
         id="menu-helper-text"
-        class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine text-white"
+        class="w-full h-[20%] flex items-center justify-center mx-auto text-3xl font-serpentine text-white mb-3"
       ></div>
     </div>
   </template>
 
   <template id="game-menu-template">
     <div id="game-menu" class="z-50 w-full h-full flex items-center justify-center">
-      <div id="game-menu-inner" class="w-[85%] h-[95%] flex flex-col overflow-auto">
+      <div id="game-menu-inner" class="w-[80%] h-[90%] flex flex-col overflow-hidden">
         <!-- Game Type Selection -->
-        <div id="game-type-selection" class="flex-grow p-6 flex flex-col -mt-4">
-          <h2 class="text-4xl font-bold font-serpentine text-center mb-8 text-white">
-            Select Your Game
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+        <div
+          id="game-type-selection"
+          class="flex-grow p-6 flex flex-col -mt-4 min-w-[800px] justify-between"
+        >
+          <div class="flex justify-between items-center mb-8">
+            <h2 class="text-4xl font-bold font-serpentine text-white text-center flex-1">
+              Select Your Game
+            </h2>
+            <div
+              id="how-to"
+              class="cursor-pointer text-sm text-white font-serpentine ml-4 whitespace-nowrap"
+            >
+              How to play?
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-8 flex-1 min-w-[600px]">
             <!-- Classic Pong Button -->
             <button id="classic-pong-button" class="game-type-button group">
               <div
-                class="relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-blue-500"
+                class="cursor-pointer relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-blue-500"
               >
                 <img
                   src="/static/images/pokemon_trainer_female.png"
@@ -398,7 +469,7 @@
             <!-- Crazy Pong Button -->
             <button id="crazy-pong-button" class="game-type-button group">
               <div
-                class="relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-red-500"
+                class="cursor-pointer relative aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105 shadow-xl border-2 border-red-500"
               >
                 <img
                   src="/static/images/pokemon_trainer_male.png"
@@ -422,31 +493,33 @@
 
         <!-- Game Settings Menu -->
         <div id="game-settings-menu" class="flex-grow flex flex-col hidden">
-          <div id="settings-columns" class="flex flex-row gap-6 h-full overflow-hidden">
+          <div id="settings-columns" class="flex flex-row gap-6 h-[90%]">
             <!-- Player 1 Settings -->
             <div
               id="player-1-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-red-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-red-500/30 hover:-translate-y-1"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-red-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-red-400">
                 Player 1
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-1-name" class="mb-6 w-3/4">
+                <div id="player-1-name" class="mb-3 w-3/4">
                   <label
+                    id="player-1-alias-label"
                     for="player-1-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
                     id="player-1-alias"
                     type="text"
                     class="shadow appearance-none border-b-2 border-red-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-red-300 focus:shadow-outline text-center transition-all duration-300"
-                    placeholder="Player 1"
+                    placeholder="Player"
                   />
                 </div>
-                <div id="player-1-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-1-paddle-colour" class="mt-3 mb-3 w-3/4 text-center">
                   <label
+                    id="player-1-paddle-colour-input-label"
                     for="player-1-paddle-colour-input"
                     class="block text-gray-300 text-lg font-bold mb-2 text-center"
                     >Paddle Colour</label
@@ -458,20 +531,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-1-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-1-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
-                  <div class="flex items-center gap-6">
+                  <div id="character-select-1" class="flex items-center gap-6">
                     <button
                       id="prev-character-1"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-1"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-red-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-red-400"
                     >
                       <img
                         id="character-img-1"
@@ -482,7 +555,7 @@
                     </div>
                     <button
                       id="next-character-1"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -500,25 +573,27 @@
               id="player-2-settings"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-blue-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-blue-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-blue-400">
                 Player 2
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
-                <div id="player-2-name" class="mb-6 w-3/4">
+                <div id="player-2-name" class="mb-3 w-3/4">
                   <label
+                    id="player-2-alias-label"
                     for="player-2-alias"
-                    class="block text-gray-300 text-lg font-bold mb-6 text-center"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
                     >Alias</label
                   >
                   <input
                     id="player-2-alias"
                     type="text"
                     class="shadow appearance-none border-b-2 border-blue-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-blue-300 focus:shadow-outline text-center transition-all duration-300"
-                    placeholder="Player 2"
+                    placeholder="Opponent"
                   />
                 </div>
-                <div id="player-2-paddle-colour" class="mt-6 mb-6 w-3/4 flex flex-col items-center">
+                <div id="player-2-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
                   <label
+                    id="player-2-paddle-colour-input-label"
                     for="player-2-paddle-colour-input"
                     class="block text-gray-300 text-lg font-bold mb-2 text-center"
                     >Paddle Colour</label
@@ -530,20 +605,20 @@
                     class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
                   />
                 </div>
-                <div id="player-2-character" class="mt-6 flex flex-col items-center hidden">
+                <div id="player-2-character" class="mt-3 flex flex-col items-center hidden">
                   <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
                     Character
                   </div>
-                  <div class="flex items-center gap-6">
+                  <div id="character-select-2" class="flex items-center gap-6">
                     <button
                       id="prev-character-2"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       &lt; Previous
                     </button>
                     <div
                       id="character-display-2"
-                      class="w-48 h-48 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-blue-400"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-blue-400"
                     >
                       <img
                         id="character-img-2"
@@ -554,7 +629,7 @@
                     </div>
                     <button
                       id="next-character-2"
-                      class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
                     >
                       Next &gt;
                     </button>
@@ -567,12 +642,447 @@
               </div>
             </div>
 
+            <div
+              id="player-3-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-green-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-green-500/30 hover:-translate-y-1 hidden"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-green-400">
+                Player 3
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-3-name" class="mb-3 w-3/4">
+                  <label
+                    id="player-3-alias-label"
+                    for="player-3-alias"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-3-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-green-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-green-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 3"
+                  />
+                </div>
+                <div id="player-3-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
+                  <label
+                    id="player-3-paddle-colour-input-label"
+                    for="player-3-paddle-colour-input"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-3-paddle-colour-input"
+                    type="color"
+                    value="#22c55e"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-3-character" class="mt-3 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div id="character-select-3" class="flex items-center gap-6">
+                    <button
+                      id="prev-character-3"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-3"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-green-400"
+                    >
+                      <img
+                        id="character-img-3"
+                        src="./static/character_select/mario.png"
+                        alt="Character 3"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-3"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-helper-text-3" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-3"></div>
+                    <div id="character-move-help-3" class="italic"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="player-4-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-yellow-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/30 hover:-translate-y-1 hidden"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-yellow-400">
+                Player 4
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-4-name" class="mb-3 w-3/4">
+                  <label
+                    id="player-4-alias-label"
+                    for="player-4-alias"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-4-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-yellow-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-yellow-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 4"
+                  />
+                </div>
+                <div id="player-4-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
+                  <label
+                    id="player-4-paddle-colour-input-label"
+                    for="player-4-paddle-colour-input"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-4-paddle-colour-input"
+                    type="color"
+                    value="#eab308"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-4-character" class="mt-3 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div id="character-select-4" class="flex items-center gap-6">
+                    <button
+                      id="prev-character-4"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-4"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-yellow-400"
+                    >
+                      <img
+                        id="character-img-4"
+                        src="./static/character_select/mario.png"
+                        alt="Character 4"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-4"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-helper-text-4" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-4"></div>
+                    <div id="character-move-help-4" class="italic"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="player-5-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-1 hidden"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-purple-400">
+                Player 5
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-5-name" class="mb-3 w-3/4">
+                  <label
+                    id="player-5-alias-label"
+                    for="player-5-alias"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-5-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-purple-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-purple-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 5"
+                  />
+                </div>
+                <div id="player-5-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
+                  <label
+                    id="player-5-paddle-colour-input-label"
+                    for="player-5-paddle-colour-input"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-5-paddle-colour-input"
+                    type="color"
+                    value="#a855f7"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-5-character" class="mt-3 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div id="character-select-5" class="flex items-center gap-6">
+                    <button
+                      id="prev-character-5"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-5"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-purple-400"
+                    >
+                      <img
+                        id="character-img-5"
+                        src="./static/character_select/mario.png"
+                        alt="Character 5"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-5"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-helper-text-5" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-5"></div>
+                    <div id="character-move-help-5" class="italic"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="player-6-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-gray-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-gray-500/30 hover:-translate-y-1 hidden"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-gray-400">
+                Player 6
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-6-name" class="mb-3 w-3/4">
+                  <label
+                    id="player-6-alias-label"
+                    for="player-6-alias"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-6-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-gray-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-gray-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 6"
+                  />
+                </div>
+                <div id="player-6-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
+                  <label
+                    id="player-6-paddle-colour-input-label"
+                    for="player-6-paddle-colour-input"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-6-paddle-colour-input"
+                    type="color"
+                    value="#71717a"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-6-character" class="mt-3 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div id="character-select-6" class="flex items-center gap-6">
+                    <button
+                      id="prev-character-6"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-6"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-gray-400"
+                    >
+                      <img
+                        id="character-img-6"
+                        src="./static/character_select/mario.png"
+                        alt="Character 6"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-6"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-helper-text-6" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-6"></div>
+                    <div id="character-move-help-6" class="italic"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="player-7-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-teal-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-1 hidden"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-teal-400">
+                Player 7
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-7-name" class="mb-3 w-3/4">
+                  <label
+                    id="player-7-alias-label"
+                    for="player-7-alias"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-7-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-teal-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-teal-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 7"
+                  />
+                </div>
+                <div id="player-7-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
+                  <label
+                    id="player-7-paddle-colour-input-label"
+                    for="player-7-paddle-colour-input"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-7-paddle-colour-input"
+                    type="color"
+                    value="#14b8a6"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-7-character" class="mt-3 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div id="character-select-7" class="flex items-center gap-6">
+                    <button
+                      id="prev-character-7"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-7"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-teal-400"
+                    >
+                      <img
+                        id="character-img-7"
+                        src="./static/character_select/mario.png"
+                        alt="Character 7"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-7"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-helper-text-7" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-7"></div>
+                    <div id="character-move-help-7" class="italic"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="player-8-settings"
+              class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-cyan-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/30 hover:-translate-y-1 hidden"
+            >
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-cyan-400">
+                Player 8
+              </h3>
+              <div class="flex flex-col items-center justify-center flex-grow w-full">
+                <div id="player-8-name" class="mb-3 w-3/4">
+                  <label
+                    id="player-8-alias-label"
+                    for="player-8-alias"
+                    class="block text-gray-300 text-lg font-bold mb-3 text-center"
+                    >Alias</label
+                  >
+                  <input
+                    id="player-8-alias"
+                    type="text"
+                    class="shadow appearance-none border-b-2 border-cyan-400 bg-gray-700 rounded-md w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-cyan-300 focus:shadow-outline text-center transition-all duration-300"
+                    placeholder="Player 8"
+                  />
+                </div>
+                <div id="player-8-paddle-colour" class="mt-3 mb-3 w-3/4 flex flex-col items-center">
+                  <label
+                    id="player-8-paddle-colour-input-label"
+                    for="player-8-paddle-colour-input"
+                    class="block text-gray-300 text-lg font-bold mb-2 text-center"
+                    >Paddle Colour</label
+                  >
+                  <input
+                    id="player-8-paddle-colour-input"
+                    type="color"
+                    value="#06b6d4"
+                    class="rounded-full w-1/2 h-10 cursor-pointer border-2 border-white"
+                  />
+                </div>
+                <div id="player-8-character" class="mt-3 flex flex-col items-center hidden">
+                  <div class="block text-gray-300 text-lg font-bold mb-3 text-center">
+                    Character
+                  </div>
+                  <div id="character-select-8" class="flex items-center gap-6">
+                    <button
+                      id="prev-character-8"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      &lt; Previous
+                    </button>
+                    <div
+                      id="character-display-8"
+                      class="w-36 h-36 rounded-lg bg-gray-700 shadow-xl p-3 flex items-center justify-center mx-2 border-2 border-cyan-400"
+                    >
+                      <img
+                        id="character-img-8"
+                        src="./static/character_select/mario.png"
+                        alt="Character 8"
+                        class="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <button
+                      id="next-character-8"
+                      class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300"
+                    >
+                      Next &gt;
+                    </button>
+                  </div>
+                  <div id="character-helper-text-8" class="mt-4 text-center text-gray-300">
+                    <div id="character-move-name-8"></div>
+                    <div id="character-move-help-8" class="italic"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Board Settings -->
             <div
               id="board-settings-content"
               class="flex flex-col flex-1 p-6 rounded-lg border-l-4 border-purple-500 bg-gray-800 shadow-lg items-center transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-1"
             >
-              <h3 class="text-2xl font-semibold font-serpentine text-center mb-6 text-purple-400">
+              <h3 class="text-2xl font-semibold font-serpentine text-center mb-3 text-purple-400">
                 Board Background
               </h3>
               <div class="flex flex-col items-center justify-center flex-grow w-full">
@@ -600,13 +1110,13 @@
                 <div class="flex items-center mt-4 gap-4">
                   <button
                     id="prev-background"
-                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
+                    class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
                   >
                     &lt; Previous
                   </button>
                   <button
                     id="next-background"
-                    class="text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
+                    class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition-colors duration-300"
                   >
                     Next &gt;
                   </button>
@@ -617,35 +1127,38 @@
         </div>
 
         <!-- Play Button -->
-        <div class="flex justify-center mt-4">
+        <div id="play-button-container" class="flex justify-center">
           <button
             id="play-button"
-            class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider hidden"
+            class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider hidden"
           >
             Play Game!
           </button>
+        </div>
+        <div
+          id="waiting-game-modal"
+          class="flex flex-grow justify-center items-center text-center p-4 hidden font-serpentine text-9xl text-white"
+        >
+          Waiting for game
         </div>
       </div>
     </div>
   </template>
 
-  <template id="profile-template">
-    <div>I'm on profile!</div>
-  </template>
-
   <template id="friends-template">
     <div id="friends-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
-      <div class="flex flex-row gap-6 h-full">
+      <div class="flex flex-row gap-6 h-full pb-20">
         <!-- Left Panel: User Friends List -->
-        <div class="flex flex-col w-2/3 h-full">
+        <div class="flex flex-col w-2/3 h-full min-w-[600px]">
           <div
-            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
+            class="flex flex-col bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
           >
             <h2 class="text-3xl font-serpentine text-center mb-8 text-white">My Friends</h2>
 
             <div class="flex items-center justify-between mb-6">
               <div class="relative flex-grow mr-4">
                 <input
+                  id="friend-search"
                   type="text"
                   placeholder="Search friends..."
                   class="w-full py-3 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-600"
@@ -655,296 +1168,38 @@
                 </button>
               </div>
               <button
-                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center"
+                id="add-friend-button"
+                class="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center"
               >
                 <span class="mr-2">+</span> Add Friend
               </button>
             </div>
 
-            <div class="bg-gray-700 rounded-lg shadow-md overflow-hidden">
+            <div class="flex flex-col flex-grow bg-gray-700 rounded-lg shadow-md overflow-hidden">
               <div
                 class="flex justify-between items-center bg-gray-900 p-4 border-b border-gray-600"
               >
                 <div class="w-1/2 font-serpentine text-purple-400">Friend</div>
                 <div class="w-1/4 text-center font-serpentine text-purple-400">Status</div>
-                <div class="w-1/4 text-center font-serpentine text-purple-400">Actions</div>
+                <div class="w-1/4"></div>
               </div>
 
-              <div id="friends-list" class="max-h-[60vh] overflow-y-auto">
-                <!-- Online friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 1"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">PongMaster</span>
-                      <span class="text-gray-400 text-sm">Rank #2 • 4,720 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm"
-                      >Online</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200"
-                      title="Challenge to a game"
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Playing friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 2"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-yellow-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">GameChamp</span>
-                      <span class="text-gray-400 text-sm">Rank #3 • 3,980 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 text-sm"
-                      >In Game</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Currently in a game"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Offline friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3 opacity-70"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 3"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-gray-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">Striker42</span>
-                      <span class="text-gray-400 text-sm">Rank #4 • 3,250 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-500/20 text-gray-300 text-sm"
-                      >Offline</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Friend is offline"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Online friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 4"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-green-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">BallWizard</span>
-                      <span class="text-gray-400 text-sm">Rank #6 • 2,180 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-sm"
-                      >Online</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200"
-                      title="Challenge to a game"
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Offline friend -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/2 flex items-center">
-                    <div class="relative">
-                      <div
-                        class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3 opacity-70"
-                      >
-                        <img
-                          src="./static/avatar/default/mario.png"
-                          alt="Friend 5"
-                          class="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div
-                        class="absolute bottom-0 right-2 h-3 w-3 rounded-full bg-gray-500 border-2 border-gray-800"
-                      ></div>
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="text-white font-bold">PaddlePro</span>
-                      <span class="text-gray-400 text-sm">Rank #7 • 1,950 pts</span>
-                    </div>
-                  </div>
-                  <div class="w-1/4 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-500/20 text-gray-300 text-sm"
-                      >Offline</span
-                    >
-                  </div>
-                  <div class="w-1/4 flex justify-center space-x-2">
-                    <button
-                      class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded transition-colors duration-200 opacity-50 cursor-not-allowed"
-                      title="Friend is offline"
-                      disabled
-                    >
-                      🎮
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <div id="friends-list" class="flex-grow min-h-0 overflow-y-auto"></div>
             </div>
           </div>
         </div>
 
         <!-- Right Panel: Friend Requests & Activity -->
-        <div class="flex flex-col w-1/3 h-full gap-4">
+        <div class="flex flex-col w-1/3 h-full gap-4 min-w-[300px]">
           <!-- Friend Requests Section -->
           <div
-            class="flex-1 bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
+            class="flex flex-col bg-gray-800 rounded-lg shadow-xl border-l-4 border-purple-500 p-6 h-full transform transition-all duration-300 hover:shadow-purple-500/30 hover:-translate-y-1"
           >
             <h3 class="text-2xl font-serpentine text-center mb-4 text-white">Friend Requests</h3>
 
-            <div class="bg-gray-700 rounded-lg p-4 shadow-md max-h-[25vh] overflow-y-auto">
+            <div class="bg-gray-700 rounded-lg p-4 shadow-md overflow-y-auto">
               <div id="friend-requests">
-                <!-- Pending requests -->
-                <div class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg">
-                  <div class="flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Request 1"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">SuperPlayer</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button
-                      class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
-                  <div class="flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Request 2"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">BounceKing</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button
-                      class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Empty state (hidden by default) -->
-                <div class="hidden text-center py-6">
+                <div id="empty-friend-request-section" class="hidden text-center py-6">
                   <div class="text-gray-400 mb-2">No pending friend requests</div>
                   <div class="text-sm text-gray-500">Friend requests will appear here</div>
                 </div>
@@ -956,92 +1211,164 @@
     </div>
   </template>
 
+  <template id="friend-template">
+    <div
+      class="friend-item flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
+    >
+      <div class="w-1/2 flex items-center">
+        <div class="relative">
+          <div class="h-12 w-12 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
+            <img
+              id="friend-avatar"
+              src="./static/avatar/default/mario.png"
+              alt="Friend 1"
+              class="h-full w-full object-cover"
+            />
+          </div>
+          <div
+            id="friend-online-indicator"
+            class="absolute bottom-0 right-2 h-3 w-3 rounded-full border-2 border-gray-800"
+          ></div>
+        </div>
+        <div class="flex flex-col">
+          <span id="friend-name" class="friend-name text-white font-bold">Friend Name</span>
+          <span id="friend-score" class="text-gray-400 text-sm">Rank #X • 9,999 pts</span>
+        </div>
+      </div>
+      <div class="w-1/4 text-center">
+        <span id="friend-online-status" class="inline-block px-3 py-1 rounded-full text-sm"
+          >Online</span
+        >
+      </div>
+      <div class="w-1/4 text-center">
+        <button
+          id="remove-friend-button"
+          class="cursor-pointer bg-gray-600 hover:bg-red-600 text-gray-300 hover:text-white p-2 rounded-full transition-colors duration-200"
+          aria-label="Remove friend"
+          title="Remove friend"
+        >
+          <!-- Heroicon: x-mark -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <template id="friend-request-template">
+    <div
+      id="friend-request-container"
+      class="flex justify-between items-center mb-3 p-3 bg-gray-800 rounded-lg min-w-[400px]"
+    >
+      <div class="flex items-center">
+        <div class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3">
+          <img
+            id="friend-request-avatar"
+            src="./static/avatar/default/mario.png"
+            alt="Request 1"
+            class="h-full w-full object-cover"
+          />
+        </div>
+        <span id="friend-request-name" class="text-white">SuperPlayer</span>
+      </div>
+      <div class="flex space-x-2">
+        <button
+          id="friend-request-accept-button"
+          class="cursor-pointer bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
+        >
+          Accept
+        </button>
+        <button
+          id="friend-request-decline-button"
+          class="cursor-pointer bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
+        >
+          Decline
+        </button>
+      </div>
+    </div>
+  </template>
+
   <template id="rankings-template">
     <div id="rankings-menu" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
       <div class="flex flex-row gap-6 h-full">
         <!-- Left Panel: User Stats -->
-        <div class="flex flex-col w-1/3 h-full">
+        <div id="top-left-rankings-panel" class="flex flex-col w-1/3 h-full min-w-[400px]">
           <div
             class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-green-500 p-6 h-full transform transition-all duration-300 hover:shadow-green-500/30 hover:-translate-y-1 overflow-y-auto"
           >
-            <h2 class="text-3xl font-serpentine text-center mb-8 text-white">My Stats</h2>
+            <h2 class="text-3xl font-serpentine text-center mb-8 text-white">Stats</h2>
 
             <div class="bg-gray-700 rounded-lg p-6 mb-6 shadow-md">
               <div class="flex flex-col items-center mb-6">
                 <div class="h-32 w-32 rounded-full overflow-hidden border-4 border-green-400 mb-4">
                   <img
-                    id="user-avatar"
+                    id="user-avatar-rankings"
                     src="./static/avatar/default/mario.png"
                     alt="User Avatar"
                     class="h-full w-full object-cover"
                   />
                 </div>
-                <h3 id="user-name" class="text-2xl font-bold text-white">Username</h3>
+                <h3 id="user-name-rankings" class="text-2xl font-bold text-white">Username</h3>
               </div>
 
               <div class="grid grid-cols-2 gap-4">
                 <div class="bg-gray-800 rounded-lg p-4 text-center">
-                  <p class="font-serpentine text-green-400 text-lg">ID</p>
-                  <p id="user-id" class="text-white text-2xl font-bold">#42123</p>
+                  <p class="font-serpentine text-green-400 text-lg">Ranking</p>
+                  <p id="user-ranking-rankings" class="text-white text-2xl font-bold">N/A</p>
                 </div>
 
                 <div class="bg-gray-800 rounded-lg p-4 text-center">
-                  <p class="font-serpentine text-green-400 text-lg">Ranking</p>
-                  <p id="user-ranking" class="text-white text-2xl font-bold">#5</p>
+                  <p class="font-serpentine text-green-400 text-lg">W/L</p>
+                  <p id="user-wl-rankings" class="text-white text-2xl font-bold">N/A</p>
                 </div>
 
                 <div class="bg-gray-800 rounded-lg p-4 text-center">
                   <p class="font-serpentine text-green-400 text-lg">Points</p>
-                  <p id="user-points" class="text-white text-2xl font-bold">2,450</p>
+                  <p id="user-points-rankings" class="text-white text-2xl font-bold">N/A</p>
                 </div>
 
                 <div class="bg-gray-800 rounded-lg p-4 text-center">
                   <p class="font-serpentine text-green-400 text-lg">Tournaments</p>
-                  <p id="user-tournaments" class="text-white text-2xl font-bold">3</p>
+                  <p id="user-tournaments-rankings" class="text-white text-2xl font-bold">N/A</p>
                 </div>
               </div>
             </div>
 
-            <div class="bg-gray-700 rounded-lg p-6 shadow-md overflow-hidden">
-              <h3 class="text-xl font-serpentine text-white mb-4">Recent Matches</h3>
+            <div class="bg-gray-700 rounded-lg p-6 shadow-md overflow-hidden mb-6">
+              <h3 class="text-xl font-serpentine text-white mb-4">Recent Remote Matches</h3>
               <div id="recent-matches" class="space-y-3">
                 <!-- Recent match items will be populated here -->
-                <div class="flex justify-between items-center bg-gray-800 rounded-lg p-3">
-                  <div class="flex items-center">
-                    <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                    <span class="text-white">vs. Player1</span>
-                  </div>
-                  <span class="text-green-400 font-bold">10-8</span>
-                </div>
-                <div class="flex justify-between items-center bg-gray-800 rounded-lg p-3">
-                  <div class="flex items-center">
-                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-                    <span class="text-white">vs. Player2</span>
-                  </div>
-                  <span class="text-red-400 font-bold">7-10</span>
-                </div>
-                <div class="flex justify-between items-center bg-gray-800 rounded-lg p-3">
-                  <div class="flex items-center">
-                    <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                    <span class="text-white">vs. Player3</span>
-                  </div>
-                  <span class="text-green-400 font-bold">10-6</span>
-                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-700 rounded-lg p-6 shadow-md overflow-hidden">
+              <h3 class="text-xl font-serpentine text-white mb-4">Recent Remote Tournaments</h3>
+              <div id="recent-tournaments" class="space-y-3">
+                <!-- Recent match items will be populated here -->
               </div>
             </div>
           </div>
         </div>
 
         <!-- Right Panel: Leaderboard -->
-        <div class="flex flex-col w-2/3 h-full">
+        <div class="flex flex-col w-2/3 h-full min-w-[900px]">
           <div
-            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-green-500 p-6 h-full transform transition-all duration-300 hover:shadow-green-500/30 hover:-translate-y-1"
+            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-green-500 p-6 h-full transform transition-all duration-300 hover:shadow-green-500/30 hover:-translate-y-1 flex flex-col"
           >
             <h2 class="text-3xl font-serpentine text-center mb-8 text-white">Global Rankings</h2>
 
             <div class="mb-6">
               <div class="relative">
                 <input
+                  id="leaderboard-search"
                   type="text"
                   placeholder="Search players..."
                   class="w-full py-3 px-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 border border-gray-600"
@@ -1052,7 +1379,7 @@
               </div>
             </div>
 
-            <div class="bg-gray-700 rounded-lg shadow-md overflow-hidden">
+            <div class="bg-gray-700 rounded-lg shadow-md overflow-hidden flex flex-col flex-grow">
               <div
                 class="flex justify-between items-center bg-gray-900 p-4 border-b border-gray-600"
               >
@@ -1063,221 +1390,20 @@
                 <div class="w-1/6 text-center font-serpentine text-green-400">Tournaments</div>
               </div>
 
-              <div id="rankings-list" class="max-h-[56vh] overflow-y-auto">
-                <!-- Top player (highlighted) -->
-                <div
-                  class="flex justify-between items-center p-4 bg-gradient-to-r from-yellow-900/30 to-transparent border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 font-bold"
-                      >#1</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-yellow-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 1"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white font-bold">SuperPlayer</span>
-                  </div>
-                  <div class="w-1/6 text-center text-yellow-300 font-bold">5,230</div>
-                  <div class="w-1/6 text-center text-white">42/5</div>
-                  <div class="w-1/6 text-center text-white">7</div>
-                </div>
-
-                <!-- Other players -->
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold"
-                      >#2</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 2"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">PongMaster</span>
-                  </div>
-                  <div class="w-1/6 text-center text-white font-bold">4,720</div>
-                  <div class="w-1/6 text-center text-white">38/10</div>
-                  <div class="w-1/6 text-center text-white">5</div>
-                </div>
-
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold"
-                      >#3</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 3"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">GameChamp</span>
-                  </div>
-                  <div class="w-1/6 text-center text-white font-bold">3,980</div>
-                  <div class="w-1/6 text-center text-white">31/12</div>
-                  <div class="w-1/6 text-center text-white">4</div>
-                </div>
-
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold"
-                      >#4</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 4"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">Striker42</span>
-                  </div>
-                  <div class="w-1/6 text-center text-white font-bold">3,250</div>
-                  <div class="w-1/6 text-center text-white">27/15</div>
-                  <div class="w-1/6 text-center text-white">3</div>
-                </div>
-
-                <!-- Current user (highlighted) -->
-                <div
-                  class="flex justify-between items-center p-4 bg-gradient-to-r from-green-900/30 to-transparent border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-300 font-bold"
-                      >#5</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-green-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Current User"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white font-bold">Username</span>
-                  </div>
-                  <div class="w-1/6 text-center text-green-300 font-bold">2,450</div>
-                  <div class="w-1/6 text-center text-white">23/17</div>
-                  <div class="w-1/6 text-center text-white">3</div>
-                </div>
-
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold"
-                      >#6</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 6"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">BallWizard</span>
-                  </div>
-                  <div class="w-1/6 text-center text-white font-bold">2,180</div>
-                  <div class="w-1/6 text-center text-white">18/20</div>
-                  <div class="w-1/6 text-center text-white">2</div>
-                </div>
-
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold"
-                      >#7</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 7"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">PaddlePro</span>
-                  </div>
-                  <div class="w-1/6 text-center text-white font-bold">1,950</div>
-                  <div class="w-1/6 text-center text-white">16/22</div>
-                  <div class="w-1/6 text-center text-white">1</div>
-                </div>
-
-                <div
-                  class="flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
-                >
-                  <div class="w-1/6 text-center">
-                    <span
-                      class="inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold"
-                      >#8</span
-                    >
-                  </div>
-                  <div class="w-2/6 flex items-center">
-                    <div
-                      class="h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
-                    >
-                      <img
-                        src="./static/avatar/default/mario.png"
-                        alt="Player 8"
-                        class="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span class="text-white">BounceKing</span>
-                  </div>
-                  <div class="w-1/6 text-center text-white font-bold">1,780</div>
-                  <div class="w-1/6 text-center text-white">14/25</div>
-                  <div class="w-1/6 text-center text-white">1</div>
-                </div>
-              </div>
+              <div id="rankings-list" class="overflow-y-auto flex-grow min-h-0"></div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        id="stats-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
+      >
+        <div
+          id="stats-results"
+          class="bg-gray-800 w-[75%] h-[80%] rounded-lg shadow-xl overflow-auto"
+        ></div>
       </div>
     </div>
   </template>
@@ -1285,11 +1411,11 @@
   <template id="game-template">
     <div
       id="gaming-page"
-      class="w-screen h-[90%] flex flex-row justify-center items-center p-6 space-x-6"
+      class="w-screen h-[90%] flex flex-row justify-center items-center p-6 space-x-6 min-h-[600px]"
     >
       <div
         id="left-hud"
-        class="w-1/6 max-w-[250px] h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl transition-opacity duration-500 opacity-100"
+        class="w-1/6 max-w-[250px] h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl transition-opacity duration-500 opacity-100 min-w-[200px]"
       >
         <div
           id="left-player-hud"
@@ -1330,7 +1456,7 @@
       </div>
       <div
         id="game-container"
-        class="h-full aspect-[16/9] flex justify-center items-center relative transition-opacity duration-500 opacity-100 overflow-hidden"
+        class="h-full aspect-[16/9] flex justify-center items-center relative transition-opacity duration-500 opacity-100 overflow-hidden min-w-[800px]"
       >
         <img
           src="./static/backgrounds/Backyard.png"
@@ -1341,7 +1467,7 @@
       </div>
       <div
         id="right-hud"
-        class="w-1/6 max-w-[250px] h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl transition-opacity duration-500 opacity-100"
+        class="w-1/6 max-w-[250px] h-full p-4 flex flex-col items-center justify-center text-white font-serpentine bg-gray-700 rounded-xl transition-opacity duration-500 opacity-100 min-w-[200px]"
       >
         <div
           id="right-player-hud"
@@ -1407,61 +1533,56 @@
             Winner!
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p
-              id="goals-scored-title"
-              class="font-serpentine text-colour-placeholder text-2xl mr-4"
-            >
+            <p id="goals-scored-title" class="font-serpentine text-green-600 text-2xl mr-4">
               Goals Scored
             </p>
             <p id="goals-scored-result" class="font-serpentine text-white text-3xl font-bold" d></p>
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p
-              id="goals-suffered-title"
-              class="font-serpentine text-colour-placeholder text-2xl mr-4"
-            >
+            <p id="goals-suffered-title" class="font-serpentine text-green-600 text-2xl mr-4">
               Goals Suffered
             </p>
             <p id="goals-suffered-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p id="saves-title" class="font-serpentine text-colour-placeholder text-2xl mr-4">
-              Goals Saved
-            </p>
+            <p id="saves-title" class="font-serpentine text-green-600 text-2xl mr-4">Goals Saved</p>
             <p id="saves-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
-
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p id="powers-used-title" class="font-serpentine text-colour-placeholder text-2xl mr-4">
+            <p id="powers-used-title" class="font-serpentine text-green-600 text-2xl mr-4">
               Powers Used
             </p>
             <p id="powers-used-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
           <div class="flex bg-gray-800 rounded-lg p-4 text-center">
-            <p
-              id="max-ball-speed-title"
-              class="font-serpentine text-colour-placeholder text-2xl mr-4"
-            >
+            <p id="max-ball-speed-title" class="font-serpentine text-green-600 text-2xl mr-4">
               Max Ball Speed
             </p>
             <p id="max-ball-speed-result" class="font-serpentine text-white text-3xl font-bold"></p>
           </div>
+
           <div id="after-game-buttons" class="flex justify-center items-center p-4">
             <a
               href="#main-menu-page"
               id="go-back-to-main-menu-button"
-              class="bg-gray-800 text-gray-700 border-gray-300 hover:bg-gray-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider mr-6"
+              class="cursor-pointer bg-gray-800 text-gray-700 border-gray-300 hover:bg-gray-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider mr-6"
             >
               Go back to main menu
             </a>
             <button
               id="play-again-button"
-              class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider ml-6"
+              class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider ml-6"
             >
               Play another Game!
             </button>
           </div>
         </div>
+      </div>
+      <div
+        id="waiting-next-game-modal"
+        class="flex flex-grow justify-center items-center text-center p-4 hidden font-serpentine text-9xl text-white"
+      >
+        Waiting for next game
       </div>
     </div>
   </template>
@@ -1478,7 +1599,7 @@
             >&#8617;</span
           >
           <div
-            class="absolute inset-0 bg-gradient-to-r from-gray-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
+            class="cursor-pointer absolute inset-0 bg-gradient-to-r from-gray-300/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
           ></div>
         </div>
         <div
@@ -1491,10 +1612,14 @@
         <span id="player-name" class="font-semibold">Username</span>
         <button
           id="nav-settings-button"
-          class="rounded-full overflow-hidden"
+          class="cursor-pointer rounded-full overflow-hidden"
           style="width: 40px; height: 40px"
         >
-          <img src="./static/avatar/default/mario.png" class="w-full h-full object-cover" />
+          <img
+            id="nav-settings-avatar"
+            src="./static/avatar/default/mario.png"
+            class="w-full h-full object-cover"
+          />
         </button>
         <div
           id="settings-dropdown"
@@ -1503,13 +1628,14 @@
           <div class="py-2">
             <a
               href="#"
-              data-target="profile-template"
-              class="block px-4 py-2 text-sm transition hover:bg-gray-300 hover:font-bold"
-              >Profile</a
+              id="settings-dropdown-button"
+              data-target="settings-page"
+              class="cursor-pointer block px-4 py-2 text-sm transition hover:bg-gray-300 hover:font-bold"
+              >Settings</a
             >
             <button
               id="logout-button"
-              class="block px-4 py-2 text-sm w-full text-left transition hover:bg-gray-300 hover:font-bold"
+              class="cursor-pointer block px-4 py-2 text-sm w-full text-left transition hover:bg-gray-300 hover:font-bold"
             >
               Log Out
             </button>
@@ -1520,11 +1646,602 @@
   </template>
 
   <template id="error-template">
-    <div id="error-container" class="justify-center text-center">
-      <div id="error-title" class="text-6xl underline font-bold">Oops! An error Occurred</div>
-      <div id="error-message" class="text-5xl mt-10 pt-20 mb-10 pb-20"></div>
+    <div
+      id="error-container"
+      class="h-full w-full flex flex-col items-center justify-center bg-gray-800 text-white p-8 text-center"
+    >
+      <!-- Main Error Title (using your game's font) -->
+      <h1 id="error-title" class="font-serpentine text-7xl font-bold text-red-500 uppercase">
+        Oops! An error has ocurred!
+      </h1>
+
+      <!-- User-Friendly Error Message -->
+      <h2 id="error-message" class="text-3xl mb-12 max-w-3xl">
+        A skill issue was detected between the chair and the computer's screen.
+      </h2>
+
+      <!-- Action Button (Styled to match your game's buttons) -->
       <div class="error-actions">
-        <button class="btn btn-primary" onclick="window.location.href='/'">Go Home</button>
+        <a
+          href="/"
+          class="inline-block bg-red-600 text-white font-serpentine text-2xl py-4 px-10 rounded-lg shadow-lg hover:bg-red-700 hover:scale-105 active:scale-100 transition-all duration-300 uppercase mt-6"
+        >
+          Return to Main Menu
+        </a>
+      </div>
+    </div>
+  </template>
+
+  <template id="settings-template">
+    <div id="player-global-settings" class="w-[85%] h-[95%] mx-auto flex flex-col mt-6">
+      <div class="flex flex-row gap-6 h-full">
+        <div class="flex flex-col w-1/3 h-full min-w-[400px]">
+          <div
+            id="player-avatar-settings"
+            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
+          >
+            <h2 id="current-avatar-settings" class="text-4xl font-bold text-white mb-8 text-center">
+              Avatar Settings
+            </h2>
+            <div
+              id="avatar-container"
+              class="flex flex-row h-1/2 flex-grow justify-center items-center bg-gray-700 rounded-lg mt-40"
+            >
+              <button
+                id="previous-avatar"
+                class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 mr-2 text-4xl"
+              >
+                &lt
+              </button>
+              <div
+                class="h-64 w-64 rounded-full overflow-hidden border-4 border-orange-400 mt-4 mb-4"
+              >
+                <img
+                  id="user-avatar"
+                  src="./static/avatar/default/mario.png"
+                  alt="User Avatar"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <button
+                id="next-avatar"
+                class="cursor-pointer text-gray-300 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md transition-colors duration-300 ml-2 text-4xl"
+              >
+                &gt
+              </button>
+            </div>
+            <div class="flex p-4 justify-center items-center mt-6">
+              <input type="file" id="customAvatarInput" accept="image/*" style="display: none" />
+              <button
+                id="avatar-submit-button"
+                class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+              >
+                Change Avatar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full h-full min-w-[800px] overflow-y-scroll">
+          <div
+            id="user-account-settings"
+            class="bg-gray-800 rounded-lg shadow-xl border-l-4 border-orange-500 p-6 h-full transform transition-all duration-300 hover:shadow-orange-500/30 hover:-translate-y-1 overflow-y-auto"
+          >
+            <h2 id="current-user-settings" class="text-4xl font-bold text-white mb-8 text-center">
+              User Settings
+            </h2>
+
+            <div
+              id="settings-container"
+              class="flex flex-col h-4/5 justify-center items-center bg-gray-700 rounded-lg gap-4"
+            >
+              <div class="bg-gray-800 rounded-lg p-4 text-center w-4/5">
+                <label
+                  for="username-settings-container"
+                  class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                  >Username</label
+                >
+                <input
+                  id="username-settings-container"
+                  type="text"
+                  class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
+                  placeholder="UsernamePlaceholder"
+                />
+              </div>
+
+              <div class="bg-gray-800 rounded-lg p-4 text-center w-4/5">
+                <label
+                  for="email-settings-container"
+                  class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                  >Email</label
+                >
+                <input
+                  id="email-settings-container"
+                  type="text"
+                  class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
+                  placeholder="EmailPlaceholder"
+                />
+              </div>
+
+              <div
+                class="flex bg-gray-800 rounded-lg p-4 text-center items-center justify-center w-4/5"
+              >
+                <div class="flex flex-row">
+                  <div class="flex flex-col">
+                    <label
+                      for="password-settings-container"
+                      class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                      >Password</label
+                    >
+                    <input
+                      id="password-settings-container"
+                      type="password"
+                      class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold mb-6 text-center"
+                      placeholder="**************"
+                    />
+                  </div>
+                  <div class="flex flex-col">
+                    <label
+                      for="retype-password-settings-container"
+                      class="block font-serpentine text-orange-400 text-lg font-bold mb-6 text-center"
+                      >Retype Password</label
+                    >
+                    <input
+                      id="retype-password-settings-container"
+                      type="password"
+                      class="rounded-md text-2xl w-full py-3 px-4 text-white text-bold text-center"
+                      placeholder="*************"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex p-4 justify-center items-center gap-2">
+              <button
+                id="settings-submit-button"
+                class="cursor-pointer bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-10 rounded-full focus:outline-none focus:shadow-outline shadow-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wider"
+              >
+                Submit
+              </button>
+            </div>
+            <div
+              id="2fa-container"
+              class="flex flex-col h-1/5 justify-center items-center bg-gray-700 rounded-lg gap-6"
+            >
+              <div class="bg-gray-800 rounded-lg p-4 w-4/5">
+                <div class="flex flex-col items-center space-y-3">
+                  <span class="block font-serpentine text-orange-400 text-lg font-bold"
+                    >2-Factor Authentication</span
+                  >
+                  <label
+                    for="2fa-toggle-input"
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input id="2fa-toggle-input" type="checkbox" value="" class="sr-only peer" />
+                    <div
+                      class="w-20 h-10 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-[2.5rem] rtl:peer-checked:after:-translate-x-[2.5rem] peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-8 after:w-8 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-orange-600"
+                    ></div>
+                    <span class="sr-only">Enable 2-Factor Authentication</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="twoFA-modal"
+        class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
+      >
+        <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
+          <h2 id="qr-modal-header" class="text-2xl font-bold text-center text-gray-800">
+            Scan this QR code with your Authenticator app
+          </h2>
+          <img
+            id="QR-code"
+            src=""
+            class="w-11/12 max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto"
+            alt="QR-code"
+          />
+          <form
+            id="QRCode-form"
+            class="flex flex-col p-6 sm:p-8 space-y-6"
+            action="#"
+            method="post"
+          >
+            <div
+              id="error-2fa-message"
+              role="alert"
+              aria-live="polite"
+              class="hidden w-full text-sm text-red-700 bg-red-100 rounded-md border border-red-300 px-4 py-2"
+            ></div>
+
+            <div class="space-y-1">
+              <label for="auth-code" class="block text-sm font-medium text-gray-700"
+                >Authentication Code</label
+              >
+              <input
+                type="text"
+                id="auth-code"
+                name="auth-code"
+                required
+                autocomplete="auth-code"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+            <div class="space-y-1">
+              <label for="QRcode-password" class="block text-sm font-medium text-gray-700"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="QRCode-password"
+                name="QRCode-password"
+                required
+                autocomplete="QRCode-password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+            <button
+              id="twoFA-button"
+              type="button"
+              class="cursor-pointer w-full text-white py-2.5 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out font-semibold"
+            >
+              Send Code
+            </button>
+          </form>
+        </div>
+      </div>
+      <div
+        id="password-modal"
+        class="login-modal fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 hidden"
+      >
+        <div class="bg-white w-full max-w-md rounded-lg shadow-xl overflow-hidden">
+          <form id="password-confirm-form" class="flex flex-col p-6 sm:p-8 space-y-6">
+            <h2 class="text-2xl font-bold text-center text-gray-800">
+              Please confirm changes with your current password
+            </h2>
+
+            <div class="space-y-1">
+              <label for="confirm-password" class="block text-sm font-medium text-gray-700"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="confirm-password"
+                name="password"
+                required
+                autocomplete="current-password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+              />
+            </div>
+            <button
+              id="change-confirm-button"
+              type="submit"
+              class="cursor-pointer w-full bg-blue-600 text-white py-2.5 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out font-semibold"
+            >
+              Confirm
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="recent-matches-template">
+    <div
+      class="cursor-pointer recent-match flex justify-between items-center bg-gray-800 rounded-lg p-3 hover:scale-105 duration-200"
+    >
+      <div class="flex items-center">
+        <div id="recent-match-score-indicator" class="w-3 h-3 rounded-full mr-2"></div>
+        <span id="recent-match-player" class="text-white">vs. Player</span>
+      </div>
+      <span id="recent-match-result" class="font-bold">Result</span>
+    </div>
+  </template>
+
+  <template id="recent-tournaments-template">
+    <div
+      class="recent-tournament cursor-pointer flex justify-between items-center bg-gray-800 rounded-lg p-3 hover:scale-105 duration-200"
+    >
+      <div class="flex items-center">
+        <div
+          id="recent-tournament-score-indicator"
+          class="w-3 h-3 rounded-full bg-green-500 mr-2"
+        ></div>
+        <span id="recent-tournament-id" class="text-white"></span>
+      </div>
+      <span id="recent-tournament-result" class="text-green-400 font-bold"></span>
+    </div>
+  </template>
+
+  <template id="leaderboard-player-template">
+    <div
+      class="leaderboard-player flex justify-between items-center p-4 border-b border-gray-600 hover:bg-gray-600/50 transition-colors duration-200"
+    >
+      <div class="w-1/6 text-center">
+        <span
+          class="leaderboard-player-ranking inline-block px-3 py-1 rounded-full bg-gray-600 text-white font-bold"
+          >#2</span
+        >
+      </div>
+      <div class="w-2/6 flex items-center">
+        <div
+          class="leaderboard-player-round-circle h-10 w-10 rounded-full overflow-hidden border-2 border-gray-400 mr-3"
+        >
+          <img
+            src="./static/avatar/default/mario.png"
+            alt="Player 2"
+            class="leaderboard-player-avatar h-full w-full object-cover"
+          />
+        </div>
+        <span
+          class="leaderboard-player-username text-white hover:underline hover:font-bold cursor-pointer duration-150"
+          role="button"
+          tabindex="0."
+          aria-haspopup="dialog"
+          >PongMaster</span
+        >
+      </div>
+      <div class="leaderboard-player-points w-1/6 text-center text-white font-bold">4,720</div>
+      <div class="leaderboard-player-wl w-1/6 text-center text-white">38/10</div>
+      <div class="leaderboard-player-tournaments-won w-1/6 text-center text-white">5</div>
+    </div>
+  </template>
+
+  <template id="match-stats">
+    <div
+      class="flex flex-row gap-4 bg-gray-700 items-center mx-auto h-full rounded-lg border-l-4 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 p-4"
+    >
+      <!-- LEFT HUD -->
+      <div class="flex flex-col flex-grow w-1/4 p-4 justify-center items-center">
+        <img
+          src="./static/avatar/default/mario.png"
+          class="left-match-stats-player-avatar object-cover rounded-full h-[150px] w-[150px] border-6 border-red-500"
+        />
+        <p class="left-match-stats-alias text-white font-bold text-2xl mt-2 mb-20">Player 1</p>
+        <img
+          src="./static/character_portrait/mario.png"
+          class="left-match-stats-portrait w-1/2 border-6 border-red-500 rounded-lg"
+        />
+      </div>
+
+      <!-- CENTER STATS -->
+      <div class="flex flex-col gap-4 w-1/2 p-4 justify-center items-center">
+        <!-- Result -->
+        <div
+          class="font-serpentine text-5xl font-bold text-white text-center mb-4"
+          data-stat="result"
+        >
+          Match Details
+        </div>
+
+        <!-- Goals Scored -->
+        <div class="flex justify-between bg-gray-800 rounded-lg p-4 w-full items-center">
+          <p id="left-goals" class="w-1/3 text-white text-3xl pr-4 font-bold text-left">0</p>
+          <p class="w-1/3 text-green-600 text-3xl font-bold text-center">Goals Scored</p>
+          <p class="w-1/3 text-white text-3xl text-right pl-4 font-bold" id="right-goals">0</p>
+        </div>
+
+        <!-- Goals Saved -->
+        <div class="flex justify-between bg-gray-800 rounded-lg p-4 w-full items-center">
+          <p class="w-1/3 text-white text-3xl text-left pr-4 font-bold" id="left-saves">0</p>
+          <p class="w-1/3 text-green-600 text-3xl font-bold text-center">Goals Saved</p>
+          <p class="w-1/3 text-white text-3xl text-right pl-4 font-bold" id="right-saves">0</p>
+        </div>
+
+        <!-- Powers Used -->
+        <div
+          id="powers-used"
+          class="flex justify-between bg-gray-800 rounded-lg p-4 w-full items-center"
+        >
+          <p class="w-1/3 text-white text-3xl text-left pr-4 font-bold" id="left-powers">0</p>
+          <p class="w-1/3 text-green-600 text-3xl font-bold text-center">Powers Used</p>
+          <p class="w-1/3 text-white text-3xl text-right pl-4 font-bold" id="right-powers">0</p>
+        </div>
+
+        <!-- Max Ball Speed (shared stat) -->
+        <div class="flex bg-gray-800 rounded-lg p-4 w-full justify-center">
+          <p class="text-green-600 text-3xl font-bold mr-2">Max Ball Speed</p>
+          <p class="text-white text-3xl font-bold" id="max-speed">0</p>
+        </div>
+
+        <div class="flex bg-gray-800 rounded-lg p-4 w-full justify-center">
+          <p class="text-green-600 text-3xl font-bold mr-2">Match Date</p>
+          <p class="text-white text-3xl font-bold" id="match-date"></p>
+        </div>
+      </div>
+
+      <!-- RIGHT HUD -->
+      <div class="flex flex-col flex-grow w-1/4 p-4 justify-center items-center">
+        <img
+          src="./static/avatar/default/mario.png"
+          class="right-match-stats-player-avatar object-cover rounded-full h-[150px] w-[150px] border-6 border-blue-500"
+        />
+        <p class="right-match-stats-alias text-white font-bold text-2xl mt-2 mb-20">Player 2</p>
+        <img
+          src="./static/character_portrait/mario.png"
+          class="right-match-stats-portrait w-1/2 border-6 border-blue-500 rounded-lg"
+        />
+      </div>
+    </div>
+  </template>
+
+  <template id="tournament-tree">
+    <div class="w-full h-full flex flex-col overflow-hidden bg-gray-700 text-white">
+      <!-- Header: Round Names -->
+      <div
+        class="mb-2 grid grid-flow-col grid-cols-3 items-center border-0 border-b-2 border-gray-500 text-center py-3 sm:py-4 text-base sm:text-lg md:text-xl lg:text-2xl font-bold uppercase shrink-0"
+      >
+        <div>Quarterfinals</div>
+        <div>Semifinals</div>
+        <div>Finals</div>
+      </div>
+
+      <!-- Main Content: Rounds -->
+      <div class="grid grid-flow-col grid-cols-3 items-stretch flex-grow overflow-hidden">
+        <!-- Quarterfinals Column -->
+        <div class="flex flex-col justify-around items-center p-2 md:p-4 gap-4">
+          <!-- Match Box 1 -->
+          <div
+            class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="1"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="1"
+              ></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="2"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="2"
+              ></p>
+            </div>
+          </div>
+          <!-- Match Box 2 -->
+          <div
+            class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="3"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="3"
+              ></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="4"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="4"
+              ></p>
+            </div>
+          </div>
+          <!-- Match Box 3 -->
+          <div
+            class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="5"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="5"
+              ></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="6"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="6"
+              ></p>
+            </div>
+          </div>
+          <!-- Match Box 4 -->
+          <div
+            class="w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="7"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="7"
+              ></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="TournamentPlayer font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+                data-index="8"
+              ></p>
+              <p
+                class="TournamentPlayerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"
+                data-index="8"
+              ></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Semifinals Column -->
+        <div id="semifinals" class="flex flex-col justify-around items-center p-2 md:p-4 gap-4">
+          <!-- Match Box 1 -->
+          <div
+            class="semifinals w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+              ></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+              ></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+          </div>
+          <!-- Match Box 2 -->
+          <div
+            class="semifinals w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+              ></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="QFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+              ></p>
+              <p class="QFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Finals Column -->
+        <div class="flex flex-col justify-center items-center p-2 md:p-4 gap-4">
+          <!-- Changed justify-around to justify-center for finals -->
+          <!-- Match Box 1 -->
+          <div
+            class="finals w-full max-w-sm rounded-md bg-gray-600 p-2 sm:p-3 md:p-4 flex flex-col justify-center min-h-0 border border-gray-500 hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="SFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+              ></p>
+              <p class="SFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <p
+                class="SFWinner font-semibold text-left pl-1 sm:pl-2 truncate text-base sm:text-lg"
+              ></p>
+              <p class="SFWinnerScore text-right pr-1 sm:pr-2 text-base sm:text-lg"></p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </template>

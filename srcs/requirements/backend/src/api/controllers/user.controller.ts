@@ -1,157 +1,403 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { prisma } from '../../utils/prisma';
 import { verifyPassword } from '../../utils/hash';
-import { handleError } from '../../utils/errorHandler';
-
-export type UserCreate = {
-  username: string;
-  email: string;
-  password: string;
-  repeatPassword: string;
-};
-
-type UserLogin = {
-  email: string;
-  password: string;
-};
-
-type UserUpdate = {
-  username?: string;
-  email?: string;
-};
-
-export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    const users = await prisma.user.findMany({
-      include: {
-        player: true,
-      },
-    });
-    reply.send(users);
-  } catch (error) {
-    handleError(error, reply);
-  }
-}
+import { getUserGlobalStats, setJWTCookie, updateSession } from '../services/user.services';
+import speakeasy from 'speakeasy';
+import qrcode from 'qrcode';
+import { transformUserUpdate } from '../../utils/helpers';
+import fs from 'fs';
+import { fileTypeFromBuffer } from 'file-type';
+import path from 'path';
+import { getUserRank } from '../services/leaderboard.services';
+import {
+  AvatarData,
+  DefaultAvatar,
+  Login2FAData,
+  UserCreate,
+  UserLogin,
+  UserSessionData,
+  UserUpdate,
+  VerifyToken,
+} from '../../types';
+import { avatarImagePaths } from '../../../scripts/avatarData';
 
 export async function getUserById(
   request: FastifyRequest<{ Params: IParams }>,
   reply: FastifyReply,
 ) {
-  try {
-    const loggedInUserId = request.user.id;
-
-    if (loggedInUserId !== request.params.id) reply.status(401).send({ message: 'Unauthorized' });
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: request.params.id },
-    });
-    reply.send(user);
-  } catch (error) {
-    handleError(error, reply);
-  }
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: request.params.id },
+    select: { username: true, lastActiveAt: true, avatarUrl: true, sessionExpiresAt: true },
+  });
+  const friendScore = await prisma.leaderboard.findUnique({
+    where: { userId: request.params.id },
+  });
+  const currentTime = Date.now() / 1000;
+  const inactiveTime = currentTime - user.lastActiveAt.getTime() / 1000;
+  let onlineState = 'offline';
+  if (user.sessionExpiresAt && user.sessionExpiresAt > new Date() && inactiveTime < 10 * 60)
+    onlineState = 'online';
+  reply.send({
+    ...user,
+    rank: await getUserRank(request.params.id),
+    points: friendScore?.score,
+    onlineState: onlineState,
+  });
 }
 
 export async function createUser(
   request: FastifyRequest<{ Body: UserCreate }>,
   reply: FastifyReply,
 ) {
-  try {
-    const user = await prisma.user.create({
-      data: {
-        username: request.body.username,
-        email: request.body.email,
-        hashedPassword: request.body.password,
-      },
-    });
-    reply.send(user);
-  } catch (error) {
-    handleError(error, reply);
-  }
+  const user = await prisma.user.create({
+    data: {
+      username: request.body.username,
+      email: request.body.email,
+      hashedPassword: request.body.password,
+    },
+    select: { username: true, email: true },
+  });
+  reply.send(user);
 }
 
 export async function updateUser(
-  request: FastifyRequest<{ Params: IParams; Body: UserUpdate }>,
+  request: FastifyRequest<{ Body: UserUpdate }>,
   reply: FastifyReply,
 ) {
-  try {
-    const user = await prisma.user.update({
-      where: { id: request.params.id },
-      data: request.body,
-    });
-    reply.send(user);
-  } catch (error) {
-    handleError(error, reply);
-  }
+  request.body = transformUserUpdate(request.body);
+  const user = await prisma.user.update({
+    where: { id: request.user.id },
+    data: request.body,
+    select: { username: true, email: true },
+  });
+  reply.send(user);
 }
 
-export async function deleteUser(
-  request: FastifyRequest<{ Params: IParams }>,
+export async function preLogin(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { email: request.body.email },
+    select: {
+      hashedPassword: true,
+      salt: true,
+      enabled2FA: true,
+      sessionToken: true,
+      sessionExpiresAt: true,
+    },
+  });
+
+  const isMatch = verifyPassword({
+    candidatePassword: request.body.password,
+    hash: user.hashedPassword,
+    salt: user.salt,
+  });
+
+  if (!isMatch) {
+    return reply.status(401).send({ message: 'Invalid credentials' });
+  }
+
+  if (user.sessionToken && user.sessionExpiresAt && user.sessionExpiresAt > new Date()) {
+    return reply.status(403).send({
+      message: 'User is already logged in on another device or tab.',
+    });
+  }
+
+  if (user.enabled2FA) return reply.status(206).send({ enabled2FA: true });
+  reply.send({ enabled2FA: false });
+}
+
+export async function login2FA(
+  request: FastifyRequest<{ Body: Login2FAData }>,
   reply: FastifyReply,
 ) {
-  try {
-    const user = await prisma.user.delete({
-      where: { id: request.params.id },
-    });
-    reply.send(user);
-  } catch (error) {
-    handleError(error, reply);
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { email: request.body.email },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      hashedPassword: true,
+      salt: true,
+      enabled2FA: true,
+      secret2FA: true,
+      avatarUrl: true,
+      sessionToken: true,
+      sessionExpiresAt: true,
+    },
+  });
+
+  const isMatch = verifyPassword({
+    candidatePassword: request.body.password,
+    hash: user.hashedPassword,
+    salt: user.salt,
+  });
+
+  if (!isMatch) {
+    return reply.status(401).send({ message: 'Invalid credentials' });
   }
+
+  if (user.sessionToken && user.sessionExpiresAt && user.sessionExpiresAt > new Date()) {
+    return reply.status(403).send({
+      message: 'User is already logged in on another device or tab.',
+    });
+  }
+  if (!user.enabled2FA) return reply.status(403).send({ message: '2FA not setup' });
+  if (!user.secret2FA) return reply.status(403).send({ message: '2FA required but not setup.' });
+
+  const token = request.body.code;
+
+  const verified = speakeasy.totp.verify({
+    secret: user.secret2FA,
+    encoding: 'base32',
+    token,
+  });
+  if (!verified)
+    return reply
+      .status(401)
+      .send({ message: 'The two-factor authentication token is invalid or expired.' });
+
+  const sessionId = await updateSession(user.id);
+  const userData: UserSessionData = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    sessionId: sessionId,
+  };
+  setJWTCookie(request, reply, userData);
+  reply.send({ avatar: user.avatarUrl });
 }
 
 export async function login(request: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) {
-  try {
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { email: request.body.email },
-      select: { id: true, username: true, email: true, hashedPassword: true, salt: true },
-    });
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { email: request.body.email },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      hashedPassword: true,
+      salt: true,
+      enabled2FA: true,
+      avatarUrl: true,
+      sessionToken: true,
+      sessionExpiresAt: true,
+    },
+  });
 
+  const isMatch = verifyPassword({
+    candidatePassword: request.body.password,
+    hash: user.hashedPassword,
+    salt: user.salt,
+  });
+
+  if (!isMatch) {
+    return reply.status(401).send({ message: 'Invalid credentials' });
+  }
+
+  if (user.sessionToken && user.sessionExpiresAt && user.sessionExpiresAt > new Date()) {
+    return reply.status(403).send({
+      message: 'User is already logged in on another device or tab.',
+    });
+  }
+
+  if (user.enabled2FA) return reply.status(403).send({ message: '2FA required' });
+
+  const sessionId = await updateSession(user.id);
+  const userData: UserSessionData = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    sessionId: sessionId,
+  };
+  setJWTCookie(request, reply, userData);
+  reply.send({ avatar: user.avatarUrl });
+}
+
+export async function checkLoginStatus(request: FastifyRequest, reply: FastifyReply) {
+  const token = request.cookies.access_token;
+  if (token) reply.send({ message: 'User is logged in' });
+}
+
+export async function logout(request: FastifyRequest, reply: FastifyReply) {
+  reply.clearCookie('access_token');
+  await prisma.user.update({
+    where: { id: request.user.id },
+    data: { sessionToken: null, sessionExpiresAt: null },
+  });
+  reply.send({ message: 'Logout successful!' });
+}
+
+export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
+  const userId = request.user.id;
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { id: true, username: true, email: true, avatarUrl: true },
+  });
+
+  reply.send(user);
+}
+
+export async function getUserStats(
+  request: FastifyRequest<{ Params: IParams }>,
+  reply: FastifyReply,
+) {
+  const userMatches = await prisma.match.findMany({
+    where: { OR: [{ user1Id: request.params.id }, { user2Id: request.params.id }] },
+  });
+
+  reply.send({ stats: await getUserGlobalStats(userMatches, request.params.id) });
+}
+
+export async function setDefaultAvatar(
+  request: FastifyRequest<{ Body: DefaultAvatar }>,
+  reply: FastifyReply,
+) {
+  if (!request.body.path) return reply.status(400).send({ message: 'Path to avatar required.' });
+  if (!avatarImagePaths.includes(request.body.path))
+    return reply.status(400).send({ message: 'Path to avatar invalid.' });
+  await prisma.user.update({
+    where: { id: request.user.id },
+    data: { avatarUrl: request.body.path },
+  });
+  reply.send({ message: 'Path to avatar updated successfully.' });
+}
+
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'multipart/form-data'];
+
+export async function uploadCustomAvatar(
+  request: FastifyRequest<{ Body: AvatarData }>,
+  reply: FastifyReply,
+) {
+  const parts = request.files();
+  const userId = request.user.id;
+  const avatarDir = path.resolve(__dirname, '../../../../avatar');
+  const filePath = path.join(avatarDir, `${userId}.png`);
+  for await (const part of parts) {
+    if (!part.mimetype || !ALLOWED_MIME_TYPES.includes(part.mimetype))
+      return reply.status(400).send({ message: 'Unsupported file type' });
+    const buffer = await part.toBuffer();
+    if (buffer.length > MAX_FILE_SIZE)
+      return reply.status(400).send({ message: 'File too large. Max 1MB allowed.' });
+    const fileType = await fileTypeFromBuffer(buffer);
+    if (!fileType || !ALLOWED_MIME_TYPES.includes(fileType.mime)) {
+      return reply.status(400).send({ message: 'Invalid file content' });
+    }
+    await fs.promises.writeFile(filePath, buffer);
+  }
+  await prisma.user.update({
+    where: { id: userId },
+    data: { avatarUrl: `../../../../static/avatar/custom/${userId}.png` },
+  });
+  reply.send({ message: 'Avatar uploaded.' });
+}
+
+export async function getAvatarPath(request: FastifyRequest, reply: FastifyReply) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+  reply.send({ path: user.avatarUrl });
+}
+
+export async function setup2FA(request: FastifyRequest, reply: FastifyReply) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+  if (user.enabled2FA)
+    return reply.status(409).send({ message: '2FA already setup for this user.' });
+
+  const secret = speakeasy.generateSecret({
+    name: `ft_transcendence(${user.username})`,
+  });
+  if (!secret.otpauth_url) {
+    return reply.status(500).send({ message: 'No otpauth_url in secret.' });
+  }
+  const qrCode = await qrcode.toDataURL(secret.otpauth_url);
+  await prisma.user.update({
+    where: { id: request.user.id },
+    data: { secret2FA: secret.base32 },
+  });
+  return qrCode; // Set img.src to this in frontend
+}
+
+export async function verify2FA(
+  request: FastifyRequest<{ Body: VerifyToken }>,
+  reply: FastifyReply,
+) {
+  if (!request.cookies.access_token)
+    return reply.status(401).send({ message: 'Access token not set.' });
+
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+  if (!user.secret2FA) {
+    return reply.status(403).send({ message: '2FA required but not setup.' });
+  }
+  if (!user.enabled2FA) {
+    if (!request.body.password) return reply.status(400).send({ message: 'Password required.' });
     const isMatch = verifyPassword({
       candidatePassword: request.body.password,
       hash: user.hashedPassword,
       salt: user.salt,
     });
-
-    if (!isMatch) {
-      return reply.status(401).send({ message: 'Invalid credentials' });
-    }
-
-    const token = request.server.jwt.sign({
-      id: user.id,
-      email: user.email,
-      userName: user.username,
-    });
-
-    reply.setCookie('access_token', token, {
-      path: '/',
-      httpOnly: true,
-      secure: true,
-      maxAge: 2 * 60 * 60, // Valid for 2h
-    });
-    reply.send({ token });
-  } catch (error) {
-    handleError(error, reply);
+    if (!isMatch) return reply.status(401).send({ message: 'Password incorrect.' });
   }
-}
 
-export async function checkLoginStatus(request: FastifyRequest, reply: FastifyReply) {
-  const token = request.cookies.access_token;
-  if (token) reply.send('User is logged in');
-}
+  const token = request.body.code;
 
-export async function logout(request: FastifyRequest, reply: FastifyReply) {
-  reply.clearCookie('access_token');
-  reply.send({ message: 'Logout successful!' });
-}
+  const verified = speakeasy.totp.verify({
+    secret: user.secret2FA,
+    encoding: 'base32',
+    token,
+  });
+  if (!verified)
+    return reply
+      .status(401)
+      .send({ message: 'The two-factor authentication token is invalid or expired.' });
 
-export async function getOwnUser(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    const userId = request.user.id;
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: { id: true, username: true, email: true },
-    });
-
-    reply.send(user);
-  } catch (error) {
-    handleError(error, reply);
+  const sessionId = await updateSession(user.id);
+  const userData: UserSessionData = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    sessionId: sessionId,
+  };
+  const finalToken = setJWTCookie(request, reply, userData);
+  if (!user.enabled2FA) {
+    await prisma.user.update({ where: { id: request.user.id }, data: { enabled2FA: true } });
   }
+  reply.send({ token: finalToken });
+}
+
+export async function check2FAstatus(request: FastifyRequest, reply: FastifyReply) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+  reply.send(user.enabled2FA);
+}
+
+export async function disable2FA(
+  request: FastifyRequest<{ Body: VerifyToken }>,
+  reply: FastifyReply,
+) {
+  if (!request.cookies.access_token)
+    return reply.status(401).send({ message: 'Access token not set.' });
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: request.user.id } });
+  if (!user.enabled2FA) return reply.status(403).send({ message: '2FA not setup.' });
+  if (!user.secret2FA) return reply.status(403).send({ message: '2FA required but not setup.' });
+
+  if (!request.body.password) return reply.status(400).send({ message: 'Password required.' });
+  const isMatch = verifyPassword({
+    candidatePassword: request.body.password,
+    hash: user.hashedPassword,
+    salt: user.salt,
+  });
+  if (!isMatch) return reply.status(401).send({ message: 'Password incorrect.' });
+
+  const token = request.body.code;
+
+  const verified = speakeasy.totp.verify({
+    secret: user.secret2FA,
+    encoding: 'base32',
+    token,
+  });
+  if (!verified)
+    return reply
+      .status(401)
+      .send({ message: 'The two-factor authentication token is invalid or expired.' });
+  await prisma.user.update({
+    where: { id: request.user.id },
+    data: { secret2FA: null, enabled2FA: false },
+  });
+  return reply.send({ message: 'Success' });
 }

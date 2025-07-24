@@ -11,15 +11,21 @@
 # **************************************************************************** #
 
 DB_DATA = $(PWD)/data/backend_db
+AVATAR_DATA = $(PWD)/data/avatar
 BC_DATA = $(PWD)/data/blockchain
 COMPOSE = docker compose -f ./srcs/docker-compose.yml
+BLOCKCHAIN_ADDRESS = $(PWD)/srcs/requirements/blockchain/conf/output/blockchain_address.txt
 
 all: up
 
 up:
 	@mkdir -p $(DB_DATA)
 	@mkdir -p $(BC_DATA)
-	@$(COMPOSE) up --build -d
+	@mkdir -p $(AVATAR_DATA)
+	@if [ ! -s $(BLOCKCHAIN_ADDRESS) ]; then \
+		make contract; \
+	fi
+	@$(COMPOSE) up --build -d frontend backend
 
 down:
 	@$(COMPOSE) down
@@ -29,16 +35,18 @@ build:
 
 clean: down
 	@echo "** REMOVING IMAGES **"
-	@docker rmi -f $$(docker images -qa)
+	@docker rmi -f $$(docker images -qa) 2>/dev/null || true
 	@echo "** REMOVING VOLUMES **"
-	@docker volume rm $$(docker volume ls -q)
+	@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 	@echo "** DELETING VOLUMES' DATA **"
-	@sudo rm -rf $(DB_DATA) $(BC_DATA)
-
-re: clean up
+	@sudo rm -rf $(DB_DATA) $(BC_DATA) $(AVATAR_DATA) data
 
 prune:
 	@docker system prune -a
+
+fclean: clean prune clear-blockchain-address
+
+re: clean up
 
 status:
 	@clear
@@ -51,31 +59,13 @@ status:
 	@docker network ls
 	@echo ""
 
-frontend:
-	@$(COMPOSE) build frontend
+contract:
+	@echo "** DEPLOYING NEW SMART CONTRACT **"
+	@$(COMPOSE) run --build --rm blockchain
 
-backend:
-	@$(COMPOSE) build backend
 
-bc:
-	@$(COMPOSE) build blockchain
+clear-blockchain-address:
+	@echo "** CLEANING BLOCKCHAIN ADDRESS **"
+	@> $(BLOCKCHAIN_ADDRESS)
 
-frontend_clean:
-	$(COMPOSE) rm -sf frontend
-	@docker rmi -f frontend || true
-
-backend_clean:
-	$(COMPOSE) rm -sf backend
-	@docker rmi -f backend || true
-
-bc_clean:
-	$(COMPOSE) rm -sf blockchain
-	@docker rmi -f blockchain || true
-
-db_reset:
-	@docker exec -it backend sh -c "npm run populate"
-
-test: 
-	@./docs/scripts/build_dockerfile_test.sh  #Tests build
-
-.PHONY: all up down build clean re prune status frontend backend bc frontend_clean backend_clean bc_clean test db_reset
+.PHONY: all up down build clean fclean re prune status contract clear-blockchain-address

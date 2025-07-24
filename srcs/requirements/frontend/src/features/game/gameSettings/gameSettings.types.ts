@@ -1,3 +1,4 @@
+import { TournamentPhase } from 'ui/tournamentStatus/tournamentStatus.types.js';
 import { background } from '../backgroundData/backgroundData.types.js';
 import { character } from '../characterData/characterData.types.js';
 
@@ -14,7 +15,11 @@ import { character } from '../characterData/characterData.types.js';
  *
  * This type defines the different modes of play available in the game.
  */
-export type playType = 'Local Play' | 'Remote Play' | 'Tournament Play';
+export type playType =
+  | 'Local Play'
+  | 'Remote Play'
+  | 'Local Tournament Play'
+  | 'Remote Tournament Play';
 
 /**
  * @brief Type representing the game variant.
@@ -34,11 +39,41 @@ export interface gameSettings {
   gameType: gameType;
   alias1: string;
   alias2: string;
+  avatar1: string;
+  avatar2: string;
   paddleColour1: string;
   paddleColour2: string;
   character1: character | null;
   character2: character | null;
   background: background;
+}
+
+/**
+ * @brief Interface for tournament settings.
+ *
+ * This interface defines the structure for tournament settings, including play type, game type, and tournament players
+ */
+export interface tournamentSettings {
+  playType: playType;
+  gameType: gameType;
+  players: tournamentPlayerSettings[];
+}
+
+/**
+ * @brief Interface for tournament player settings.
+ *
+ * This interface defines the structure for tournament settings, including play type, game type, and tournament players
+ */
+export interface tournamentPlayerSettings {
+  playerNumber: number;
+  alias: string;
+  paddleColour: string;
+  character: character | null;
+  avatar: string;
+  quarterFinalScore: string | null;
+  semiFinalScore: string | null;
+  finalScore: string | null;
+  phase: TournamentPhase;
 }
 
 /**

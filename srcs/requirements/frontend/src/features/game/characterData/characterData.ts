@@ -41,6 +41,22 @@ const characterList: character[] = [
     selectHelpMessage: 'Fill the field with fake targets!',
   },
   {
+    name: 'Donkey Kong',
+    attack: 'Giant Punch',
+    characterSelectPicturePath: `${characterSelectPicturePath}donkey_kong.png`,
+    characterAvatarPicturePath: `${characterAvatarPicturePath}donkey_kong.png`,
+    accentColour: 'orange',
+    selectHelpMessage: "Smash your opponent's paddle!",
+  },
+  {
+    name: 'Bowser',
+    attack: 'Shell Decoy',
+    characterSelectPicturePath: `${characterSelectPicturePath}bowser.png`,
+    characterAvatarPicturePath: `${characterAvatarPicturePath}bowser.png`,
+    accentColour: 'lime',
+    selectHelpMessage: 'Hide the ball in your shell!',
+  },
+  {
     name: 'Sonic',
     attack: 'Spin Dash',
     characterSelectPicturePath: `${characterSelectPicturePath}sonic.png`,
@@ -66,27 +82,43 @@ const characterList: character[] = [
   },
   {
     name: 'Link',
-    attack: 'Magic Mirror',
+    attack: 'Gale Boomerang',
     characterSelectPicturePath: `${characterSelectPicturePath}link.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}link.png`,
     accentColour: 'cyan',
-    selectHelpMessage: "Reflect the ball's trajectory!",
+    selectHelpMessage: "Invert the ball's trajectory!",
   },
   {
     name: 'Kirby',
-    attack: 'Mini',
+    attack: 'The Amazing Mirror',
     characterSelectPicturePath: `${characterSelectPicturePath}kirby.png`,
     characterAvatarPicturePath: `${characterAvatarPicturePath}kirby.png`,
     accentColour: 'pink',
-    selectHelpMessage: 'Minify the ball!',
+    selectHelpMessage: "Use your enemy's powers!",
   },
   {
-    name: 'Donkey Kong',
-    attack: 'Giant Punch',
-    characterSelectPicturePath: `${characterSelectPicturePath}donkey_kong.png`,
-    characterAvatarPicturePath: `${characterAvatarPicturePath}donkey_kong.png`,
-    accentColour: 'orange',
-    selectHelpMessage: "Smash your opponent's paddle!",
+    name: 'Samus',
+    attack: 'Morph Ball',
+    characterSelectPicturePath: `${characterSelectPicturePath}samus.png`,
+    characterAvatarPicturePath: `${characterAvatarPicturePath}samus.png`,
+    accentColour: 'amber',
+    selectHelpMessage: "Slow down the ball with Samus' morph!",
+  },
+  {
+    name: 'Captain Falcon',
+    attack: 'Falcon Dive',
+    characterSelectPicturePath: `${characterSelectPicturePath}captain_falcon.png`,
+    characterAvatarPicturePath: `${characterAvatarPicturePath}captain_falcon.png`,
+    accentColour: 'indigo',
+    selectHelpMessage: 'Speed up your paddle!',
+  },
+  {
+    name: 'Snake',
+    attack: 'Sabotage',
+    characterSelectPicturePath: `${characterSelectPicturePath}snake.png`,
+    characterAvatarPicturePath: `${characterAvatarPicturePath}snake.png`,
+    accentColour: 'zinc',
+    selectHelpMessage: "Hide your opponent's paddle!",
   },
 ] as const;
 
@@ -97,4 +129,46 @@ const characterList: character[] = [
  */
 export function getCharacterList(): character[] {
   return characterList;
+}
+
+function getCharacterIndexFromBackend(name: string): number {
+  switch (name) {
+    case 'MARIO':
+      return 0;
+    case 'YOSHI':
+      return 1;
+    case 'DK':
+      return 2;
+    case 'BOWSER':
+      return 3;
+    case 'SONIC':
+      return 4;
+    case 'PIKACHU':
+      return 5;
+    case 'MEWTWO':
+      return 6;
+    case 'LINK':
+      return 7;
+    case 'KIRBY':
+      return 8;
+    case 'SAMUS':
+      return 9;
+    case 'CAPFALCON':
+      return 10;
+    case 'SNAKE':
+      return 11;
+  }
+  return 0;
+}
+
+export function getCharacterPathFromBackend(name: string): string {
+  let index: number = getCharacterIndexFromBackend(name);
+
+  return characterList[index].characterAvatarPicturePath;
+}
+
+export function getAccentColourFromBackend(name: string): string {
+  let index: number = getCharacterIndexFromBackend(name);
+
+  return characterList[index].accentColour;
 }

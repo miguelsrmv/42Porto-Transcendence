@@ -4,34 +4,17 @@ import { Player } from './player.js';
 import { GameArea } from './types.js';
 import { scoreAnimation } from '../animations/animations.js';
 import { triggerEndGameMenu } from '../gameStats/gameConclusion.js';
-import { Ball, ballCountdown } from './ball.js';
+import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
+import { playType } from '../gameSettings/gameSettings.types.js';
+import { powerBarInterval } from './game.js';
 
 /**
  * Maximum speed a ball can reach.
  */
 export const MAX_BALL_SPEED: number = 1000;
 
-//
-// interface Ball {
-//   x: number;
-//   y: number;
-//   previousX: number;
-//   previousY: number;
-//   radius: number;
-//   speedX: number;
-//   speedY: number;
-//   bounceVertical(): void;
-//   bounceHorizontal(): void;
-//   reset(): void;
-// }
-//
-// interface Paddle {
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-// }
+let endGameMenuHasTriggered: boolean = false;
 
 /**
  * Checks if the ball has collided with the horizontal walls of the canvas.
@@ -97,10 +80,23 @@ function eitherPlayerHasWon(leftPlayer: Player, rightPlayer: Player): boolean {
  * @param winningPlayer The player who won the game.
  * @param gameArea The game area containing the canvas and game state.
  */
-function endGame(winningPlayer: Player, gameArea: GameArea): void {
+function endGame(
+  winningPlayer: Player,
+  gameArea: GameArea,
+  playType: playType,
+  tournamentIsRunning: boolean,
+): void {
   gameArea.stop();
   gameArea.clear();
-  triggerEndGameMenu(winningPlayer.side, winningPlayer.side, stats, 'Local Play');
+  if (!endGameMenuHasTriggered)
+    triggerEndGameMenu(
+      winningPlayer.side,
+      winningPlayer.side,
+      stats,
+      playType,
+      tournamentIsRunning,
+    );
+  endGameMenuHasTriggered = true;
 }
 
 /**
@@ -111,7 +107,13 @@ function endGame(winningPlayer: Player, gameArea: GameArea): void {
  * @param rightPlayer The right player object.
  * @param gameArea The game area containing the canvas and game state.
  */
-export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameArea: GameArea) {
+export async function checkGoal(
+  leftPlayer: Player,
+  rightPlayer: Player,
+  gameArea: GameArea,
+  playType: playType,
+  tournamentIsRunning: boolean,
+): Promise<void> {
   if (!gameArea.canvas) {
     console.error('Error getting canvas element!');
     return;
@@ -120,22 +122,27 @@ export async function checkGoal(leftPlayer: Player, rightPlayer: Player, gameAre
     rightPlayer.increaseScore();
     paintScore('right', rightPlayer.getScore());
     scoreAnimation('right');
-    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
     stats.right.increaseGoals();
     stats.left.increaseSufferedGoals();
-    console.log(`Right player now has: ${rightPlayer.getScore()} points`);
     await resetRound(leftPlayer, rightPlayer, gameArea);
   } else if (leftPlayer.ball.x + leftPlayer.ball.radius >= gameArea.canvas.width) {
     leftPlayer.increaseScore();
     paintScore('left', leftPlayer.getScore());
     scoreAnimation('left');
-    console.log(`Left player now has: ${leftPlayer.getScore()} points`);
     stats.left.increaseGoals();
     stats.right.increaseSufferedGoals();
     await resetRound(leftPlayer, rightPlayer, gameArea);
   }
-  if (eitherPlayerHasWon(leftPlayer, rightPlayer))
-    endGame(leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer, gameArea);
+  if (eitherPlayerHasWon(leftPlayer, rightPlayer)) {
+    clearInterval(powerBarInterval[0]);
+    clearInterval(powerBarInterval[1]);
+    endGame(
+      leftPlayer.getScore() > rightPlayer.getScore() ? leftPlayer : rightPlayer,
+      gameArea,
+      playType,
+      tournamentIsRunning,
+    );
+  }
 }
 
 /**
@@ -233,6 +240,7 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
     return;
   }
 
+  endGameMenuHasTriggered = false;
   const pauseEvent = new CustomEvent('paused');
   const beforeTime = Date.now();
   leftPlayer.ball.reset();
@@ -242,7 +250,7 @@ async function resetRound(leftPlayer: Player, rightPlayer: Player, gameArea: Gam
   gameArea.inputHandler?.disable();
   window.dispatchEvent(pauseEvent);
   gameArea.state = gameState.paused;
-  ballCountdown();
+  leftPlayer.ball.countdown();
   await wait(3);
   const newTime = Date.now();
   leftPlayer.attack?.reset(beforeTime, newTime);

@@ -1,24 +1,16 @@
 import { FastifyInstance } from 'fastify';
-import {
-  createMatch,
-  getAllMatches,
-  getMatchById,
-  getPlayerMatches,
-  updateMatch,
-} from '../controllers/match.controller';
-import { createMatchSchema, updateMatchSchema } from '../schemas/match.schema';
+import { getMatchById, getUserMatches } from '../controllers/match.controller';
 import { getByIdSchema } from '../schemas/global.schema';
-import { validateGameSettings } from '../schemas/settingsValidation';
 
-// NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function matchRoutes(fastify: FastifyInstance) {
-  fastify.get('/', getAllMatches);
-  fastify.get('/:id', { schema: getByIdSchema }, getMatchById);
-  fastify.get('/player/:id', getPlayerMatches);
-  fastify.post(
-    '/',
-    { schema: createMatchSchema, preValidation: validateGameSettings },
-    createMatch,
+  fastify.get<{ Params: IParams }>(
+    '/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    getMatchById,
   );
-  fastify.patch('/:id', { schema: updateMatchSchema }, updateMatch);
+  fastify.get<{ Params: IParams }>(
+    '/user/:id',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    getUserMatches,
+  );
 }

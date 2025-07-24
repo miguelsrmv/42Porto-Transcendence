@@ -1,32 +1,79 @@
 import { FastifyInstance } from 'fastify';
 import {
-  getAllUsers,
   getUserById,
   createUser,
   updateUser,
-  deleteUser,
   login,
   checkLoginStatus,
   logout,
   getOwnUser,
+  getUserStats,
+  setup2FA,
+  verify2FA,
+  check2FAstatus,
+  disable2FA,
+  getAvatarPath,
+  setDefaultAvatar,
+  uploadCustomAvatar,
+  preLogin,
+  login2FA,
 } from '../controllers/user.controller';
-import { createUserSchema, loginSchema, updateUserSchema } from '../schemas/user.schema';
+import {
+  createUserSchema,
+  login2FASchema,
+  loginSchema,
+  setup2FASchema,
+  updateUserSchema,
+} from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
-import { userCreateValidation } from '../validation/users.validation';
+import { userCreateValidation, userUpdateValidation } from '../validation/users.validation';
+import { AvatarData, DefaultAvatar, UserUpdate, VerifyToken } from '../../types';
 
 // NOTE: Insert '{ onRequest: [fastify.jwtAuth] }' before handler to protect route
 export async function userRoutes(fastify: FastifyInstance) {
-  fastify.get('/', { onRequest: [fastify.jwtAuth] }, getAllUsers);
   fastify.post('/', { schema: createUserSchema, preValidation: userCreateValidation }, createUser);
-  fastify.delete('/logout', { onRequest: [fastify.jwtAuth] }, logout);
+  fastify.patch('/logout', { onRequest: [fastify.jwtAuth] }, logout);
+  fastify.post('/preLogin', { schema: loginSchema }, preLogin);
+  fastify.post('/login2FA', { schema: login2FASchema }, login2FA);
   fastify.post('/login', { schema: loginSchema }, login);
   fastify.get('/me', { onRequest: [fastify.jwtAuth] }, getOwnUser);
   fastify.get('/checkLoginStatus', { onRequest: [fastify.jwtAuth] }, checkLoginStatus);
+  fastify.patch<{ Body: DefaultAvatar }>(
+    '/defaultAvatar',
+    { onRequest: [fastify.jwtAuth] },
+    setDefaultAvatar,
+  );
+  fastify.patch<{ Body: AvatarData }>(
+    '/customAvatar',
+    { onRequest: [fastify.jwtAuth] },
+    uploadCustomAvatar,
+  );
+  fastify.get('/getAvatarPath', { onRequest: [fastify.jwtAuth] }, getAvatarPath);
+  fastify.get('/2FA/setup', { onRequest: [fastify.jwtAuth] }, setup2FA);
+  fastify.post<{ Body: VerifyToken }>(
+    '/2FA/verify',
+    { schema: setup2FASchema, onRequest: [fastify.jwtAuth] },
+    verify2FA,
+  );
+  fastify.get('/2FA/check', { onRequest: [fastify.jwtAuth] }, check2FAstatus);
+  fastify.post<{ Body: VerifyToken }>(
+    '/2FA/disable',
+    { schema: setup2FASchema, onRequest: [fastify.jwtAuth] },
+    disable2FA,
+  );
   fastify.get<{ Params: IParams }>(
     '/:id',
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
     getUserById,
   );
-  fastify.patch('/:id', { schema: updateUserSchema }, updateUser);
-  fastify.delete('/:id', { schema: getByIdSchema }, deleteUser);
+  fastify.patch<{ Body: UserUpdate }>(
+    '/',
+    { schema: updateUserSchema, onRequest: [fastify.jwtAuth], preValidation: userUpdateValidation },
+    updateUser,
+  );
+  fastify.get<{ Params: IParams }>(
+    '/:id/stats',
+    { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
+    getUserStats,
+  );
 }

@@ -1,7 +1,6 @@
 import { Ball } from './ball.js';
 import { CANVAS_HEIGHT, CANVAS_WIDTH, BALL_RADIUS, PADDLE_LEN, GameArea } from './gameArea.js';
-import { MAX_BALL_SPEED } from './collisions.js';
-import { wait } from './helpers.js';
+import { wait } from '../helpers.js';
 import { gameStats } from './gameStats.js';
 import { Paddle } from './paddle.js';
 import { getGameVersion } from './game.js';
@@ -18,15 +17,20 @@ type attackIdentifier =
   | 'Spin Dash'
   | 'Thunder Wave'
   | 'Confusion'
-  | 'Magic Mirror'
-  | 'Mini'
-  | 'Giant Punch';
+  | 'Gale Boomerang'
+  | 'The Amazing Mirror'
+  | 'Giant Punch'
+  | 'Morph Ball'
+  | 'Falcon Dive'
+  | 'Shell Decoy'
+  | 'Sabotage';
 
 export class Attack {
   ownPaddle: Paddle;
   enemyPaddle: Paddle;
   ball: Ball;
   attackName: string | undefined;
+  enemyAttackName: string | null;
   side: string;
   lastUsed: number;
   attackIsAvailable: boolean;
@@ -39,6 +43,7 @@ export class Attack {
 
   constructor(
     attackName: string | undefined,
+    enemyAttackName: string | null,
     ownPaddle: Paddle,
     enemyPaddle: Paddle,
     ball: Ball,
@@ -50,6 +55,7 @@ export class Attack {
     this.enemyPaddle = enemyPaddle;
     this.ball = ball;
     this.attackName = attackName;
+    this.enemyAttackName = enemyAttackName;
     this.side = side;
     this.lastUsed = Date.now();
     this.attackIsAvailable = false;
@@ -59,17 +65,17 @@ export class Attack {
       'Super Shroom': {
         handler: async () => this.superShroom(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Egg Barrage': {
         handler: async () => this.eggBarrage(),
         duration: 5,
-        cooldown: 8000,
+        cooldown: 6000,
       },
       'Spin Dash': {
         handler: async () => this.spinDash(),
-        duration: 2,
-        cooldown: 10000,
+        duration: 3,
+        cooldown: 8000,
       },
       'Thunder Wave': {
         handler: async () => this.thunderWave(),
@@ -79,31 +85,53 @@ export class Attack {
       Confusion: {
         handler: async () => this.confusion(),
         duration: 4,
-        cooldown: 7500,
+        cooldown: 10000,
       },
-      'Magic Mirror': {
-        handler: async () => this.magicMirror(),
+      'Gale Boomerang': {
+        handler: async () => this.galeBoomerang(),
         duration: 0,
-        cooldown: 7500,
+        cooldown: 14000,
       },
-      Mini: {
-        handler: async () => this.mini(),
-        duration: 5,
-        cooldown: 5000,
+      'The Amazing Mirror': {
+        handler: async () => this.theAmazingMirror(),
+        duration: 4,
+        cooldown: 10000,
       },
       'Giant Punch': {
         handler: async () => this.giantPunch(),
         duration: 4,
+        cooldown: 8000,
+      },
+      'Morph Ball': {
+        handler: async () => this.morphBall(),
+        duration: 4,
+        cooldown: 8000,
+      },
+      'Falcon Dive': {
+        handler: async () => this.falconDive(),
+        duration: 4,
+        cooldown: 6000,
+      },
+      'Shell Decoy': {
+        handler: async () => this.shellDecoy(),
+        duration: 6,
+        cooldown: 8000,
+      },
+      Sabotage: {
+        handler: async () => this.sabotage(),
+        duration: 6,
         cooldown: 10000,
       },
     };
 
-    this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    if (attackName !== 'The Amazing Mirror')
+      this.activeAttack = this.attackMap[attackName as attackIdentifier].handler;
+    else this.activeAttack = this.attackMap[enemyAttackName as attackIdentifier].handler;
     this.attackDuration = this.attackMap[attackName as attackIdentifier].duration;
     this.attackCooldown = this.attackMap[attackName as attackIdentifier].cooldown;
   }
 
-  attack(): void {
+  async attack() {
     if (!this.attackName || !(this.attackName in this.attackMap) || !this.attackIsAvailable) return;
 
     this.lastUsed = Date.now();
@@ -118,7 +146,7 @@ export class Attack {
       this.gameArea.rightPlayer.powerBarFill = 0;
     }
 
-    this.activeAttack();
+    await this.activeAttack();
 
     this.attackIsAvailable = false;
   }
@@ -186,17 +214,8 @@ export class Attack {
 
     const startingSpeedX = this.ball.speedX;
     const startingSpeedY = this.ball.speedY;
-
-    const currentSpeedXMag = Math.abs(startingSpeedX);
-    const boostedSpeedXMag = currentSpeedXMag * growthFactor;
-    const cappedSpeedXMag = Math.min(boostedSpeedXMag, MAX_BALL_SPEED);
-    const newSpeedX = cappedSpeedXMag * Math.sign(startingSpeedX);
-
-    const currentSpeedYMag = Math.abs(startingSpeedY);
-    const boostedSpeedYMag = currentSpeedYMag * growthFactor;
-    const cappedSpeedYMag = Math.min(boostedSpeedYMag, MAX_BALL_SPEED);
-    const newSpeedY = cappedSpeedYMag * Math.sign(startingSpeedY);
-
+    const newSpeedX = startingSpeedX * growthFactor;
+    const newSpeedY = startingSpeedY * growthFactor;
     this.ball.setSpeed(newSpeedX, newSpeedY);
 
     await wait(this.attackDuration);
@@ -204,13 +223,8 @@ export class Attack {
     if (!this.gameVersionHasChanged(startingVersion)) {
       const currentSpeedX = this.ball.speedX;
       const currentSpeedY = this.ball.speedY;
-
-      const originalMagnitude = Math.sqrt(startingSpeedX ** 2 + startingSpeedY ** 2);
-      const currentMagnitude = Math.sqrt(currentSpeedX ** 2 + currentSpeedY ** 2);
-
-      const scaleFactor = originalMagnitude / currentMagnitude;
-      const revertedSpeedX = currentSpeedX * scaleFactor;
-      const revertedSpeedY = currentSpeedY * scaleFactor;
+      const revertedSpeedX = currentSpeedX * (1 / growthFactor);
+      const revertedSpeedY = currentSpeedY * (1 / growthFactor);
 
       this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
     }
@@ -244,29 +258,13 @@ export class Attack {
     }
   }
 
-  async magicMirror(): Promise<void> {
+  async galeBoomerang(): Promise<void> {
     this.ball.setSpeed(this.ball.speedX, -this.ball.speedY);
   }
 
-  async mini(): Promise<void> {
-    const startingVersion = getGameVersion(this.gameArea);
-
-    const shrinkFactor = 0.5;
-
-    const oldRadius = this.ball.radius;
-    const newRadius = oldRadius * shrinkFactor;
-
-    this.ball.setRadius(newRadius);
-
-    await wait(this.attackDuration);
-
-    if (!this.gameVersionHasChanged(startingVersion)) {
-      this.ball.setRadius(oldRadius);
-    }
-  }
+  async theAmazingMirror(): Promise<void> {}
 
   async giantPunch(): Promise<void> {
-    console.log('Giant punch called');
     const startingVersion = getGameVersion(this.gameArea);
 
     const shrink = PADDLE_LEN * 0.4;
@@ -286,6 +284,65 @@ export class Attack {
       const newOriginalY = this.enemyPaddle.y;
       this.enemyPaddle.setHeight(this.enemyPaddle.height + shrink);
       this.enemyPaddle.setY(newOriginalY + yOffset);
+    }
+  }
+
+  async morphBall(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea); // Check score changes
+
+    const slowFactor = 0.75; // Speed multiplier
+
+    const startingSpeedX = this.ball.speedX;
+    const startingSpeedY = this.ball.speedY;
+    const newSpeedX = startingSpeedX * slowFactor;
+    const newSpeedY = startingSpeedY * slowFactor;
+    this.ball.setSpeed(newSpeedX, newSpeedY);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      const currentSpeedX = this.ball.speedX;
+      const currentSpeedY = this.ball.speedY;
+      const revertedSpeedX = currentSpeedX * (1 / slowFactor);
+      const revertedSpeedY = currentSpeedY * (1 / slowFactor);
+
+      this.ball.setSpeed(revertedSpeedX, revertedSpeedY);
+    }
+  }
+
+  async falconDive(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea);
+
+    const growthFactor = 2;
+
+    this.ownPaddle.setSpeedModifier(growthFactor);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setSpeedModifier(1);
+    }
+  }
+  async shellDecoy(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea);
+
+    this.ball.setIsVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.ball.setIsVisible(true);
+    }
+  }
+  async sabotage(): Promise<void> {
+    const startingVersion = getGameVersion(this.gameArea);
+
+    this.enemyPaddle.setIsPaddleVisible(false);
+
+    await wait(this.attackDuration);
+
+    if (!this.gameVersionHasChanged(startingVersion)) {
+      this.enemyPaddle.setIsPaddleVisible(true);
     }
   }
 }

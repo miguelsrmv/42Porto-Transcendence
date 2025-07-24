@@ -4,7 +4,7 @@
  */
 
 import { Paddle } from './paddle.js';
-import { Ball, ballCountdown } from './ball.js';
+import { Ball } from './ball.js';
 import { setupInput, handleInput } from './input.js';
 import {
   checkWallCollision,
@@ -21,7 +21,6 @@ import {
   deactivatePowerBarAnimation,
 } from '../animations/animations.js';
 import { gameStats } from '../gameStats/gameStatsTypes.js';
-import { wait } from '../../../utils/helpers.js';
 
 /** @brief Speed of the ball in the game. */
 export const SPEED = 250;
@@ -71,6 +70,12 @@ export let fakeBalls: Ball[] = [];
 
 let leftPlayer: Player;
 let rightPlayer: Player;
+
+let playType: playType;
+
+let tournamentIsRunning: boolean = false;
+
+export let powerBarInterval: number[] = [];
 
 /** @brief Game statistics. */
 export let stats: gameStats = new gameStats();
@@ -188,6 +193,7 @@ function setPlayers(
     ball,
     gameSettings.alias1,
     gameSettings.character1 ? gameSettings.character1.attack : null,
+    gameSettings.character2 ? gameSettings.character2.attack : null,
     'left',
   );
   rightPlayer = new Player(
@@ -196,6 +202,7 @@ function setPlayers(
     ball,
     gameSettings.alias2,
     gameSettings.character2 ? gameSettings.character2.attack : null,
+    gameSettings.character1 ? gameSettings.character1.attack : null,
     'right',
   );
 
@@ -213,9 +220,13 @@ function setPlayers(
 
     let filledAnimationIsOn = false;
 
-    if (player.attack) player.attack.lastUsed = Date.now();
+    if (player.attack) {
+      player.attack.lastUsed = Date.now();
+    }
 
-    window.setInterval(() => {
+    let powerBarNumber: number = player.side === 'left' ? 0 : 1;
+
+    powerBarInterval[powerBarNumber] = window.setInterval(() => {
       if (player.attack && myGameArea.state === gameState.playing) {
         const lastUsed: number = player.attack.lastUsed;
         const coolDown: number = player.attack.attackCooldown;
@@ -248,15 +259,23 @@ function setPlayers(
  * @brief Initializes a local game with the given settings.
  * @param gameSettings Settings for the game.
  */
-export function initializeLocalGame(gameSettings: gameSettings): void {
+export function initializeLocalGame(
+  gameSettings: gameSettings,
+  tournamentRunning: boolean = false,
+): void {
   const pongPage = document.getElementById('game-container') as HTMLElement | null;
   if (!pongPage) {
     console.error('Cannot start the game: game-container is missing.');
     return;
   }
 
+  playType = gameSettings.playType;
+  tournamentIsRunning = tournamentRunning;
   updateBackground(gameSettings.background);
   setPaddles(gameSettings);
+  // HACK:
+  deactivatePowerBarAnimation('left');
+  deactivatePowerBarAnimation('right');
   ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
   setPlayers(leftPaddle, rightPaddle, ball, gameSettings);
   stats.reset();
@@ -269,7 +288,7 @@ export function initializeLocalGame(gameSettings: gameSettings): void {
  * @param currentTime Current time in milliseconds.
  */
 async function updateGameArea(currentTime: number) {
-  animationFrameId = requestAnimationFrame(updateGameArea);
+  if (myGameArea.state != gameState.ended) animationFrameId = requestAnimationFrame(updateGameArea);
 
   if (lastTime === 0) {
     lastTime = currentTime;
@@ -323,7 +342,7 @@ async function updateGameArea(currentTime: number) {
   fakeBalls.forEach((fakeBall) => checkFakeBallWallCollision(fakeBall, myGameArea));
   checkPaddleCollision(ball, leftPaddle, rightPaddle);
 
-  await checkGoal(leftPlayer, rightPlayer, myGameArea);
+  await checkGoal(leftPlayer, rightPlayer, myGameArea, playType, tournamentIsRunning);
 
   if (myGameArea.context) {
     leftPaddle.draw(myGameArea.context);
@@ -381,5 +400,18 @@ export function paintScore(side: string, score: number): void {
  * @brief Ends the local game if it is currently running.
  */
 export function endLocalGameIfRunning(): void {
-  if (myGameArea.state !== gameState.ended) myGameArea.stop();
+  // NOTE: Potential bug introduced. Removed if condition.
+  lastTime = 0;
+  countdownTimeLeft = 3;
+  countdownBlinkTimer = 0;
+  countdownVisible = true;
+  isInitialCountdownActive = true;
+  animationFrameId = null;
+  stats.reset();
+  deactivatePowerBarAnimation('left');
+  deactivatePowerBarAnimation('right');
+  clearInterval(powerBarInterval[0]);
+  clearInterval(powerBarInterval[1]);
+  myGameArea.inputHandler?.disable();
+  myGameArea.stop();
 }

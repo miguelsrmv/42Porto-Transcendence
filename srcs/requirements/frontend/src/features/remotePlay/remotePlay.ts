@@ -4,19 +4,17 @@
  */
 
 import type { gameType } from '../game/gameSettings/gameSettings.types.js';
-
 import {
   getGameType,
-  createBackgroundLoop,
   createCharacterLoop,
   setGameSettings,
   getLeanGameSettings,
-  updateHUD,
 } from '../game/gameSetup.js';
-
 import { initializeRemoteGame } from '../game/remoteGameApp/remoteGame.js';
-
-import { loadView } from '../../core/viewLoader.js';
+import { checkLoginStatus } from '../../utils/helpers.js';
+import { navigate } from '../../core/router.js';
+import { showWaitingModal } from '../../ui/waitingNextGame.js';
+import { showHowToPlay } from '../../ui/controls.js';
 
 /**
  * @brief Initializes view for remote play
@@ -24,6 +22,16 @@ import { loadView } from '../../core/viewLoader.js';
  * This function sets up the pre-game page for remote play
  */
 export async function initializeView(): Promise<void> {
+  // If not logged in, redirect
+  if (!(await checkLoginStatus())) {
+    alert('You need to be logged in to access this page');
+    navigate('landing-page');
+    return;
+  }
+
+  // Triggers alert message for how to play
+  showHowToPlay('Remote Play');
+
   // Gets Classic or Crazy Pong
   const gameType: gameType = await getGameType();
 
@@ -64,7 +72,7 @@ export async function initializeView(): Promise<void> {
       'click',
       () => {
         setGameSettings(gameType, 'Remote Play');
-        // TODO: Hide elements, create "Waiting modal"
+        showWaitingModal();
         initializeRemoteGame(getLeanGameSettings());
       },
       { once: true },

@@ -1,3 +1,5 @@
+import { GameSession } from '../gameSession';
+import { Tournament } from '../tournament';
 import { Ball } from './ball';
 import { updateGameArea } from './game';
 import { gameStats } from './gameStats';
@@ -32,8 +34,15 @@ export class GameArea {
   countdownVisible = true;
   isInitialCountdownActive = true;
   intervals: NodeJS.Timeout[] = [];
+  settings: gameSettings;
+  isEnding: boolean;
+  session: GameSession;
+  tournament?: Tournament;
 
-  constructor(p1socket: WebSocket, p2socket: WebSocket, gameSettings: gameSettings) {
+  constructor(p1id: string, p2id: string, gameSettings: gameSettings, session: GameSession) {
+    this.session = session;
+    this.settings = gameSettings;
+    this.isEnding = false;
     this.ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, BALL_RADIUS, SPEED, SPEED);
     this.leftPaddle = new Paddle(
       PADDLE_WID,
@@ -51,24 +60,26 @@ export class GameArea {
     );
 
     this.leftPlayer = new Player(
+      p1id,
       this.leftPaddle,
       this.rightPaddle,
       this.ball,
       gameSettings.alias1,
       gameSettings.character1?.attack ?? null,
+      gameSettings.character2 ? gameSettings.character2.attack : null,
       'left',
-      p1socket,
       this.stats,
       this,
     );
     this.rightPlayer = new Player(
+      p2id,
       this.rightPaddle,
       this.leftPaddle,
       this.ball,
       gameSettings.alias2,
       gameSettings.character2?.attack ?? null,
+      gameSettings.character1 ? gameSettings.character1.attack : null,
       'right',
-      p2socket,
       this.stats,
       this,
     );
@@ -79,19 +90,22 @@ export class GameArea {
   }
 
   stop() {
+    if (this.runningState === gameRunningState.ended) return;
     this.runningState = gameRunningState.ended;
     this.clear();
+    console.log('Stopping game');
   }
 
   clear() {
     this.intervals.forEach((interval) => clearInterval(interval));
   }
 
-  broadcastSessionMessage(message: string) {
-    if (!this.leftPlayer || !this.rightPlayer) return;
-    if (this.leftPlayer.socket.readyState === WebSocket.OPEN) this.leftPlayer.socket.send(message);
-    if (this.rightPlayer.socket.readyState === WebSocket.OPEN)
-      this.rightPlayer.socket.send(message);
+  getPlayerById(playerId: string) {
+    return playerId === this.leftPlayer.id ? this.leftPlayer : this.rightPlayer;
+  }
+
+  getOtherPlayer(player: Player) {
+    return player === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
   }
 
   async gameLoop() {
@@ -135,7 +149,7 @@ export class GameArea {
       };
 
       const gameStateMsg: ServerMessage = { type: 'game_state', state: gameState };
-      this.broadcastSessionMessage(JSON.stringify(gameStateMsg));
+      this.session.broadcastMessage(JSON.stringify(gameStateMsg));
       return;
     }
 
