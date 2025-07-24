@@ -5,3 +5,4 @@ generated
 .env
 *.db
 *.db-journal
+avatar
