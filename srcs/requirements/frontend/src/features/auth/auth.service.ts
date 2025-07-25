@@ -192,10 +192,10 @@ async function fetchUserData() {
  *
  * @param event The form submission event.
  */
-export async function attemptRegister(this: HTMLFormElement, event: Event) {
+export async function attemptRegister(form: HTMLFormElement, event: Event) {
   event.preventDefault();
 
-  const data = formToJSON(this);
+  const data = formToJSON(form);
 
   try {
     const response = await fetch('api/users', {
