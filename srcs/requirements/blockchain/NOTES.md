@@ -1,3 +1,9 @@
+# Project Notes: TournamentsStorage Contract
+
+**Last Updated:** 2025-07-25
+
+## File Structure
+
 ```
 blockchain
  ┣ tools
@@ -74,13 +80,12 @@ blockchain
  ┗ deploy.sh                                        # Entrypoint script used by Docker to build and deploy the smart contract
  ```
 
-# Project Notes: TournamentsStorage Contract
-
-**Last Updated:** 2025-07-25
+---
 
 ## Table of Contents
 
 - [Project Notes: TournamentsStorage Contract](#project-notes-tournamentsstorage-contract)
+	- [File Structure](#file-structure)
 	- [Table of Contents](#table-of-contents)
 	- [Project Overview](#project-overview)
 	- [Contract Architecture \& Core Concepts](#contract-architecture--core-concepts)
