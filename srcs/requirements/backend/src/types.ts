@@ -41,7 +41,7 @@ export type DefaultAvatar = {
 
 export type VerifyToken = {
   code: string;
-  password?: string;
+  password: string;
 };
 
 export type Login2FAData = {

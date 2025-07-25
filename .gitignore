@@ -1,15 +1,9 @@
+# Database
 data
-node_modules
-dev.db
 
-**/dist/
+# Secrets
+secrets
+srcs/.env
 
-**/.env
-
-*.log
-**/blockchain_address.txt
-**/output/
-**/broadcast/
-settings.json
-avatar/
-/secrets
+# Blockchain
+srcs/requirements/conf/output/blockchain_address.txt
