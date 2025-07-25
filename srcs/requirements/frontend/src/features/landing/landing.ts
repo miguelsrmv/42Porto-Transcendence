@@ -3,7 +3,7 @@
  * @brief Handles the setup of the landing page.
  */
 
-import { triggerLoginModal } from './loginMenu.js';
+import { resetListeners, triggerLoginModal } from './loginMenu.js';
 import { setLandingAnimations } from '../../ui/animations.js';
 import { userIsLoggedIn } from '../auth/auth.service.js';
 
@@ -16,7 +16,7 @@ import { userIsLoggedIn } from '../auth/auth.service.js';
  */
 export function initializeView(): void {
   const enterButton = document.getElementById('enter-button');
-
+  resetListeners();
   // Adds event
   if (enterButton) {
     enterButton.addEventListener('click', async () => {
