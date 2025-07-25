@@ -6,13 +6,16 @@
 
 ```
 blockchain
+ ┣ conf
+ ┃ ┗ output
+ ┃ ┃ ┗ blockchain_address.txt                      # File generated on contract deployment - contains smart contract's address
  ┣ tools
  ┃ ┗ contracts
  ┃ ┃ ┗ TournamentsStorage
  ┃ ┃ ┃ ┣ lib
- ┃ ┃ ┃ ┃ ┣ forge-std                              # Foundry standard library for smart contract testing and scripting
+ ┃ ┃ ┃ ┃ ┣ forge-std                               # Foundry standard library for smart contract testing and scripting
  ┃ ┃ ┃ ┃ ┃ ┣ scripts
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ vm.py                              # Helper script for interacting with the Foundry virtual machine (VM)
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ vm.py                               # Helper script for interacting with the Foundry virtual machine (VM)
  ┃ ┃ ┃ ┃ ┃ ┣ src                                   # Core source files for the forge-std library, including base contracts,
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ interfaces                          # Interface definitions for standard Ethereum token protocols and utility contracts
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ IERC1155.sol
@@ -70,14 +73,13 @@ blockchain
  ┃ ┃ ┃ ┣ src
  ┃ ┃ ┃ ┃ ┗ TournamentsStorage.sol                  # Main contract source that stores tournament data
  ┃ ┃ ┃ ┣ test
- ┃ ┃ ┃ ┃ ┗ TournamentsStorage.t.sol               # Unit tests for the `TournamentsStorage` contract
+ ┃ ┃ ┃ ┃ ┗ TournamentsStorage.t.sol                # Unit tests for the `TournamentsStorage` contract
  ┃ ┃ ┃ ┣ .gitignore
  ┃ ┃ ┃ ┗ foundry.toml                              # Main configuration file for the Foundry-based smart contract project
  ┣ .dockerignore
- ┣ Dockerfile                                       # Dockerfile defining containerized environment for deploying/testing smart contracts
- ┣ NOTES.md                                         # Developer notes and miscellaneous information related to project setup or usage
- ┣ README.md
- ┗ deploy.sh                                        # Entrypoint script used by Docker to build and deploy the smart contract
+ ┣ Dockerfile                                      # Dockerfile defining containerized environment for deploying/testing smart contracts
+ ┣ NOTES.md                                        # Developer notes and miscellaneous information related to project setup or usage
+ ┗ deploy.sh                                       # Entrypoint script used by Docker to build and deploy the smart contract
  ```
 
 ---
