@@ -101,7 +101,6 @@ blockchain
 		- [Owner-Only Functions (Actions)](#owner-only-functions-actions)
 		- [Public Getter Functions (Views)](#public-getter-functions-views)
 		- [Internal \& Helper Functions](#internal--helper-functions)
-	- [Future Ideas \& Todos](#future-ideas--todos)
 
 ---
 
@@ -227,13 +226,3 @@ These functions support the main contract logic and are not exposed publicly.
 *   `getCurrentDateTimeUTC()`: Uses the above functions to provide the full current date and time.
 *   `getCurrentDate()` / `getCurrentTime()`: Return formatted date and time arrays.
 *   `findLastIndexOfPlayer(string, string)`: A crucial public view function that finds the most advanced position (highest index) of a player within the `matchedParticipants` array. This is key for determining who won and where to place scores.
-
----
-
-## Future Ideas & Todos
-
-*   **Gas Optimization:** The extensive use of strings and loops can be gas-intensive. Explore using `bytes32` for IDs or alternative data structures to reduce costs.
-*   **Dynamic `MAX_PARTICIPANTS`:** Modify the contract to support a variable number of participants (e.g., 4, 16, 32), though this would significantly increase complexity.
-*   **Event Emission:** Add events for critical actions like `TournamentCreated`, `WinnerAdded`, and `ScoreSaved`. This would improve off-chain monitoring and dApp integration.
-*   **Entrance Fees & Payouts:** Implement logic to handle cryptocurrency entrance fees and automatically distribute a prize pool to the winner(s).
-*   **Write a comprehensive test suite:** Develop tests to cover all functions and edge cases, especially the winner progression and score-saving logic.
