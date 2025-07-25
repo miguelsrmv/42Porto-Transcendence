@@ -1,7 +1,8 @@
 node_modules
-# Keep environment variables out of version control
+dist
+data
+generated
 .env
 *.db
 *.db-journal
-dist
-generated/
+avatar
