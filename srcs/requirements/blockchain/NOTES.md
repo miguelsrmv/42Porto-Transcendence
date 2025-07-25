@@ -1,3 +1,79 @@
+```
+blockchain
+ ┣ tools
+ ┃ ┗ contracts
+ ┃ ┃ ┗ TournamentsStorage
+ ┃ ┃ ┃ ┣ lib
+ ┃ ┃ ┃ ┃ ┣ forge-std                              # Foundry standard library for smart contract testing and scripting
+ ┃ ┃ ┃ ┃ ┃ ┣ scripts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ vm.py                              # Helper script for interacting with the Foundry virtual machine (VM)
+ ┃ ┃ ┃ ┃ ┃ ┣ src                                   # Core source files for the forge-std library, including base contracts,
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ interfaces                          # Interface definitions for standard Ethereum token protocols and utility contracts
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ IERC1155.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ IERC165.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ IERC20.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ IERC4626.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ IERC721.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ IMulticall3.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ Base.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ Script.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdAssertions.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdChains.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdCheats.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdError.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdInvariant.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdJson.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdMath.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdStorage.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdStyle.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdToml.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdUtils.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ Test.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ Vm.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ console.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ console2.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ safeconsole.sol
+ ┃ ┃ ┃ ┃ ┃ ┣ test                                  # Test contracts for forge-std components and utilities, including cheat codes,
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ compilation                         # Tests and scripts related to contract compilation scenarios
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ CompilationScript.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ CompilationScriptBase.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ CompilationTest.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ CompilationTestBase.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ fixtures                            # Test fixture files including logs and configuration samples
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ broadcast.log.json
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ test.json
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ test.toml
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdAssertions.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdChains.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdCheats.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdError.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdJson.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdMath.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdStorage.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdStyle.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdToml.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ StdUtils.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ Vm.t.sol
+ ┃ ┃ ┃ ┃ ┃ ┣ .gitattributes
+ ┃ ┃ ┃ ┃ ┃ ┣ .gitignore
+ ┃ ┃ ┃ ┃ ┃ ┣ foundry.toml                          # Configuration specific to the forge-std project
+ ┃ ┃ ┃ ┃ ┃ ┗ package.json                          # Node.js package manifest
+ ┃ ┃ ┃ ┃ ┗ openzeppelin-contracts                  # OpenZeppelin library used for secure smart contract development (standard practice)
+ ┃ ┃ ┃ ┣ script
+ ┃ ┃ ┃ ┃ ┗ DeployTournamentsStorage.s.sol          # Deployment script for the `TournamentsStorage` contract
+ ┃ ┃ ┃ ┣ src
+ ┃ ┃ ┃ ┃ ┗ TournamentsStorage.sol                  # Main contract source that stores tournament data
+ ┃ ┃ ┃ ┣ test
+ ┃ ┃ ┃ ┃ ┗ TournamentsStorage.t.sol               # Unit tests for the `TournamentsStorage` contract
+ ┃ ┃ ┃ ┣ .gitignore
+ ┃ ┃ ┃ ┗ foundry.toml                              # Main configuration file for the Foundry-based smart contract project
+ ┣ .dockerignore
+ ┣ Dockerfile                                       # Dockerfile defining containerized environment for deploying/testing smart contracts
+ ┣ NOTES.md                                         # Developer notes and miscellaneous information related to project setup or usage
+ ┣ README.md
+ ┗ deploy.sh                                        # Entrypoint script used by Docker to build and deploy the smart contract
+ ```
+
 # Project Notes: TournamentsStorage Contract
 
 **Last Updated:** 2025-07-25
@@ -18,6 +94,7 @@
 		- [Owner-Only Functions (Actions)](#owner-only-functions-actions)
 		- [Public Getter Functions (Views)](#public-getter-functions-views)
 		- [Internal \& Helper Functions](#internal--helper-functions)
+	- [Future Ideas \& Todos](#future-ideas--todos)
 
 ---
 
@@ -143,3 +220,13 @@ These functions support the main contract logic and are not exposed publicly.
 *   `getCurrentDateTimeUTC()`: Uses the above functions to provide the full current date and time.
 *   `getCurrentDate()` / `getCurrentTime()`: Return formatted date and time arrays.
 *   `findLastIndexOfPlayer(string, string)`: A crucial public view function that finds the most advanced position (highest index) of a player within the `matchedParticipants` array. This is key for determining who won and where to place scores.
+
+---
+
+## Future Ideas & Todos
+
+*   **Gas Optimization:** The extensive use of strings and loops can be gas-intensive. Explore using `bytes32` for IDs or alternative data structures to reduce costs.
+*   **Dynamic `MAX_PARTICIPANTS`:** Modify the contract to support a variable number of participants (e.g., 4, 16, 32), though this would significantly increase complexity.
+*   **Event Emission:** Add events for critical actions like `TournamentCreated`, `WinnerAdded`, and `ScoreSaved`. This would improve off-chain monitoring and dApp integration.
+*   **Entrance Fees & Payouts:** Implement logic to handle cryptocurrency entrance fees and automatically distribute a prize pool to the winner(s).
+*   **Write a comprehensive test suite:** Develop tests to cover all functions and edge cases, especially the winner progression and score-saving logic.
