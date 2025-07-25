@@ -122,7 +122,7 @@ function toggleLoginMenu(): void {
   if (loginForm) {
     const loginButton = document.getElementById('login-submit-button');
     if (loginButton) {
-      loginButton.addEventListener('click', function (event) {
+      loginButton.addEventListener('click', function (event: MouseEvent) {
         attemptLogin(loginForm, event);
       });
     }
@@ -163,7 +163,7 @@ function handleRegisterButtonClick(): void {
  * and sets up event listeners for the register form.
  */
 function toggleRegisterMenu(): void {
-  const registerForm = document.getElementById('register-form');
+  const registerForm = document.getElementById('register-form') as HTMLFormElement;;
   if (!registerForm) {
     console.warn('#register-form not found.');
     return;
@@ -171,24 +171,23 @@ function toggleRegisterMenu(): void {
 
   registerForm.classList.toggle('hidden');
 
-  if (!registerFormListenerAttached) {
-    const registerButton = document.getElementById('register-submit-button');
-    if (registerButton) {
-      registerButton.addEventListener('click', function (event) {
-        attemptRegister.call(registerForm as HTMLFormElement, event);
-      });
-      registerFormListenerAttached = true;
-    }
+  const registerButton = document.getElementById('register-submit-button');
 
-    const showLoginButton = document.getElementById('show-login-button');
-    if (showLoginButton) {
-      // Remove existing listener to prevent duplicates
-      showLoginButton.removeEventListener('click', handleBackRegisterClick);
-      // Add the click listener
-      showLoginButton.addEventListener('click', handleBackRegisterClick);
-    } else {
-      console.warn('#show-login-button not found.');
-    }
+  if (registerButton) {
+    registerButton.addEventListener('click', function (event) {
+      attemptRegister(registerForm, event);
+    });
+    registerFormListenerAttached = true;
+  }
+
+  const showLoginButton = document.getElementById('show-login-button');
+  if (showLoginButton) {
+    // Remove existing listener to prevent duplicates
+    showLoginButton.removeEventListener('click', handleBackRegisterClick);
+    // Add the click listener
+    showLoginButton.addEventListener('click', handleBackRegisterClick);
+  } else {
+    console.warn('#show-login-button not found.');
   }
 }
 

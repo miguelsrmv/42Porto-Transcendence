@@ -49,7 +49,8 @@ export function handleUserDataChange(): void {
     return;
   }
 
-  userDataSubmitButton.addEventListener('click', async () => {
+  userDataSubmitButton.addEventListener('click', async (event: MouseEvent) => {
+    event.preventDefault();
     fillUserData();
     if (userData.username || userData.email || (userData.newPassword && userData.repeatPassword)) {
       userData.oldPassword = (await confirmChanges()) as string;
