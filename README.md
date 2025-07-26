@@ -37,7 +37,7 @@ Our landing page is designed to be your portal into the world of Transcendence. 
 </div>
 <br>
 
-<summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
+<summary><b>🕹️ Couch Co-op: Local Game</b></summary>
 <br>
 
 
