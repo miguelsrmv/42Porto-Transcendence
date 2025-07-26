@@ -13,6 +13,12 @@ let loginFormListenerAttached: boolean = false;
 let registerFormListenerAttached: boolean = false;
 let modalClickListenerAttached: boolean = false;
 
+export function resetListeners(): void {
+  loginFormListenerAttached = false;
+  registerFormListenerAttached = false;
+  modalClickListenerAttached = false;
+}
+
 /**
  * @brief Shows the login modal with smooth transitions.
  *
@@ -118,13 +124,18 @@ function handleModalTransitionEnd(event: TransitionEvent): void {
  */
 function toggleLoginMenu(): void {
   const loginForm = document.getElementById('login-form') as HTMLFormElement;
+  if (!loginForm) {
+    console.warn('#login-form not found.');
+    return;
+  }
 
-  if (loginForm) {
+  if (!loginFormListenerAttached) {
     const loginButton = document.getElementById('login-submit-button');
     if (loginButton) {
-      loginButton.addEventListener('click', function (event) {
+      loginButton.addEventListener('click', function (event: MouseEvent) {
         attemptLogin(loginForm, event);
       });
+      loginFormListenerAttached = true;
     }
 
     const showRegisterButton = document.getElementById('show-register-button');
@@ -163,7 +174,7 @@ function handleRegisterButtonClick(): void {
  * and sets up event listeners for the register form.
  */
 function toggleRegisterMenu(): void {
-  const registerForm = document.getElementById('register-form');
+  const registerForm = document.getElementById('register-form') as HTMLFormElement;;
   if (!registerForm) {
     console.warn('#register-form not found.');
     return;
@@ -173,9 +184,10 @@ function toggleRegisterMenu(): void {
 
   if (!registerFormListenerAttached) {
     const registerButton = document.getElementById('register-submit-button');
+
     if (registerButton) {
       registerButton.addEventListener('click', function (event) {
-        attemptRegister.call(registerForm as HTMLFormElement, event);
+        attemptRegister(registerForm, event);
       });
       registerFormListenerAttached = true;
     }

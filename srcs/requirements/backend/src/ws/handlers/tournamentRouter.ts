@@ -98,12 +98,10 @@ export async function handleSocketConnectionTournament(socket: WebSocket, reques
   }, 15000); // every 15 seconds
   socket.on('message', async (message) => {
     clientLastActive = Date.now() / 1000;
-    console.log('Received message:', message.toString());
     try {
       await messageTypeHandlerTournament(JSON.parse(message.toString()), socket, request.user.id);
     } catch (err) {
       console.error('Error handling message:', err);
-      // closeSocket(socket);
     }
   });
 
