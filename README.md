@@ -7,6 +7,7 @@
 <h1> ✨ 42Porto-Transcendence ✨ </h1>
 Transcend Your Gaming Limits with the Ultimate Pong Experience!
 </div>
+<br>
 
 <p align="center">
 <i>This project is about doing something you’ve never done before. Remind yourself of the beginning of your journey in computer science. Look at you now. Time to shine!</i>
@@ -26,7 +27,6 @@ Ready to see it in action?
 
 Explore the core features of Transcendence through these short clips.
 
-<details>
 <summary><b>🚪 A Grand Welcome: The Landing Page</b></summary>
 <br>
 
@@ -35,9 +35,7 @@ Our landing page is designed to be your portal into the world of Transcendence. 
 
 <video src="docs/videos/landing_page.mp4" autoplay loop muted playsinline width="100%"></video>
 
-</details>
 
-<details>
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
 <br>
 
@@ -46,9 +44,7 @@ Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It
 
 <video src="docs/videos/local_game.mp4" autoplay loop muted playsinline width="100%"></video>
 
-</details>
 
-<details>
 <summary><b>🌍 Global Domination: Remote Multiplayer Match</b></summary>
 <br>
 
@@ -57,9 +53,7 @@ Find an opponent from anywhere in the world. Experience seamless, real-time game
 
 <video src="docs/videos/remote_match.mp4" autoplay loop muted playsinline width="100%"></video>
 
-</details>
 
-<details>
 <summary><b>🏆 The Gauntlet: Intense Local Tournaments</b></summary>
 <br>
 
@@ -68,9 +62,7 @@ Gather your friends and crown a champion! Our tournament mode handles all the br
 
 <video src="docs/videos/local_tournament.mp4" autoplay loop muted playsinline width="100%"></video>
 
-</details>
 
-<details>
 <summary><b>📈 Climb the Ladder: Rankings & Leaderboards</b></summary>
 <br>
 
@@ -81,9 +73,7 @@ Track your stats, view your match history, and see how you stack up against othe
 
 📸 Suggested Image: A screenshot of the leaderboard, highlighting the Top 3 players with their avatars, usernames, and win/loss ratios.
 
-</details>
 
-<details>
 <summary><b>👥 Better Together: Friends & Social</b></summary>
 <br>
 
@@ -94,9 +84,7 @@ Add friends to see who's online. The social hub keeps you connected to your riva
 
 📸 Suggested Image: A view of the friends list, showing different user statuses (Online, In-Game, Offline) with buttons to chat or challenge.
 
-</details>
 
-<details>
 <summary><b>⚙️ Make It Yours: Profile & Settings</b></summary>
 <br>
 
@@ -105,7 +93,6 @@ Customize your public profile, change your display name, upload a new avatar, an
 
 <video src="docs/videos/settings.mp4" autoplay loop muted playsinline width="100%"></video>
 
-</details>
 
 ---
 
@@ -126,4 +113,4 @@ Customize your public profile, change your display name, upload a new avatar, an
 *   A huge thank you to **[42 Porto](https://www.42porto.com/pt/)** for providing the opportunity and framework for this incredible project.
 *   To all the staff and peers who supported us along the way.
 
-<p align="center">Made with ❤️ by 42 Porto students.</p>
+<p align="center"><i>Made with ❤️ by 42 Porto students.</i></p>
