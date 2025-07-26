@@ -81,12 +81,17 @@ backend/
 - `npm run populate-tournament` to create a tournament 
 - `npm run build` to compile ts files into js
 - `npm run start` to launch the app (js)
+- `npm run start-dev` to launch the app with nodemon (js)
+- `npm run test` to run Vitest tests
 - `npm run test-db` to test database is up and running
 - `npm run db-reset` to reset the local database, apply any migrations, and generate a new prisma client instance
+- `npm run tournament` to run a full tournament without UI
+- `npm run open-tournament` to open 8 browser windows, log in users, and navigate to the join tournament page
+- `npm run login-tournament` to open 8 browser windows and log in users
 
-**Note:** The first time running playwright scripts, first run `npm install` to install dependencies and `npx playwright install firefox` (this project was optimized to run in Firefox). Then run `npm run build` (to compile the ts file into js) and then run the script (Firefox needs to be installed as well).
+**Note:** The first time running playwright scripts, first run `npm install` to install dependencies and `npx playwright install firefox`. Then run `npm run build-dev` (to compile the ts file into js) and then run the script.
 
 ## Notes
 
-- When testing locally, an `.env` file is required with the DATABASE_URL key, in the backend root directory `.`
-- If running locally for the first time, first run `npm install` to install all required dependencies
+- When testing locally, an `.env` file is required with the DATABASE_URL key, in the project root directory `.`
+- If running locally for the first time, first run `npm install` to install all the project's dependencies

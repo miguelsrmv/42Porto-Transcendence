@@ -85,6 +85,7 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
       await messageTypeHandler(JSON.parse(message.toString()), socket, request.user.id);
     } catch (err) {
       console.error('Error handling message:', err);
+      // closeSocket(socket);
     }
   });
 
@@ -92,8 +93,10 @@ export async function handleSocketConnection(socket: WebSocket, request: Fastify
     try {
       const playerId = playerManager.getPlayerId(socket);
       if (!playerId) return;
+      // reconnectionManager.markDisconnected(playerId, async () => {
       await sessionManager.removePlayerSessionManager(playerId);
       playerManager.unregister(socket);
+      // });
     } catch (err) {
       console.error('Error closing socket:', err);
     }

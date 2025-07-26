@@ -1,3 +1,5 @@
+import { FriendshipStatus } from '@prisma/client';
+
 export type UserCreate = {
   username: string;
   email: string;
@@ -48,7 +50,7 @@ export type Login2FAData = {
   password: string;
 };
 
-export type OnlineState = 'online' | 'offline';
+export type OnlineState = 'online' | 'offline' | 'inGame';
 
 export type FriendCreate = {
   friendId: string;

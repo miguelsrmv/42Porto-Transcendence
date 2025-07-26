@@ -129,13 +129,12 @@ function toggleLoginMenu(): void {
     return;
   }
 
-  if (!loginFormListenerAttached) {
+  if (loginForm) {
     const loginButton = document.getElementById('login-submit-button');
     if (loginButton) {
       loginButton.addEventListener('click', function (event: MouseEvent) {
         attemptLogin(loginForm, event);
       });
-      loginFormListenerAttached = true;
     }
 
     const showRegisterButton = document.getElementById('show-register-button');

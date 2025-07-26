@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 
+// NOTE: Unused for now
 class PlayerManager {
   private playerToSocket: Map<string, WebSocket> = new Map();
   private socketToPlayer: Map<WebSocket, string> = new Map();
