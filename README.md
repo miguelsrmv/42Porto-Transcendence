@@ -15,6 +15,12 @@ Transcend Your Gaming Limits with the Ultimate Pong Experience!
 Dive deep into our development process! Check out our dev notes, ideas, and the rationale behind our decisions on our project's <a href="https://github.com/miguelsrmv/42Porto-Transcendence/wiki"><b>🚀 Git Wiki</b></a>!
 </p>
 
+<details>
+<summary><strong>Legal Disclaimer</strong></summary>
+
+This project is a non-commercial fan-made project and is not affiliated with or endorsed by Nintendo. All trademarks, logos, and copyrighted materials are the property of their respective owners. No copyrighted assets are distributed with this project. The assets shown below are here merely for demonstration purposes.
+</details>
+
 <h2> 🚀 About The Project </h2>
 
 Transcendence is our take on the legendary arcade game, Pong, reimagined for the modern web. This isn't just a game; it's a full-fledged web application featuring real-time multiplayer action, social features, and intense tournaments. Built from the ground up, this project showcases our passion for clean code, robust architecture, and creating fun, interactive experiences.
