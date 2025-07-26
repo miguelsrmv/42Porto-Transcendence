@@ -1,13 +1,11 @@
-<br>
-<p align="center">
+<div align="center">
 <img src="docs/images/project_banner.png" alt="Transcendence Project Banner" width="800"/>
-</p>
+</div>
 
 <div align="center">
 <h1> ✨ 42Porto-Transcendence ✨ </h1>
 Transcend Your Gaming Limits with the Ultimate Pong Experience!
 </div>
-<br>
 
 <p align="center">
 <i>This project is about doing something you’ve never done before. Remind yourself of the beginning of your journey in computer science. Look at you now. Time to shine!</i>
