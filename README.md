@@ -4,8 +4,7 @@
 </p>
 
 <div align="center">
-
-✨ 42Porto-Transcendence ✨
+<h1> ✨ 42Porto-Transcendence ✨ </h1>
 Transcend Your Gaming Limits with the Ultimate Pong Experience!
 </div>
 
@@ -17,13 +16,13 @@ Transcend Your Gaming Limits with the Ultimate Pong Experience!
 Dive deep into our development process! Check out our dev notes, ideas, and the rationale behind our decisions on our project's <a href="https://github.com/miguelsrmv/42Porto-Transcendence/wiki"><b>🚀 Git Wiki</b></a>!
 </p>
 
-🚀 About The Project
+<h2> 🚀 About The Project </h2>
 
 Transcendence is our take on the legendary arcade game, Pong, reimagined for the modern web. This isn't just a game; it's a full-fledged web application featuring real-time multiplayer action, social features, and intense tournaments. Built from the ground up, this project showcases our passion for clean code, robust architecture, and creating fun, interactive experiences.
 
 Ready to see it in action?
 
-🌟 Features Showcase
+<h2> 🌟 Features Showcase </h2>
 
 Explore the core features of Transcendence through these short clips.
 
@@ -108,7 +107,6 @@ Customize your public profile, change your display name, upload a new avatar, an
 
 </details>
 
-|
 ---
 
 ## 🤝 Meet The Team
