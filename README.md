@@ -1,5 +1,5 @@
 <div align="center">
-<img src="docs/images/project_banner.png" alt="Transcendence Project Banner" width="800"/>
+<img src="docs/assets/images/project_banner.png" alt="Transcendence Project Banner" width="800"/>
 </div>
 
 <div align="center">
@@ -14,6 +14,7 @@ Transcend Your Gaming Limits with the Ultimate Pong Experience!
 <p align="center">
 Dive deep into our development process! Check out our dev notes, ideas, and the rationale behind our decisions on our project's <a href="https://github.com/miguelsrmv/42Porto-Transcendence/wiki"><b>🚀 Git Wiki</b></a>!
 </p>
+
 
 <h2> 🚀 About The Project </h2>
 
@@ -31,8 +32,10 @@ Explore the core features of Transcendence through these short clips.
 
 Our landing page is designed to be your portal into the world of Transcendence. Log in (with optional 2FA) and get ready to play.
 
-![A video demonstrating the registration and login process.](docs/assets/video/register_login.mp4)
-
+<div align="center">
+  <img src="docs/assets/gifs/register_login.gif" alt="Registration and login demo" style="max-width: 100%; height: auto;"/>
+</div>
+<br>
 
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
 <br>
@@ -40,8 +43,10 @@ Our landing page is designed to be your portal into the world of Transcendence. 
 
 Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It's fast, frantic, and a true test of reflexes and friendships!
 
-![A video demonstrating a local game.](docs/assets/video/local_game.mp4)
-
+<div align="center">
+  <img src="docs/assets/gifs/local_game.gif" alt="Local game demo" style="max-width: 100%; height: auto;"/>
+</div>
+<br>
 
 <summary><b>🌍 Global Domination: Remote Multiplayer Match</b></summary>
 <br>
@@ -49,8 +54,10 @@ Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It
 
 Find an opponent from anywhere in the world. Experience seamless, real-time gameplay and prove you're the best.
 
-![A video demonstrating a remote game.](docs/assets/video/remote_match.mp4)
-
+<div align="center">
+  <img src="docs/assets/gifs/remote_match.gif" alt="Remote match demo" style="max-width: 100%; height: auto;"/>
+</div>
+<br>
 
 <summary><b>🏆 The Gauntlet: Intense Local and Remote Tournaments</b></summary>
 <br>
@@ -58,8 +65,10 @@ Find an opponent from anywhere in the world. Experience seamless, real-time game
 
 Gather your friends and crown a champion! Our tournament mode handles all the brackets and matchups for you. All you have to do is win.
 
-![A video demonstrating a local tournament.](docs/assets/video/local_tournament.mp4)
-
+<div align="center">
+  <img src="docs/assets/gifs/local_tournament.gif" alt="Local tournament demo" style="max-width: 100%; height: auto;"/>
+</div>
+<br>
 
 <summary><b>🤯 Crazy Pong: A new take on a classic game</b></summary>
 <br>
@@ -90,8 +99,11 @@ Think you've mastered Pong? Think again! Our exclusive Crazy Pong mode introduce
 
 Track your stats, view your match history, and see how you stack up against other players on the global leaderboard. The top spot is waiting!
 
-![A video demonstrating the rankings page.](docs/assets/video/rankings.mp4)
 
+<div align="center">
+  <img src="docs/assets/gifs/rankings.gif" alt="Rankings demo" style="max-width: 100%; height: auto;"/>
+</div>
+<br>
 
 <summary><b>👥 Better Together: Friends & Social</b></summary>
 <br>
@@ -99,8 +111,10 @@ Track your stats, view your match history, and see how you stack up against othe
 
 Add friends to see who's online. The social hub keeps you connected to your rivals and teammates.
 
-![A video demonstrating the friends page.](docs/assets/video/friends.mp4)
-
+<div align="center">
+  <img src="docs/assets/gifs/friends.gif" alt="Friends demo" style="max-width: 100%; height: auto;"/>
+</div>
+<br>
 
 <summary><b>⚙️ Make It Yours: Profile & Settings</b></summary>
 <br>
@@ -108,8 +122,11 @@ Add friends to see who's online. The social hub keeps you connected to your riva
 
 Customize your public profile, change your display name, upload a new avatar, and enable Two-Factor Authentication (2FA) for enhanced security.
 
-![A video demonstrating the user settings page.](docs/assets/video/user_settings.mp4)
 
+<div align="center">
+  <img src="docs/assets/gifs/user_settings.gif" alt="User settings demo" style="max-width: 100%; height: auto;"/>
+</div>
+<br>
 
 ---
 
@@ -123,6 +140,10 @@ Customize your public profile, change your display name, upload a new avatar, an
 
 <br>
 
+<div align="center">
+  <img src="docs/assets/images/project_delivery.png" alt="Picture after project delivery" style="max-width: 100%; height: auto;"/>
+</div>
+
 ---
 
 ### Acknowledgements
@@ -131,3 +152,10 @@ Customize your public profile, change your display name, upload a new avatar, an
 *   To all the staff and peers who supported us along the way.
 
 <p align="center"><i>Made with ❤️ by 42 Porto students.</i></p>
+
+
+<details>
+<summary><strong>Legal Disclaimer</strong></summary>
+
+This project is a non-commercial fan-made project and is not affiliated with or endorsed by Nintendo. All trademarks, logos, and copyrighted materials are the property of their respective owners. No copyrighted assets are distributed with this project. The assets shown above are here merely for demonstration purposes.
+</details>
