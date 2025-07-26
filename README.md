@@ -34,7 +34,7 @@ Our landing page is designed to be your portal into the world of Transcendence. 
 <div align="center">
   <img src="docs/assets/gifs/register_login.gif" alt="Registration and login demo" style="max-width: 100%; height: auto;"/>
 </div>
-
+<br>
 
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
 <br>
@@ -45,7 +45,7 @@ Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It
 <div align="center">
   <img src="docs/assets/gifs/local_game.gif" alt="Local game demo" style="max-width: 100%; height: auto;"/>
 </div>
-
+<br>
 
 <summary><b>🌍 Global Domination: Remote Multiplayer Match</b></summary>
 <br>
@@ -56,7 +56,7 @@ Find an opponent from anywhere in the world. Experience seamless, real-time game
 <div align="center">
   <img src="docs/assets/gifs/remote_match.gif" alt="Remote match demo" style="max-width: 100%; height: auto;"/>
 </div>
-
+<br>
 
 <summary><b>🏆 The Gauntlet: Intense Local and Remote Tournaments</b></summary>
 <br>
@@ -67,7 +67,7 @@ Gather your friends and crown a champion! Our tournament mode handles all the br
 <div align="center">
   <img src="docs/assets/gifs/local_tournament.gif" alt="Local tournament demo" style="max-width: 100%; height: auto;"/>
 </div>
-
+<br>
 
 <summary><b>🤯 Crazy Pong: A new take on a classic game</b></summary>
 <br>
@@ -102,7 +102,7 @@ Track your stats, view your match history, and see how you stack up against othe
 <div align="center">
   <img src="docs/assets/gifs/rankings.gif" alt="Rankings demo" style="max-width: 100%; height: auto;"/>
 </div>
-
+<br>
 
 <summary><b>👥 Better Together: Friends & Social</b></summary>
 <br>
@@ -113,7 +113,7 @@ Add friends to see who's online. The social hub keeps you connected to your riva
 <div align="center">
   <img src="docs/assets/gifs/friends.gif" alt="Friends demo" style="max-width: 100%; height: auto;"/>
 </div>
-
+<br>
 
 <summary><b>⚙️ Make It Yours: Profile & Settings</b></summary>
 <br>
@@ -125,7 +125,7 @@ Customize your public profile, change your display name, upload a new avatar, an
 <div align="center">
   <img src="docs/assets/gifs/user_settings.gif" alt="User settings demo" style="max-width: 100%; height: auto;"/>
 </div>
-
+<br>
 
 ---
 
