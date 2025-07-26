@@ -50,7 +50,19 @@ export const login2FASchema = {
     properties: {
       email: { type: 'string', format: 'email', maxLength: LEN_EMAIL },
       password: { type: 'string', minLength: 6, maxLength: LEN_PASSWORD },
-      code: { type: 'integer' },
+      code: { type: 'string', pattern: '^[0-9]{6,8}$' },
+    },
+    additionalProperties: false,
+  },
+};
+
+export const setup2FASchema = {
+  body: {
+    type: 'object',
+    required: ['code', 'password'],
+    properties: {
+      code: { type: 'string', pattern: '^[0-9]{6,8}$' },
+      password: { type: 'string', minLength: 6, maxLength: LEN_PASSWORD },
     },
     additionalProperties: false,
   },

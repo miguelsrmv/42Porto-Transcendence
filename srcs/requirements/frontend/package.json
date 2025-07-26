@@ -4,15 +4,11 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "dev-ts": "tsc --watch",
-    "dev-tailwind": "npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles/tailwind.css --watch",
     "build-ts": "tsc",
     "build-tailwind": "npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles/tailwind.css",
-    "dev": "npm run dev-ts & npm run dev-tailwind",
-    "build": "npm run build-ts && npm run build-tailwind",
-    "format": "prettier --write ."
+    "build": "npm run build-ts && npm run build-tailwind"
   },
-  "author": "",
+  "author": "miguel",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {

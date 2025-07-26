@@ -22,6 +22,7 @@ import {
   createUserSchema,
   login2FASchema,
   loginSchema,
+  setup2FASchema,
   updateUserSchema,
 } from '../schemas/user.schema';
 import { getByIdSchema } from '../schemas/global.schema';
@@ -49,9 +50,17 @@ export async function userRoutes(fastify: FastifyInstance) {
   );
   fastify.get('/getAvatarPath', { onRequest: [fastify.jwtAuth] }, getAvatarPath);
   fastify.get('/2FA/setup', { onRequest: [fastify.jwtAuth] }, setup2FA);
-  fastify.post<{ Body: VerifyToken }>('/2FA/verify', { onRequest: [fastify.jwtAuth] }, verify2FA);
+  fastify.post<{ Body: VerifyToken }>(
+    '/2FA/verify',
+    { schema: setup2FASchema, onRequest: [fastify.jwtAuth] },
+    verify2FA,
+  );
   fastify.get('/2FA/check', { onRequest: [fastify.jwtAuth] }, check2FAstatus);
-  fastify.post<{ Body: VerifyToken }>('/2FA/disable', { onRequest: [fastify.jwtAuth] }, disable2FA);
+  fastify.post<{ Body: VerifyToken }>(
+    '/2FA/disable',
+    { schema: setup2FASchema, onRequest: [fastify.jwtAuth] },
+    disable2FA,
+  );
   fastify.get<{ Params: IParams }>(
     '/:id',
     { schema: getByIdSchema, onRequest: [fastify.jwtAuth] },
