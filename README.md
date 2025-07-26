@@ -1,5 +1,5 @@
 <div align="center">
-<img src="docs/images/project_banner.png" alt="Transcendence Project Banner" width="800"/>
+<img src="docs/assets/images/project_banner.png" alt="Transcendence Project Banner" width="800"/>
 </div>
 
 <div align="center">
@@ -31,7 +31,7 @@ Explore the core features of Transcendence through these short clips.
 
 Our landing page is designed to be your portal into the world of Transcendence. Log in (with optional 2FA) and get ready to play.
 
-![A video demonstrating the registration and login process.](docs/assets/video/register_login.mp4)
+![A video demonstrating the registration and login process.](docs/assets/gifs/register_login.gif)
 
 
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
@@ -40,7 +40,7 @@ Our landing page is designed to be your portal into the world of Transcendence. 
 
 Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It's fast, frantic, and a true test of reflexes and friendships!
 
-![A video demonstrating a local game.](docs/assets/video/local_game.mp4)
+![A video demonstrating a local game.](docs/assets/gifs/local_game.gif)
 
 
 <summary><b>🌍 Global Domination: Remote Multiplayer Match</b></summary>
@@ -49,7 +49,7 @@ Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It
 
 Find an opponent from anywhere in the world. Experience seamless, real-time gameplay and prove you're the best.
 
-![A video demonstrating a remote game.](docs/assets/video/remote_match.mp4)
+![A video demonstrating a remote game.](docs/assets/gifs/remote_match.gif)
 
 
 <summary><b>🏆 The Gauntlet: Intense Local and Remote Tournaments</b></summary>
@@ -58,7 +58,7 @@ Find an opponent from anywhere in the world. Experience seamless, real-time game
 
 Gather your friends and crown a champion! Our tournament mode handles all the brackets and matchups for you. All you have to do is win.
 
-![A video demonstrating a local tournament.](docs/assets/video/local_tournament.mp4)
+![A video demonstrating a local tournament.](docs/assets/gifs/local_tournament.gif)
 
 
 <summary><b>🤯 Crazy Pong: A new take on a classic game</b></summary>
@@ -90,7 +90,7 @@ Think you've mastered Pong? Think again! Our exclusive Crazy Pong mode introduce
 
 Track your stats, view your match history, and see how you stack up against other players on the global leaderboard. The top spot is waiting!
 
-![A video demonstrating the rankings page.](docs/assets/video/rankings.mp4)
+![A video demonstrating the rankings page.](docs/assets/gifs/rankings.gif)
 
 
 <summary><b>👥 Better Together: Friends & Social</b></summary>
@@ -99,7 +99,7 @@ Track your stats, view your match history, and see how you stack up against othe
 
 Add friends to see who's online. The social hub keeps you connected to your rivals and teammates.
 
-![A video demonstrating the friends page.](docs/assets/video/friends.mp4)
+![A video demonstrating the friends page.](docs/assets/gifs/friends.gif)
 
 
 <summary><b>⚙️ Make It Yours: Profile & Settings</b></summary>
@@ -108,7 +108,7 @@ Add friends to see who's online. The social hub keeps you connected to your riva
 
 Customize your public profile, change your display name, upload a new avatar, and enable Two-Factor Authentication (2FA) for enhanced security.
 
-![A video demonstrating the user settings page.](docs/assets/video/user_settings.mp4)
+![A video demonstrating the user settings page.](docs/assets/gifs/user_settings.gif)
 
 
 ---
