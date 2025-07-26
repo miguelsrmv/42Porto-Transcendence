@@ -25,7 +25,7 @@ Ready to see it in action?
 
 Explore the core features of Transcendence through these short clips.
 
-<b>🚪 A Grand Welcome: The Landing Page</b>
+<summary><b>🚪 A Grand Welcome: The Landing Page</b></summary>
 <br>
 
 
@@ -61,12 +61,28 @@ Gather your friends and crown a champion! Our tournament mode handles all the br
 <video src="docs/videos/local_tournament.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
-<b>🤯 Crazy Pong: A new take on a classic game</b>
+<summary><b>🤯 Crazy Pong: A new take on a classic game</b></summary>
 <br>
 
-Pick up an ally and have it fight for you until the very end!
+Think you've mastered Pong? Think again! Our exclusive Crazy Pong mode introduces unique characters, each wielding a game-changing superpower. Choose your champion, time your ability perfectly, and unleash chaos on the arena!
 
-<video src="docs/videos/crazy_pong.mp4" autoplay loop muted playsinline width="100%"></video>
+#### Meet the Champions:
+
+| Character | Superpower | Description |
+| :---: | :---: | :--- |
+| 🍄 **Mario** | `Super Shroom` | Ingest a Super Shroom to instantly grow your paddle, creating an almost impenetrable defensive wall. |
+| 🥚 **Yoshi** | `Egg Barrage` | Unleash a chaotic flurry of decoy eggs onto the field, overwhelming your opponent's senses and hiding the real ball in the mayhem. |
+| ⏩ **Sonic** | `Spin Dash` | Channel the blue blur's iconic move to launch the ball at blistering, near-supersonic speed. Gotta go fast! |
+| ⚡️ **Pikachu** | `Thunder Wave` | Zap your opponent's paddle with a jolt of electricity, stunning it and drastically slowing its movement for a short time. |
+| 🧠 **Mewtwo** | `Confusion` | Unleash potent psychic power to temporarily invert your opponent's controls, forcing them to fight their own instincts. |
+| 🪃 **Link** | `Gale Boomerang` | Hurl a magic boomerang that catches the ball mid-flight, suddenly reversing its vertical direction to catch your opponent off-guard. |
+| 🌟 **Kirby** | `Inhale` | Do what Kirby does best! Inhale and copy the last superpower used by your opponent, turning their own strategy against them. |
+| 👊 **Donkey Kong** | `Giant Punch` | Wind up and deliver a devastating blow that smashes your opponent's paddle, temporarily shrinking it to a pathetic size. |
+| 🔮 **Samus** | `Morph Ball` | Encapsulate the ball in Morph Ball energy, drastically slowing its momentum and giving you time to line up the perfect shot. |
+| 🔥 **Cpt. Falcon** | `Falcon Boost` | "Show me ya moves!" Engage your paddle's boosters for a burst of incredible speed, perfect for making those impossible, clutch saves. |
+| 🐢 **Bowser** | `Shell Retreat` | The ball retreats into Bowser's spiky shell, rendering it completely invisible until the moment it's about to strike your opponent. |
+| 📦 **Snake** | `Stealth Camo` | Activate active camouflage on your opponent's paddle, making it completely invisible. They can't hit what they can't see. |
+
 
 <summary><b>📈 Climb the Ladder: Rankings & Leaderboards</b></summary>
 <br>
