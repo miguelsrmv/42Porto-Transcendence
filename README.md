@@ -31,7 +31,7 @@ Explore the core features of Transcendence through these short clips.
 
 Our landing page is designed to be your portal into the world of Transcendence. Log in (with optional 2FA) and get ready to play.
 
-<video src="docs/videos/landing_page.mp4" autoplay loop muted playsinline width="100%"></video>
+<video src="docs/assets/videos/register_login.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
@@ -40,7 +40,7 @@ Our landing page is designed to be your portal into the world of Transcendence. 
 
 Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It's fast, frantic, and a true test of reflexes and friendships!
 
-<video src="docs/videos/local_game.mp4" autoplay loop muted playsinline width="100%"></video>
+<video src="docs/assets/videos/local_game.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
 <summary><b>🌍 Global Domination: Remote Multiplayer Match</b></summary>
@@ -49,7 +49,7 @@ Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It
 
 Find an opponent from anywhere in the world. Experience seamless, real-time gameplay and prove you're the best.
 
-<video src="docs/videos/remote_match.mp4" autoplay loop muted playsinline width="100%"></video>
+<video src="docs/assets/videos/remote_match.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
 <summary><b>🏆 The Gauntlet: Intense Local and Remote Tournaments</b></summary>
@@ -58,7 +58,7 @@ Find an opponent from anywhere in the world. Experience seamless, real-time game
 
 Gather your friends and crown a champion! Our tournament mode handles all the brackets and matchups for you. All you have to do is win.
 
-<video src="docs/videos/local_tournament.mp4" autoplay loop muted playsinline width="100%"></video>
+<video src="docs/assets/videos/local_tournament.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
 <summary><b>🤯 Crazy Pong: A new take on a classic game</b></summary>
@@ -103,8 +103,6 @@ Add friends to see who's online. The social hub keeps you connected to your riva
 
 <video src="docs/videos/friends.mp4" autoplay loop muted playsinline width="100%"></video>
 
-📸 Suggested Image: A view of the friends list, showing different user statuses (Online, In-Game, Offline) with buttons to chat or challenge.
-
 
 <summary><b>⚙️ Make It Yours: Profile & Settings</b></summary>
 <br>
@@ -112,7 +110,7 @@ Add friends to see who's online. The social hub keeps you connected to your riva
 
 Customize your public profile, change your display name, upload a new avatar, and enable Two-Factor Authentication (2FA) for enhanced security.
 
-<video src="docs/videos/settings.mp4" autoplay loop muted playsinline width="100%"></video>
+<video src="docs/assets/videos/user/settings.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
 ---
