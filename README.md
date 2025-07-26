@@ -15,11 +15,6 @@ Transcend Your Gaming Limits with the Ultimate Pong Experience!
 Dive deep into our development process! Check out our dev notes, ideas, and the rationale behind our decisions on our project's <a href="https://github.com/miguelsrmv/42Porto-Transcendence/wiki"><b>🚀 Git Wiki</b></a>!
 </p>
 
-<details>
-<summary><strong>Legal Disclaimer</strong></summary>
-
-This project is a non-commercial fan-made project and is not affiliated with or endorsed by Nintendo. All trademarks, logos, and copyrighted materials are the property of their respective owners. No copyrighted assets are distributed with this project. The assets shown below are here merely for demonstration purposes.
-</details>
 
 <h2> 🚀 About The Project </h2>
 
@@ -157,3 +152,10 @@ Customize your public profile, change your display name, upload a new avatar, an
 *   To all the staff and peers who supported us along the way.
 
 <p align="center"><i>Made with ❤️ by 42 Porto students.</i></p>
+
+
+<details>
+<summary><strong>Legal Disclaimer</strong></summary>
+
+This project is a non-commercial fan-made project and is not affiliated with or endorsed by Nintendo. All trademarks, logos, and copyrighted materials are the property of their respective owners. No copyrighted assets are distributed with this project. The assets shown above are here merely for demonstration purposes.
+</details>
