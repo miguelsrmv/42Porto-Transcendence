@@ -139,6 +139,10 @@ Customize your public profile, change your display name, upload a new avatar, an
 
 <br>
 
+<div align="center">
+  <img src="docs/assets/images/project_delivery.png" alt="Picture after project delivery" style="max-width: 100%; height: auto;"/>
+</div>
+
 ---
 
 ### Acknowledgements
