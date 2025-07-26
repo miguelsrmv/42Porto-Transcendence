@@ -2,7 +2,6 @@
 <p align="center">
 <img src="docs/images/project_banner.png" alt="Transcendence Project Banner" width="800"/>
 </p>
-<br>
 
 <div align="center">
 
