@@ -1,5 +1,132 @@
-# 42Porto-Transcendence
-This project is about doing something you’ve never done before. Remind yourself of the beginning of your journey in computer science. Look at you now. Time to shine!
+<br>
+<p align="center">
+<img src="docs/images/project_banner.png" alt="Transcendence Project Banner" width="800"/>
+</p>
+<br>
 
-# Our Projects' Git Wiki!
-You can checkout dev notes, ideas, and the rationale behind some of our teams' decisions on our projects' **[Git Wiki](https://github.com/miguelsrmv/42Porto-Transcendence/wiki)**! Feel free to explore it.
+<div align="center">
+
+✨ 42Porto-Transcendence ✨
+Transcend Your Gaming Limits with the Ultimate Pong Experience!
+</div>
+
+<p align="center">
+<i>This project is about doing something you’ve never done before. Remind yourself of the beginning of your journey in computer science. Look at you now. Time to shine!</i>
+</p>
+
+<p align="center">
+Dive deep into our development process! Check out our dev notes, ideas, and the rationale behind our decisions on our project's <a href="https://github.com/miguelsrmv/42Porto-Transcendence/wiki"><b>🚀 Git Wiki</b></a>!
+</p>
+
+🚀 About The Project
+
+Transcendence is our take on the legendary arcade game, Pong, reimagined for the modern web. This isn't just a game; it's a full-fledged web application featuring real-time multiplayer action, social features, and intense tournaments. Built from the ground up, this project showcases our passion for clean code, robust architecture, and creating fun, interactive experiences.
+
+Ready to see it in action?
+
+🌟 Features Showcase
+
+Explore the core features of Transcendence through these short clips.
+
+<details>
+<summary><b>🚪 A Grand Welcome: The Landing Page</b></summary>
+<br>
+
+
+Our landing page is designed to be your portal into the world of Transcendence. Log in (with optional 2FA) and get ready to play.
+
+<video src="docs/videos/landing_page.mp4" autoplay loop muted playsinline width="100%"></video>
+
+</details>
+
+<details>
+<summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
+<br>
+
+
+Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It's fast, frantic, and a true test of reflexes and friendships!
+
+<video src="docs/videos/local_game.mp4" autoplay loop muted playsinline width="100%"></video>
+
+</details>
+
+<details>
+<summary><b>🌍 Global Domination: Remote Multiplayer Match</b></summary>
+<br>
+
+
+Find an opponent from anywhere in the world. Experience seamless, real-time gameplay and prove you're the best.
+
+<video src="docs/videos/remote_match.mp4" autoplay loop muted playsinline width="100%"></video>
+
+</details>
+
+<details>
+<summary><b>🏆 The Gauntlet: Intense Local Tournaments</b></summary>
+<br>
+
+
+Gather your friends and crown a champion! Our tournament mode handles all the brackets and matchups for you. All you have to do is win.
+
+<video src="docs/videos/local_tournament.mp4" autoplay loop muted playsinline width="100%"></video>
+
+</details>
+
+<details>
+<summary><b>📈 Climb the Ladder: Rankings & Leaderboards</b></summary>
+<br>
+
+
+Track your stats, view your match history, and see how you stack up against other players on the global leaderboard. The top spot is waiting!
+
+<video src="docs/videos/rankings.mp4" autoplay loop muted playsinline width="100%"></video>
+
+📸 Suggested Image: A screenshot of the leaderboard, highlighting the Top 3 players with their avatars, usernames, and win/loss ratios.
+
+</details>
+
+<details>
+<summary><b>👥 Better Together: Friends & Social</b></summary>
+<br>
+
+
+Add friends to see who's online. The social hub keeps you connected to your rivals and teammates.
+
+<video src="docs/videos/friends.mp4" autoplay loop muted playsinline width="100%"></video>
+
+📸 Suggested Image: A view of the friends list, showing different user statuses (Online, In-Game, Offline) with buttons to chat or challenge.
+
+</details>
+
+<details>
+<summary><b>⚙️ Make It Yours: Profile & Settings</b></summary>
+<br>
+
+
+Customize your public profile, change your display name, upload a new avatar, and enable Two-Factor Authentication (2FA) for enhanced security.
+
+<video src="docs/videos/settings.mp4" autoplay loop muted playsinline width="100%"></video>
+
+</details>
+
+|
+---
+
+## 🤝 Meet The Team
+
+| Name                | Role         | GitHub Profile                               |
+| ------------------- | ------------ | -------------------------------------------- |
+| **Miguel Sá**       | Frontend     | [miguelsrmv](https://github.com/miguelsrmv)  |
+| **David Machado**   | Backend      | [damachad](https://github.com/damachad)  |
+| **Tiago Martins**   | Blockchain   | [TiagoMartins14](https://github.com/TiagoMartins14)  |
+
+<br>
+
+---
+
+### Acknowledgements
+
+*   A huge thank you to **[42 Porto](https://www.42porto.com/pt/)** for providing the opportunity and framework for this incredible project.
+*   To all the staff and peers who supported us along the way.
+
+<p align="center">Made with ❤️ by 42 Porto students.</p>
