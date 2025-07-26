@@ -31,7 +31,7 @@ Explore the core features of Transcendence through these short clips.
 
 Our landing page is designed to be your portal into the world of Transcendence. Log in (with optional 2FA) and get ready to play.
 
-<video src="docs/assets/video/register_login.mp4" autoplay loop muted playsinline width="100%"></video>
+<video src="https://github.com/miguelsrmv/42Porto-Transcendence/tree/main/docs/assets/video/register_login.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
