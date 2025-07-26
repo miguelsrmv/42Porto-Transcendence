@@ -31,14 +31,16 @@ Explore the core features of Transcendence through these short clips.
 
 Our landing page is designed to be your portal into the world of Transcendence. Log in (with optional 2FA) and get ready to play.
 
-<video src="https://github.com/miguelsrmv/42Porto-Transcendence/tree/main/docs/assets/video/register_login.mp4" autoplay loop muted playsinline width="100%"></video>
-
+![A video demonstrating the registration and login process.](docs/assets/video/register_login.mp4)
 
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
 <br>
 
 
 Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It's fast, frantic, and a true test of reflexes and friendships!
+
+![A video demonstrating a local game.](docs/assets/video/local_game.mp4)
+
 
 <video src="docs/assets/video/local_game.mp4" autoplay loop muted playsinline width="100%"></video>
 
