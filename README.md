@@ -33,6 +33,7 @@ Our landing page is designed to be your portal into the world of Transcendence. 
 
 ![A video demonstrating the registration and login process.](docs/assets/video/register_login.mp4)
 
+
 <summary><b>🕹️ Couch Co-op: Classic Local Game</b></summary>
 <br>
 
@@ -42,16 +43,13 @@ Challenge a friend on the same keyboard in a classic, no-frills game of Pong. It
 ![A video demonstrating a local game.](docs/assets/video/local_game.mp4)
 
 
-<video src="docs/assets/video/local_game.mp4" autoplay loop muted playsinline width="100%"></video>
-
-
 <summary><b>🌍 Global Domination: Remote Multiplayer Match</b></summary>
 <br>
 
 
 Find an opponent from anywhere in the world. Experience seamless, real-time gameplay and prove you're the best.
 
-<video src="docs/assets/video/remote_match.mp4" autoplay loop muted playsinline width="100%"></video>
+![A video demonstrating a remote game.](docs/assets/video/remote_match.mp4)
 
 
 <summary><b>🏆 The Gauntlet: Intense Local and Remote Tournaments</b></summary>
@@ -60,7 +58,7 @@ Find an opponent from anywhere in the world. Experience seamless, real-time game
 
 Gather your friends and crown a champion! Our tournament mode handles all the brackets and matchups for you. All you have to do is win.
 
-<video src="docs/assets/video/local_tournament.mp4" autoplay loop muted playsinline width="100%"></video>
+![A video demonstrating a local tournament.](docs/assets/video/local_tournament.mp4)
 
 
 <summary><b>🤯 Crazy Pong: A new take on a classic game</b></summary>
@@ -92,9 +90,7 @@ Think you've mastered Pong? Think again! Our exclusive Crazy Pong mode introduce
 
 Track your stats, view your match history, and see how you stack up against other players on the global leaderboard. The top spot is waiting!
 
-<video src="docs/video/rankings.mp4" autoplay loop muted playsinline width="100%"></video>
-
-📸 Suggested Image: A screenshot of the leaderboard, highlighting the Top 3 players with their avatars, usernames, and win/loss ratios.
+![A video demonstrating the rankings page.](docs/assets/video/rankings.mp4)
 
 
 <summary><b>👥 Better Together: Friends & Social</b></summary>
@@ -103,7 +99,7 @@ Track your stats, view your match history, and see how you stack up against othe
 
 Add friends to see who's online. The social hub keeps you connected to your rivals and teammates.
 
-<video src="docs/video/friends.mp4" autoplay loop muted playsinline width="100%"></video>
+![A video demonstrating the friends page.](docs/assets/video/friends.mp4)
 
 
 <summary><b>⚙️ Make It Yours: Profile & Settings</b></summary>
@@ -112,7 +108,7 @@ Add friends to see who's online. The social hub keeps you connected to your riva
 
 Customize your public profile, change your display name, upload a new avatar, and enable Two-Factor Authentication (2FA) for enhanced security.
 
-<video src="docs/assets/video/user_settings.mp4" autoplay loop muted playsinline width="100%"></video>
+![A video demonstrating the user settings page.](docs/assets/video/user_settings.mp4)
 
 
 ---
