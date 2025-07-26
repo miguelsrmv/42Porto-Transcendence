@@ -25,7 +25,7 @@ Ready to see it in action?
 
 Explore the core features of Transcendence through these short clips.
 
-<summary><b>🚪 A Grand Welcome: The Landing Page</b></summary>
+<b>🚪 A Grand Welcome: The Landing Page</b>
 <br>
 
 
@@ -52,7 +52,7 @@ Find an opponent from anywhere in the world. Experience seamless, real-time game
 <video src="docs/videos/remote_match.mp4" autoplay loop muted playsinline width="100%"></video>
 
 
-<summary><b>🏆 The Gauntlet: Intense Local Tournaments</b></summary>
+<summary><b>🏆 The Gauntlet: Intense Local and Remote Tournaments</b></summary>
 <br>
 
 
@@ -60,6 +60,13 @@ Gather your friends and crown a champion! Our tournament mode handles all the br
 
 <video src="docs/videos/local_tournament.mp4" autoplay loop muted playsinline width="100%"></video>
 
+
+<b>🤯 Crazy Pong: A new take on a classic game</b>
+<br>
+
+Pick up an ally and have it fight for you until the very end!
+
+<video src="docs/videos/crazy_pong.mp4" autoplay loop muted playsinline width="100%"></video>
 
 <summary><b>📈 Climb the Ladder: Rankings & Leaderboards</b></summary>
 <br>
